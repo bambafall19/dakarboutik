@@ -2,7 +2,6 @@ import { FeaturedCategories } from '@/components/featured-categories';
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
 import { getBestsellers, getNewArrivals } from '@/lib/data';
-import { FlashSale } from '@/components/flash-sale';
 
 export default function HomePage() {
   const newArrivals = getNewArrivals();
@@ -13,9 +12,6 @@ export default function HomePage() {
       <HeroSection />
       <div className="container px-4 md:px-6">
         <FeaturedCategories />
-      </div>
-       <div className="container px-4 md:px-6">
-        <FlashSale />
       </div>
       <div className="container px-4 md:px-6">
         <ProductGrid

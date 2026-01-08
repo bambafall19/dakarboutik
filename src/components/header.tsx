@@ -21,55 +21,58 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Icons.menu />
+                <span className="sr-only">Ouvrir le menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="pr-0">
+              <div className="flex flex-col h-full">
+                <div className="p-4">
+                  <Logo />
+                </div>
+                <Separator />
+                <nav className="flex flex-col gap-4 p-4">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/products?category=${category.slug}`}
+                      className="font-medium text-foreground/80 hover:text-foreground"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <div className="mr-4 hidden md:flex">
           <Logo />
         </div>
-
-        {/* Mobile Menu */}
-        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Icons.menu />
-              <span className="sr-only">Ouvrir le menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="pr-0">
-            <div className="flex flex-col h-full">
-              <div className="p-4">
-                <Logo />
-              </div>
-              <Separator />
-              <nav className="flex flex-col gap-4 p-4">
+        
+        {/* Desktop Navigation */}
+        <div className="flex-1 flex justify-center">
+            <nav className="hidden md:flex gap-6 items-center">
                 {categories.map((category) => (
-                  <Link
+                <Link
                     key={category.id}
                     href={`/products?category=${category.slug}`}
-                    className="font-medium text-foreground/80 hover:text-foreground"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
                     {category.name}
-                  </Link>
+                </Link>
                 ))}
-              </nav>
-            </div>
-          </SheetContent>
-        </Sheet>
-        
-        <div className="flex flex-1 items-center justify-between gap-2 md:justify-end">
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-6 items-center">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/products?category=${category.slug}`}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                {category.name}
-              </Link>
-            ))}
-          </nav>
+            </nav>
+        </div>
           
-          <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
             <div className="relative hidden sm:block">
               <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Rechercher..." className="pl-9" />
@@ -91,7 +94,6 @@ export function Header() {
                 <CartDrawer />
               </SheetContent>
             </Sheet>
-          </div>
         </div>
       </div>
     </header>

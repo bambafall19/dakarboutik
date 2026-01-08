@@ -1,3 +1,112 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "banner-1",
+      "description": "Promotion banner for smartphones",
+      "imageUrl": "https://images.unsplash.com/photo-1734035162495-47b168bb3c1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc2FsZXxlbnwwfHx8fDE3Njc4OTE1MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech sale"
+    },
+    {
+      "id": "banner-2",
+      "description": "Promotion banner for audio products",
+      "imageUrl": "https://images.unsplash.com/photo-1668942697842-37332c5932fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aGVhZHBob25lcyUyMGF1ZGlvfGVufDB8fHx8MTc2NzgzNjE1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "headphones audio"
+    },
+    {
+      "id": "banner-3",
+      "description": "Promotion banner for laptop accessories",
+      "imageUrl": "https://images.unsplash.com/photo-1515965885361-f1e0095517ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsYXB0b3AlMjBkZXNrfGVufDB8fHx8MTc2Nzg1NDUxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop desk"
+    },
+    {
+      "id": "product-phone-1a",
+      "description": "Front view of a modern smartphone",
+      "imageUrl": "https://images.unsplash.com/photo-1699265837122-7636e128b4b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWFydHBob25lJTIwcHJvZHVjdHxlbnwwfHx8fDE3Njc4OTE1MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smartphone product"
+    },
+    {
+      "id": "product-phone-1b",
+      "description": "Back view of a modern smartphone",
+      "imageUrl": "https://images.unsplash.com/photo-1511227682637-ddb98c43c42c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbWFydHBob25lJTIwYmFja3xlbnwwfHx8fDE3Njc3OTcyOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smartphone back"
+    },
+    {
+      "id": "product-phone-2a",
+      "description": "Angled view of a premium smartphone",
+      "imageUrl": "https://images.unsplash.com/photo-1758348844306-5a0ba556db03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHJlbWl1bSUyMHNtYXJ0cGhvbmV8ZW58MHx8fHwxNzY3ODkxNTIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "premium smartphone"
+    },
+    {
+      "id": "product-earbuds-1a",
+      "description": "Wireless earbuds with charging case",
+      "imageUrl": "https://images.unsplash.com/photo-1590658006821-04f4008d5717?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3aXJlbGVzcyUyMGVhcmJ1ZHN8ZW58MHx8fHwxNzY3ODA3MTU2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wireless earbuds"
+    },
+    {
+      "id": "product-earbuds-1b",
+      "description": "Close-up of a single wireless earbud",
+      "imageUrl": "https://images.unsplash.com/photo-1762114469204-0aa2cbfa609d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlYXJidWQlMjBjbG9zZXVwfGVufDB8fHx8MTc2Nzg5MTUyMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "earbud closeup"
+    },
+    {
+      "id": "product-headphones-1a",
+      "description": "Over-ear wireless headphones",
+      "imageUrl": "https://images.unsplash.com/photo-1491927570842-0261e477d937?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3aXJlbGVzcyUyMGhlYWRwaG9uZXN8ZW58MHx8fHwxNzY3ODEyODg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wireless headphones"
+    },
+    {
+      "id": "product-powerbank-1a",
+      "description": "Slim powerbank for charging devices",
+      "imageUrl": "https://images.unsplash.com/photo-1644571669401-9ab344866592?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwb3dlciUyMGJhbmt8ZW58MHx8fHwxNzY3ODIyMTY1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "power bank"
+    },
+    {
+      "id": "product-cable-1a",
+      "description": "Braided USB-C charging cable",
+      "imageUrl": "https://images.unsplash.com/photo-1492107376256-4026437926cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1c2IlMjBjYWJsZXxlbnwwfHx8fDE3Njc4MDMzODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "usb cable"
+    },
+    {
+      "id": "product-speaker-1a",
+      "description": "Portable bluetooth speaker",
+      "imageUrl": "https://images.unsplash.com/photo-1589001181560-a8df1800e501?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxibHVldG9vdGglMjBzcGVha2VyfGVufDB8fHx8MTc2Nzg2OTE0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bluetooth speaker"
+    },
+    {
+      "id": "product-laptop-1a",
+      "description": "Modern thin laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1618424181497-157f25b6ddd5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxsYXB0b3AlMjBjb21wdXRlcnxlbnwwfHx8fDE3Njc4NjUyNzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop computer"
+    },
+    {
+      "id": "product-laptop-1b",
+      "description": "Side view of modern thin laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1754928864131-21917af96dfd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxsYXB0b3AlMjBzaWRlfGVufDB8fHx8MTc2Nzg2OTE0MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop side"
+    },
+    {
+      "id": "product-powerbank-2a",
+      "description": "High capacity powerbank",
+      "imageUrl": "https://images.unsplash.com/photo-1734204456459-9a9e4a9c74e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsYXJnZSUyMHBvd2VyYmFua3xlbnwwfHx8fDE3Njc4OTE1MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "large powerbank"
+    },
+    {
+      "id": "product-charger-1a",
+      "description": "Wall charger with multiple ports",
+      "imageUrl": "https://images.unsplash.com/photo-1600490819734-6311c5c6f517?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3YWxsJTIwY2hhcmdlcnxlbnwwfHx8fDE3Njc4MDQzOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wall charger"
+    },
+    {
+      "id": "product-cable-2a",
+      "description": "Set of charging cables",
+      "imageUrl": "https://images.unsplash.com/photo-1660548902162-fdf9892065e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaGFyZ2luZyUyMGNhYmxlc3xlbnwwfHx8fDE3Njc4OTE1MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "charging cables"
+    },
+    {
+      "id": "product-speaker-2a",
+      "description": "Small stylish bluetooth speaker",
+      "imageUrl": "https://images.unsplash.com/photo-1760088348190-023af514df23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzbWFsbCUyMHNwZWFrZXJ8ZW58MHx8fHwxNzY3ODkxNTIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "small speaker"
+    }
+  ]
 }

@@ -14,20 +14,23 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(amount).replace(/\s/g, ''); // remove space for compact display
   };
 
   return (
-    <div className={cn("flex items-end gap-2 font-semibold", className)}>
-      <span className={cn(
-        "text-foreground",
-        salePrice ? "text-muted-foreground line-through text-sm font-normal" : "text-lg"
-      )}>
-        {formatPrice(price)}
-      </span>
-      {salePrice && (
-        <span className="text-primary text-lg">
-          {formatPrice(salePrice)}
+    <div className={cn("flex items-center gap-2", className)}>
+      {salePrice ? (
+        <>
+          <span className="font-bold text-base text-red-500">
+            {formatPrice(salePrice)}
+          </span>
+          <span className="text-sm text-muted-foreground line-through">
+            {formatPrice(price)}
+          </span>
+        </>
+      ) : (
+        <span className="font-bold text-base text-foreground">
+          {formatPrice(price)}
         </span>
       )}
     </div>

@@ -15,6 +15,7 @@ export function HeroSection() {
 
   return (
     <section className="w-full">
+      <div className="container">
       <Carousel
         className="w-full"
         opts={{
@@ -24,7 +25,7 @@ export function HeroSection() {
         <CarouselContent>
           {banners.map((banner) => (
             <CarouselItem key={banner.id}>
-              <div className="relative aspect-[16/7] w-full">
+              <div className="relative aspect-[16/6] w-full rounded-xl overflow-hidden">
                 <Image
                   src={banner.image.imageUrl}
                   alt={banner.title}
@@ -39,7 +40,7 @@ export function HeroSection() {
                       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">
                         {banner.title}
                       </h1>
-                      <Button asChild className="mt-6" size="lg">
+                       <Button asChild className="mt-6" size="lg" variant="secondary">
                         <Link href={banner.linkUrl}>Découvrir</Link>
                       </Button>
                     </div>
@@ -52,6 +53,7 @@ export function HeroSection() {
         <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:inline-flex" />
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:inline-flex" />
       </Carousel>
+      </div>
     </section>
   );
 }

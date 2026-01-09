@@ -9,6 +9,7 @@ import {
   Users,
   DollarSign,
   LineChart,
+  Users2,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -44,7 +45,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Gestion des Produits</CardTitle>
@@ -77,6 +78,24 @@ export default function AdminPage() {
               <Link href="#">
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Voir les commandes
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>Gestion des Clients</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="text-muted-foreground mb-4">
+              Consultez la liste et l'historique de vos clients.
+            </p>
+          </CardContent>
+          <CardContent>
+            <Button asChild className="w-full" variant="secondary">
+              <Link href="#">
+                <Users2 className="mr-2 h-4 w-4" />
+                Voir les clients
               </Link>
             </Button>
           </CardContent>

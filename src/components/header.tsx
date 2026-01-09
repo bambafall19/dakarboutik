@@ -55,12 +55,6 @@ export function Header({ settings }: HeaderProps) {
                     {category.name}
                   </Link>
                 ))}
-                <Link
-                  href="/admin"
-                  className="hover:text-primary transition-colors"
-                >
-                  Admin
-                </Link>
               </nav>
             </>
           )}
@@ -95,14 +89,6 @@ export function Header({ settings }: HeaderProps) {
                                 {category.name}
                                 </Link>
                             ))}
-                            <Separator />
-                            <Link
-                                href="/admin"
-                                className="font-medium text-foreground/80 hover:text-foreground"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Admin
-                            </Link>
                             </nav>
                         </div>
                         </SheetContent>

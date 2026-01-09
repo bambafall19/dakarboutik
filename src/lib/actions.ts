@@ -31,10 +31,9 @@ export async function addProduct(productData: {
   stock: number;
   category: string;
   brand: string;
+  imageUrl: string;
   isNew: boolean;
   isBestseller: boolean;
-  metaTitle?: string;
-  metaDescription?: string;
 }) {
   const { firestore } = initializeFirebase();
   if (!firestore) {
@@ -51,10 +50,10 @@ export async function addProduct(productData: {
       // Add placeholder values for fields not in the form
       images: [
         {
-          id: 'product-phone-1a',
-          description: 'Front view of a modern smartphone',
-          imageUrl: 'https://picsum.photos/seed/1/600/600',
-          imageHint: 'smartphone product',
+          id: `product-${slug}-1`,
+          description: productData.title,
+          imageUrl: productData.imageUrl,
+          imageHint: 'product',
         },
       ],
       specs: {},

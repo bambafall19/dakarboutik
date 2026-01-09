@@ -1,3 +1,4 @@
+
 import { AddProductForm } from '@/components/admin/add-product-form';
 import { getCategories } from '@/lib/data';
 import {
@@ -8,6 +9,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { initializeFirebase } from '@/firebase/server';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import type { Product } from '@/lib/types';
 
 export default async function AddProductPage() {
   const categories = getCategories();

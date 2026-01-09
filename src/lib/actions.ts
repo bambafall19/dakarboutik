@@ -43,7 +43,7 @@ export async function addProduct(productData: {
     const slug = slugify(productData.title);
     const newProduct: Omit<Product, 'id'> = {
       ...productData,
-      brand: '', // Set brand to empty string
+      brand: '', // Explicitly set brand to empty string
       slug,
       status: 'active',
       createdAt: new Date().toISOString(),

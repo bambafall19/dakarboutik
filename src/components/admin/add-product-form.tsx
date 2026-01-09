@@ -81,7 +81,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       // Use subCategory if it exists, otherwise fall back to main category slug
       const categoryToSave = values.subCategory || values.category;
       
-      await addProduct({ ...values, category: categoryToSave, brand: '' });
+      await addProduct({ ...values, category: categoryToSave });
 
       toast({
         title: 'Produit ajouté !',

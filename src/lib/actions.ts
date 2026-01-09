@@ -43,10 +43,10 @@ export async function addProduct(productData: {
     const slug = slugify(productData.title);
     const newProduct: Omit<Product, 'id'> = {
       ...productData,
+      brand: '', // Set brand to empty string
       slug,
       status: 'active',
       createdAt: new Date().toISOString(),
-      // Add placeholder values for fields not in the form
       images: [
         {
           id: `product-${slug}-1`,

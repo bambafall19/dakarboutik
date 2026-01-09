@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useMemo } from 'react';
-import type { Product, SimpleCategory } from '@/lib/types';
+import type { Product, SimpleCategory, Category } from '@/lib/types';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
@@ -22,24 +23,24 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
     sortBy: 'newest',
   });
 
-  // Re-hydrate full category objects with icons on the client
-  const categories = useMemo(() => {
-    const fullCategories = getCategories();
-    return simpleCategories.map(sc => {
-      const fullCategory = fullCategories.find(fc => fc.slug === sc.slug);
-      return fullCategory || { ...sc, icon: undefined };
-    });
-  }, [simpleCategories]);
+  const categories = useMemo(() => getCategories(), []);
 
   const filteredProducts = useMemo(() => {
     let products: Product[] = allProducts;
 
     if (filters.category) {
-      products = products.filter(p => p.category === filters.category);
+      const selectedCategory = categories.find(c => c.slug === filters.category);
+      const categorySlugs = [
+        filters.category,
+        ...(selectedCategory?.subCategories?.map(sc => sc.slug) || [])
+      ];
+      products = products.filter(p => categorySlugs.includes(p.category));
     }
+    
     if (filters.brand) {
       products = products.filter(p => p.brand === filters.brand);
     }
+    
     products = products.filter(p => {
       const price = p.salePrice ?? p.price;
       return price >= filters.priceRange[0] && price <= filters.priceRange[1];
@@ -54,13 +55,12 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
         break;
       case 'newest':
       default:
-        // Assuming createdAt is a string. For Firestore Timestamps, you'd convert to date.
         products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
     }
 
     return products;
-  }, [allProducts, filters]);
+  }, [allProducts, filters, categories]);
 
   const selectedCategoryName = categories.find(c => c.slug === filters.category)?.name || 'Tous les produits';
 

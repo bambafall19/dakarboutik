@@ -40,7 +40,7 @@ export function HeroSection() {
                       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">
                         {banner.title}
                       </h1>
-                       <Button asChild className="mt-6" size="lg" variant="secondary">
+                       <Button asChild className="mt-6" size="lg">
                         <Link href={banner.linkUrl}>Découvrir</Link>
                       </Button>
                     </div>

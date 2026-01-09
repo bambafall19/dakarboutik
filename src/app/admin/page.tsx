@@ -10,6 +10,7 @@ import {
   DollarSign,
   LineChart,
   Users2,
+  Image as ImageIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -96,6 +97,24 @@ export default function AdminPage() {
               <Link href="#">
                 <Users2 className="mr-2 h-4 w-4" />
                 Voir les clients
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>Gestion des Bannières</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="text-muted-foreground mb-4">
+              Gérez les bannières promotionnelles de la page d'accueil.
+            </p>
+          </CardContent>
+          <CardContent>
+            <Button asChild className="w-full" variant="secondary">
+              <Link href="#">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                Gérer les bannières
               </Link>
             </Button>
           </CardContent>

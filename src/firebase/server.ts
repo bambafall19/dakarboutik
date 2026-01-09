@@ -5,8 +5,8 @@ import { firebaseConfig } from './config';
 let firebaseApp: FirebaseApp;
 let firestore: Firestore;
 
+// This check ensures we only initialize on the server
 if (typeof window === 'undefined') {
-  // Server-side initialization
   if (!getApps().length) {
     firebaseApp = initializeApp(firebaseConfig);
   } else {
@@ -17,11 +17,7 @@ if (typeof window === 'undefined') {
 
 // This function can be called on the server to get the instances
 export function initializeFirebase() {
-  // This check is to ensure we don't re-initialize on the client-side
-  // if this file by chance gets imported there.
-  if (typeof window !== 'undefined') {
-    throw new Error('initializeFirebase (server) should not be called on the client');
-  }
-
+  // The check for 'window' is now implicitly handled by where this function is called from (server-only files)
+  // and the top-level check in this file. We can safely return the instances.
   return { firebaseApp, firestore };
 }

@@ -37,7 +37,7 @@ export default async function RootLayout({
         <FirebaseClientProvider>
           <CartProvider>
             <div className="relative flex min-h-screen flex-col">
-              <Header logoUrl={settings.logoUrl} announcementMessage={settings.announcementMessage} />
+              <Header settings={settings} />
               <main className="flex-1">{children}</main>
               <Footer logoUrl={settings.logoUrl} />
             </div>

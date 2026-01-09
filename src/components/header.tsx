@@ -12,15 +12,15 @@ import { Icons } from '@/components/icons';
 import { getCategories } from '@/lib/data';
 import { useState, useEffect } from 'react';
 import { Separator } from './ui/separator';
+import type { SiteSettings } from '@/lib/types';
 
 const categories = getCategories();
 
 interface HeaderProps {
-  logoUrl?: string;
-  announcementMessage?: string;
+  settings: SiteSettings;
 }
 
-export function Header({ logoUrl, announcementMessage }: HeaderProps) {
+export function Header({ settings }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -31,9 +31,9 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card">
-      {announcementMessage && (
+      {settings.announcementMessage && (
         <div className="bg-primary text-primary-foreground text-center text-sm p-2">
-          {announcementMessage}
+          {settings.announcementMessage}
         </div>
       )}
       <div className="container flex h-16 items-center justify-between">
@@ -48,7 +48,7 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
             <SheetContent side="left" className="pr-0">
               <div className="flex flex-col h-full">
                 <div className="p-4">
-                  <Logo imageUrl={logoUrl} />
+                  <Logo imageUrl={settings.logoUrl} />
                 </div>
                 <Separator />
                 <nav className="flex flex-col gap-4 p-4">
@@ -74,7 +74,9 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
               </div>
             </SheetContent>
           </Sheet>
-          <Logo imageUrl={logoUrl} />
+          <div className="hidden md:flex ml-4">
+             <Logo imageUrl={settings.logoUrl} />
+          </div>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">

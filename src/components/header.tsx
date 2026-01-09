@@ -17,17 +17,20 @@ const categories = getCategories();
 
 interface HeaderProps {
   logoUrl?: string;
+  announcementMessage?: string;
 }
 
-export function Header({ logoUrl }: HeaderProps) {
+export function Header({ logoUrl, announcementMessage }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card">
-      <div className="bg-primary text-primary-foreground text-center text-sm p-2">
-        Livraison gratuite à partir de 50 000 F CFA !
-      </div>
+      {announcementMessage && (
+        <div className="bg-primary text-primary-foreground text-center text-sm p-2">
+          {announcementMessage}
+        </div>
+      )}
       <div className="container flex h-16 items-center">
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>

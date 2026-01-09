@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import { revalidatePath } from 'next/cache';
 import { initializeFirebase } from '@/firebase/server'; // Using server instance
-import type { Product } from './types';
+import type { Product, SiteSettings } from './types';
 
 // Slugify function
 function slugify(text: string) {
@@ -74,7 +74,7 @@ export async function addProduct(productData: {
   }
 }
 
-export async function updateSiteSettings(settings: { logoUrl?: string }) {
+export async function updateSiteSettings(settings: SiteSettings) {
   const { firestore } = initializeFirebase();
   if (!firestore) {
     throw new Error('Firestore is not initialized.');

@@ -82,7 +82,7 @@ export const getBanners = () => banners;
 export const getNewArrivals = async (count: number = 4) =>
   await fetchProducts(
     query(
-      collection(firestore, 'products'), 
+      collection(firestore, 'products'),
       orderBy('createdAt', 'desc'),
       limit(count)
     )
@@ -107,7 +107,8 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
   } else {
     // Return default settings if nothing is in the database
     return {
-      logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100"
+      logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
+      announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
     };
   }
 };

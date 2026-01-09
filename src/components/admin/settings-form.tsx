@@ -19,9 +19,11 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import type { SiteSettings } from '@/lib/types';
 import { updateSiteSettings } from '@/lib/actions';
+import { Separator } from '../ui/separator';
 
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
+  announcementMessage: z.string().optional(),
 });
 
 interface SettingsFormProps {
@@ -36,6 +38,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       logoUrl: settings.logoUrl || '',
+      announcementMessage: settings.announcementMessage || '',
     },
   });
 
@@ -59,16 +62,16 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Logo du site</CardTitle>
-        <CardDescription>
-          Mettez à jour le logo qui apparaît dans l'en-tête et le pied de page.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Apparence du site</CardTitle>
+            <CardDescription>
+              Gérez les éléments visuels de votre boutique.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <FormField
               control={form.control}
               name="logoUrl"
@@ -82,12 +85,25 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+            <FormField
+              control={form.control}
+              name="announcementMessage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message de la barre d'annonce</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Livraison gratuite pour les commandes de plus de..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
+        </Button>
+      </form>
+    </Form>
   );
 }

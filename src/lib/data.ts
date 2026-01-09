@@ -82,9 +82,5 @@ export const getNewArrivals = async (count: number = 4) =>
 
 export const getBestsellers = async (count: number = 4) =>
   await fetchProducts(
-    query(
-      collection(firestore, 'products'),
-      where('isBestseller', '==', true),
-      limit(count)
-    )
+    query(collection(firestore, 'products'), where('status', '==', 'active'), limit(count))
   );

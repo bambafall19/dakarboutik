@@ -83,7 +83,6 @@ export const getNewArrivals = async (count: number = 4) =>
   await fetchProducts(
     query(
       collection(firestore, 'products'), 
-      where('status', '==', 'active'),
       orderBy('createdAt', 'desc'),
       limit(count)
     )

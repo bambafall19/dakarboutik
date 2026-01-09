@@ -4,16 +4,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public read access for products
+    // Public read access for products, write access for authenticated users.
     match /products/{productId} {
       allow read: if true;
-      allow write: if false; // No one can write directly
+      allow write: if request.auth != null; 
     }
 
-    // Public read access for site settings
+    // Public read access for site settings, write access for authenticated users.
     match /settings/siteConfig {
       allow read: if true;
-      allow write: if false; // Protect settings from client-side writes
+      allow write: if request.auth != null;
     }
   }
 }

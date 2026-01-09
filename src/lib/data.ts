@@ -24,6 +24,8 @@ const categories: Category[] = [
     slug: 'informatique',
     icon: Laptop,
     subCategories: [
+      { id: 'sub-pc', name: 'PC', slug: 'pc' },
+      { id: 'sub-ordinateur-portable', name: 'Ordinateur Portable', slug: 'ordinateur-portable' },
       { id: 'sub-carte-graphique', name: 'Carte graphique', slug: 'carte-graphique' },
       { id: 'sub-souris', name: 'Souris', slug: 'souris' },
       { id: 'sub-clavier', name: 'Clavier', slug: 'clavier' },

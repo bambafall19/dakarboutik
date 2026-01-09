@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <FirebaseClientProvider>
           <CartProvider>
-            <div className="relative flex min-h-screen flex-col">
+            <div className="relative flex min-h-screen flex-col container">
               <Header />
               <main className="flex-1">{children}</main>
               <Footer />

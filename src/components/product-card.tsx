@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -10,6 +11,7 @@ import { Price } from "./price";
 import { HeartIcon, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +20,12 @@ interface ProductCardProps {
 
 export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const { addToCart } = useCart();
+  const [soldCount, setSoldCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    // This runs only on the client, after hydration
+    setSoldCount(Math.floor(Math.random() * 500) + 50);
+  }, []);
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -84,7 +92,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400"/>
             <span>4.9</span>
             <span>|</span>
-            <span>{Math.floor(Math.random() * 500) + 50}+ Sold</span>
+            {soldCount !== null && <span>{soldCount}+ Sold</span>}
           </div>
         </div>
         <div className="mt-4">

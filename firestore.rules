@@ -13,7 +13,7 @@ service cloud.firestore {
     // Public read access for site settings, write access for authenticated users.
     match /settings/siteConfig {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if true; 
     }
   }
 }

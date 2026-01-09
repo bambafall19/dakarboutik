@@ -36,6 +36,7 @@ export function Header({ settings }: HeaderProps) {
       )}
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
+          {/* Mobile Menu Trigger */}
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
@@ -74,11 +75,14 @@ export function Header({ settings }: HeaderProps) {
               </SheetContent>
             </Sheet>
           </div>
-          <div className="hidden md:flex ml-4">
-            <Logo imageUrl={logoUrl} />
+
+          {/* Desktop Logo */}
+          <div className="hidden md:flex">
+             <Logo imageUrl={logoUrl} />
           </div>
         </div>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           {categories.map((category) => (
             <Link
@@ -97,7 +101,12 @@ export function Header({ settings }: HeaderProps) {
           </Link>
         </nav>
 
+        {/* Search and Cart */}
         <div className="flex items-center justify-end space-x-2">
+           {/* Mobile Logo (placed here for layout) */}
+           <div className="md:hidden">
+            <Logo imageUrl={logoUrl} />
+          </div>
           <div className="relative flex-1 max-w-xs hidden sm:block">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

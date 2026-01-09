@@ -10,7 +10,7 @@ import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import { getCategories } from '@/lib/data';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
 
@@ -23,11 +23,6 @@ interface HeaderProps {
 export function Header({ settings }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const logoUrl = settings?.logoUrl;
   const announcementMessage = settings?.announcementMessage;
@@ -41,60 +36,52 @@ export function Header({ settings }: HeaderProps) {
       )}
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          {isMounted && (
-             <>
-                {/* Mobile Menu - Hidden on desktop */}
-                <div className="flex items-center md:hidden">
-                    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                        <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Icons.menu />
-                            <span className="sr-only">Ouvrir le menu</span>
-                        </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" className="pr-0">
-                        <div className="flex flex-col h-full">
-                            <div className="p-4">
-                            <Logo imageUrl={logoUrl} />
-                            </div>
-                            <Separator />
-                            <nav className="flex flex-col gap-4 p-4">
-                            {categories.map((category) => (
-                                <Link
-                                key={category.id}
-                                href={`/products?category=${category.slug}`}
-                                className="font-medium text-foreground/80 hover:text-foreground"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                {category.name}
-                                </Link>
-                            ))}
-                            </nav>
-                        </div>
-                        </SheetContent>
-                    </Sheet>
-                </div>
-             </>
-           )}
+          {/* Mobile Menu - Hidden on desktop */}
+          <div className="flex items-center md:hidden">
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                  <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                      <Icons.menu />
+                      <span className="sr-only">Ouvrir le menu</span>
+                  </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="pr-0">
+                  <div className="flex flex-col h-full">
+                      <div className="p-4">
+                      <Logo imageUrl={logoUrl} />
+                      </div>
+                      <Separator />
+                      <nav className="flex flex-col gap-4 p-4">
+                      {categories.map((category) => (
+                          <Link
+                          key={category.id}
+                          href={`/products?category=${category.slug}`}
+                          className="font-medium text-foreground/80 hover:text-foreground"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                          {category.name}
+                          </Link>
+                      ))}
+                      </nav>
+                  </div>
+                  </SheetContent>
+              </Sheet>
+          </div>
           <Logo imageUrl={logoUrl} />
         </div>
         
-        {isMounted && (
-          <>
-            {/* Desktop Navigation - Hidden on mobile */}
-            <nav className="hidden md:flex items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/products?category=${category.slug}`}
-                  className="hover:text-primary transition-colors"
-                >
-                  {category.name}
-                </Link>
-              ))}
-            </nav>
-          </>
-        )}
+        {/* Desktop Navigation - Hidden on mobile */}
+        <nav className="hidden md:flex items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              href={`/products?category=${category.slug}`}
+              className="hover:text-primary transition-colors"
+            >
+              {category.name}
+            </Link>
+          ))}
+        </nav>
         
         <div className="flex items-center justify-end space-x-2">
           <div className="relative flex-1 justify-end hidden sm:flex max-w-xs">

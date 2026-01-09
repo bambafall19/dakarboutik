@@ -5,6 +5,8 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  doc,
+  setDoc,
 } from 'firebase/firestore';
 import { revalidatePath } from 'next/cache';
 import { initializeFirebase } from '@/firebase/server'; // Using server instance
@@ -69,5 +71,23 @@ export async function addProduct(productData: {
   } catch (e) {
     console.error('Error adding document: ', e);
     throw new Error('Failed to add product.');
+  }
+}
+
+export async function updateSiteSettings(settings: { logoUrl?: string }) {
+  const { firestore } = initializeFirebase();
+  if (!firestore) {
+    throw new Error('Firestore is not initialized.');
+  }
+
+  try {
+    const settingsRef = doc(firestore, 'settings', 'siteConfig');
+    await setDoc(settingsRef, settings, { merge: true });
+
+    // Revalidate all paths to reflect the new logo
+    revalidatePath('/', 'layout');
+  } catch (e) {
+    console.error('Error updating settings: ', e);
+    throw new Error('Failed to update site settings.');
   }
 }

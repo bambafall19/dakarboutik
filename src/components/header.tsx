@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -13,9 +14,12 @@ import { useState } from 'react';
 import { Separator } from './ui/separator';
 
 const categories = getCategories();
-const logoUrl = "https://picsum.photos/seed/dakarboutik-logo/100/100";
 
-export function Header() {
+interface HeaderProps {
+  logoUrl?: string;
+}
+
+export function Header({ logoUrl }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

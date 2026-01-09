@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -7,6 +8,7 @@ import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
+import { getSiteSettings } from '@/lib/data';
 
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -17,11 +19,13 @@ export const metadata: Metadata = {
     'Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
   return (
     <html lang="fr-SN" className="h-full">
       <body
@@ -33,9 +37,9 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <CartProvider>
             <div className="relative flex min-h-screen flex-col">
-              <Header />
+              <Header logoUrl={settings.logoUrl} />
               <main className="flex-1">{children}</main>
-              <Footer />
+              <Footer logoUrl={settings.logoUrl} />
             </div>
             <Toaster />
           </CartProvider>

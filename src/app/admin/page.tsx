@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import {
   LineChart,
   Users2,
   Image as ImageIcon,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -133,6 +135,24 @@ export default function AdminPage() {
               <Link href="#">
                 <LineChart className="mr-2 h-4 w-4" />
                 Voir les rapports
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>Réglages du site</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="text-muted-foreground mb-4">
+              Gérez les paramètres généraux comme le logo.
+            </p>
+          </CardContent>
+          <CardContent>
+            <Button asChild className="w-full" variant="secondary">
+              <Link href="/admin/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                Modifier les réglages
               </Link>
             </Button>
           </CardContent>

@@ -45,3 +45,7 @@ export type CartItem = {
   quantity: number;
   variant?: { name: string; value: string; };
 };
+
+export type SiteSettings = {
+  logoUrl?: string;
+};

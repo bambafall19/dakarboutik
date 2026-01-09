@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Logo } from './logo';
 import { Separator } from './ui/separator';
@@ -21,9 +22,11 @@ const footerLinks = {
   ],
 };
 
-const logoUrl = "https://picsum.photos/seed/dakarboutik-logo/100/100";
+interface FooterProps {
+  logoUrl?: string;
+}
 
-export function Footer() {
+export function Footer({ logoUrl }: FooterProps) {
   return (
     <footer className="bg-muted text-muted-foreground mt-16">
       <div className="container py-12">

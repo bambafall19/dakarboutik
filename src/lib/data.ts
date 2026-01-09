@@ -1,9 +1,12 @@
+
 import { Smartphone, Headphones, Laptop, Plug } from 'lucide-react';
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
-import type { Banner, Category, Product, SimpleCategory } from './types';
+import type { Banner, Category, Product, SimpleCategory, SiteSettings } from './types';
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -78,10 +81,34 @@ export const getBanners = () => banners;
 
 export const getNewArrivals = async (count: number = 4) =>
   await fetchProducts(
-    query(collection(firestore, 'products'), where('status', '==', 'active'), limit(count))
+    query(
+      collection(firestore, 'products'), 
+      where('status', '==', 'active'),
+      orderBy('createdAt', 'desc'),
+      limit(count)
+    )
   );
 
 export const getBestsellers = async (count: number = 4) =>
   await fetchProducts(
-    query(collection(firestore, 'products'), where('status', '==', 'active'), limit(count))
+    query(
+      collection(firestore, 'products'),
+      where('isBestseller', '==', true),
+      where('status', '==', 'active'),
+      limit(count)
+    )
   );
+
+export const getSiteSettings = async (): Promise<SiteSettings> => {
+  const settingsRef = doc(firestore, 'settings', 'siteConfig');
+  const docSnap = await getDoc(settingsRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data() as SiteSettings;
+  } else {
+    // Return default settings if nothing is in the database
+    return {
+      logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100"
+    };
+  }
+};

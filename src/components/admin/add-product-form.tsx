@@ -38,7 +38,6 @@ const formSchema = z.object({
   stock: z.coerce.number().min(0, 'Le stock doit être positif.'),
   category: z.string().min(1, 'La catégorie est requise.'),
   subCategory: z.string().optional(),
-  brand: z.string().min(1, 'La marque est requise.'),
   imageUrl: z.string().url("Veuillez entrer une URL d'image valide."),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
@@ -46,10 +45,9 @@ const formSchema = z.object({
 
 interface AddProductFormProps {
   categories: SimpleCategory[];
-  brands: string[];
 }
 
-export function AddProductForm({ categories, brands }: AddProductFormProps) {
+export function AddProductForm({ categories }: AddProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -62,7 +60,6 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
       stock: 0,
       category: '',
       subCategory: '',
-      brand: '',
       imageUrl: '',
       isNew: true,
       isBestseller: false,
@@ -243,34 +240,6 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
                     )}
                   />
                 )}
-
-                <FormField
-                  control={form.control}
-                  name="brand"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Marque</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Choisir une marque" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {brands.map((brand) => (
-                            <SelectItem key={brand} value={brand}>
-                              {brand}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
 

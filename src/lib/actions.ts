@@ -30,7 +30,6 @@ export async function addProduct(productData: {
   price: number;
   stock: number;
   category: string;
-  brand: string;
   imageUrl: string;
   isNew: boolean;
   isBestseller: boolean;

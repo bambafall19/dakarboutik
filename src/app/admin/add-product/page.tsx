@@ -1,6 +1,6 @@
 
 import { AddProductForm } from '@/components/admin/add-product-form';
-import { getSimpleCategories, getProducts } from '@/lib/data';
+import { getSimpleCategories } from '@/lib/data';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,7 +12,6 @@ import {
 
 export default async function AddProductPage() {
   const categories = getSimpleCategories();
-  const brands = [...new Set((await getProducts()).map((p) => p.brand))];
 
   return (
     <div className="container py-12">
@@ -28,7 +27,7 @@ export default async function AddProductPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <h1 className="text-3xl font-bold mb-8">Ajouter un nouveau produit</h1>
-      <AddProductForm categories={categories} brands={brands} />
+      <AddProductForm categories={categories} />
     </div>
   );
 }

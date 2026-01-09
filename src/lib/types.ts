@@ -9,7 +9,7 @@ export type Product = {
   price: number;
   salePrice?: number;
   currency: 'XOF';
-  brand: string;
+  brand?: string;
   category: string; // slug of category
   specs: Record<string, string>;
   stock: number;

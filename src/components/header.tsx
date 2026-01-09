@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+} from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';

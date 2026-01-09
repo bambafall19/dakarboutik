@@ -39,29 +39,9 @@ export function Header({ settings }: HeaderProps) {
           {announcementMessage}
         </div>
       )}
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Logo imageUrl={logoUrl} />
           {isMounted && (
-            <>
-              {/* Desktop Navigation - Hidden on mobile */}
-              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/products?category=${category.slug}`}
-                    className="hover:text-primary transition-colors"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </nav>
-            </>
-          )}
-        </div>
-        
-        <div className="flex flex-1 items-center justify-end space-x-2">
-           {isMounted && (
              <>
                 {/* Mobile Menu - Hidden on desktop */}
                 <div className="flex items-center md:hidden">
@@ -96,7 +76,27 @@ export function Header({ settings }: HeaderProps) {
                 </div>
              </>
            )}
-
+          <Logo imageUrl={logoUrl} />
+        </div>
+        
+        {isMounted && (
+          <>
+            {/* Desktop Navigation - Hidden on mobile */}
+            <nav className="hidden md:flex items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${category.slug}`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </nav>
+          </>
+        )}
+        
+        <div className="flex items-center justify-end space-x-2">
           <div className="relative flex-1 justify-end hidden sm:flex max-w-xs">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

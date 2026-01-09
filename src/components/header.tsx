@@ -31,48 +31,49 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
           {announcementMessage}
         </div>
       )}
-      <div className="container flex h-16 items-center">
-        <div className="md:hidden">
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Icons.menu />
-                <span className="sr-only">Ouvrir le menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
-              <div className="flex flex-col h-full">
-                <div className="p-4">
-                  <Logo imageUrl={logoUrl} />
-                </div>
-                <Separator />
-                <nav className="flex flex-col gap-4 p-4">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={`/products?category=${category.slug}`}
-                      className="font-medium text-foreground/80 hover:text-foreground"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-4">
+           <div className="md:hidden">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Icons.menu />
+                  <span className="sr-only">Ouvrir le menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="pr-0">
+                <div className="flex flex-col h-full">
+                  <div className="p-4">
+                    <Logo imageUrl={logoUrl} />
+                  </div>
                   <Separator />
-                   <Link
-                      href="/admin"
-                      className="font-medium text-foreground/80 hover:text-foreground"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Admin
-                    </Link>
-                </nav>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        <div className="mr-6 flex">
-          <Logo imageUrl={logoUrl} />
+                  <nav className="flex flex-col gap-4 p-4">
+                    {categories.map((category) => (
+                      <Link
+                        key={category.id}
+                        href={`/products?category=${category.slug}`}
+                        className="font-medium text-foreground/80 hover:text-foreground"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                    <Separator />
+                    <Link
+                        href="/admin"
+                        className="font-medium text-foreground/80 hover:text-foreground"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </Link>
+                  </nav>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+          <div className="hidden md:flex">
+             <Logo imageUrl={logoUrl} />
+          </div>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -85,9 +86,9 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
               Admin
             </Link>
         </nav>
-
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <div className="relative flex-1 max-w-xs">
+        
+        <div className="flex items-center justify-end space-x-2">
+          <div className="relative flex-1 max-w-xs hidden sm:block">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Rechercher un produit..." className="pl-9 bg-background" />
           </div>

@@ -35,42 +35,40 @@ export function Header({ settings }: HeaderProps) {
         </div>
       )}
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
-          {/* Mobile Menu - Hidden on desktop */}
-          <div className="flex items-center md:hidden">
-              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                  <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                      <Icons.menu />
-                      <span className="sr-only">Ouvrir le menu</span>
-                  </Button>
-                  </SheetTrigger>
-                  <SheetContent side="left" className="pr-0">
-                  <div className="flex flex-col h-full">
-                      <div className="p-4">
-                      <Logo imageUrl={logoUrl} />
-                      </div>
-                      <Separator />
-                      <nav className="flex flex-col gap-4 p-4">
-                      {categories.map((category) => (
-                          <Link
-                          key={category.id}
-                          href={`/products?category=${category.slug}`}
-                          className="font-medium text-foreground/80 hover:text-foreground"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                          {category.name}
-                          </Link>
-                      ))}
-                      </nav>
-                  </div>
-                  </SheetContent>
-              </Sheet>
-          </div>
+        {/* Left section: Mobile Menu and Logo */}
+        <div className="flex items-center gap-4">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Icons.menu />
+                <span className="sr-only">Ouvrir le menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="pr-0 md:hidden">
+              <div className="flex flex-col h-full">
+                <div className="p-4">
+                  <Logo imageUrl={logoUrl} onClick={() => setIsMobileMenuOpen(false)} />
+                </div>
+                <Separator />
+                <nav className="flex flex-col gap-4 p-4">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/products?category=${category.slug}`}
+                      className="font-medium text-foreground/80 hover:text-foreground"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
           <Logo imageUrl={logoUrl} />
         </div>
         
-        {/* Desktop Navigation - Hidden on mobile */}
+        {/* Desktop Navigation - Centered */}
         <nav className="hidden md:flex items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
           {categories.map((category) => (
             <Link
@@ -83,6 +81,7 @@ export function Header({ settings }: HeaderProps) {
           ))}
         </nav>
         
+        {/* Right section: Search and Cart */}
         <div className="flex items-center justify-end space-x-2">
           <div className="relative flex-1 justify-end hidden sm:flex max-w-xs">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

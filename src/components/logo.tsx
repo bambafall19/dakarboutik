@@ -9,11 +9,12 @@ import Image from 'next/image';
 interface LogoProps {
   className?: string;
   imageUrl?: string;
+  onClick?: () => void;
 }
 
-export const Logo = ({ className, imageUrl }: LogoProps) => {
+export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
   return (
-    <Link href="/" className={cn('flex items-center gap-2', className)}>
+    <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
       {imageUrl ? (
         <Image
           src={imageUrl}

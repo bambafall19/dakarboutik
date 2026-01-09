@@ -21,13 +21,15 @@ const footerLinks = {
   ],
 };
 
+const logoUrl = "https://picsum.photos/seed/dakarboutik-logo/100/100";
+
 export function Footer() {
   return (
     <footer className="bg-muted text-muted-foreground mt-16">
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <Logo />
+            <Logo imageUrl={logoUrl} />
             <p className="mt-4 text-sm">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>

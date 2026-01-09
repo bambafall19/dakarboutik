@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { Separator } from './ui/separator';
 
 const categories = getCategories();
+const logoUrl = "https://picsum.photos/seed/dakarboutik-logo/100/100";
 
 export function Header() {
   const { totalItems } = useCart();
@@ -32,7 +33,7 @@ export function Header() {
             <SheetContent side="left" className="pr-0">
               <div className="flex flex-col h-full">
                 <div className="p-4">
-                  <Logo />
+                  <Logo imageUrl={logoUrl} />
                 </div>
                 <Separator />
                 <nav className="flex flex-col gap-4 p-4">
@@ -61,7 +62,7 @@ export function Header() {
         </div>
 
         <div className="mr-6 flex">
-          <Logo />
+          <Logo imageUrl={logoUrl} />
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">

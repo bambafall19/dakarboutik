@@ -21,6 +21,7 @@ import {
   Router,
   Tv,
   Tablet,
+  Filter,
 } from 'lucide-react';
 
 export const Icons = {
@@ -40,6 +41,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   heart: Heart,
   chevronDown: ChevronDown,
+  filter: Filter,
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {

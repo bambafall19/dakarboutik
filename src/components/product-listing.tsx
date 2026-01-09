@@ -7,6 +7,9 @@ import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
 import { getCategories } from '@/lib/data';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { Icons } from './icons';
 
 interface ProductListingProps {
     products: Product[];
@@ -63,6 +66,15 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
   }, [allProducts, filters, categories]);
 
   const selectedCategoryName = categories.find(c => c.slug === filters.category)?.name || 'Tous les produits';
+  
+  const filterNode = (
+    <ProductFilters
+        categories={categories}
+        brands={brands}
+        filters={filters}
+        onFilterChange={setFilters}
+    />
+  );
 
   return (
     <div className="container py-8">
@@ -79,16 +91,32 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
       </Breadcrumb>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <aside className="hidden md:block md:col-span-1">
-          <ProductFilters
-            categories={categories}
-            brands={brands}
-            filters={filters}
-            onFilterChange={setFilters}
-          />
+          {filterNode}
         </aside>
         <main className="md:col-span-3">
-          <h1 className="text-3xl font-bold tracking-tight mb-4">{selectedCategoryName}</h1>
-          <p className="text-muted-foreground mb-6">{filteredProducts.length} résultat(s)</p>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">{selectedCategoryName}</h1>
+                <p className="text-muted-foreground mt-1">{filteredProducts.length} résultat(s)</p>
+            </div>
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" className="md:hidden">
+                        <Icons.filter className="mr-2 h-4 w-4" />
+                        Filtrer
+                    </Button>
+                </SheetTrigger>
+                <SheetContent className="flex flex-col">
+                    <SheetHeader>
+                        <SheetTitle>Filtres</SheetTitle>
+                    </SheetHeader>
+                    <div className="flex-1 overflow-y-auto -mx-6 px-6">
+                      {filterNode}
+                    </div>
+                </SheetContent>
+            </Sheet>
+          </div>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} />

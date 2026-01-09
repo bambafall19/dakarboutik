@@ -3,9 +3,9 @@ import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
 import { getBestsellers, getNewArrivals } from '@/lib/data';
 
-export default function HomePage() {
-  const newArrivals = getNewArrivals();
-  const bestsellers = getBestsellers();
+export default async function HomePage() {
+  const newArrivals = await getNewArrivals();
+  const bestsellers = await getBestsellers();
 
   return (
     <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">

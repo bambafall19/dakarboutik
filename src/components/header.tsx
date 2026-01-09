@@ -9,14 +9,15 @@ import {
   Sheet,
   SheetTrigger,
   SheetContent,
+  SheetClose,
 } from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import { getCategories } from '@/lib/data';
-import { useState } from 'react';
 import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
+import { useState } from 'react';
 
 const categories = getCategories();
 
@@ -56,20 +57,22 @@ export function Header({ settings }: HeaderProps) {
                 <Separator />
                 <nav className="flex flex-col gap-4 p-4">
                   {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={`/products?category=${category.slug}`}
-                      className="font-medium text-foreground/80 hover:text-foreground"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {category.name}
-                    </Link>
+                    <SheetClose asChild key={category.id}>
+                      <Link
+                        href={`/products?category=${category.slug}`}
+                        className="font-medium text-foreground/80 hover:text-foreground"
+                      >
+                        {category.name}
+                      </Link>
+                    </SheetClose>
                   ))}
                 </nav>
               </div>
             </SheetContent>
           </Sheet>
-          <Logo imageUrl={logoUrl} />
+          <div className="hidden md:block">
+            <Logo imageUrl={logoUrl} />
+          </div>
         </div>
         
         {/* Desktop Navigation - Centered */}
@@ -87,6 +90,9 @@ export function Header({ settings }: HeaderProps) {
         
         {/* Right section: Search and Cart */}
         <div className="flex items-center justify-end space-x-2">
+          <div className="md:hidden">
+            <Logo imageUrl={logoUrl} />
+          </div>
           <div className="relative flex-1 justify-end hidden sm:flex max-w-xs">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

@@ -4,7 +4,9 @@ import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner, Category, Product } from './types';
 import { collection, getDocs, query, where, limit, orderBy } from 'firebase/firestore';
-import { firestore } from '@/firebase/client';
+import { initializeFirebase } from '@/firebase';
+
+const { firestore } = initializeFirebase();
 
 const categories: Category[] = [
   { id: 'cat1', name: 'Smartphones', slug: 'smartphones', icon: Smartphone },
@@ -60,7 +62,6 @@ export const getNewArrivals = async (count: number = 4) =>
     query(
       collection(firestore, 'products'),
       where('isNew', '==', true),
-      orderBy('createdAt', 'desc'),
       limit(count)
     )
   );
@@ -73,3 +74,4 @@ export const getBestsellers = async (count: number = 4) =>
             limit(count)
         )
     );
+

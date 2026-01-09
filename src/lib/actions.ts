@@ -60,8 +60,7 @@ export async function addProduct(productData: {
       currency: 'XOF',
     };
 
-    const docRef = await addDoc(collection(firestore, 'products'), newProduct);
-    console.log('Document written with ID: ', docRef.id);
+    await addDoc(collection(firestore, 'products'), newProduct);
 
     // Revalidate paths to show the new product
     revalidatePath('/');

@@ -91,8 +91,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'JE NE PEU PAS AJOUTER UN PRODUIT EN TANT QUE ADMIN',
-        description: 'IMPOSSIBLE POUR AJOUTER UN PRODUIT',
+        title: 'Échec de l\'ajout du produit',
+        description: 'Une erreur est survenue. Veuillez vérifier les informations et réessayer.',
       });
     }
   }

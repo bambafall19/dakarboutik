@@ -34,79 +34,76 @@ export function Header({ settings }: HeaderProps) {
           {announcementMessage}
         </div>
       )}
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-4">
-          {/* Mobile Menu Trigger */}
-          <div className="md:hidden">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Icons.menu />
-                  <span className="sr-only">Ouvrir le menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="pr-0">
-                <div className="flex flex-col h-full">
-                  <div className="p-4">
-                    <Logo imageUrl={logoUrl} />
-                  </div>
-                  <Separator />
-                  <nav className="flex flex-col gap-4 p-4">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={`/products?category=${category.slug}`}
-                        className="font-medium text-foreground/80 hover:text-foreground"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
-                    <Separator />
+      <div className="container flex h-16 items-center">
+        {/* Mobile Menu & Logo */}
+        <div className="flex items-center md:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Icons.menu />
+                <span className="sr-only">Ouvrir le menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="pr-0">
+              <div className="flex flex-col h-full">
+                <div className="p-4">
+                  <Logo imageUrl={logoUrl} />
+                </div>
+                <Separator />
+                <nav className="flex flex-col gap-4 p-4">
+                  {categories.map((category) => (
                     <Link
-                      href="/admin"
+                      key={category.id}
+                      href={`/products?category=${category.slug}`}
                       className="font-medium text-foreground/80 hover:text-foreground"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      Admin
+                      {category.name}
                     </Link>
-                  </nav>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Desktop Logo */}
-          <div className="hidden md:flex">
-             <Logo imageUrl={logoUrl} />
-          </div>
+                  ))}
+                  <Separator />
+                  <Link
+                    href="/admin"
+                    className="font-medium text-foreground/80 hover:text-foreground"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-          {categories.map((category) => (
+        {/* Desktop Logo and Navigation */}
+        <div className="hidden md:flex items-center gap-6">
+          <Logo imageUrl={logoUrl} />
+          <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                className="hover:text-primary transition-colors"
+              >
+                {category.name}
+              </Link>
+            ))}
             <Link
-              key={category.id}
-              href={`/products?category=${category.slug}`}
+              href="/admin"
               className="hover:text-primary transition-colors"
             >
-              {category.name}
+              Admin
             </Link>
-          ))}
-          <Link
-            href="/admin"
-            className="hover:text-primary transition-colors"
-          >
-            Admin
-          </Link>
-        </nav>
+          </nav>
+        </div>
+        
+        {/* Centered mobile logo */}
+        <div className="flex-1 flex justify-center md:hidden">
+             <Logo imageUrl={logoUrl} />
+        </div>
 
         {/* Search and Cart */}
-        <div className="flex items-center justify-end space-x-2">
-           {/* Mobile Logo (placed here for layout) */}
-           <div className="md:hidden">
-            <Logo imageUrl={logoUrl} />
-          </div>
+        <div className="flex items-center justify-end space-x-2 flex-shrink-0">
           <div className="relative flex-1 max-w-xs hidden sm:block">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

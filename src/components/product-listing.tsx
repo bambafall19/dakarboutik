@@ -20,8 +20,8 @@ interface ProductListingProps {
 
 export function ProductListing({ products: allProducts, categories: simpleCategories, brands, initialCategory }: ProductListingProps) {
   const [filters, setFilters] = useState({
-    category: initialCategory || '',
-    brand: '',
+    categories: initialCategory ? [initialCategory] : [],
+    brands: [],
     priceRange: [0, 1000000] as [number, number],
     sortBy: 'newest',
   });
@@ -30,18 +30,17 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
 
   const filteredProducts = useMemo(() => {
     let products: Product[] = allProducts;
-
-    if (filters.category) {
-      const selectedCategory = categories.find(c => c.slug === filters.category);
-      const categorySlugs = [
-        filters.category,
-        ...(selectedCategory?.subCategories?.map(sc => sc.slug) || [])
-      ];
-      products = products.filter(p => categorySlugs.includes(p.category));
+    
+    if (filters.categories.length > 0) {
+        const allCategorySlugs = filters.categories.flatMap(catSlug => {
+            const selectedCategory = categories.find(c => c.slug === catSlug);
+            return [catSlug, ...(selectedCategory?.subCategories?.map(sc => sc.slug) || [])];
+        });
+        products = products.filter(p => allCategorySlugs.includes(p.category));
     }
     
-    if (filters.brand) {
-      products = products.filter(p => p.brand === filters.brand);
+    if (filters.brands.length > 0) {
+      products = products.filter(p => p.brand && filters.brands.includes(p.brand));
     }
     
     products = products.filter(p => {
@@ -65,7 +64,9 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
     return products;
   }, [allProducts, filters, categories]);
 
-  const selectedCategoryName = categories.find(c => c.slug === filters.category)?.name || 'Tous les produits';
+  const selectedCategoryName = filters.categories.length === 1 
+    ? categories.find(c => c.slug === filters.categories[0])?.name || 'Produits'
+    : 'Tous les produits';
   
   const filterNode = (
     <ProductFilters

@@ -1,17 +1,19 @@
+
 "use client";
 
 import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Price } from './price';
+import { Checkbox } from './ui/checkbox';
+import { Button } from './ui/button';
 
 type Filters = {
-  category: string;
-  brand: string;
+  categories: string[];
+  brands: string[];
   priceRange: [number, number];
   sortBy: string;
 };
@@ -25,12 +27,18 @@ interface ProductFiltersProps {
 
 export function ProductFilters({ categories, brands, filters, onFilterChange }: ProductFiltersProps) {
   
-  const handleCategoryChange = (value: string) => {
-    onFilterChange({ ...filters, category: value });
+  const handleCategoryChange = (slug: string, checked: boolean) => {
+    const newCategories = checked
+      ? [...filters.categories, slug]
+      : filters.categories.filter(c => c !== slug);
+    onFilterChange({ ...filters, categories: newCategories });
   };
   
-  const handleBrandChange = (value: string) => {
-    onFilterChange({ ...filters, brand: value });
+  const handleBrandChange = (brand: string, checked: boolean) => {
+    const newBrands = checked
+      ? [...filters.brands, brand]
+      : filters.brands.filter(b => b !== brand);
+    onFilterChange({ ...filters, brands: newBrands });
   };
   
   const handlePriceChange = (value: number[]) => {
@@ -40,6 +48,14 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
   const handleSortChange = (value: string) => {
     onFilterChange({ ...filters, sortBy: value });
   };
+
+  const clearFilters = () => {
+    onFilterChange({
+      ...filters,
+      categories: [],
+      brands: [],
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -62,49 +78,46 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className='flex-row items-center justify-between'>
           <CardTitle>Filtres</CardTitle>
+          <Button variant="ghost" size="sm" onClick={clearFilters}>Effacer</Button>
         </CardHeader>
         <CardContent>
           <Accordion type="multiple" defaultValue={['category', 'price']} className="w-full">
             <AccordionItem value="category">
               <AccordionTrigger>Catégorie</AccordionTrigger>
-              <AccordionContent>
-                <RadioGroup value={filters.category} onValueChange={handleCategoryChange}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="" id="cat-all" />
-                    <Label htmlFor="cat-all">Toutes</Label>
+              <AccordionContent className="space-y-2">
+                {categories.map(cat => (
+                  <div key={cat.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`cat-${cat.id}`}
+                      checked={filters.categories.includes(cat.slug)}
+                      onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
+                    />
+                    <Label htmlFor={`cat-${cat.id}`} className="font-normal">{cat.name}</Label>
                   </div>
-                  {categories.map(cat => (
-                    <div key={cat.id} className="flex items-center space-x-2">
-                      <RadioGroupItem value={cat.slug} id={`cat-${cat.id}`} />
-                      <Label htmlFor={`cat-${cat.id}`}>{cat.name}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                ))}
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="brand">
               <AccordionTrigger>Marque</AccordionTrigger>
-              <AccordionContent>
-                <RadioGroup value={filters.brand} onValueChange={handleBrandChange}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="" id="brand-all" />
-                    <Label htmlFor="brand-all">Toutes</Label>
+              <AccordionContent className="space-y-2">
+                {brands.map(brand => (
+                  <div key={brand} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`brand-${brand}`}
+                      checked={filters.brands.includes(brand)}
+                      onCheckedChange={(checked) => handleBrandChange(brand, !!checked)}
+                    />
+                    <Label htmlFor={`brand-${brand}`} className="font-normal">{brand}</Label>
                   </div>
-                  {brands.map(brand => (
-                    <div key={brand} className="flex items-center space-x-2">
-                      <RadioGroupItem value={brand} id={`brand-${brand}`} />
-                      <Label htmlFor={`brand-${brand}`}>{brand}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                ))}
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="price">
               <AccordionTrigger>Prix</AccordionTrigger>
               <AccordionContent>
-                <div className="px-1">
+                <div className="px-1 pt-2">
                   <Slider
                     min={0}
                     max={1000000}
@@ -125,5 +138,3 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
     </div>
   );
 }
-
-    

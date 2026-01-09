@@ -42,44 +42,42 @@ export function Header({ settings }: HeaderProps) {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
           {isMounted && (
-            <div className="md:hidden">
-              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Icons.menu />
-                    <span className="sr-only">Ouvrir le menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="pr-0">
-                  <div className="flex flex-col h-full">
-                    <div className="p-4">
-                      <Logo imageUrl={logoUrl} />
-                    </div>
-                    <Separator />
-                    <nav className="flex flex-col gap-4 p-4">
-                      {categories.map((category) => (
-                        <Link
-                          key={category.id}
-                          href={`/products?category=${category.slug}`}
-                          className="font-medium text-foreground/80 hover:text-foreground"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {category.name}
-                        </Link>
-                      ))}
-                      <Separator />
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Icons.menu />
+                  <span className="sr-only">Ouvrir le menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="pr-0">
+                <div className="flex flex-col h-full">
+                  <div className="p-4">
+                    <Logo imageUrl={logoUrl} />
+                  </div>
+                  <Separator />
+                  <nav className="flex flex-col gap-4 p-4">
+                    {categories.map((category) => (
                       <Link
-                        href="/admin"
+                        key={category.id}
+                        href={`/products?category=${category.slug}`}
                         className="font-medium text-foreground/80 hover:text-foreground"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        Admin
+                        {category.name}
                       </Link>
-                    </nav>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+                    ))}
+                    <Separator />
+                    <Link
+                      href="/admin"
+                      className="font-medium text-foreground/80 hover:text-foreground"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Admin
+                    </Link>
+                  </nav>
+                </div>
+              </SheetContent>
+            </Sheet>
           )}
           <div className="hidden md:flex ml-4">
             <Logo imageUrl={logoUrl} />

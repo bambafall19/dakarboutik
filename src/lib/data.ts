@@ -1,5 +1,4 @@
 
-import { HardDrive, MemoryStick, Cpu, Headset, Router, Tv, Smartphone, Tablet, Laptop, Plug } from 'lucide-react';
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner, Category, Product, SimpleCategory, SiteSettings } from './types';
@@ -22,7 +21,6 @@ const categories: Category[] = [
     id: 'cat-accessoires',
     name: 'Accessoires Informatiques',
     slug: 'accessoires-informatiques',
-    icon: Plug,
     subCategories: [
       { id: 'sub-lecteur-multimedia', name: 'Lecteur multimédia', slug: 'lecteur-multimedia' },
       { id: 'sub-routeur', name: 'Routeur', slug: 'routeur' },
@@ -46,7 +44,6 @@ const categories: Category[] = [
     id: 'cat-informatique',
     name: 'Informatique',
     slug: 'informatique',
-    icon: Laptop,
     subCategories: [
       { id: 'sub-ordinateur-portable-pc', name: 'Ordinateur Portable et PC', slug: 'ordinateur-portable-pc' },
     ],
@@ -55,7 +52,6 @@ const categories: Category[] = [
     id: 'cat-telephones-tablettes',
     name: 'Téléphones & Tablettes',
     slug: 'telephones-tablettes',
-    icon: Smartphone,
     subCategories: [
       { id: 'sub-iphone', name: 'iPhone', slug: 'iphone' },
       { id: 'sub-samsung-phone', name: 'Samsung', slug: 'samsung-phone' },

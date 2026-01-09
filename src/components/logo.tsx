@@ -27,7 +27,7 @@ export const Logo = ({ className, imageUrl }: LogoProps) => {
           alt="Dakarboutik Logo"
           width={32}
           height={32}
-          className="h-8 w-8"
+          className="h-8 w-8 rounded-full object-cover"
         />
       ) : (
         <ShoppingBag className="h-7 w-7 text-primary" />

@@ -81,7 +81,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       // Use subCategory if it exists, otherwise fall back to main category slug
       const categoryToSave = values.subCategory || values.category;
       
-      await addProduct({ ...values, category: categoryToSave });
+      await addProduct({ ...values, category: categoryToSave, brand: '' });
 
       toast({
         title: 'Produit ajouté !',
@@ -91,10 +91,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: "JE NE PEU PAS AJOUTER UN PRODUIT EN TANT QUE ADMIN",
-        description:
-          'Une erreur est survenue. Veuillez réessayer.' +
-          (error instanceof Error ? error.message : ''),
+        title: 'JE NE PEU PAS AJOUTER UN PRODUIT EN TANT QUE ADMIN',
+        description: 'IMPOSSIBLE POUR AJOUTER UN PRODUIT',
       });
     }
   }

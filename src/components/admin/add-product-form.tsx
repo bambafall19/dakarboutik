@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Category } from '@/lib/types';
+import type { SimpleCategory } from '@/lib/types';
 import { addProduct } from '@/lib/actions';
 import { Card, CardContent } from '../ui/card';
 import { Sparkles } from 'lucide-react';
@@ -47,7 +47,7 @@ const formSchema = z.object({
 });
 
 interface AddProductFormProps {
-  categories: Category[];
+  categories: SimpleCategory[];
   brands: string[];
 }
 

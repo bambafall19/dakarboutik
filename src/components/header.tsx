@@ -10,7 +10,7 @@ import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import { getCategories } from '@/lib/data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Separator } from './ui/separator';
 
 const categories = getCategories();
@@ -23,6 +23,12 @@ interface HeaderProps {
 export function Header({ logoUrl, announcementMessage }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card">
@@ -32,45 +38,47 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
         </div>
       )}
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-4">
-           <div className="md:hidden">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Icons.menu />
-                  <span className="sr-only">Ouvrir le menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="pr-0">
-                <div className="flex flex-col h-full">
-                  <div className="p-4">
-                    <Logo imageUrl={logoUrl} />
-                  </div>
-                  <Separator />
-                  <nav className="flex flex-col gap-4 p-4">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={`/products?category=${category.slug}`}
-                        className="font-medium text-foreground/80 hover:text-foreground"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
+        <div className="flex items-center gap-4 ml-4">
+          {isMounted && (
+            <div className="md:hidden">
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Icons.menu />
+                    <span className="sr-only">Ouvrir le menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="pr-0">
+                  <div className="flex flex-col h-full">
+                    <div className="p-4">
+                      <Logo imageUrl={logoUrl} />
+                    </div>
                     <Separator />
-                    <Link
-                        href="/admin"
-                        className="font-medium text-foreground/80 hover:text-foreground"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Admin
-                      </Link>
-                  </nav>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+                    <nav className="flex flex-col gap-4 p-4">
+                      {categories.map((category) => (
+                        <Link
+                          key={category.id}
+                          href={`/products?category=${category.slug}`}
+                          className="font-medium text-foreground/80 hover:text-foreground"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {category.name}
+                        </Link>
+                      ))}
+                      <Separator />
+                      <Link
+                          href="/admin"
+                          className="font-medium text-foreground/80 hover:text-foreground"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Admin
+                        </Link>
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          )}
           <div className="hidden md:flex">
              <Logo imageUrl={logoUrl} />
           </div>

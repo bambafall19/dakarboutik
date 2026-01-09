@@ -92,7 +92,7 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
               </Button>
             </div>
             <Button size="lg" onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1">
-              <Icons.logo className="mr-2 h-5 w-5"/> Ajouter au panier
+              <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
             </Button>
           </div>
 

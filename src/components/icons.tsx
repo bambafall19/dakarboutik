@@ -29,7 +29,7 @@ export const Icons = {
   laptop: Laptop,
   plug: Plug,
   speaker: Speaker,
-  logo: ShoppingBag,
+  shoppingBag: ShoppingBag,
   search: Search,
   menu: Menu,
   close: X,

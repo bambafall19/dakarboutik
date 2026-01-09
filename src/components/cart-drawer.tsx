@@ -85,7 +85,7 @@ export function CartDrawer() {
         </>
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <Icons.logo className="w-20 h-20 text-muted-foreground/30" />
+            <Icons.shoppingBag className="w-20 h-20 text-muted-foreground/30" />
             <h3 className="font-semibold text-lg">Votre panier est vide</h3>
             <p className="text-muted-foreground text-sm">Parcourez nos produits pour trouver votre bonheur.</p>
             <Button asChild>

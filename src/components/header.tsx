@@ -94,7 +94,7 @@ export function Header({ settings }: HeaderProps) {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
-                <Icons.logo className="h-5 w-5" />
+                <Icons.shoppingBag className="h-5 w-5" />
                 <span className="sr-only">Ouvrir le panier</span>
                 {totalItems > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">

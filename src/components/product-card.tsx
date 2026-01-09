@@ -8,10 +8,11 @@ import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Price } from "./price";
-import { HeartIcon, Star } from "lucide-react";
+import { HeartIcon, ShoppingCart, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { Icons } from "./icons";
 
 interface ProductCardProps {
   product: Product;
@@ -80,6 +81,16 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white/80 hover:bg-white">
             <HeartIcon className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)]">
+          <Button
+            className="w-full h-9 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={handleAddToCart}
+            variant="secondary"
+          >
+            <Icons.shoppingBag className="mr-2 h-4 w-4" />
+            Ajouter au panier
           </Button>
         </div>
       </div>

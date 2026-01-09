@@ -19,22 +19,6 @@ const { firestore } = initializeFirebase();
 
 const categories: Category[] = [
   {
-    id: 'cat-informatique',
-    name: 'Informatique',
-    slug: 'informatique',
-    icon: Laptop,
-    subCategories: [
-      { id: 'sub-pc', name: 'PC', slug: 'pc' },
-      { id: 'sub-ordinateur-portable', name: 'Ordinateur Portable', slug: 'ordinateur-portable' },
-      { id: 'sub-carte-graphique', name: 'Carte graphique', slug: 'carte-graphique' },
-      { id: 'sub-souris', name: 'Souris', slug: 'souris' },
-      { id: 'sub-clavier', name: 'Clavier', slug: 'clavier' },
-      { id: 'sub-boitier-pc', name: 'Boîtier PC', slug: 'boitier-pc' },
-      { id: 'sub-processeur', name: 'Processeur', slug: 'processeur' },
-      { id: 'sub-convertisseur', name: 'Convertisseur, Câble & Adaptateur', slug: 'convertisseur-cable-adaptateur' },
-    ],
-  },
-  {
     id: 'cat-accessoires',
     name: 'Accessoires Informatiques',
     slug: 'accessoires-informatiques',
@@ -50,6 +34,21 @@ const categories: Category[] = [
       { id: 'sub-disque-dur-interne', name: 'Disque dur interne', slug: 'disque-dur-interne' },
       { id: 'sub-alimentation-pc', name: 'Alimentation PC', slug: 'alimentation-pc' },
       { id: 'sub-ventilateur-pc', name: 'Ventilateur PC', slug: 'ventilateur-pc' },
+      { id: 'sub-carte-graphique', name: 'Carte graphique', slug: 'carte-graphique' },
+      { id: 'sub-souris', name: 'Souris', slug: 'souris' },
+      { id: 'sub-clavier', name: 'Clavier', slug: 'clavier' },
+      { id: 'sub-boitier-pc', name: 'Boîtier PC', slug: 'boitier-pc' },
+      { id: 'sub-processeur', name: 'Processeur', slug: 'processeur' },
+      { id: 'sub-convertisseur', name: 'Convertisseur, Câble & Adaptateur', slug: 'convertisseur-cable-adaptateur' },
+    ],
+  },
+  {
+    id: 'cat-informatique',
+    name: 'Informatique',
+    slug: 'informatique',
+    icon: Laptop,
+    subCategories: [
+      { id: 'sub-ordinateur-portable-pc', name: 'Ordinateur Portable et PC', slug: 'ordinateur-portable-pc' },
     ],
   },
   {

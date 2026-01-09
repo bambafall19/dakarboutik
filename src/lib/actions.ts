@@ -1,3 +1,4 @@
+
 'use server';
 
 import {
@@ -30,6 +31,8 @@ export async function addProduct(productData: {
   brand: string;
   isNew: boolean;
   isBestseller: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
 }) {
   const { firestore } = initializeFirebase();
   if (!firestore) {

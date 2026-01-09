@@ -1,3 +1,4 @@
+
 import type { ImagePlaceholder } from './placeholder-images';
 
 export type Product = {
@@ -18,6 +19,8 @@ export type Product = {
   isBestseller?: boolean;
   isNew?: boolean;
   description: string;
+  metaTitle?: string;
+  metaDescription?: string;
 };
 
 export type Category = {

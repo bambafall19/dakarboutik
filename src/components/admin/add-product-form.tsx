@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +29,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import type { Category } from '@/lib/types';
 import { addProduct } from '@/lib/actions';
 import { Card, CardContent } from '../ui/card';
+import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { generateProductSeoData } from '@/ai/flows/generate-product-seo-data';
 
 const formSchema = z.object({
   title: z.string().min(2, 'Le titre doit contenir au moins 2 caractères.'),
@@ -38,6 +42,8 @@ const formSchema = z.object({
   brand: z.string().min(1, 'La marque est requise.'),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
 });
 
 interface AddProductFormProps {
@@ -48,6 +54,7 @@ interface AddProductFormProps {
 export function AddProductForm({ categories, brands }: AddProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,8 +67,48 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
       brand: '',
       isNew: true,
       isBestseller: false,
+      metaTitle: '',
+      metaDescription: '',
     },
   });
+
+  async function handleGenerateSeo() {
+    const { title, description, brand, category } = form.getValues();
+    if (!title || !description || !brand || !category) {
+      toast({
+        variant: 'destructive',
+        title: 'Champs manquants',
+        description: 'Veuillez remplir le titre, la description, la marque et la catégorie.',
+      });
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const result = await generateProductSeoData({
+        title,
+        description,
+        brand,
+        category,
+        relatedProducts: [],
+      });
+      form.setValue('metaTitle', result.metaTitle);
+      form.setValue('metaDescription', result.metaDescription);
+      toast({
+        title: 'Contenu SEO généré !',
+        description: 'Le titre et la description SEO ont été remplis.',
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur de génération',
+        description:
+          'Impossible de générer le contenu SEO. ' +
+          (error instanceof Error ? error.message : ''),
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -206,6 +253,48 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
                 />
               </div>
             </div>
+
+            <div className="space-y-4 p-6 border rounded-lg bg-muted/30">
+              <div className="flex items-center justify-between">
+                 <div className="space-y-1">
+                    <h3 className="text-lg font-semibold">Assistant SEO IA</h3>
+                    <p className="text-sm text-muted-foreground">Générez automatiquement un titre et une description optimisés pour le référencement.</p>
+                 </div>
+                 <Button type="button" onClick={handleGenerateSeo} disabled={isGenerating}>
+                   <Sparkles className="mr-2 h-4 w-4" />
+                   {isGenerating ? 'Génération...' : 'Générer avec l\'IA'}
+                 </Button>
+              </div>
+              <div className="space-y-4 pt-4">
+                <FormField
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Titre (SEO)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Titre optimisé pour les moteurs de recherche..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description (SEO)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Description optimisée pour les moteurs de recherche..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
 
             <div className="space-y-4">
               <FormField

@@ -15,6 +15,12 @@ import {
   ArrowRight,
   Heart,
   ChevronDown,
+  HardDrive,
+  MemoryStick,
+  Cpu,
+  Router,
+  Tv,
+  Tablet,
 } from 'lucide-react';
 
 export const Icons = {
@@ -37,8 +43,7 @@ export const Icons = {
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
-  smartphones: Smartphone,
-  accessoires: Plug,
-  audio: Headphones,
-  'pc-portables': Laptop,
+  'informatique': Laptop,
+  'accessoires-informatiques': Plug,
+  'telephones-tablettes': Smartphone,
 };

@@ -23,11 +23,18 @@ export type Product = {
   metaDescription?: string;
 };
 
+export type SubCategory = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 export type Category = {
   id: string;
   name: string;
   slug: string;
   icon?: React.ComponentType<{ className?: string }>;
+  subCategories?: SubCategory[];
 };
 
 export type SimpleCategory = Omit<Category, 'icon'>;

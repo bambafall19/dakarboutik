@@ -7,7 +7,7 @@ export function FeaturedCategories() {
 
   return (
     <section>
-      <div className="grid grid-cols-4 md:grid-cols-8 gap-4 md:gap-6">
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-4 md:gap-6">
         {categories.map((category) => {
           const Icon = CategoryIcons[category.slug];
           return (

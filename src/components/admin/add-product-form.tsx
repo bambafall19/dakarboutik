@@ -91,9 +91,9 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
+        title: "Impossible d'ajouter un produit",
         description:
-          'Une erreur est survenue lors de l`ajout du produit.' +
+          'Une erreur est survenue. Veuillez réessayer.' +
           (error instanceof Error ? error.message : ''),
       });
     }

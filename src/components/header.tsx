@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -27,6 +28,7 @@ interface HeaderProps {
 export function Header({ settings }: HeaderProps) {
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const logoUrl = settings?.logoUrl;
   const announcementMessage = settings?.announcementMessage;
@@ -38,9 +40,9 @@ export function Header({ settings }: HeaderProps) {
           {announcementMessage}
         </div>
       )}
-      <div className="container flex h-16 items-center justify-between">
-        {/* Left section: Mobile Menu and Logo */}
-        <div className="flex items-center gap-4">
+      <div className="container flex h-16 items-center justify-between gap-4">
+        {/* Left section: Mobile Menu and Desktop Logo */}
+        <div className="flex items-center gap-2">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -48,9 +50,8 @@ export function Header({ settings }: HeaderProps) {
                 <span className="sr-only">Ouvrir le menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="pr-0 md:hidden">
-              <div className="flex flex-col h-full">
-                <div className="p-4">
+            <SheetContent side="left" className="flex flex-col">
+               <div className="p-4">
                   <Logo imageUrl={logoUrl} onClick={() => setIsMobileMenuOpen(false)} />
                 </div>
                 <Separator />
@@ -66,7 +67,6 @@ export function Header({ settings }: HeaderProps) {
                     </SheetClose>
                   ))}
                 </nav>
-              </div>
             </SheetContent>
           </Sheet>
           <div className="hidden md:block">
@@ -74,8 +74,25 @@ export function Header({ settings }: HeaderProps) {
           </div>
         </div>
         
+        {/* Mobile Logo & Search */}
+         <div className="flex flex-1 items-center justify-center md:hidden">
+            {isSearchOpen ? (
+                 <div className="relative w-full max-w-sm">
+                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Rechercher un produit..."
+                        className="pl-9 bg-background"
+                        autoFocus
+                        onBlur={() => setIsSearchOpen(false)}
+                    />
+                </div>
+            ) : (
+                <Logo imageUrl={logoUrl} />
+            )}
+        </div>
+
         {/* Desktop Navigation - Centered */}
-        <nav className="hidden md:flex items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
+        <nav className="hidden md:flex flex-1 items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
           {categories.map((category) => (
             <Link
               key={category.id}
@@ -88,10 +105,7 @@ export function Header({ settings }: HeaderProps) {
         </nav>
         
         {/* Right section: Search and Cart */}
-        <div className="flex items-center justify-end space-x-2">
-          <div className="md:hidden">
-            <Logo imageUrl={logoUrl} />
-          </div>
+        <div className="flex items-center justify-end gap-2">
           <div className="relative flex-1 justify-end hidden sm:flex max-w-xs">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -99,6 +113,11 @@ export function Header({ settings }: HeaderProps) {
               className="pl-9 bg-background"
             />
           </div>
+
+           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(true)}>
+                <Icons.search className="h-5 w-5" />
+                <span className="sr-only">Rechercher</span>
+            </Button>
 
           <Sheet>
             <SheetTrigger asChild>
@@ -112,7 +131,7 @@ export function Header({ settings }: HeaderProps) {
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="flex flex-col">
               <CartDrawer />
             </SheetContent>
           </Sheet>

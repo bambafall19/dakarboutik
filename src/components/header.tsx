@@ -28,7 +28,7 @@ export function Header({ settings }: HeaderProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  
+
   const logoUrl = settings?.logoUrl;
   const announcementMessage = settings?.announcementMessage;
 
@@ -41,7 +41,7 @@ export function Header({ settings }: HeaderProps) {
       )}
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
-           {isMounted && (
+          {isMounted && (
             <div className="md:hidden">
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
@@ -69,12 +69,12 @@ export function Header({ settings }: HeaderProps) {
                       ))}
                       <Separator />
                       <Link
-                          href="/admin"
-                          className="font-medium text-foreground/80 hover:text-foreground"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          Admin
-                        </Link>
+                        href="/admin"
+                        className="font-medium text-foreground/80 hover:text-foreground"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </Link>
                     </nav>
                   </div>
                 </SheetContent>
@@ -82,25 +82,32 @@ export function Header({ settings }: HeaderProps) {
             </div>
           )}
           <div className="hidden md:flex ml-4">
-             <Logo imageUrl={logoUrl} />
+            <Logo imageUrl={logoUrl} />
           </div>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           {categories.map((category) => (
-            <Link key={category.id} href={`/products?category=${category.slug}`} className="hover:text-primary transition-colors">
+            <Link
+              key={category.id}
+              href={`/products?category=${category.slug}`}
+              className="hover:text-primary transition-colors"
+            >
               {category.name}
             </Link>
           ))}
-            <Link href="/admin" className="hover:text-primary transition-colors">
-              Admin
-            </Link>
+          <Link href="/admin" className="hover:text-primary transition-colors">
+            Admin
+          </Link>
         </nav>
-        
+
         <div className="flex items-center justify-end space-x-2">
           <div className="relative flex-1 max-w-xs hidden sm:block">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Rechercher un produit..." className="pl-9 bg-background" />
+            <Input
+              placeholder="Rechercher un produit..."
+              className="pl-9 bg-background"
+            />
           </div>
 
           <Sheet>

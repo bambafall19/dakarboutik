@@ -11,13 +11,6 @@ import { Icons } from '@/components/icons';
 import { getCategories } from '@/lib/data';
 import { useState } from 'react';
 import { Separator } from './ui/separator';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ChevronDown, User } from 'lucide-react';
 
 const categories = getCategories();
 
@@ -53,6 +46,14 @@ export function Header() {
                       {category.name}
                     </Link>
                   ))}
+                  <Separator />
+                   <Link
+                      href="/admin"
+                      className="font-medium text-foreground/80 hover:text-foreground"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Admin
+                    </Link>
                 </nav>
               </div>
             </SheetContent>
@@ -69,6 +70,9 @@ export function Header() {
               {category.name}
             </Link>
           ))}
+            <Link href="/admin" className="hover:text-primary transition-colors">
+              Admin
+            </Link>
         </nav>
 
         <div className="flex flex-1 items-center justify-end space-x-2">

@@ -1,10 +1,16 @@
-
 import { Smartphone, Headphones, Laptop, Plug } from 'lucide-react';
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner, Category, Product } from './types';
-import { collection, getDocs, query, where, limit, orderBy } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  limit,
+  orderBy,
+} from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase/server';
 
 const { firestore } = initializeFirebase();
 
@@ -38,26 +44,34 @@ const banners: Banner[] = [
 
 async function fetchProducts(q?: any): Promise<Product[]> {
   const productsCollection = collection(firestore, 'products');
-  const finalQuery = q || query(productsCollection, where('status', '==', 'active'));
+  const finalQuery =
+    q || query(productsCollection, where('status', '==', 'active'));
   const querySnapshot = await getDocs(finalQuery);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+  return querySnapshot.docs.map(
+    (doc) => ({ id: doc.id, ...doc.data() } as Product)
+  );
 }
 
 export const getProducts = async () => {
-    return await fetchProducts();
-}
+  return await fetchProducts();
+};
 
 export const getProductBySlug = async (slug: string) => {
-    const q = query(collection(firestore, 'products'), where('slug', '==', slug), limit(1));
-    const products = await fetchProducts(q);
-    return products[0] || null;
-}
+  const q = query(
+    collection(firestore, 'products'),
+    where('slug', '==', slug),
+    limit(1)
+  );
+  const products = await fetchProducts(q);
+  return products[0] || null;
+};
 
 export const getCategories = () => categories;
-export const getCategoryBySlug = (slug: string) => categories.find(c => c.slug === slug);
+export const getCategoryBySlug = (slug: string) =>
+  categories.find((c) => c.slug === slug);
 export const getBanners = () => banners;
 
-export const getNewArrivals = async (count: number = 4) => 
+export const getNewArrivals = async (count: number = 4) =>
   await fetchProducts(
     query(
       collection(firestore, 'products'),
@@ -67,11 +81,10 @@ export const getNewArrivals = async (count: number = 4) =>
   );
 
 export const getBestsellers = async (count: number = 4) =>
-    await fetchProducts(
-        query(
-            collection(firestore, 'products'),
-            where('isBestseller', '==', true),
-            limit(count)
-        )
-    );
-
+  await fetchProducts(
+    query(
+      collection(firestore, 'products'),
+      where('isBestseller', '==', true),
+      limit(count)
+    )
+  );

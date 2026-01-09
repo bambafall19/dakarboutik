@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -24,7 +25,7 @@ export function HeroSection() {
         <CarouselContent>
           {banners.map((banner) => (
             <CarouselItem key={banner.id}>
-              <div className="relative aspect-[16/6] w-full rounded-xl overflow-hidden">
+              <div className="relative aspect-[16/6] w-full overflow-hidden">
                 <Image
                   src={banner.image.imageUrl}
                   alt={banner.title}
@@ -33,9 +34,9 @@ export function HeroSection() {
                   priority
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
+                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center">
                   <div className="px-4 md:px-6">
-                    <div className="max-w-xl text-white">
+                    <div className="max-w-2xl text-white">
                       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">
                         {banner.title}
                       </h1>

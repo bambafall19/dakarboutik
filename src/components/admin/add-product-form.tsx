@@ -91,7 +91,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: "TOUJOUR LE MEME ERREUR",
+        title: "JE NE PEU PAS AJOUTER UN PRODUIT EN TANT QUE ADMIN",
         description:
           'Une erreur est survenue. Veuillez réessayer.' +
           (error instanceof Error ? error.message : ''),

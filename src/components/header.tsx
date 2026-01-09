@@ -38,7 +38,7 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
         </div>
       )}
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-4 ml-4">
+        <div className="flex items-center gap-4">
           {isMounted && (
             <div className="md:hidden">
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -79,7 +79,7 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
               </Sheet>
             </div>
           )}
-          <div className="hidden md:flex">
+          <div className="hidden md:flex ml-4">
              <Logo imageUrl={logoUrl} />
           </div>
         </div>
@@ -106,7 +106,7 @@ export function Header({ logoUrl, announcementMessage }: HeaderProps) {
               <Button variant="ghost" size="icon" className="relative">
                 <Icons.logo className="h-5 w-5" />
                 <span className="sr-only">Ouvrir le panier</span>
-                {totalItems > 0 && (
+                {isMounted && totalItems > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {totalItems}
                   </span>

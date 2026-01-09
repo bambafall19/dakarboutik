@@ -1,6 +1,6 @@
 
 import { AddProductForm } from '@/components/admin/add-product-form';
-import { getCategories, getProducts } from '@/lib/data';
+import { getSimpleCategories, getProducts } from '@/lib/data';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/breadcrumb';
 
 export default async function AddProductPage() {
-  const categories = getCategories();
+  const categories = getSimpleCategories();
   const brands = [...new Set((await getProducts()).map((p) => p.brand))];
 
   return (

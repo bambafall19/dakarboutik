@@ -89,10 +89,11 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       });
       router.push('/admin');
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         variant: 'destructive',
-        title: 'Échec de l\'ajout du produit',
-        description: 'Une erreur est survenue. Veuillez vérifier les informations et réessayer.',
+        title: "Échec de l'ajout du produit",
+        description: errorMessage,
       });
     }
   }

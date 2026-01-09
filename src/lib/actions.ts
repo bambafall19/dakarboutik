@@ -33,6 +33,7 @@ export async function addProduct(productData: {
   imageUrl: string;
   isNew: boolean;
   isBestseller: boolean;
+  brand?: string;
 }) {
   const { firestore } = initializeFirebase();
   if (!firestore) {
@@ -42,8 +43,14 @@ export async function addProduct(productData: {
   try {
     const slug = slugify(productData.title);
     const newProduct: Omit<Product, 'id'> = {
-      ...productData,
-      brand: '', // Explicitly set brand to empty string
+      title: productData.title,
+      description: productData.description,
+      price: productData.price,
+      stock: productData.stock,
+      category: productData.category,
+      isNew: productData.isNew,
+      isBestseller: productData.isBestseller,
+      brand: productData.brand || '', // Ensure brand is always present
       slug,
       status: 'active',
       createdAt: new Date().toISOString(),
@@ -67,7 +74,8 @@ export async function addProduct(productData: {
     revalidatePath('/products');
   } catch (e) {
     console.error('Error adding document: ', e);
-    throw new Error('Failed to add product.');
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    throw new Error(`Failed to add product: ${errorMessage}`);
   }
 }
 

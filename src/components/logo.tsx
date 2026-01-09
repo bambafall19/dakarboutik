@@ -1,7 +1,11 @@
+
+'use client';
+
 import Link from 'next/link';
 import { ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface LogoProps {
   className?: string;
@@ -9,10 +13,22 @@ interface LogoProps {
 }
 
 export const Logo = ({ className, imageUrl }: LogoProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
-    <Link href="/" className={cn("flex items-center gap-2", className)}>
-      {imageUrl ? (
-        <Image src={imageUrl} alt="Dakarboutik Logo" width={32} height={32} className="h-8 w-8" />
+    <Link href="/" className={cn('flex items-center gap-2', className)}>
+      {imageUrl && isMounted ? (
+        <Image
+          src={imageUrl}
+          alt="Dakarboutik Logo"
+          width={32}
+          height={32}
+          className="h-8 w-8"
+        />
       ) : (
         <ShoppingBag className="h-7 w-7 text-primary" />
       )}

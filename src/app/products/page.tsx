@@ -1,12 +1,13 @@
 
 import { ProductListing } from '@/components/product-listing';
-import { getProducts, getCategories } from '@/lib/data';
+import { getProducts, getSimpleCategories } from '@/lib/data';
 
-const allCategories = getCategories();
-const allBrands = [...new Set((await getProducts()).map(p => p.brand))];
+const allCategories = getSimpleCategories();
+
 
 export default async function ProductsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
   const products = await getProducts();
+  const allBrands = [...new Set(products.map(p => p.brand))];
   
   return (
     <ProductListing 

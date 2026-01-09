@@ -27,6 +27,8 @@ export type Category = {
   icon?: React.ComponentType<{ className?: string }>;
 };
 
+export type SimpleCategory = Omit<Category, 'icon'>;
+
 export type Banner = {
   id: string;
   title: string;

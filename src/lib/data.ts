@@ -1,7 +1,7 @@
 import { Smartphone, Headphones, Laptop, Plug } from 'lucide-react';
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
-import type { Banner, Category, Product } from './types';
+import type { Banner, Category, Product, SimpleCategory } from './types';
 import {
   collection,
   getDocs,
@@ -66,18 +66,19 @@ export const getProductBySlug = async (slug: string) => {
   return products[0] || null;
 };
 
-export const getCategories = () => categories;
+export const getCategories = (): Category[] => categories;
+
+export const getSimpleCategories = (): SimpleCategory[] => {
+  return categories.map(({ icon, ...rest }) => rest);
+}
+
 export const getCategoryBySlug = (slug: string) =>
   categories.find((c) => c.slug === slug);
 export const getBanners = () => banners;
 
 export const getNewArrivals = async (count: number = 4) =>
   await fetchProducts(
-    query(
-      collection(firestore, 'products'),
-      where('isNew', '==', true),
-      limit(count)
-    )
+    query(collection(firestore, 'products'), where('status', '==', 'active'), limit(count))
   );
 
 export const getBestsellers = async (count: number = 4) =>

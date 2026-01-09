@@ -1,25 +1,35 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import type { Product, Category } from '@/lib/types';
+import type { Product, SimpleCategory } from '@/lib/types';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
+import { getCategories } from '@/lib/data';
 
 interface ProductListingProps {
     products: Product[];
-    categories: Category[];
+    categories: SimpleCategory[];
     brands: string[];
     initialCategory?: string;
 }
 
-export function ProductListing({ products: allProducts, categories, brands, initialCategory }: ProductListingProps) {
+export function ProductListing({ products: allProducts, categories: simpleCategories, brands, initialCategory }: ProductListingProps) {
   const [filters, setFilters] = useState({
     category: initialCategory || '',
     brand: '',
     priceRange: [0, 1000000] as [number, number],
     sortBy: 'newest',
   });
+
+  // Re-hydrate full category objects with icons on the client
+  const categories = useMemo(() => {
+    const fullCategories = getCategories();
+    return simpleCategories.map(sc => {
+      const fullCategory = fullCategories.find(fc => fc.slug === sc.slug);
+      return fullCategory || { ...sc, icon: undefined };
+    });
+  }, [simpleCategories]);
 
   const filteredProducts = useMemo(() => {
     let products: Product[] = allProducts;

@@ -1,9 +1,7 @@
-
 "use client";
 
 import { useState, useMemo } from 'react';
 import type { Product, Category } from '@/lib/types';
-import { ProductGrid } from '@/components/product-grid';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';

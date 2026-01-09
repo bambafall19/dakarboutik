@@ -13,6 +13,8 @@ import {
   Minus,
   ChevronRight,
   ArrowRight,
+  Heart,
+  ChevronDown,
 } from 'lucide-react';
 
 export const Icons = {
@@ -29,7 +31,9 @@ export const Icons = {
   plus: Plus,
   minus: Minus,
   chevronRight: ChevronRight,
-  arrowRight: ArrowRight
+  arrowRight: ArrowRight,
+  heart: Heart,
+  chevronDown: ChevronDown,
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {

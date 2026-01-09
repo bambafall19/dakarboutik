@@ -1,6 +1,6 @@
 
 import { ProductDetails } from '@/components/product-details';
-import { getProductBySlug } from '@/lib/data';
+import { getProductBySlug, getProducts } from '@/lib/data';
 import { notFound } from 'next/navigation';
 
 
@@ -10,6 +10,12 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
   if (!product) {
     notFound();
   }
+  
+  // Fetch related products from the same category, excluding the current one
+  const allProducts = await getProducts();
+  const relatedProducts = allProducts
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
-  return <ProductDetails product={product} />;
+  return <ProductDetails product={product} relatedProducts={relatedProducts} />;
 }

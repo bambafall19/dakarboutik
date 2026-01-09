@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -12,8 +13,9 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Price } from '@/components/price';
 import { Icons } from '@/components/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { ProductGrid } from './product-grid';
 
-export function ProductDetails({ product }: { product: Product }) {
+export function ProductDetails({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
 
@@ -109,6 +111,15 @@ export function ProductDetails({ product }: { product: Product }) {
           </div>
         </div>
       </div>
+      
+      {relatedProducts && relatedProducts.length > 0 && (
+        <div className="mt-16">
+          <ProductGrid 
+            title="Produits similaires"
+            products={relatedProducts}
+          />
+        </div>
+      )}
     </div>
   );
 }

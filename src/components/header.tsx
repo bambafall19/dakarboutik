@@ -71,7 +71,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="relative flex-1 max-w-xs">
             <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Rechercher un produit..." className="pl-9 bg-background" />
@@ -93,13 +93,6 @@ export function Header() {
               <CartDrawer />
             </SheetContent>
           </Sheet>
-
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="#">
-             <User className="h-5 w-5" />
-              <span className="sr-only">Mon compte</span>
-            </Link>
-          </Button>
         </div>
       </div>
     </header>

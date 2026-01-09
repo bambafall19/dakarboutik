@@ -13,12 +13,16 @@ import {
   Users2,
   Image as ImageIcon,
   Settings,
+  LogOut,
 } from 'lucide-react';
 import Link from 'next/link';
+import { getAuth, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 const stats = [
   {
-    title: 'Chiffre d\'affaires total',
+    title: "Chiffre d'affaires total",
     value: '12,345,678 F CFA',
     icon: DollarSign,
   },
@@ -28,9 +32,36 @@ const stats = [
 ];
 
 export default function AdminPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const auth = getAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: 'Déconnexion réussie',
+        description: 'Vous avez été déconnecté de votre session administrateur.',
+      });
+      router.push('/login');
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur de déconnexion',
+        description: 'Impossible de se déconnecter. Veuillez réessayer.',
+      });
+    }
+  };
+
   return (
     <div className="container py-12">
-      <h1 className="text-3xl font-bold mb-8">Espace Administrateur</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Espace Administrateur</h1>
+        <Button variant="outline" onClick={handleLogout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Se déconnecter
+        </Button>
+      </div>
 
       <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (

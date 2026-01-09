@@ -25,6 +25,9 @@ export function Header({ logoUrl }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card">
+       <div className="bg-primary text-primary-foreground text-center text-sm p-2">
+        Livraison gratuite à partir de 50 000 F CFA !
+      </div>
       <div className="container flex h-16 items-center">
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>

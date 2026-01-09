@@ -29,7 +29,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <Logo />
             <p className="mt-4 text-sm">
-              Votre destination pour l'électronique de qualité à Dakar.
+              Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 md:col-span-3 gap-8">
@@ -47,7 +47,7 @@ export function Footer() {
         </div>
         <Separator className="my-8" />
         <div className="text-center text-sm">
-          © {new Date().getFullYear()} Dakarboutik. Tous droits réservés.
+          © {new Date().getFullYear()} Dakarboutik. Une entreprise fièrement sénégalaise.
         </div>
       </div>
     </footer>

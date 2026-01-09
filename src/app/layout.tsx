@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full">
+    <html lang="fr-SN" className="h-full">
       <body
         className={cn(
           'relative h-full bg-background font-body antialiased',

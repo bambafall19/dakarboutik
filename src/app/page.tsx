@@ -10,17 +10,17 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">
       <HeroSection />
-      <div className="container px-4 md:px-6">
+      <div className="px-4 md:px-6">
         <FeaturedCategories />
       </div>
-      <div className="container px-4 md:px-6">
+      <div className="px-4 md:px-6">
         <ProductGrid
           title="Nouveautés"
           products={newArrivals}
           link={{ href: '/products', text: 'Voir tout' }}
         />
       </div>
-      <div className="container px-4 md:px-6">
+      <div className="px-4 md:px-6">
         <ProductGrid
           title="Meilleures Ventes"
           products={bestsellers}

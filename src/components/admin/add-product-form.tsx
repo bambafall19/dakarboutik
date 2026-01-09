@@ -26,10 +26,24 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { SimpleCategory } from '@/lib/types';
-import { addProduct } from '@/lib/actions';
+import type { SimpleCategory, Product } from '@/lib/types';
 import { Card, CardContent } from '../ui/card';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useFirestore } from '@/firebase';
+import { addDoc, collection } from 'firebase/firestore';
+
+// Slugify function
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
+}
+
 
 const formSchema = z.object({
   title: z.string().min(2, 'Le titre doit contenir au moins 2 caractères.'),
@@ -50,6 +64,7 @@ interface AddProductFormProps {
 export function AddProductForm({ categories }: AddProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,18 +92,59 @@ export function AddProductForm({ categories }: AddProductFormProps) {
   }, [selectedCategorySlug, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!firestore) {
+      toast({
+        variant: 'destructive',
+        title: "Erreur de connexion",
+        description: "Impossible de se connecter à la base de données.",
+      });
+      return;
+    }
+    
     try {
       // Use subCategory if it exists, otherwise fall back to main category slug
       const categoryToSave = values.subCategory || values.category;
-      
-      await addProduct({ ...values, category: categoryToSave });
+      const slug = slugify(values.title);
+
+      const newProduct: Omit<Product, 'id'> = {
+        title: values.title,
+        description: values.description,
+        price: values.price,
+        stock: values.stock,
+        category: categoryToSave,
+        isNew: values.isNew,
+        isBestseller: values.isBestseller,
+        brand: '', // Ensure brand is always present
+        slug,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        images: [
+          {
+            id: `product-${slug}-1`,
+            description: values.title,
+            imageUrl: values.imageUrl,
+            imageHint: 'product',
+          },
+        ],
+        specs: {},
+        variants: [],
+        currency: 'XOF',
+      };
+
+      const productsCollection = collection(firestore, 'products');
+      await addDoc(productsCollection, newProduct);
 
       toast({
         title: 'Produit ajouté !',
         description: `Le produit "${values.title}" a été ajouté avec succès.`,
       });
+      // A revalidation on the server would be ideal, but for client-side action,
+      // we just redirect. The data will appear on next server render.
       router.push('/admin');
+      router.refresh(); // Ask Next.js to refresh server components
+
     } catch (error) {
+      console.error("Error adding product: ", error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         variant: 'destructive',

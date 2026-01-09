@@ -24,61 +24,6 @@ function slugify(text: string) {
     .replace(/-+$/, ''); // Trim - from end of text
 }
 
-export async function addProduct(productData: {
-  title: string;
-  description: string;
-  price: number;
-  stock: number;
-  category: string;
-  imageUrl: string;
-  isNew: boolean;
-  isBestseller: boolean;
-  brand?: string;
-}) {
-  const { firestore } = initializeFirebase();
-  if (!firestore) {
-    throw new Error('Firestore is not initialized.');
-  }
-
-  try {
-    const slug = slugify(productData.title);
-    const newProduct: Omit<Product, 'id'> = {
-      title: productData.title,
-      description: productData.description,
-      price: productData.price,
-      stock: productData.stock,
-      category: productData.category,
-      isNew: productData.isNew,
-      isBestseller: productData.isBestseller,
-      brand: productData.brand || '', // Ensure brand is always present
-      slug,
-      status: 'active',
-      createdAt: new Date().toISOString(),
-      images: [
-        {
-          id: `product-${slug}-1`,
-          description: productData.title,
-          imageUrl: productData.imageUrl,
-          imageHint: 'product',
-        },
-      ],
-      specs: {},
-      variants: [],
-      currency: 'XOF',
-    };
-
-    await addDoc(collection(firestore, 'products'), newProduct);
-
-    // Revalidate paths to show the new product
-    revalidatePath('/');
-    revalidatePath('/products');
-  } catch (e) {
-    console.error('Error adding document: ', e);
-    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
-    throw new Error(`Failed to add product: ${errorMessage}`);
-  }
-}
-
 export async function updateSiteSettings(settings: SiteSettings) {
   const { firestore } = initializeFirebase();
   if (!firestore) {

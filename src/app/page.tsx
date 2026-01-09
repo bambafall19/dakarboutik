@@ -18,14 +18,14 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 my-12">
           <main className="lg:col-span-3">
             <ProductGrid
-              title="Flash Sale"
+              title="Vente Flash"
               products={newArrivals}
               gridClass="grid-cols-2 md:grid-cols-3"
             />
           </main>
           <aside className="lg:col-span-1">
              <div className="sticky top-24 space-y-6">
-               <h2 className="text-xl font-bold">Todays For You!</h2>
+               <h2 className="text-xl font-bold">Pour vous aujourd'hui !</h2>
                <div className="grid grid-cols-1 gap-4">
                 {bestsellers.slice(0, 3).map((product) => (
                   <ProductCard key={product.id} product={product} variant="horizontal" />
@@ -38,11 +38,11 @@ export default async function HomePage() {
         <div className="my-12">
            <Tabs defaultValue="bestseller" className="w-full">
             <div className="flex items-center justify-between mb-4">
-               <h2 className="text-xl font-bold">Todays For You!</h2>
+               <h2 className="text-xl font-bold">Notre Sélection</h2>
               <TabsList>
-                <TabsTrigger value="bestseller">Best Seller</TabsTrigger>
-                <TabsTrigger value="new">Keep Stylish</TabsTrigger>
-                <TabsTrigger value="special">Special Discount</TabsTrigger>
+                <TabsTrigger value="bestseller">Meilleures Ventes</TabsTrigger>
+                <TabsTrigger value="new">Nouveautés</TabsTrigger>
+                <TabsTrigger value="special">Promotions</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="bestseller">

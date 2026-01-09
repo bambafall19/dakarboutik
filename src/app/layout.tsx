@@ -12,9 +12,9 @@ import { FirebaseClientProvider } from '@/firebase';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'BeliBeli - Redefine Your Everyday Style',
+  title: 'Dakarboutik - Électronique de pointe à Dakar',
   description:
-    'Your online store for fashion, electronics, and more. Quality and customer service guaranteed.',
+    'Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis.',
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="fr" className="h-full">
       <body
         className={cn(
-          'relative h-full bg-background font-sans antialiased',
+          'relative h-full bg-background font-body antialiased',
           inter.className
         )}
       >

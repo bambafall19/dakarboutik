@@ -2,10 +2,9 @@
 import { FeaturedCategories } from '@/components/featured-categories';
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
-import { getBestsellers, getNewArrivals, getProducts } from '@/lib/data';
-import { ProductCard } from '@/components/product-card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getProducts } from '@/lib/data';
+import { Engagements } from '@/components/engagements';
+import { Testimonials } from '@/components/testimonials';
 
 export default async function HomePage() {
   const allProducts = await getProducts();
@@ -18,7 +17,7 @@ export default async function HomePage() {
   return (
     <div className="bg-background">
       <HeroSection />
-      <div className="container space-y-12 my-12">
+      <div className="container space-y-16 my-16">
         <FeaturedCategories />
         
         <ProductGrid
@@ -28,12 +27,16 @@ export default async function HomePage() {
           gridClass="grid-cols-2 md:grid-cols-4"
         />
 
-        <ProductGrid
-          title="Meilleures Ventes"
-          products={bestsellers}
-          link={{ href: '/products', text: 'Voir tout' }}
-          gridClass="grid-cols-2 md:grid-cols-4"
-        />
+        {bestsellers.length > 0 && (
+          <ProductGrid
+            title="Meilleures Ventes"
+            products={bestsellers}
+            link={{ href: '/products', text: 'Voir tout' }}
+            gridClass="grid-cols-2 md:grid-cols-4"
+          />
+        )}
+        
+        <Engagements />
 
         {saleProducts.length > 0 && (
             <ProductGrid
@@ -43,6 +46,8 @@ export default async function HomePage() {
                 gridClass="grid-cols-2 md:grid-cols-4"
             />
         )}
+
+        <Testimonials />
       </div>
     </div>
   );

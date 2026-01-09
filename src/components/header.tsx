@@ -41,8 +41,8 @@ export function Header({ settings }: HeaderProps) {
       )}
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="md:hidden">
-            {isMounted && (
+          {isMounted && (
+            <div className="md:hidden">
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -79,60 +79,58 @@ export function Header({ settings }: HeaderProps) {
                   </div>
                 </SheetContent>
               </Sheet>
-            )}
-          </div>
+            </div>
+          )}
           <div className="hidden md:flex ml-4">
-             <Logo imageUrl={logoUrl} />
+            <Logo imageUrl={logoUrl} />
           </div>
         </div>
 
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              href={`/products?category=${category.slug}`}
+              className="hover:text-primary transition-colors"
+            >
+              {category.name}
+            </Link>
+          ))}
+          <Link
+            href="/admin"
+            className="hover:text-primary transition-colors"
+          >
+            Admin
+          </Link>
+        </nav>
+
         {isMounted && (
-          <>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/products?category=${category.slug}`}
-                  className="hover:text-primary transition-colors"
-                >
-                  {category.name}
-                </Link>
-              ))}
-              <Link
-                href="/admin"
-                className="hover:text-primary transition-colors"
-              >
-                Admin
-              </Link>
-            </nav>
-
-            <div className="flex items-center justify-end space-x-2">
-              <div className="relative flex-1 max-w-xs hidden sm:block">
-                <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher un produit..."
-                  className="pl-9 bg-background"
-                />
-              </div>
-
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <Icons.logo className="h-5 w-5" />
-                    <span className="sr-only">Ouvrir le panier</span>
-                    {totalItems > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                        {totalItems}
-                      </span>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <CartDrawer />
-                </SheetContent>
-              </Sheet>
+          <div className="flex items-center justify-end space-x-2">
+            <div className="relative flex-1 max-w-xs hidden sm:block">
+              <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher un produit..."
+                className="pl-9 bg-background"
+              />
             </div>
-          </>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  <Icons.logo className="h-5 w-5" />
+                  <span className="sr-only">Ouvrir le panier</span>
+                  {totalItems > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                      {totalItems}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <CartDrawer />
+              </SheetContent>
+            </Sheet>
+          </div>
         )}
       </div>
     </header>

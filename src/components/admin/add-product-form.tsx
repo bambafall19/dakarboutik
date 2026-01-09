@@ -29,6 +29,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import type { SimpleCategory } from '@/lib/types';
 import { addProduct } from '@/lib/actions';
 import { Card, CardContent } from '../ui/card';
+import { useEffect, useState } from 'react';
 
 const formSchema = z.object({
   title: z.string().min(2, 'Le titre doit contenir au moins 2 caractères.'),
@@ -36,8 +37,9 @@ const formSchema = z.object({
   price: z.coerce.number().min(0, 'Le prix doit être positif.'),
   stock: z.coerce.number().min(0, 'Le stock doit être positif.'),
   category: z.string().min(1, 'La catégorie est requise.'),
+  subCategory: z.string().optional(),
   brand: z.string().min(1, 'La marque est requise.'),
-  imageUrl: z.string().url('Veuillez entrer une URL d\'image valide.'),
+  imageUrl: z.string().url("Veuillez entrer une URL d'image valide."),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
 });
@@ -59,6 +61,7 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
       price: 0,
       stock: 0,
       category: '',
+      subCategory: '',
       brand: '',
       imageUrl: '',
       isNew: true,
@@ -66,9 +69,23 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
     },
   });
 
+  const selectedCategorySlug = form.watch('category');
+  const selectedCategory = categories.find(
+    (cat) => cat.slug === selectedCategorySlug
+  );
+
+  useEffect(() => {
+    // Reset subcategory when category changes
+    form.setValue('subCategory', '');
+  }, [selectedCategorySlug, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await addProduct(values);
+      // Use subCategory if it exists, otherwise fall back to main category slug
+      const categoryToSave = values.subCategory || values.category;
+      
+      await addProduct({ ...values, category: categoryToSave });
+
       toast({
         title: 'Produit ajouté !',
         description: `Le produit "${values.title}" a été ajouté avec succès.`,
@@ -120,14 +137,17 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Adresse (lien) de l'image du produit</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://exemple.com/image.png" {...field} />
+                      <Input
+                        placeholder="https://exemple.com/image.png"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -193,6 +213,37 @@ export function AddProductForm({ categories, brands }: AddProductFormProps) {
                     </FormItem>
                   )}
                 />
+
+                {selectedCategory && selectedCategory.subCategories && selectedCategory.subCategories.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="subCategory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sous-catégorie</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choisir une sous-catégorie" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {selectedCategory.subCategories.map((subCat) => (
+                              <SelectItem key={subCat.id} value={subCat.slug}>
+                                {subCat.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="brand"

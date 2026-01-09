@@ -115,7 +115,7 @@ export const getProductBySlug = async (slug: string) => {
 export const getCategories = (): Category[] => categories;
 
 export const getSimpleCategories = (): SimpleCategory[] => {
-  return categories.map(({ icon, ...rest }) => rest);
+  return categories.map(({ ...rest }) => rest);
 }
 
 export const getCategoryBySlug = (slug: string) =>

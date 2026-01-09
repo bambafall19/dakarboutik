@@ -2,62 +2,47 @@
 import { FeaturedCategories } from '@/components/featured-categories';
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
-import { getBestsellers, getNewArrivals } from '@/lib/data';
+import { getBestsellers, getNewArrivals, getProducts } from '@/lib/data';
 import { ProductCard } from '@/components/product-card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function HomePage() {
-  const newArrivals = await getNewArrivals(8);
-  const bestsellers = await getBestsellers(8);
+  const allProducts = await getProducts();
+  const newArrivals = allProducts
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
+  const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
+  const saleProducts = allProducts.filter(p => p.salePrice).slice(0, 8);
 
   return (
     <div className="bg-background">
       <HeroSection />
-      <div className="container">
+      <div className="container space-y-12 my-12">
         <FeaturedCategories />
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 my-12">
-          <main className="lg:col-span-3">
+        
+        <ProductGrid
+          title="Nouveautés"
+          products={newArrivals}
+          link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
+          gridClass="grid-cols-2 md:grid-cols-4"
+        />
+
+        <ProductGrid
+          title="Meilleures Ventes"
+          products={bestsellers}
+          link={{ href: '/products', text: 'Voir tout' }}
+          gridClass="grid-cols-2 md:grid-cols-4"
+        />
+
+        {saleProducts.length > 0 && (
             <ProductGrid
-              title="Vente Flash"
-              products={newArrivals}
-              gridClass="grid-cols-2 md:grid-cols-3"
+                title="En Promotion"
+                products={saleProducts}
+                link={{ href: '/products', text: 'Voir tout' }}
+                gridClass="grid-cols-2 md:grid-cols-4"
             />
-          </main>
-          <aside className="lg:col-span-1">
-             <div className="sticky top-24 space-y-6">
-               <h2 className="text-xl font-bold">Pour vous aujourd'hui !</h2>
-               <div className="grid grid-cols-1 gap-4">
-                {bestsellers.slice(0, 3).map((product) => (
-                  <ProductCard key={product.id} product={product} variant="horizontal" />
-                ))}
-               </div>
-             </div>
-          </aside>
-        </div>
-
-        <div className="my-12">
-           <Tabs defaultValue="bestseller" className="w-full">
-            <div className="flex items-center justify-between mb-4">
-               <h2 className="text-xl font-bold">Notre Sélection</h2>
-              <TabsList>
-                <TabsTrigger value="bestseller">Meilleures Ventes</TabsTrigger>
-                <TabsTrigger value="new">Nouveautés</TabsTrigger>
-                <TabsTrigger value="special">Promotions</TabsTrigger>
-              </TabsList>
-            </div>
-            <TabsContent value="bestseller">
-              <ProductGrid products={bestsellers} gridClass="grid-cols-2 md:grid-cols-4" />
-            </TabsContent>
-            <TabsContent value="new">
-               <ProductGrid products={newArrivals} gridClass="grid-cols-2 md:grid-cols-4" />
-            </TabsContent>
-             <TabsContent value="special">
-               <ProductGrid products={bestsellers.filter(p => p.salePrice)} gridClass="grid-cols-2 md:grid-cols-4" />
-            </TabsContent>
-          </Tabs>
-        </div>
-
+        )}
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ export default async function HomePage() {
   const bestsellers = await getBestsellers();
 
   return (
-    <div className="flex flex-col gap-12 md:gap-16 lg:gap-20 container">
+    <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">
       <HeroSection />
       <div className="px-4 md:px-6">
         <FeaturedCategories />

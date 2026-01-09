@@ -1,3 +1,4 @@
+
 import { FeaturedCategories } from '@/components/featured-categories';
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';

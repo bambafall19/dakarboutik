@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ProductListing } from '@/components/product-listing';

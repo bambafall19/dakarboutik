@@ -1,25 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { onSnapshot, type Query } from 'firebase/firestore';
 
 export function useCollection<T extends { id: string }>(q: Query | null) {
   const [data, setData] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  // By memoizing the query, we can use it as a dependency in useEffect.
-  // We stringify the query's internal _query object to create a stable key.
-  const memoizedQuery = useMemo(() => {
-    if (!q) return null;
-    try {
-      // This is a way to get a stable, string representation of the query
-      return JSON.stringify((q as any)._query);
-    } catch {
-      // Fallback for safety, though it's less reliable
-      return String(q);
-    }
-  }, [q]);
 
   useEffect(() => {
     if (q === null) {
@@ -51,7 +38,7 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
     );
 
     return () => unsubscribe();
-  }, [memoizedQuery, q]);
+  }, [q]);
 
   return { data, loading, error };
 }

@@ -26,19 +26,22 @@ export function HeroSection() {
                 <Link href={mainBanner.linkUrl}>Explorer les produits</Link>
               </Button>
             </div>
-            <div className="relative aspect-square w-full">
-            <Image
-              src={mainBanner.image.imageUrl}
-              alt={mainBanner.title}
-              data-ai-hint={mainBanner.image.imageHint}
-              fill
-              priority
-              className="object-contain"
-            />
-          </div>
+            <Card className="overflow-hidden">
+                <CardContent className="p-0">
+                    <div className="relative aspect-square w-full">
+                        <Image
+                        src={mainBanner.image.imageUrl}
+                        alt={mainBanner.title}
+                        data-ai-hint={mainBanner.image.imageHint}
+                        fill
+                        priority
+                        className="object-cover"
+                        />
+                    </div>
+                </CardContent>
+            </Card>
         </div>
       </div>
     </section>
   );
 }
-

@@ -16,13 +16,9 @@ function ProductsPageContent() {
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
   
-  const initialCategory = searchParams.get('category');
-  const initialSortBy = searchParams.get('sortBy');
-  const initialBrands = searchParams.get('brands');
-  const initialPriceRange = searchParams.get('priceRange');
-
   const [filters, setFilters] = useState(() => {
      let priceRange: [number, number] = [0, 1000000];
+     const initialPriceRange = searchParams.get('priceRange');
      if (initialPriceRange) {
         const [min, max] = initialPriceRange.split('-').map(Number);
         if (!isNaN(min) && !isNaN(max)) {
@@ -31,10 +27,10 @@ function ProductsPageContent() {
      }
 
     return {
-      categories: initialCategory ? initialCategory.split(',') : [],
-      brands: initialBrands ? initialBrands.split(',') : [],
+      categories: searchParams.get('category')?.split(',') || [],
+      brands: searchParams.get('brands')?.split(',') || [],
       priceRange: priceRange,
-      sortBy: initialSortBy || 'newest',
+      sortBy: searchParams.get('sortBy') || 'newest',
     }
   });
 
@@ -53,7 +49,12 @@ function ProductsPageContent() {
       params.set('sortBy', filters.sortBy);
     }
     
-    router.replace(`${pathname}?${params.toString()}`);
+    // Using setTimeout to batch updates and avoid rapid-fire router changes
+    const timer = setTimeout(() => {
+      router.replace(`${pathname}?${params.toString()}`);
+    }, 300);
+
+    return () => clearTimeout(timer);
 
   }, [filters, pathname, router]);
 
@@ -66,27 +67,7 @@ function ProductsPageContent() {
     let filtered = [...products];
 
     if (filters.categories.length > 0) {
-      const getAllChildSlugs = (slug: string): string[] => {
-        const cat = categories.find(c => c.slug === slug);
-        if (!cat || !cat.subCategories) return [];
-        let slugs: string[] = [];
-        cat.subCategories.forEach(sub => {
-          slugs.push(sub.slug);
-          if (sub.subCategories) {
-            sub.subCategories.forEach(s => slugs.push(s.slug));
-          }
-        });
-        return slugs;
-      };
-
-      const allFilterSlugs = new Set<string>();
-      filters.categories.forEach(slug => {
-        allFilterSlugs.add(slug);
-        const childSlugs = getAllChildSlugs(slug);
-        childSlugs.forEach(childSlug => allFilterSlugs.add(childSlug));
-      });
-      
-      filtered = filtered.filter((p) => allFilterSlugs.has(p.category));
+      filtered = filtered.filter((p) => filters.categories.includes(p.category));
     }
     if (filters.brands.length > 0) {
       filtered = filtered.filter((p) => p.brand && filters.brands.includes(p.brand));

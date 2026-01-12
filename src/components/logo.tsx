@@ -1,8 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ShoppingBasket } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -12,6 +12,7 @@ interface LogoProps {
 export const Logo = ({ className, onClick }: LogoProps) => {
   return (
     <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
+      <ShoppingBasket className="h-6 w-6 text-primary" />
       <span className="text-xl font-bold tracking-tight text-foreground">
         Dakar<span className="text-primary">Boutik</span>
       </span>

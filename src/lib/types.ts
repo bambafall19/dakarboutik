@@ -34,6 +34,13 @@ export type Product = {
   metaDescription?: string;
 };
 
+export type ProductFormData = Omit<Product, 'id' | 'slug' | 'createdAt' | 'images'> & {
+    id?: string;
+    imageUrl1?: string;
+    imageUrl2?: string;
+};
+
+
 export type SubCategory = {
   id: string;
   name: string;

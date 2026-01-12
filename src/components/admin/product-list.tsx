@@ -50,11 +50,13 @@ import { useFirestore } from '@/firebase';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function ProductList({ products }: { products: Product[] }) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const router = useRouter();
 
   const handleStatusChange = async (product: Product, checked: boolean) => {
     if (!firestore) return;
@@ -183,7 +185,7 @@ export function ProductList({ products }: { products: Product[] }) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Modifier</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
                         <DropdownMenuItem
                         className="text-red-600 focus:text-red-600 focus:bg-red-50"
                         onClick={() => setProductToDelete(product)}

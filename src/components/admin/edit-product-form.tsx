@@ -1,0 +1,378 @@
+
+'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import type { SimpleCategory, Product, ProductFormData } from '@/lib/types';
+import { Card, CardContent } from '../ui/card';
+import { useEffect } from 'react';
+import { useFirestore } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
+
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') 
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+const formSchema = z.object({
+  title: z.string().min(2, 'Le titre doit contenir au moins 2 caractères.'),
+  description: z.string().min(10, 'La description est requise.'),
+  price: z.coerce.number().min(0, 'Le prix doit être positif.'),
+  stock: z.coerce.number().min(0, 'Le stock doit être positif.'),
+  category: z.string().min(1, 'La catégorie est requise.'),
+  subCategory: z.string().optional(),
+  imageUrl1: z.string().url("Veuillez entrer une URL d'image valide."),
+  imageUrl2: z.string().url("Veuillez entrer une URL d'image valide.").optional().or(z.literal('')),
+  isNew: z.boolean().default(false),
+  isBestseller: z.boolean().default(false),
+});
+
+interface EditProductFormProps {
+  categories: SimpleCategory[];
+  product: Product;
+}
+
+export function EditProductForm({ categories, product }: EditProductFormProps) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const firestore = useFirestore();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: product.title || '',
+      description: product.description || '',
+      price: product.price || 0,
+      stock: product.stock || 0,
+      category: product.category || '', // This needs more logic for parent/child
+      subCategory: '',
+      imageUrl1: product.images[0]?.imageUrl || '',
+      imageUrl2: product.images[1]?.imageUrl || '',
+      isNew: product.isNew || false,
+      isBestseller: product.isBestseller || false,
+    },
+  });
+
+  const selectedCategorySlug = form.watch('category');
+  const selectedCategory = categories.find(
+    (cat) => cat.slug === selectedCategorySlug
+  );
+  
+  useEffect(() => {
+    // This is complex because a slug could be a child or parent.
+    // This form setup doesn't handle deep nesting well for pre-population.
+    // A simpler approach for now.
+    form.setValue('category', product.category);
+  }, [product.category, form]);
+
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!firestore) {
+      toast({
+        variant: 'destructive',
+        title: "Erreur de connexion",
+        description: "Impossible de se connecter à la base de données.",
+      });
+      return;
+    }
+    
+    try {
+      const categoryToSave = values.subCategory || values.category;
+      const slug = slugify(values.title);
+
+      const images = [];
+      if (values.imageUrl1) {
+        images.push({
+          id: `product-${slug}-1`,
+          description: values.title,
+          imageUrl: values.imageUrl1,
+          imageHint: 'product',
+        });
+      }
+      if (values.imageUrl2) {
+        images.push({
+          id: `product-${slug}-2`,
+          description: values.title,
+          imageUrl: values.imageUrl2,
+          imageHint: 'product detail',
+        });
+      }
+
+      const updatedProductData: Partial<ProductFormData> = {
+        title: values.title,
+        slug: slug,
+        description: values.description,
+        price: values.price,
+        stock: values.stock,
+        category: categoryToSave,
+        isNew: values.isNew,
+        isBestseller: values.isBestseller,
+        images: images,
+      };
+
+      const productRef = doc(firestore, 'products', product.id);
+      await updateDoc(productRef, updatedProductData);
+
+      toast({
+        title: 'Produit mis à jour !',
+        description: `Le produit "${values.title}" a été mis à jour avec succès.`,
+      });
+      
+      router.push('/admin');
+      router.refresh();
+
+    } catch (error) {
+      console.error("Error updating product: ", error);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast({
+        variant: 'destructive',
+        title: "Échec de la mise à jour",
+        description: errorMessage,
+      });
+    }
+  }
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Titre du produit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: iPhone 15 Pro" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Description détaillée du produit..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="imageUrl1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse (lien) de l'image principale</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://exemple.com/image-principale.png"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="imageUrl2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse (lien) de la deuxième image (optionnel)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://exemple.com/image-secondaire.png"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prix (XOF)</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantité en stock</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Catégorie</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choisir une catégorie" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.slug}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {selectedCategory && selectedCategory.subCategories && selectedCategory.subCategories.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="subCategory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sous-catégorie</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choisir une sous-catégorie" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {selectedCategory.subCategories.map((subCat) => (
+                              <SelectItem key={subCat.id} value={subCat.slug}>
+                                {subCat.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="isNew"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Nouveau produit</FormLabel>
+                      <FormDescription>
+                        Cochez cette case pour afficher un badge "NOUVEAU".
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isBestseller"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Meilleure vente</FormLabel>
+                      <FormDescription>
+                        Cochez pour inclure dans la section "Meilleures
+                        Ventes".
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting
+                ? 'Mise à jour...'
+                : 'Enregistrer les modifications'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}

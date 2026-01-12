@@ -54,7 +54,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="container py-12">
+    <div className="py-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Espace Administrateur</h1>
         <Button variant="outline" onClick={handleLogout}>

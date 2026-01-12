@@ -20,7 +20,7 @@ export default function CheckoutPage() {
   
   if (totalItems === 0) {
     return (
-      <div className="container text-center py-20">
+      <div className="text-center py-20">
         <h1 className="text-2xl font-bold">Votre panier est vide</h1>
         <p className="text-muted-foreground">Vous serez redirigé vers la boutique.</p>
       </div>
@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

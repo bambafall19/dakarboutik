@@ -14,7 +14,7 @@ export default async function SettingsPage() {
   const settings = await getSiteSettings();
 
   return (
-    <div className="container py-12">
+    <div className="py-12">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

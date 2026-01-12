@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useProductsBySlug } from '@/hooks/use-site-data';
@@ -28,8 +29,6 @@ export default function ProductDetailPage() {
     .slice(0, 4);
 
   return (
-    <div className="container">
-      <ProductDetails product={product} relatedProducts={relatedProducts} />
-    </div>
+    <ProductDetails product={product} relatedProducts={relatedProducts} />
   );
 }

@@ -14,7 +14,7 @@ export default async function AddProductPage() {
   const categories = getSimpleCategories();
 
   return (
-    <div className="container py-12">
+    <div className="py-12">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -8,9 +8,11 @@ import { Engagements } from '@/components/engagements';
 import { Testimonials } from '@/components/testimonials';
 import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
+import { usePathname } from 'next/navigation';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
+  const pathname = usePathname();
   
   const newArrivals = [...products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -25,10 +27,12 @@ export default function HomePage() {
     </div>
   )
 
+  const isHomePage = pathname === '/';
+
   return (
-    <div className="bg-background overflow-hidden">
-      <HeroSection />
-      <div className="container space-y-16 my-16">
+    <>
+      {isHomePage && <HeroSection />}
+      <div className="space-y-16 my-16">
         <FeaturedCategories />
         
         {loading ? (
@@ -82,6 +86,6 @@ export default function HomePage() {
 
         <Testimonials />
       </div>
-    </div>
+    </>
   );
 }

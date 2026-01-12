@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -6,7 +7,7 @@ import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 
 export default function ProductsPage() {
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <Suspense fallback={<ProductListingSkeleton />}>
         <ProductsContent />
       </Suspense>

@@ -40,7 +40,7 @@ export function ProductListing({ products, categories, brands, filters, onFilter
   );
 
   return (
-    <div className="py-8">
+    <>
        <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -93,6 +93,6 @@ export function ProductListing({ products, categories, brands, filters, onFilter
           )}
         </main>
       </div>
-    </div>
+    </>
   );
 }

@@ -23,7 +23,7 @@ export function FeaturedCategories() {
     <div>
         <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">Catégories</h2>
-            <p className="mt-2 text-muted-foreground">Parcourez nos univers de produits.</p>
+            <p className="mt-2 text-foreground">Parcourez nos univers de produits.</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {featured.map((category) => {

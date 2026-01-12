@@ -30,7 +30,7 @@ export function Engagements() {
       <div className="container">
         <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">Pourquoi nous choisir ?</h2>
-            <p className="mt-2 text-muted-foreground">Votre satisfaction est notre priorité absolue.</p>
+            <p className="mt-2 text-foreground">Votre satisfaction est notre priorité absolue.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {engagements.map((engagement) => (

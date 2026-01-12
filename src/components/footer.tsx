@@ -34,7 +34,7 @@ export function Footer({ settings }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <Logo imageUrl={settings?.logoUrl} />
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-4 text-sm text-foreground">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
           </div>
@@ -44,7 +44,7 @@ export function Footer({ settings }: FooterProps) {
                 <h4 className="font-semibold text-foreground">{title}</h4>
                 <nav className="mt-4 flex flex-col gap-2 text-sm">
                   {links.map(link => (
-                    <Link key={link.name} href={link.href} className="text-muted-foreground hover:text-primary">{link.name}</Link>
+                    <Link key={link.name} href={link.href} className="text-foreground hover:text-primary">{link.name}</Link>
                   ))}
                 </nav>
               </div>
@@ -52,7 +52,7 @@ export function Footer({ settings }: FooterProps) {
           </div>
         </div>
         <Separator className="my-8 bg-border/50" />
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-foreground">
           © {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.
         </div>
       </div>

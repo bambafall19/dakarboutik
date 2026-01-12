@@ -41,7 +41,7 @@ export function Testimonials() {
     <section>
         <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">L'avis de nos Clients</h2>
-            <p className="mt-2 text-muted-foreground">Découvrez pourquoi ils nous font confiance.</p>
+            <p className="mt-2 text-foreground">Découvrez pourquoi ils nous font confiance.</p>
         </div>
       <Carousel
         opts={{
@@ -64,7 +64,7 @@ export function Testimonials() {
                         </Avatar>
                         <div>
                             <p className="font-bold text-sm text-left">{testimonial.name}</p>
-                            <p className="text-xs text-muted-foreground text-left">{testimonial.role}</p>
+                            <p className="text-xs text-foreground text-left">{testimonial.role}</p>
                         </div>
                     </div>
                   </CardContent>

@@ -13,6 +13,7 @@ import type { SiteSettings } from '@/lib/types';
 import { useCategories } from '@/hooks/use-site-data';
 import { MainNav } from './main-nav';
 import { useEffect, useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -23,6 +24,8 @@ export function Header({ settings, loading }: HeaderProps) {
   const { totalItems } = useCart();
   const { categories } = useCategories();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+
 
   const announcementMessages = useMemo(() => {
     if (!settings) return [];
@@ -36,7 +39,11 @@ export function Header({ settings, loading }: HeaderProps) {
   useEffect(() => {
     if (announcementMessages.length > 1) {
       const interval = setInterval(() => {
-        setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % announcementMessages.length);
+        setIsFading(true);
+        setTimeout(() => {
+          setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % announcementMessages.length);
+          setIsFading(false);
+        }, 500); // Corresponds to the fade-out duration
       }, 5000); // Change message every 5 seconds
       return () => clearInterval(interval);
     }
@@ -47,13 +54,20 @@ export function Header({ settings, loading }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       {currentAnnouncement && !loading && (
-        <div className="bg-secondary text-secondary-foreground text-center text-xs p-2">
-          {currentAnnouncement}
+        <div className="bg-primary text-primary-foreground text-center text-sm p-2.5 transition-opacity duration-500">
+           <span
+            className={cn(
+              'transition-opacity duration-500 ease-in-out',
+              isFading ? 'opacity-0' : 'opacity-100'
+            )}
+          >
+            {currentAnnouncement}
+          </span>
         </div>
       )}
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-6">
-          <Logo imageUrl={settings?.logoUrl} loading={loading} />
+          <Logo loading={loading} imageUrl={settings?.logoUrl} />
           <div className="hidden lg:flex">
             <MainNav items={categories} />
           </div>

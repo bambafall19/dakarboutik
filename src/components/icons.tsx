@@ -52,7 +52,7 @@ export const Icons = {
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
   'informatique': Laptop,
-  'telephones-tablettes': Smartphone,
+  'telephonie': Smartphone,
   'accessoires': Plug,
   'audio': Headphones,
 };

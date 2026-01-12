@@ -5,9 +5,9 @@ import type { Banner, Category, SimpleCategory } from './types';
 
 const categories: Category[] = [
   {
-    id: 'cat-telephones-tablettes',
-    name: 'Téléphones & Tablettes',
-    slug: 'telephones-tablettes',
+    id: 'cat-telephonie',
+    name: 'Téléphonie',
+    slug: 'telephonie',
   },
   {
     id: 'cat-informatique',
@@ -62,7 +62,7 @@ const banners: Banner[] = [
     title: 'La tech à votre portée',
     subtitle: 'Les dernières nouveautés smartphones, ordinateurs et accessoires au meilleur prix.',
     image: findImage('banner-1'),
-    linkUrl: '/products?category=telephones-tablettes',
+    linkUrl: '/products?category=telephonie',
   },
   {
     id: 'banner-sale',

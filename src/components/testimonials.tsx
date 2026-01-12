@@ -12,27 +12,27 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 const testimonials = [
     {
         name: "Moussa Diop",
-        role: "Client fidèle",
+        role: "Client fidèle, Mermoz",
         avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        text: "Service client au top et livraison super rapide ! J'ai reçu mon nouveau téléphone en moins de 24h. Je recommande Dakarboutik à 100%."
+        text: "Service client au top et livraison super rapide ! J'ai commandé un nouveau téléphone et je l'ai reçu aux Almadies en moins de 24h. Je recommande Dakarboutik à 100%."
     },
     {
         name: "Aïssatou Fall",
-        role: "Développeuse Web",
+        role: "Développeuse Web, Fann",
         avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        text: "J'ai enfin trouvé des accessoires informatiques de qualité à Dakar. Leurs conseils m'ont permis de choisir la carte graphique parfaite pour mes besoins."
+        text: "Enfin une boutique fiable pour les accessoires informatiques à Dakar. J'avais un besoin urgent d'une carte graphique pour un projet, leurs conseils et leur stock m'ont sauvé la vie."
     },
     {
         name: "Ibrahima Sow",
-        role: "Étudiant",
+        role: "Étudiant à l'UCAD",
         avatar: "https://randomuser.me/api/portraits/men/46.jpg",
-        text: "Les prix sont vraiment compétitifs et les produits sont authentiques. J'ai acheté un ordinateur portable pour mes études et j'en suis très satisfait."
+        text: "Les prix sont vraiment compétitifs pour des produits authentiques. J'ai acheté un ordinateur portable pour mes études, parfait pour un budget étudiant. Le paiement par Wave était un plus."
     },
     {
         name: "Fatima Ba",
-        role: "Entrepreneure",
+        role: "Entrepreneure, Sacré-Cœur",
         avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-        text: "Une boutique en ligne fiable et professionnelle. L'équipe est très réactive et les produits sont toujours conformes à la description. Bravo !"
+        text: "En tant qu'entrepreneure, la fiabilité est primordiale. Dakarboutik est mon fournisseur de confiance pour tout le matériel électronique de mon bureau. Jamais déçue."
     }
 ]
 

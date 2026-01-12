@@ -85,7 +85,7 @@ export function Header({ settings, loading }: HeaderProps) {
         <Skeleton className="h-8 w-full" />
       ) : (
         announcementMessage && (
-          <div className="bg-primary text-primary-foreground text-center text-sm p-2">
+          <div className="bg-accent text-accent-foreground text-center text-sm p-2">
             {announcementMessage}
           </div>
         )

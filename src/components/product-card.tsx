@@ -6,10 +6,8 @@ import Link from "next/link";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Price } from "./price";
-import { HeartIcon, ShoppingCart, Star } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Icons } from "./icons";
@@ -32,9 +30,6 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     e.preventDefault();
     addToCart(product, 1);
   };
-  
-  const stockSold = 10;
-  const stockProgress = (stockSold / (product.stock + stockSold)) * 100;
 
   if (variant === 'horizontal') {
     return (
@@ -65,7 +60,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden transition-shadow duration-300 group bg-card border rounded-lg">
+    <div className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card border rounded-lg hover:shadow-lg">
       <div className="relative overflow-hidden">
         <Link href={`/products/${product.slug}`} className="block">
           <div className="aspect-square relative w-full bg-card">
@@ -78,44 +73,34 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             />
           </div>
         </Link>
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white/80 hover:bg-white">
-            <HeartIcon className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)]">
-          <Button
-            className="w-full h-9 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            onClick={handleAddToCart}
-            variant="secondary"
-          >
-            <Icons.shoppingBag className="mr-2 h-4 w-4" />
-            Ajouter au panier
+        <div className="absolute top-2 right-2">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-card/60 backdrop-blur-sm hover:bg-card">
+            <Heart className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      <div className="p-4 flex-1 flex flex-col border-t">
+      <div className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400"/>
+            <span className="font-semibold">4.9</span>
+            {soldCount !== null && <span className="text-gray-400">({soldCount})</span>}
+          </div>
           <h3 className="font-semibold text-sm leading-snug mt-1">
             <Link href={`/products/${product.slug}`}>{product.title}</Link>
           </h3>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400"/>
-            <span>4.9</span>
-            <span>|</span>
-            {soldCount !== null && <span>{soldCount}+ Sold</span>}
-          </div>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex items-end justify-between">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-          {product.salePrice && (
-            <div className="mt-2">
-              <Progress value={stockProgress} className="h-1" />
-              <div className="flex justify-between items-center text-xs text-muted-foreground mt-1">
-                <span>{stockSold} / {product.stock + stockSold} Sold</span>
-              </div>
-            </div>
-          )}
+          <Button
+            size="sm"
+            className="h-9 text-sm group-hover:bg-primary group-hover:text-primary-foreground"
+            onClick={handleAddToCart}
+            variant="outline"
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Ajouter
+          </Button>
         </div>
       </div>
     </div>

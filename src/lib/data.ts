@@ -2,17 +2,21 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner, Category, SimpleCategory } from './types';
+import { CategoryIcons } from '@/components/icons';
+
 
 const categories: Category[] = [
   {
     id: 'cat-telephonie',
     name: 'Téléphonie',
     slug: 'telephonie',
+    icon: CategoryIcons.telephonie,
   },
   {
     id: 'cat-informatique',
     name: 'Informatique',
     slug: 'informatique',
+    icon: CategoryIcons.informatique,
     subCategories: [
       {
         id: 'sub-ordinateurs',
@@ -52,8 +56,8 @@ const categories: Category[] = [
       },
     ],
   },
-  { id: 'cat-audio', name: 'Audio', slug: 'audio' },
-  { id: 'cat-accessoires', name: 'Accessoires', slug: 'accessoires' },
+  { id: 'cat-audio', name: 'Audio', slug: 'audio', icon: CategoryIcons.audio },
+  { id: 'cat-accessoires', name: 'Accessoires', slug: 'accessoires', icon: CategoryIcons.accessoires },
 ];
 
 const banners: Banner[] = [
@@ -114,7 +118,7 @@ export const getLeafCategories = (): SimpleCategory[] => {
     // Manually add top-level cats that don't have subs
     categories.forEach(c => {
         if (!c.subCategories) {
-            leafCategories.push({id: c.id, name: c.name, slug: c.slug});
+            leafCategories.push({id: cat.id, name: cat.name, slug: cat.slug});
         }
     })
     return [...new Map(leafCategories.map(c => [c.id, c])).values()];

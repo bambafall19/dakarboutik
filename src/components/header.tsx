@@ -14,6 +14,7 @@ import { useCategories } from '@/hooks/use-site-data';
 import { MainNav } from './main-nav';
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { MobileNav } from './mobile-nav';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -25,6 +26,7 @@ export function Header({ settings, loading }: HeaderProps) {
   const { categories } = useCategories();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
   const announcementMessages = useMemo(() => {
@@ -66,7 +68,18 @@ export function Header({ settings, loading }: HeaderProps) {
         </div>
       )}
       <div className="container flex h-16 items-center justify-between gap-6">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 lg:gap-6">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden">
+                  <Icons.menu className="h-5 w-5" />
+                  <span className="sr-only">Ouvrir le menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-full max-w-sm">
+                <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
+              </SheetContent>
+            </Sheet>
           <Logo loading={loading} imageUrl={settings?.logoUrl} />
           <div className="hidden lg:flex">
             <MainNav items={categories} />

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductListingSkeleton() {
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <Skeleton className="h-6 w-1/3 mb-6" />
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
         <aside className="hidden md:block md:col-span-1 space-y-6">

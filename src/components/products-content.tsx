@@ -4,22 +4,32 @@ import { useSearchParams } from 'next/navigation';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 export function ProductsContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category');
-  const initialSortBy = searchParams.get('sortBy') || 'newest';
 
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
 
   const [filters, setFilters] = useState({
-    categories: initialCategory ? [initialCategory] : [],
-    brands: [],
+    categories: [] as string[],
+    brands: [] as string[],
     priceRange: [0, 1000000] as [number, number],
-    sortBy: initialSortBy,
+    sortBy: 'newest',
   });
+  
+  // Initialize filters from URL search params once on component mount
+  useEffect(() => {
+    const initialCategory = searchParams.get('category');
+    const initialSortBy = searchParams.get('sortBy');
+
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      categories: initialCategory ? [initialCategory] : [],
+      sortBy: initialSortBy || 'newest',
+    }));
+  }, [searchParams]);
 
   const brands = useMemo(() => {
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];

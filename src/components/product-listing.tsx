@@ -31,8 +31,10 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
   const filteredProducts = useMemo(() => {
     let products: Product[] = allProducts;
     
-    if (filters.categories.length > 0) {
-        const allCategorySlugs = filters.categories.flatMap(catSlug => {
+    const currentCategories = filters.categories;
+
+    if (currentCategories.length > 0) {
+        const allCategorySlugs = currentCategories.flatMap(catSlug => {
             const selectedCategory = categories.find(c => c.slug === catSlug);
             return [catSlug, ...(selectedCategory?.subCategories?.map(sc => sc.slug) || [])];
         });

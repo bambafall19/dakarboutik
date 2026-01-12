@@ -18,8 +18,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import type { Banner } from '@/lib/types';
-import { updateBanner } from '@/lib/actions';
 import Image from 'next/image';
+import { useFirestore } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const formSchema = z.object({
   title: z.string().min(2, 'Le titre est requis.'),
@@ -35,6 +36,7 @@ interface BannerFormProps {
 export function BannerForm({ banner }: BannerFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,21 +51,32 @@ export function BannerForm({ banner }: BannerFormProps) {
   const imageUrl = form.watch('imageUrl');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!banner) return;
+    if (!banner || !firestore) {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de se connecter à la base de données.',
+      });
+      return;
+    }
+    
     try {
-      await updateBanner({
+      const bannerToUpdate: Banner = {
         id: banner.id,
         title: values.title,
         subtitle: values.subtitle,
         linkUrl: values.linkUrl,
         image: {
-            // Keep existing id and hint, just update the URL
             id: banner.image.id,
             description: banner.image.description,
             imageHint: banner.image.imageHint,
             imageUrl: values.imageUrl,
         }
-      });
+      };
+
+      const bannerRef = doc(firestore, 'banners', banner.id);
+      await setDoc(bannerRef, bannerToUpdate, { merge: true });
+
       toast({
         title: 'Bannière mise à jour !',
         description: 'La bannière principale a été modifiée avec succès.',
@@ -72,9 +85,9 @@ export function BannerForm({ banner }: BannerFormProps) {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
+        title: 'Erreur de permission',
         description:
-          'Une erreur est survenue lors de la mise à jour de la bannière.' +
+          'Une erreur est survenue. Vérifiez vos permissions et réessayez.' +
           (error instanceof Error ? error.message : ''),
       });
     }

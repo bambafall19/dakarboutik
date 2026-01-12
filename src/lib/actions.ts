@@ -41,20 +41,3 @@ export async function updateSiteSettings(settings: SiteSettings) {
     throw new Error('Failed to update site settings.');
   }
 }
-
-export async function updateBanner(banner: Banner) {
-    const { firestore } = initializeFirebase();
-    if (!firestore) {
-      throw new Error('Firestore is not initialized.');
-    }
-  
-    try {
-      const bannerRef = doc(firestore, 'banners', banner.id);
-      await setDoc(bannerRef, banner, { merge: true });
-  
-      revalidatePath('/');
-    } catch (e) {
-      console.error('Error updating banner: ', e);
-      throw new Error('Failed to update banner.');
-    }
-  }

@@ -158,3 +158,26 @@ export function getAllChildCategorySlugs(parentSlug: string): string[] {
   recurse(parentCategory);
   return slugs;
 }
+
+export function getCategoryPath(slug: string): SimpleCategory[] {
+  const findPath = (
+    categoriesToSearch: Category[],
+    currentPath: SimpleCategory[]
+  ): SimpleCategory[] | null => {
+    for (const category of categoriesToSearch) {
+      const newPath = [...currentPath, { id: category.id, name: category.name, slug: category.slug }];
+      if (category.slug === slug) {
+        return newPath;
+      }
+      if (category.subCategories) {
+        const foundPath = findPath(category.subCategories, newPath);
+        if (foundPath) {
+          return foundPath;
+        }
+      }
+    }
+    return null;
+  };
+
+  return findPath(categories, []) || [];
+}

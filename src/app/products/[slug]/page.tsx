@@ -4,6 +4,7 @@ import { ProductDetails } from '@/components/product-details';
 import { getProducts } from '@/lib/data-firebase';
 import { Suspense } from 'react';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
+import React from 'react';
 
 type ProductDetailPageProps = {
   params: { slug: string };

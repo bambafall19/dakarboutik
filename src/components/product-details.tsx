@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useCart } from '@/hooks/use-cart';
 import type { Product, SimpleCategory } from '@/lib/types';

@@ -21,6 +21,18 @@ export function useProducts() {
   return { products: products || [], loading, error };
 }
 
+export function useAdminProducts() {
+  const firestore = useFirestore();
+  const productsQuery = useMemo(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'products'));
+  }, [firestore]);
+
+  const { data: products, loading, error } = useCollection<Product>(productsQuery);
+
+  return { products: products || [], loading, error };
+}
+
 export function useProductsBySlug(slug: string) {
     const firestore = useFirestore();
     const productQuery = useMemo(() => {

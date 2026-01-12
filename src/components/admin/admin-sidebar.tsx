@@ -26,6 +26,7 @@ import {
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   {
     label: 'Produits',
     icon: Package,
@@ -38,7 +39,6 @@ const menuItems = [
   { href: '#', label: 'Commandes', icon: ShoppingCart },
   { href: '#', label: 'Clients', icon: Users },
   { href: '#', label: 'Rapports', icon: LineChart },
-  { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 

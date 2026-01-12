@@ -2,7 +2,7 @@
 "use client";
 
 import { useSearchParams } from 'next/navigation';
-import type { Product, Category, SimpleCategory } from '@/lib/types';
+import type { Product, Category } from '@/lib/types';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
@@ -15,11 +15,10 @@ import { getCategoryBySlug } from '@/lib/data';
 interface ProductListingProps {
     products: Product[];
     allCategories: Category[];
-    filterableCategories: SimpleCategory[];
     brands: string[];
 }
 
-export function ProductListing({ products, allCategories, filterableCategories, brands }: ProductListingProps) {
+export function ProductListing({ products, allCategories, brands }: ProductListingProps) {
   const searchParams = useSearchParams();
 
   const selectedCategorySlugs = searchParams.get('category')?.split(',') || [];
@@ -35,7 +34,6 @@ export function ProductListing({ products, allCategories, filterableCategories, 
   const filterNode = (
     <ProductFilters
         allCategories={allCategories}
-        filterableCategories={filterableCategories}
         brands={brands}
     />
   );

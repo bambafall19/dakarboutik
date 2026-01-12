@@ -41,12 +41,6 @@ export type ProductFormData = Omit<Product, 'id' | 'slug' | 'createdAt' | 'image
 };
 
 
-export type SubCategory = {
-  id: string;
-  name: string;
-  slug: string;
-};
-
 // Allow for nested categories/sub-categories
 export type Category = {
   id: string;

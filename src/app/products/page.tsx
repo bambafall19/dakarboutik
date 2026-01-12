@@ -85,7 +85,6 @@ function ProductsPageContent() {
     <ProductListing
       products={filteredProducts}
       allCategories={allCategories}
-      filterableCategories={filterableCategories}
       brands={brands}
     />
   );

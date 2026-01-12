@@ -2,7 +2,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type { Category } from '@/lib/types';
+import type { Category, SimpleCategory } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -76,11 +76,11 @@ export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
       const categoryCheckbox = (
         <div className="flex items-center space-x-2 py-1">
           <Checkbox
-            id={`cat-${cat.id}`}
+            id={`cat-${cat.slug}`}
             checked={selectedCategories.includes(cat.slug)}
             onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
           />
-          <Label htmlFor={`cat-${cat.id}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
+          <Label htmlFor={`cat-${cat.slug}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
         </div>
       );
   

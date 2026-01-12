@@ -40,7 +40,7 @@ export function ProductListing({ products, categories, brands, filters, onFilter
   );
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
        <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -27,7 +27,7 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
   const stockBadgeVariant = product.stock > 10 ? 'default' : product.stock > 0 ? 'secondary' : 'destructive';
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

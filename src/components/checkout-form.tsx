@@ -18,6 +18,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { SHIPPING_COSTS } from "@/components/order-summary";
 import { useSiteSettings } from "@/hooks/use-site-data";
 import { Icons } from "./icons";
+import type { CartItem } from "@/lib/types";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
@@ -121,6 +122,12 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
 
     try {
       const ordersCollection = collection(firestore, 'orders');
+      
+      const itemsToSave = state.items.map(item => ({
+        ...item,
+        selectedVariants: item.selectedVariants || [],
+      }));
+
       await addDoc(ordersCollection, {
         orderId,
         customerInfo: {
@@ -130,7 +137,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
           address: values.address,
           city: values.city,
         },
-        items: state.items,
+        items: itemsToSave,
         totalPrice: totalPrice,
         shippingCost: shippingCost,
         grandTotal: grandTotal,

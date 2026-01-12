@@ -49,7 +49,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           id: cartItemId,
           product,
           quantity,
-          selectedVariants,
+          selectedVariants: selectedVariants || [],
         };
         return { ...state, items: [...state.items, newItem] };
       }

@@ -22,6 +22,7 @@ import {
   Tv,
   Tablet,
   Filter,
+  PlusCircle,
 } from 'lucide-react';
 
 export const Icons = {
@@ -36,6 +37,7 @@ export const Icons = {
   close: X,
   trash: Trash2,
   plus: Plus,
+  plusCircle: PlusCircle,
   minus: Minus,
   chevronRight: ChevronRight,
   arrowRight: ArrowRight,

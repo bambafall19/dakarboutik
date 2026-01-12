@@ -59,11 +59,12 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Trier par</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className='flex-row items-center justify-between'>
+          <div className='flex items-center justify-between mb-2'>
+            <h3 className='font-semibold'>Filtres</h3>
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-primary hover:text-primary">Effacer</Button>
+          </div>
+          <p className='text-sm text-muted-foreground'>Trier par</p>
           <Select value={filters.sortBy} onValueChange={handleSortChange}>
             <SelectTrigger>
               <SelectValue placeholder="Trier par..." />
@@ -74,67 +75,58 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
               <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
             </SelectContent>
           </Select>
-        </CardContent>
-      </Card>
+      </div>
 
-      <Card>
-        <CardHeader className='flex-row items-center justify-between'>
-          <CardTitle>Filtres</CardTitle>
-          <Button variant="ghost" size="sm" onClick={clearFilters}>Effacer</Button>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="multiple" defaultValue={['category', 'price']} className="w-full">
-            <AccordionItem value="category">
-              <AccordionTrigger>Catégorie</AccordionTrigger>
-              <AccordionContent className="space-y-2">
-                {categories.map(cat => (
-                  <div key={cat.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`cat-${cat.id}`}
-                      checked={filters.categories.includes(cat.slug)}
-                      onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
-                    />
-                    <Label htmlFor={`cat-${cat.id}`} className="font-normal">{cat.name}</Label>
-                  </div>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="brand">
-              <AccordionTrigger>Marque</AccordionTrigger>
-              <AccordionContent className="space-y-2">
-                {brands.map(brand => (
-                  <div key={brand} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`brand-${brand}`}
-                      checked={filters.brands.includes(brand)}
-                      onCheckedChange={(checked) => handleBrandChange(brand, !!checked)}
-                    />
-                    <Label htmlFor={`brand-${brand}`} className="font-normal">{brand}</Label>
-                  </div>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="price">
-              <AccordionTrigger>Prix</AccordionTrigger>
-              <AccordionContent>
-                <div className="px-1 pt-2">
-                  <Slider
-                    min={0}
-                    max={1000000}
-                    step={10000}
-                    value={filters.priceRange}
-                    onValueChange={handlePriceChange}
-                  />
-                  <div className="flex justify-between mt-3 text-sm text-muted-foreground">
-                    <Price price={filters.priceRange[0]} currency="XOF" className="font-normal"/>
-                    <Price price={filters.priceRange[1]} currency="XOF" className="font-normal"/>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      </Card>
+      <Accordion type="multiple" defaultValue={['category', 'price', 'brand']} className="w-full">
+        <AccordionItem value="category">
+          <AccordionTrigger>Catégorie</AccordionTrigger>
+          <AccordionContent className="space-y-2 pt-2">
+            {categories.map(cat => (
+              <div key={cat.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`cat-${cat.id}`}
+                  checked={filters.categories.includes(cat.slug)}
+                  onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
+                />
+                <Label htmlFor={`cat-${cat.id}`} className="font-normal">{cat.name}</Label>
+              </div>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="brand">
+          <AccordionTrigger>Marque</AccordionTrigger>
+          <AccordionContent className="space-y-2 pt-2">
+            {brands.map(brand => (
+              <div key={brand} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`brand-${brand}`}
+                  checked={filters.brands.includes(brand)}
+                  onCheckedChange={(checked) => handleBrandChange(brand, !!checked)}
+                />
+                <Label htmlFor={`brand-${brand}`} className="font-normal">{brand}</Label>
+              </div>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="price">
+          <AccordionTrigger>Prix</AccordionTrigger>
+          <AccordionContent>
+            <div className="px-1 pt-2">
+              <Slider
+                min={0}
+                max={1000000}
+                step={10000}
+                value={filters.priceRange}
+                onValueChange={handlePriceChange}
+              />
+              <div className="flex justify-between mt-3 text-sm text-muted-foreground">
+                <Price price={filters.priceRange[0]} currency="XOF" className="font-normal"/>
+                <Price price={filters.priceRange[1]} currency="XOF" className="font-normal"/>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }

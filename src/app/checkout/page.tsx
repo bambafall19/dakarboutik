@@ -5,12 +5,14 @@ import { CheckoutForm } from "@/components/checkout-form";
 import { OrderSummary } from "@/components/order-summary";
 import { useCart } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 export default function CheckoutPage() {
   const { totalItems } = useCart();
   const router = useRouter();
+  const [deliveryMethod, setDeliveryMethod] = useState<'dakar' | 'hors-dakar'>('dakar');
+
 
   useEffect(() => {
     if (totalItems === 0) {
@@ -43,10 +45,10 @@ export default function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div>
           <h1 className="text-3xl font-bold mb-6">Finaliser ma commande</h1>
-          <CheckoutForm />
+          <CheckoutForm onDeliveryMethodChange={setDeliveryMethod} />
         </div>
         <div className="mt-0 lg:mt-16">
-          <OrderSummary />
+          <OrderSummary deliveryMethod={deliveryMethod} />
         </div>
       </div>
     </div>

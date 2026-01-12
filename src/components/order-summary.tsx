@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -6,18 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Price } from './price';
 
-// Placeholder shipping costs
 export const SHIPPING_COSTS = {
   dakar: 2000,
   "hors-dakar": 5000,
 };
 
-export function OrderSummary() {
+interface OrderSummaryProps {
+    deliveryMethod: 'dakar' | 'hors-dakar';
+}
+
+export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
   const { state, totalPrice } = useCart();
   
-  // This would come from the form state in a real app
-  const deliveryMethod = 'dakar' as keyof typeof SHIPPING_COSTS;
-  const shippingCost = SHIPPING_COSTS[deliveryMethod];
+  const shippingCost = SHIPPING_COSTS[deliveryMethod] || 0;
   const grandTotal = totalPrice + shippingCost;
 
   return (

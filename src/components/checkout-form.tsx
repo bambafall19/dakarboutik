@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore } from "@/firebase";
 import { addDoc, collection } from "firebase/firestore";
-import { SHIPPING_COSTS } from "./order-summary";
+import { SHIPPING_COSTS } from "@/components/order-summary";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
@@ -26,7 +27,11 @@ const formSchema = z.object({
   }),
 });
 
-export function CheckoutForm() {
+interface CheckoutFormProps {
+    onDeliveryMethodChange: (method: 'dakar' | 'hors-dakar') => void;
+}
+
+export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   const router = useRouter();
   const { state, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
@@ -44,6 +49,13 @@ export function CheckoutForm() {
     },
   });
 
+  const deliveryMethod = form.watch('deliveryMethod');
+
+  React.useEffect(() => {
+    onDeliveryMethodChange(deliveryMethod);
+  }, [deliveryMethod, onDeliveryMethodChange]);
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
       toast({
@@ -54,7 +66,7 @@ export function CheckoutForm() {
       return;
     }
 
-    const shippingCost = SHIPPING_COSTS[values.deliveryMethod];
+    const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
     const grandTotal = totalPrice + shippingCost;
     const orderId = `DKB-${Date.now()}`;
 
@@ -88,10 +100,11 @@ export function CheckoutForm() {
 
     } catch (error) {
       console.error("Error creating order:", error);
+      const firebaseError = error as { code?: string; message?: string };
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de passer la commande. Veuillez réessayer.",
+        title: "Erreur de commande",
+        description: firebaseError.message || "Impossible de passer la commande. Veuillez réessayer.",
       });
     }
   }

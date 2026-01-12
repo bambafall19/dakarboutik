@@ -34,12 +34,17 @@ export function HeroSection() {
                   priority
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col items-center justify-end text-center pb-12 md:pb-20">
                   <div className="px-4 md:px-6">
-                    <div className="max-w-2xl text-white">
+                    <div className="max-w-3xl text-white">
                       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">
                         {banner.title}
                       </h1>
+                      {banner.subtitle && (
+                        <p className="mt-4 max-w-xl mx-auto text-base md:text-lg text-white/90">
+                          {banner.subtitle}
+                        </p>
+                      )}
                        <Button asChild className="mt-6" size="lg">
                         <Link href={banner.linkUrl}>Découvrir</Link>
                       </Button>

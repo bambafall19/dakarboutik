@@ -42,6 +42,7 @@ export type SimpleCategory = Omit<Category, 'icon'>;
 export type Banner = {
   id: string;
   title: string;
+  subtitle?: string;
   image: ImagePlaceholder;
   linkUrl: string;
 };

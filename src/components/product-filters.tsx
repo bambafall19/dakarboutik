@@ -72,7 +72,7 @@ export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
   const renderCategoryFilters = (categories: Category[], level = 0) => {
     return categories.map(cat => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-
+  
       const categoryCheckbox = (
         <div className="flex items-center space-x-2 py-1">
           <Checkbox
@@ -83,7 +83,7 @@ export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
           <Label htmlFor={`cat-${cat.id}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
         </div>
       );
-
+  
       if (hasSubCategories) {
         return (
           <Accordion key={cat.id} type="single" collapsible className="w-full">
@@ -91,24 +91,24 @@ export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
               <div className="flex items-center">
                 <div className="flex items-center space-x-2 py-1 flex-1">
                   <Checkbox
-                    id={`cat-${cat.id}`}
+                    id={`cat-${cat.slug}`}
                     checked={selectedCategories.includes(cat.slug)}
                     onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
                   />
-                  <Label htmlFor={`cat-${cat.id}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
+                  <Label htmlFor={`cat-${cat.slug}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
                 </div>
                 <AccordionTrigger className="py-0 px-2 text-sm hover:no-underline font-normal [&[data-state=open]>svg]:text-primary" />
               </div>
-              <AccordionContent className="pb-0 pl-4 border-l ml-2">
+              <AccordionContent className="pb-0 pl-6 border-l ml-3">
                 {renderCategoryFilters(cat.subCategories, level + 1)}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         );
       }
-
+  
       return (
-        <div key={cat.id} style={{ paddingLeft: `${level * 1}rem` }}>
+        <div key={cat.id} style={{ paddingLeft: `${level * 0}rem` }}>
           {categoryCheckbox}
         </div>
       );
@@ -166,7 +166,7 @@ export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
                 max={1000000}
                 step={10000}
                 defaultValue={priceRange}
-                onValueChangeEnd={handlePriceChange}
+                onValueCommit={handlePriceChange}
               />
               <div className="flex justify-between mt-3 text-sm text-muted-foreground">
                 <Price price={priceRange[0]} currency="XOF" className="font-normal"/>

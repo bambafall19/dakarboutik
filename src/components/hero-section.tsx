@@ -13,8 +13,7 @@ export function HeroSection() {
   const sideBanner = banners.find(b => b.id === 'banner-sale') || banners[1];
 
   return (
-    <section className="w-full bg-background">
-      <div className="container py-6">
+    <section className="w-full bg-background mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Main Banner */}
           <div className="md:col-span-2">
@@ -77,7 +76,6 @@ export function HeroSection() {
             </Card>
           </div>
         </div>
-      </div>
     </section>
   );
 }

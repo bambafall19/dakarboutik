@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr-SN" className="h-full dark">
+    <html lang="fr-SN" className="h-full">
       <head>
         <title>Dakarboutik - Électronique de pointe à Dakar</title>
         <meta
@@ -31,10 +32,12 @@ export default function RootLayout({
         )}
       >
         <FirebaseClientProvider>
-          <CartProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster />
-          </CartProvider>
+          <SidebarProvider>
+            <CartProvider>
+              <AppShell>{children}</AppShell>
+              <Toaster />
+            </CartProvider>
+          </SidebarProvider>
         </FirebaseClientProvider>
       </body>
     </html>

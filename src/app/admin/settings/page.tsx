@@ -1,5 +1,5 @@
 
-import { getSiteSettings } from '@/lib/data';
+import { getSiteSettings } from '@/lib/data-firebase';
 import {
   Breadcrumb,
   BreadcrumbItem,

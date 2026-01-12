@@ -2,7 +2,7 @@
 import 'server-only';
 import { initializeFirebase } from '@/firebase/server';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
-import type { Banner, Product } from './types';
+import type { Banner, Product, SiteSettings } from './types';
 import { getBanners as getStaticBanners } from './data';
 
 // This is a server-side only function
@@ -55,5 +55,26 @@ export async function getBanners() {
     } catch (error) {
         console.error("Error fetching banners from Firestore, falling back to static data:", error);
         return getStaticBanners();
+    }
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+    const { firestore } = initializeFirebase();
+    const defaultSettings: SiteSettings = {
+        logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
+        announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
+    };
+
+    try {
+        const settingsRef = doc(firestore, 'settings', 'siteConfig');
+        const docSnap = await getDoc(settingsRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data() as SiteSettings;
+        }
+        return defaultSettings;
+    } catch (error) {
+        console.error("Error fetching site settings, falling back to defaults:", error);
+        return defaultSettings;
     }
 }

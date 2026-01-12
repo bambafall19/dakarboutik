@@ -24,7 +24,9 @@ import { doc, setDoc } from 'firebase/firestore';
 
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
-  announcementMessage: z.string().optional(),
+  announcementMessage1: z.string().optional(),
+  announcementMessage2: z.string().optional(),
+  announcementMessage3: z.string().optional(),
   whatsappNumber: z.string().min(9, 'Veuillez entrer un numéro valide.').optional().or(z.literal('')),
 });
 
@@ -41,7 +43,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       logoUrl: settings.logoUrl || '',
-      announcementMessage: settings.announcementMessage || '',
+      announcementMessage1: settings.announcementMessage1 || '',
+      announcementMessage2: settings.announcementMessage2 || '',
+      announcementMessage3: settings.announcementMessage3 || '',
       whatsappNumber: settings.whatsappNumber || '',
     },
   });
@@ -102,12 +106,38 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             />
             <FormField
               control={form.control}
-              name="announcementMessage"
+              name="announcementMessage1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message de la barre d'annonce</FormLabel>
+                  <FormLabel>Message d'annonce 1</FormLabel>
                   <FormControl>
                     <Input placeholder="Livraison gratuite pour les commandes de plus de..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="announcementMessage2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message d'annonce 2</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Message promotionnel..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="announcementMessage3"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message d'annonce 3</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nouveautés, offres spéciales..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

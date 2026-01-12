@@ -10,15 +10,9 @@ import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import type { SiteSettings } from '@/lib/types';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useCategories } from '@/hooks/use-site-data';
 import { MainNav } from './main-nav';
+import { useEffect, useMemo, useState } from 'react';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -28,14 +22,33 @@ interface HeaderProps {
 export function Header({ settings, loading }: HeaderProps) {
   const { totalItems } = useCart();
   const { categories } = useCategories();
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
-  const announcementMessage = settings?.announcementMessage;
+  const announcementMessages = useMemo(() => {
+    if (!settings) return [];
+    return [
+      settings.announcementMessage1,
+      settings.announcementMessage2,
+      settings.announcementMessage3,
+    ].filter((msg): msg is string => !!msg);
+  }, [settings]);
+
+  useEffect(() => {
+    if (announcementMessages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % announcementMessages.length);
+      }, 5000); // Change message every 5 seconds
+      return () => clearInterval(interval);
+    }
+  }, [announcementMessages.length]);
+
+  const currentAnnouncement = announcementMessages[currentMessageIndex];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      {announcementMessage && !loading && (
+      {currentAnnouncement && !loading && (
         <div className="bg-secondary text-secondary-foreground text-center text-xs p-2">
-          {announcementMessage}
+          {currentAnnouncement}
         </div>
       )}
       <div className="container flex h-16 items-center justify-between gap-6">

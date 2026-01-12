@@ -72,7 +72,7 @@ export function useSiteSettings() {
   
   const defaultSettings: SiteSettings = {
     logoUrl: null,
-    announcementMessage: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
+    announcementMessage1: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
     whatsappNumber: '221771234567', // Default placeholder number
   };
 

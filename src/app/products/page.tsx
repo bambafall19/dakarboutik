@@ -6,9 +6,8 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
-import { getSimpleCategories } from '@/lib/data';
+import { getCategories } from '@/lib/data';
 
-// This new component will wrap the logic and be suspended.
 function ProductsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -16,9 +15,7 @@ function ProductsPageContent() {
 
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
-  const simpleCategories = useMemo(() => getSimpleCategories(), []);
   
-  // Initialize state from URL search params
   const initialCategory = searchParams.get('category');
   const initialSortBy = searchParams.get('sortBy');
   const initialBrands = searchParams.get('brands');
@@ -34,14 +31,13 @@ function ProductsPageContent() {
      }
 
     return {
-      categories: initialCategory ? [initialCategory] : [],
+      categories: initialCategory ? initialCategory.split(',') : [],
       brands: initialBrands ? initialBrands.split(',') : [],
       priceRange: priceRange,
       sortBy: initialSortBy || 'newest',
     }
   });
 
-  // Effect to update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.categories.length > 0) {
@@ -57,7 +53,6 @@ function ProductsPageContent() {
       params.set('sortBy', filters.sortBy);
     }
     
-    // Using replace to avoid polluting browser history
     router.replace(`${pathname}?${params.toString()}`);
 
   }, [filters, pathname, router]);
@@ -71,13 +66,27 @@ function ProductsPageContent() {
     let filtered = [...products];
 
     if (filters.categories.length > 0) {
-      const parentCategories = filters.categories.filter(catSlug => categories.find(c => c.slug === catSlug && c.subCategories && c.subCategories.length > 0));
-      const childSlugs = parentCategories.flatMap(catSlug => {
-        const cat = categories.find(c => c.slug === catSlug);
-        return cat?.subCategories?.flatMap(sub => sub.subCategories ? sub.subCategories.map(s => s.slug) : sub.slug) ?? [];
+      const getAllChildSlugs = (slug: string): string[] => {
+        const cat = categories.find(c => c.slug === slug);
+        if (!cat || !cat.subCategories) return [];
+        let slugs: string[] = [];
+        cat.subCategories.forEach(sub => {
+          slugs.push(sub.slug);
+          if (sub.subCategories) {
+            sub.subCategories.forEach(s => slugs.push(s.slug));
+          }
+        });
+        return slugs;
+      };
+
+      const allFilterSlugs = new Set<string>();
+      filters.categories.forEach(slug => {
+        allFilterSlugs.add(slug);
+        const childSlugs = getAllChildSlugs(slug);
+        childSlugs.forEach(childSlug => allFilterSlugs.add(childSlug));
       });
-      const allFilterSlugs = [...filters.categories, ...childSlugs];
-      filtered = filtered.filter((p) => allFilterSlugs.includes(p.category));
+      
+      filtered = filtered.filter((p) => allFilterSlugs.has(p.category));
     }
     if (filters.brands.length > 0) {
       filtered = filtered.filter((p) => p.brand && filters.brands.includes(p.brand));
@@ -112,7 +121,7 @@ function ProductsPageContent() {
   return (
     <ProductListing
       products={filteredProducts}
-      categories={simpleCategories}
+      categories={categories}
       brands={brands}
       filters={filters}
       onFilterChange={setFilters}

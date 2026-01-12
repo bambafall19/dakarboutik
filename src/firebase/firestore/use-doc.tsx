@@ -41,6 +41,7 @@ export function useDoc<T extends { id: string }>(ref: DocumentReference | null) 
     );
 
     return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref?.path]);
 
   return { data, loading, error };

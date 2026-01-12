@@ -32,7 +32,7 @@ export function Footer({ logoUrl }: FooterProps) {
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <Logo imageUrl={logoUrl} />
+            <Logo />
             <p className="mt-4 text-sm text-muted-foreground">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>

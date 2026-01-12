@@ -7,7 +7,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -32,12 +31,10 @@ export default function RootLayout({
         )}
       >
         <FirebaseClientProvider>
-          <SidebarProvider>
-            <CartProvider>
-              <AppShell>{children}</AppShell>
-              <Toaster />
-            </CartProvider>
-          </SidebarProvider>
+          <CartProvider>
+            <AppShell>{children}</AppShell>
+            <Toaster />
+          </CartProvider>
         </FirebaseClientProvider>
       </body>
     </html>

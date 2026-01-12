@@ -52,11 +52,11 @@ export function ProductListing({ products, categories, brands, filters, onFilter
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
         <aside className="hidden md:block md:col-span-1">
           {filterNode}
         </aside>
-        <main className="md:col-span-3">
+        <main>
           <div className="flex justify-between items-center mb-4">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">{selectedCategoryName}</h1>
@@ -69,7 +69,7 @@ export function ProductListing({ products, categories, brands, filters, onFilter
                         Filtrer
                     </Button>
                 </SheetTrigger>
-                <SheetContent className="flex flex-col">
+                <SheetContent className="flex flex-col w-full sm:max-w-xs">
                     <SheetHeader>
                         <SheetTitle>Filtres</SheetTitle>
                     </SheetHeader>
@@ -80,13 +80,13 @@ export function ProductListing({ products, categories, brands, filters, onFilter
             </Sheet>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
           {products.length === 0 && (
-            <div className="text-center py-16">
+            <div className="text-center py-16 col-span-full">
               <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
               <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres.</p>
             </div>

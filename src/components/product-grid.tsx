@@ -13,9 +13,10 @@ interface ProductGridProps {
     text: string;
   };
   gridClass?: string;
+  icon?: React.ReactNode;
 }
 
-export function ProductGrid({ title, products, link, gridClass }: ProductGridProps) {
+export function ProductGrid({ title, products, link, gridClass, icon }: ProductGridProps) {
   if (products.length === 0) {
     return null;
   }
@@ -24,7 +25,10 @@ export function ProductGrid({ title, products, link, gridClass }: ProductGridPro
     <section>
       {title && (
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h2>
+          <div className="flex items-center gap-3">
+            {icon}
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h2>
+          </div>
           {link && (
             <Button variant="ghost" asChild>
               <Link href={link.href}>
@@ -35,7 +39,7 @@ export function ProductGrid({ title, products, link, gridClass }: ProductGridPro
           )}
         </div>
       )}
-      <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6", gridClass)}>
+      <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6", gridClass)}>
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

@@ -4,18 +4,19 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-} from '@/components/ui/sheet';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import type { SiteSettings } from '@/lib/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useCategories } from '@/hooks/use-site-data';
-import { Skeleton } from './ui/skeleton';
-import { SidebarTrigger } from './ui/sidebar';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -24,44 +25,59 @@ interface HeaderProps {
 
 export function Header({ settings, loading }: HeaderProps) {
   const { totalItems } = useCart();
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { categories } = useCategories();
 
   const logoUrl = settings?.logoUrl;
   const announcementMessage = settings?.announcementMessage;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      {loading ? (
-        <Skeleton className="h-8 w-full" />
-      ) : (
-        announcementMessage && (
-          <div className="bg-primary text-primary-foreground text-center text-sm p-2">
-            {announcementMessage}
-          </div>
-        )
+      {announcementMessage && !loading && (
+        <div className="bg-secondary text-secondary-foreground text-center text-xs p-2">
+          {announcementMessage}
+        </div>
       )}
       <div className="container flex h-16 items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <SidebarTrigger className="md:hidden"/>
-          <div className="hidden md:block">
-            <Logo imageUrl={logoUrl} />
-          </div>
+        <div className="flex items-center gap-6">
+          <Logo imageUrl={logoUrl} />
         </div>
 
-        <div className="flex-1">
-          <div className="relative w-full max-w-xl mx-auto">
-            <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher un produit, une marque ou une catégorie..."
-              className="pl-9 bg-muted border-none"
-            />
+        <div className="flex-1 hidden md:flex">
+          <div className="relative w-full max-w-xl mx-auto flex">
+            <Select defaultValue="all">
+              <SelectTrigger className="w-[150px] rounded-r-none border-r-0 focus:ring-0">
+                <SelectValue placeholder="Catégories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.slug}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="relative flex-1">
+              <Input
+                placeholder="Rechercher un produit, une marque..."
+                className="rounded-l-none focus-visible:ring-primary"
+              />
+              <Button
+                size="icon"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+              >
+                <Icons.search className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" size="icon">
-            <Icons.user className="h-5 w-5" />
-            <span className="sr-only">Mon compte</span>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/login">
+              <Icons.user className="h-5 w-5" />
+              <span className="sr-only">Mon compte</span>
+            </Link>
           </Button>
 
           <Sheet>

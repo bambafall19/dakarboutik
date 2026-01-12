@@ -50,11 +50,11 @@ export function MainNav({ items }: MainNavProps) {
                   </NavigationMenuContent>
                 </>
               ) : (
-                <Link href={`/products?category=${item.slug}`} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                  <Link href={`/products?category=${item.slug}`}>
                     {item.name}
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               )}
             </NavigationMenuItem>
           ))}

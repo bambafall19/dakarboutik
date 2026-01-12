@@ -32,7 +32,13 @@ export async function updateSiteSettings(settings: Partial<SiteSettings>) {
 
   try {
     const settingsRef = doc(firestore, 'settings', 'siteConfig');
-    await setDoc(settingsRef, settings, { merge: true });
+    // Ensure all possible fields from the form are included
+    const settingsToUpdate: Partial<SiteSettings> = {
+        logoUrl: settings.logoUrl,
+        announcementMessage: settings.announcementMessage,
+        whatsappNumber: settings.whatsappNumber,
+    };
+    await setDoc(settingsRef, settingsToUpdate, { merge: true });
 
     // Revalidate all paths to reflect the new logo
     revalidatePath('/', 'layout');

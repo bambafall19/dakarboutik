@@ -40,7 +40,7 @@ export function Header({ settings, loading }: HeaderProps) {
       )}
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-6">
-          <Logo />
+          <Logo imageUrl={settings?.logoUrl} />
           <div className="hidden lg:flex">
             <MainNav items={categories} />
           </div>

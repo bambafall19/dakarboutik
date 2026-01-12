@@ -26,8 +26,8 @@ export function ProductsContent() {
 
     setFilters(prevFilters => ({
       ...prevFilters,
-      categories: initialCategory ? [initialCategory] : [],
-      sortBy: initialSortBy || 'newest',
+      categories: initialCategory ? [initialCategory] : prevFilters.categories,
+      sortBy: initialSortBy || prevFilters.sortBy,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

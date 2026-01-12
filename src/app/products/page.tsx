@@ -1,84 +1,61 @@
 
 'use client';
 
-import { Suspense, useMemo, useState, useEffect } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
-import { useProducts, useCategories } from '@/hooks/use-site-data';
-import { getCategories } from '@/lib/data';
+import { useProducts } from '@/hooks/use-site-data';
+import { getCategories, getAllChildCategorySlugs, getLeafCategories } from '@/lib/data';
+import { useMemo } from 'react';
+import type { Product } from '@/lib/types';
+
 
 function ProductsPageContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
   const { products, loading: productsLoading } = useProducts();
-  const { categories, loading: categoriesLoading } = useCategories();
+  const allCategories = useMemo(() => getCategories(), []);
+  const filterableCategories = useMemo(() => getLeafCategories(), []);
+
+  const categoryFilter = searchParams.get('category')?.split(',') || [];
+  const brandFilter = searchParams.get('brands')?.split(',') || [];
+  const priceRangeFilter = searchParams.get('priceRange');
+  const sortBy = searchParams.get('sortBy') || 'newest';
+
+  const selectedPriceRange: [number, number] = useMemo(() => {
+    let range: [number, number] = [0, 1000000];
+    if (priceRangeFilter) {
+      const [min, max] = priceRangeFilter.split('-').map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        range = [min, max];
+      }
+    }
+    return range;
+  }, [priceRangeFilter]);
   
-  const [filters, setFilters] = useState(() => {
-     let priceRange: [number, number] = [0, 1000000];
-     const initialPriceRange = searchParams.get('priceRange');
-     if (initialPriceRange) {
-        const [min, max] = initialPriceRange.split('-').map(Number);
-        if (!isNaN(min) && !isNaN(max)) {
-          priceRange = [min, max];
-        }
-     }
-
-    return {
-      categories: searchParams.get('category')?.split(',') || [],
-      brands: searchParams.get('brands')?.split(',') || [],
-      priceRange: priceRange,
-      sortBy: searchParams.get('sortBy') || 'newest',
-    }
-  });
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (filters.categories.length > 0) {
-      params.set('category', filters.categories.join(','));
-    }
-    if (filters.brands.length > 0) {
-      params.set('brands', filters.brands.join(','));
-    }
-    if (filters.priceRange[0] !== 0 || filters.priceRange[1] !== 1000000) {
-      params.set('priceRange', `${filters.priceRange[0]}-${filters.priceRange[1]}`);
-    }
-    if (filters.sortBy !== 'newest') {
-      params.set('sortBy', filters.sortBy);
-    }
-    
-    // Using setTimeout to batch updates and avoid rapid-fire router changes
-    const timer = setTimeout(() => {
-      router.replace(`${pathname}?${params.toString()}`);
-    }, 300);
-
-    return () => clearTimeout(timer);
-
-  }, [filters, pathname, router]);
-
-  const brands = useMemo(() => {
-    const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
-    return [...new Set(allBrands)];
-  }, [products]);
-
   const filteredProducts = useMemo(() => {
-    let filtered = [...products];
+    let filtered: Product[] = [...products];
 
-    if (filters.categories.length > 0) {
-      filtered = filtered.filter((p) => filters.categories.includes(p.category));
+    // Category
+    if (categoryFilter.length > 0) {
+        const allSelectedSlugs = categoryFilter.flatMap(slug => getAllChildCategorySlugs(slug));
+        const uniqueSlugs = [...new Set(allSelectedSlugs)];
+        filtered = filtered.filter((p) => uniqueSlugs.includes(p.category));
     }
-    if (filters.brands.length > 0) {
-      filtered = filtered.filter((p) => p.brand && filters.brands.includes(p.brand));
+      
+    // Brand
+    if (brandFilter.length > 0) {
+      filtered = filtered.filter((p) => p.brand && brandFilter.includes(p.brand));
     }
 
+    // Price
     filtered = filtered.filter(p => {
       const price = p.salePrice ?? p.price;
-      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+      return price >= selectedPriceRange[0] && price <= selectedPriceRange[1];
     });
 
-    switch (filters.sortBy) {
+    // Sort
+    switch (sortBy) {
       case 'price_asc':
         filtered.sort((a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price));
         break;
@@ -92,20 +69,24 @@ function ProductsPageContent() {
     }
 
     return filtered;
-  }, [products, filters, categories]);
+  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy]);
+  
+  const brands = useMemo(() => {
+    const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
+    return [...new Set(allBrands)];
+  }, [products]);
 
 
-  if (productsLoading || categoriesLoading) {
+  if (productsLoading) {
     return <ProductListingSkeleton />;
   }
 
   return (
     <ProductListing
       products={filteredProducts}
-      categories={categories}
+      allCategories={allCategories}
+      filterableCategories={filterableCategories}
       brands={brands}
-      filters={filters}
-      onFilterChange={setFilters}
     />
   );
 }

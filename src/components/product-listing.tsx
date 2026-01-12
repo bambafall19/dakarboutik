@@ -1,41 +1,42 @@
 
 "use client";
 
-import type { Product, Category } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
+import type { Product, Category, SimpleCategory } from '@/lib/types';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Icons } from './icons';
-
-type Filters = {
-  categories: string[];
-  brands: string[];
-  priceRange: [number, number];
-  sortBy: string;
-};
+import { useMemo } from 'react';
+import { getCategoryBySlug } from '@/lib/data';
 
 interface ProductListingProps {
     products: Product[];
-    categories: Category[];
+    allCategories: Category[];
+    filterableCategories: SimpleCategory[];
     brands: string[];
-    filters: Filters;
-    onFilterChange: (filters: Filters) => void;
 }
 
-export function ProductListing({ products, categories, brands, filters, onFilterChange }: ProductListingProps) {
+export function ProductListing({ products, allCategories, filterableCategories, brands }: ProductListingProps) {
+  const searchParams = useSearchParams();
 
-  const selectedCategoryName = filters.categories.length === 1 
-    ? categories.find(c => c.slug === filters.categories[0])?.name || 'Produits'
-    : 'Tous les produits';
+  const selectedCategorySlugs = searchParams.get('category')?.split(',') || [];
   
+  const selectedCategoryName = useMemo(() => {
+    if (selectedCategorySlugs.length === 1) {
+      const cat = getCategoryBySlug(selectedCategorySlugs[0]);
+      return cat?.name || 'Produits';
+    }
+    return 'Tous les produits';
+  }, [selectedCategorySlugs]);
+
   const filterNode = (
     <ProductFilters
-        categories={categories}
+        allCategories={allCategories}
+        filterableCategories={filterableCategories}
         brands={brands}
-        filters={filters}
-        onFilterChange={onFilterChange}
     />
   );
 

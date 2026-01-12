@@ -19,8 +19,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import type { SiteSettings } from '@/lib/types';
-import { updateSiteSettings } from '@/lib/actions';
-import { Separator } from '../ui/separator';
+import { useFirestore } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
@@ -35,6 +35,7 @@ interface SettingsFormProps {
 export function SettingsForm({ settings }: SettingsFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,19 +47,30 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!firestore) {
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'La base de données est inaccessible. Veuillez réessayer.',
+      });
+      return;
+    }
+
     try {
-      await updateSiteSettings(values);
+      const settingsRef = doc(firestore, 'settings', 'siteConfig');
+      await setDoc(settingsRef, values, { merge: true });
+
       toast({
         title: 'Réglages mis à jour !',
         description: 'Vos modifications ont été enregistrées avec succès.',
       });
-      // The path is revalidated, no need to router.refresh()
+      router.refresh();
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erreur',
+        title: 'Erreur de permission',
         description:
-          'Une erreur est survenue lors de la mise à jour des réglages.' +
+          'Une erreur est survenue. Vérifiez vos permissions et réessayez.' +
           (error instanceof Error ? error.message : ''),
       });
     }

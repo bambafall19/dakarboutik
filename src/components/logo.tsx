@@ -27,7 +27,7 @@ export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
             Dakar<span className="text-primary">Boutik</span>
         </span>
       )}
-      <span className="sr-only text-xl font-bold tracking-tight text-foreground">
+      <span className="sr-only">
         DakarBoutik
       </span>
     </Link>

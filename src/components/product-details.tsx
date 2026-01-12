@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useCart } from '@/hooks/use-cart';
-import type { Product } from '@/lib/types';
+import type { Product, SimpleCategory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -14,30 +14,82 @@ import { Price } from '@/components/price';
 import { Icons } from '@/components/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductGrid } from './product-grid';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
-export function ProductDetails({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
+interface ProductDetailsProps {
+  product: Product;
+  relatedProducts: Product[];
+  categoryPath: SimpleCategory[];
+}
+
+export function ProductDetails({ product, relatedProducts, categoryPath }: ProductDetailsProps) {
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const { addToCart } = useCart();
+  
+  useEffect(() => {
+    const initialVariants: Record<string, string> = {};
+    product.variants?.forEach(variant => {
+      if (variant.options.length > 0) {
+        initialVariants[variant.name] = variant.options[0].value;
+      }
+    });
+    setSelectedVariants(initialVariants);
+  }, [product.variants]);
+
+  const currentStock = useMemo(() => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.stock;
+    }
+    
+    // This logic assumes a simple variant structure. For complex variants (e.g. color AND size),
+    // a more sophisticated way to find the stock for the specific combination is needed.
+    // For now, we find the stock for the first selected variant option we can.
+    for (const variant of product.variants) {
+      const selectedOptionValue = selectedVariants[variant.name];
+      if (selectedOptionValue) {
+        const option = variant.options.find(opt => opt.value === selectedOptionValue);
+        if (option) {
+          return option.stock;
+        }
+      }
+    }
+    
+    return product.stock;
+  }, [product, selectedVariants]);
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    const variantInfo = Object.keys(selectedVariants).length > 0 
+      ? Object.entries(selectedVariants).map(([name, value]) => ({ name, value }))
+      : undefined;
+      
+    addToCart(product, quantity, variantInfo);
   };
-
-  const stockStatus = product.stock > 10 ? 'En stock' : product.stock > 0 ? 'Stock limité' : 'Épuisé';
-  const stockBadgeVariant = product.stock > 10 ? 'default' : product.stock > 0 ? 'secondary' : 'destructive';
+  
+  const stockStatus = currentStock > 10 ? 'En stock' : currentStock > 0 ? 'Stock limité' : 'Épuisé';
+  const stockBadgeVariant = currentStock > 10 ? 'default' : currentStock > 0 ? 'secondary' : 'destructive';
 
   return (
-    <div className="py-8">
+    <div className="container py-8">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href="/">Accueil</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/products">Produits</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
+           {categoryPath.map((cat) => (
+            <React.Fragment key={cat.id}>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href={`/products?category=${cat.slug}`}>{cat.name}</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+            </React.Fragment>
+          ))}
           <BreadcrumbItem>
             <BreadcrumbPage>{product.title}</BreadcrumbPage>
           </BreadcrumbItem>
@@ -49,7 +101,7 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
             <CarouselContent>
               {product.images?.map((img) => (
                 <CarouselItem key={img.id}>
-                  <div className="aspect-square relative rounded-lg border overflow-hidden">
+                  <div className="aspect-square relative rounded-lg border overflow-hidden bg-secondary/30">
                     <Image
                       src={img.imageUrl}
                       alt={product.title}
@@ -79,7 +131,24 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
 
           <Separator className="my-6" />
 
-          <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+          {product.variants?.map(variant => (
+            <div key={variant.name} className="mb-4">
+              <h3 className="font-semibold text-sm mb-2">{variant.name}</h3>
+              <div className="flex flex-wrap gap-2">
+                {variant.options.map(option => (
+                  <Button
+                    key={option.value}
+                    variant={selectedVariants[variant.name] === option.value ? "default" : "outline"}
+                    onClick={() => setSelectedVariants(prev => ({...prev, [variant.name]: option.value}))}
+                  >
+                    {option.value}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <p className="text-muted-foreground leading-relaxed mt-4">{product.description}</p>
           
           <div className="mt-6 flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -91,24 +160,26 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
                 <Icons.plus className="h-4 w-4" />
               </Button>
             </div>
-            <Button size="lg" onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1">
+            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
               <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
             </Button>
           </div>
 
-          <div className="mt-8">
-            <h3 className="font-semibold text-lg mb-2">Caractéristiques</h3>
-            <Table>
-              <TableBody>
-                {product.specs && Object.entries(product.specs).map(([key, value]) => (
-                  <TableRow key={key}>
-                    <TableCell className="font-medium text-muted-foreground">{key}</TableCell>
-                    <TableCell>{value}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          {Object.keys(product.specs).length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-semibold text-lg mb-2">Caractéristiques</h3>
+              <Table>
+                <TableBody>
+                  {Object.entries(product.specs).map(([key, value]) => (
+                    <TableRow key={key}>
+                      <TableCell className="font-medium text-muted-foreground">{key}</TableCell>
+                      <TableCell>{value}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </div>
       </div>
       

@@ -1,15 +1,27 @@
+
 "use client";
 
-import type { CartItem, Product } from "@/lib/types";
+import type { CartItem, Product, SelectedVariant } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import React, { createContext, useReducer, useEffect, useCallback } from "react";
+
+// Function to generate a unique ID for a cart item based on product and variants
+const generateCartItemId = (productId: string, variants?: SelectedVariant[]): string => {
+  if (!variants || variants.length === 0) {
+    return productId;
+  }
+  // Sort variants by name to ensure consistent ID generation
+  const sortedVariants = [...variants].sort((a, b) => a.name.localeCompare(b.name));
+  return `${productId}-${sortedVariants.map(v => `${v.name}:${v.value}`).join('-')}`;
+};
+
 
 type CartState = {
   items: CartItem[];
 };
 
 type CartAction =
-  | { type: "ADD_ITEM"; payload: { product: Product; quantity: number } }
+  | { type: "ADD_ITEM"; payload: { product: Product; quantity: number, selectedVariants?: SelectedVariant[] } }
   | { type: "REMOVE_ITEM"; payload: { itemId: string } }
   | { type: "UPDATE_QUANTITY"; payload: { itemId: string; quantity: number } }
   | { type: "CLEAR_CART" }
@@ -22,9 +34,10 @@ const initialState: CartState = {
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case "ADD_ITEM": {
-      const { product, quantity } = action.payload;
+      const { product, quantity, selectedVariants } = action.payload;
+      const cartItemId = generateCartItemId(product.id, selectedVariants);
       const existingItemIndex = state.items.findIndex(
-        (item) => item.product.id === product.id
+        (item) => item.id === cartItemId
       );
 
       if (existingItemIndex > -1) {
@@ -33,9 +46,10 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         return { ...state, items: updatedItems };
       } else {
         const newItem: CartItem = {
-          id: product.id, // simplified ID
+          id: cartItemId,
           product,
           quantity,
+          selectedVariants,
         };
         return { ...state, items: [...state.items, newItem] };
       }
@@ -69,7 +83,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 type CartContextType = {
   state: CartState;
-  addToCart: (product: Product, quantity: number) => void;
+  addToCart: (product: Product, quantity: number, selectedVariants?: SelectedVariant[]) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -102,11 +116,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [state]);
 
-  const addToCart = useCallback((product: Product, quantity: number) => {
-    dispatch({ type: "ADD_ITEM", payload: { product, quantity } });
+  const addToCart = useCallback((product: Product, quantity: number, selectedVariants?: SelectedVariant[]) => {
+    dispatch({ type: "ADD_ITEM", payload: { product, quantity, selectedVariants } });
+    const variantText = selectedVariants?.map(v => v.value).join(', ') || '';
     toast({
       title: "Ajouté au panier",
-      description: `${quantity} x ${product.title}`,
+      description: `${quantity} x ${product.title} ${variantText ? `(${variantText})` : ''}`,
     });
   }, [toast]);
 

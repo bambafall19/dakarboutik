@@ -1,5 +1,16 @@
 
+
 import type { ImagePlaceholder } from './placeholder-images';
+
+export type ProductVariantOption = {
+  value: string;
+  stock: number;
+};
+
+export type ProductVariant = {
+  name: string;
+  options: ProductVariantOption[];
+};
 
 export type Product = {
   id: string;
@@ -13,7 +24,7 @@ export type Product = {
   category: string; // slug of category
   specs: Record<string, string>;
   stock: number;
-  variants: { name: string; options: { value: string; stock: number }[] }[];
+  variants: ProductVariant[];
   status: 'active' | 'draft';
   createdAt: string; // ISO date string
   isBestseller?: boolean;
@@ -35,13 +46,10 @@ export type Category = {
   name: string;
   slug: string;
   icon?: React.ComponentType<{ className?: string }>;
-  subCategories?: (SubCategory & { subCategories?: SubCategory[] })[];
+  subCategories?: Category[];
 };
 
-export type SimpleCategory = Omit<Category, 'icon' | 'subCategories'> & {
-  subCategories?: SimpleCategory[];
-};
-
+export type SimpleCategory = Omit<Category, 'icon' | 'subCategories'>;
 
 export type Banner = {
   id: string;
@@ -51,12 +59,18 @@ export type Banner = {
   linkUrl: string;
 };
 
+export type SelectedVariant = {
+  name: string;
+  value: string;
+};
+
 export type CartItem = {
-  id: string; // A unique ID for the cart item (e.g., product.id + variant.value)
+  id: string; // A unique ID for the cart item (e.g., product.id + variant info)
   product: Product;
   quantity: number;
-  variant?: { name: string; value: string; };
+  selectedVariants?: SelectedVariant[];
 };
+
 
 export type SiteSettings = {
   logoUrl?: string;

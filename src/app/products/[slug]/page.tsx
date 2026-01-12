@@ -1,34 +1,36 @@
 
-'use client';
-
-import { useProductsBySlug } from '@/hooks/use-site-data';
-import { useProducts } from '@/hooks/use-site-data';
+import { getProductBySlug, getCategoryPath } from '@/lib/data';
+import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
-import { notFound, useParams } from 'next/navigation';
+import { getProducts } from '@/lib/data-firebase';
 
-export default function ProductDetailPage() {
-  const params = useParams();
-  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+type ProductDetailPageProps = {
+  params: { slug: string };
+};
 
-  const { product, loading: productLoading, error } = useProductsBySlug(slug);
-  const { products: allProducts, loading: allProductsLoading } = useProducts();
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const { slug } = params;
 
-  if (productLoading || allProductsLoading) {
-    return <ProductDetailsSkeleton />;
-  }
+  const product = await getProductBySlug(slug);
 
-  if (error || !product) {
+  if (!product) {
     notFound();
   }
+  
+  const allProducts = await getProducts();
 
   const relatedProducts = allProducts
-    .filter(
-      (p) => p.category === product.category && p.id !== product.id
-    )
-    .slice(0, 4);
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 5);
+  
+  const categoryPath = getCategoryPath(product.category);
 
   return (
-    <ProductDetails product={product} relatedProducts={relatedProducts} />
+    <ProductDetails 
+      product={product} 
+      relatedProducts={relatedProducts}
+      categoryPath={categoryPath}
+    />
   );
 }

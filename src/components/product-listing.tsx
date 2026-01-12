@@ -1,70 +1,30 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import type { Product, SimpleCategory, Category } from '@/lib/types';
+import type { Product, Category } from '@/lib/types';
 import { ProductFilters } from '@/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
-import { getCategories } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Icons } from './icons';
+
+type Filters = {
+  categories: string[];
+  brands: string[];
+  priceRange: [number, number];
+  sortBy: string;
+};
 
 interface ProductListingProps {
     products: Product[];
-    categories: SimpleCategory[];
+    categories: Category[];
     brands: string[];
-    initialCategory?: string;
+    filters: Filters;
+    onFilterChange: (filters: Filters) => void;
 }
 
-export function ProductListing({ products: allProducts, categories: simpleCategories, brands, initialCategory }: ProductListingProps) {
-  const [filters, setFilters] = useState({
-    categories: initialCategory ? [initialCategory] : [],
-    brands: [],
-    priceRange: [0, 1000000] as [number, number],
-    sortBy: 'newest',
-  });
-
-  const categories = useMemo(() => getCategories(), []);
-
-  const filteredProducts = useMemo(() => {
-    let products: Product[] = allProducts;
-    
-    const currentCategories = filters.categories;
-
-    if (currentCategories.length > 0) {
-        const allCategorySlugs = currentCategories.flatMap(catSlug => {
-            const selectedCategory = categories.find(c => c.slug === catSlug);
-            return [catSlug, ...(selectedCategory?.subCategories?.map(sc => sc.slug) || [])];
-        });
-        products = products.filter(p => allCategorySlugs.includes(p.category));
-    }
-    
-    if (filters.brands.length > 0) {
-      products = products.filter(p => p.brand && filters.brands.includes(p.brand));
-    }
-    
-    products = products.filter(p => {
-      const price = p.salePrice ?? p.price;
-      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
-    });
-
-    switch (filters.sortBy) {
-      case 'price_asc':
-        products.sort((a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price));
-        break;
-      case 'price_desc':
-        products.sort((a, b) => (b.salePrice ?? b.price) - (a.salePrice ?? a.price));
-        break;
-      case 'newest':
-      default:
-        products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-    }
-
-    return products;
-  }, [allProducts, filters, categories]);
+export function ProductListing({ products, categories, brands, filters, onFilterChange }: ProductListingProps) {
 
   const selectedCategoryName = filters.categories.length === 1 
     ? categories.find(c => c.slug === filters.categories[0])?.name || 'Produits'
@@ -75,7 +35,7 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
         categories={categories}
         brands={brands}
         filters={filters}
-        onFilterChange={setFilters}
+        onFilterChange={onFilterChange}
     />
   );
 
@@ -100,7 +60,7 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
           <div className="flex justify-between items-center mb-4">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">{selectedCategoryName}</h1>
-                <p className="text-muted-foreground mt-1">{filteredProducts.length} résultat(s)</p>
+                <p className="text-muted-foreground mt-1">{products.length} résultat(s)</p>
             </div>
             <Sheet>
                 <SheetTrigger asChild>
@@ -121,11 +81,11 @@ export function ProductListing({ products: allProducts, categories: simpleCatego
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map(product => (
+            {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          {filteredProducts.length === 0 && (
+          {products.length === 0 && (
             <div className="text-center py-16">
               <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
               <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres.</p>

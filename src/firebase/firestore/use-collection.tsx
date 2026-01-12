@@ -1,20 +1,13 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { onSnapshot, type Query } from 'firebase/firestore';
 
 export function useCollection<T extends { id: string }>(q: Query | null) {
   const [data, setData] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  const stableQueryKey = useMemo(() => {
-    if (!q) return null;
-    // Using toString() on the query object provides a stable representation
-    // of the query, including its path and filters, safe for dependency arrays.
-    return q.toString();
-  }, [q]);
 
   useEffect(() => {
     if (q === null) {
@@ -46,8 +39,7 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
     );
 
     return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stableQueryKey]);
+  }, [q?.toString()]); // Using q.toString() directly in the dependency array
 
   return { data, loading, error };
 }

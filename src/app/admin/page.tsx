@@ -145,7 +145,7 @@ export default function AdminPage() {
           </CardContent>
           <CardContent>
             <Button asChild className="w-full" variant="secondary">
-              <Link href="#">
+              <Link href="/admin/banners">
                 <ImageIcon className="mr-2 h-4 w-4" />
                 Gérer les bannières
               </Link>

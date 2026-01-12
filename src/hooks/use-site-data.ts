@@ -1,10 +1,12 @@
+
 'use client';
 
 import { useMemo } from 'react';
 import { collection, query, where, doc } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
-import type { Product, SiteSettings, Category } from '@/lib/types';
+import type { Product, SiteSettings, Category, Banner } from '@/lib/types';
 import { getCategories as getStaticCategories } from '@/lib/data';
+import { getBanners as getStaticBanners } from '@/lib/data';
 
 // --- Products ---
 export function useProducts() {
@@ -50,6 +52,25 @@ export function useSiteSettings() {
   };
 
   return { settings: settings || defaultSettings, loading, error };
+}
+
+// --- Banners ---
+export function useBanners() {
+  const firestore = useFirestore();
+  const bannersQuery = useMemo(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'banners');
+  }, [firestore]);
+
+  const { data: banners, loading, error } = useCollection<Banner>(bannersQuery);
+
+  const defaultBanners = useMemo(() => getStaticBanners(), []);
+
+  return {
+    banners: banners && banners.length > 0 ? banners : defaultBanners,
+    loading,
+    error,
+  };
 }
 
 

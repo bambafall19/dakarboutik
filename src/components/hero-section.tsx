@@ -1,13 +1,37 @@
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { getBanners } from '@/lib/data';
+import { useBanners } from '@/hooks/use-site-data';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 
 export function HeroSection() {
-  const banners = getBanners();
-  const mainBanner = banners[0];
+  const { banners, loading } = useBanners();
+  const mainBanner = banners.find(b => b.id === 'banner1');
+
+  if (loading) {
+    return (
+      <section className="w-full bg-secondary/50">
+        <div className="container py-8 md:py-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+                <div className="space-y-4 text-center md:text-left">
+                    <Skeleton className="h-12 w-3/4 mx-auto md:mx-0" />
+                    <Skeleton className="h-6 w-full max-w-md mx-auto md:mx-0" />
+                    <Skeleton className="h-12 w-48 mt-6 mx-auto md:mx-0" />
+                </div>
+                <Skeleton className="aspect-square w-full rounded-lg" />
+            </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (!mainBanner) {
+    return null; // Or a placeholder
+  }
 
   return (
     <section className="w-full bg-secondary/50">

@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
+import { useFirestore } from "@/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { SHIPPING_COSTS } from "../order-summary";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
@@ -25,8 +28,9 @@ const formSchema = z.object({
 
 export function CheckoutForm() {
   const router = useRouter();
-  const { clearCart } = useCart();
+  const { state, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,29 +39,61 @@ export function CheckoutForm() {
       email: "",
       phone: "",
       address: "",
-      city: "",
+      city: "Dakar",
       deliveryMethod: "dakar",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted with values:", values);
-    
-    // This is a placeholder for the actual order submission logic.
-    // In a real app, this would call a server action or API endpoint
-    // to create the order in Firestore and initiate payment.
-    
-    toast({
-      title: "Commande en cours de traitement...",
-      description: "Vous serez redirigé vers la page de confirmation.",
-    });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!firestore) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Connexion à la base de données impossible.",
+      });
+      return;
+    }
 
-    // Simulate backend processing and redirection
-    setTimeout(() => {
+    const shippingCost = SHIPPING_COSTS[values.deliveryMethod];
+    const grandTotal = totalPrice + shippingCost;
+    const orderId = `DKB-${Date.now()}`;
+
+    try {
+      const ordersCollection = collection(firestore, 'orders');
+      await addDoc(ordersCollection, {
+        orderId,
+        customerInfo: {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          address: values.address,
+          city: values.city,
+        },
+        items: state.items,
+        totalPrice: totalPrice,
+        shippingCost: shippingCost,
+        grandTotal: grandTotal,
+        status: 'pending',
+        deliveryMethod: values.deliveryMethod,
+        createdAt: new Date().toISOString(),
+      });
+      
+      toast({
+        title: "Commande passée !",
+        description: "Vous serez redirigé vers la page de confirmation.",
+      });
+
       clearCart();
-      const orderId = `DKB-${Date.now()}`;
       router.push(`/order-confirmation?orderId=${orderId}`);
-    }, 2000);
+
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de passer la commande. Veuillez réessayer.",
+      });
+    }
   }
 
   return (
@@ -177,8 +213,8 @@ export function CheckoutForm() {
             />
         </div>
 
-        <Button type="submit" size="lg" className="w-full">
-          Procéder au paiement
+        <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? 'Traitement...' : 'Procéder au paiement'}
         </Button>
       </form>
     </Form>

@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Price } from './price';
 
 // Placeholder shipping costs
-const SHIPPING_COSTS = {
+export const SHIPPING_COSTS = {
   dakar: 2000,
   "hors-dakar": 5000,
 };

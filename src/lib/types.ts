@@ -83,3 +83,26 @@ export type SiteSettings = {
   logoUrl?: string;
   announcementMessage?: string;
 };
+
+export type CustomerInfo = {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+};
+
+export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+
+export type Order = {
+    id: string;
+    orderId: string; // User-friendly ID like DKB-12345
+    customerInfo: CustomerInfo;
+    items: CartItem[];
+    totalPrice: number;
+    shippingCost: number;
+    grandTotal: number;
+    status: OrderStatus;
+    createdAt: string; // ISO date string
+    deliveryMethod: 'dakar' | 'hors-dakar';
+};

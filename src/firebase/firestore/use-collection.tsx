@@ -39,7 +39,8 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
     );
 
     return () => unsubscribe();
-  }, [q?.toString()]); // Using q.toString() directly in the dependency array
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(q)]);
 
   return { data, loading, error };
 }

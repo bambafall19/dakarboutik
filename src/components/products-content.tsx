@@ -1,36 +1,29 @@
+
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import type { ReadonlyURLSearchParams } from 'next/navigation';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 
-export function ProductsContent() {
-  const searchParams = useSearchParams();
+interface ProductsContentProps {
+  searchParams: ReadonlyURLSearchParams;
+}
 
+export function ProductsContent({ searchParams }: ProductsContentProps) {
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
 
+  const initialCategory = searchParams.get('category');
+  const initialSortBy = searchParams.get('sortBy');
+
   const [filters, setFilters] = useState({
-    categories: [] as string[],
+    categories: initialCategory ? [initialCategory] : [],
     brands: [] as string[],
     priceRange: [0, 1000000] as [number, number],
-    sortBy: 'newest',
+    sortBy: initialSortBy || 'newest',
   });
-  
-  // Initialize filters from URL search params once on component mount
-  useEffect(() => {
-    const initialCategory = searchParams.get('category');
-    const initialSortBy = searchParams.get('sortBy');
-
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      categories: initialCategory ? [initialCategory] : prevFilters.categories,
-      sortBy: initialSortBy || prevFilters.sortBy,
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const brands = useMemo(() => {
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];

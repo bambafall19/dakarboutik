@@ -26,7 +26,7 @@ const engagements = [
 
 export function Engagements() {
   return (
-    <section className="bg-secondary rounded-lg py-12">
+    <section className="py-12">
       <div className="container">
         <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">Pourquoi nous choisir ?</h2>
@@ -39,7 +39,7 @@ export function Engagements() {
                 <engagement.icon className="h-8 w-8 text-primary" />
               </div>
               <h3 className="font-bold text-lg">{engagement.title}</h3>
-              <p className="text-muted-foreground mt-1 text-sm">{engagement.description}</p>
+              <p className="text-foreground mt-1 text-sm">{engagement.description}</p>
             </div>
           ))}
         </div>

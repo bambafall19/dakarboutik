@@ -25,9 +25,6 @@ import {
   PlusCircle,
   User,
   Zap,
-  Shirt,
-  Watch,
-  Camera,
 } from 'lucide-react';
 
 export const Icons = {
@@ -51,21 +48,12 @@ export const Icons = {
   filter: Filter,
   user: User,
   flash: Zap,
-  shirt: Shirt,
-  watch: Watch,
-  camera: Camera,
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
-  'informatique': Laptop,
-  'accessoires-informatiques': Plug,
+  'ordinateurs': Laptop,
+  'supports-stockage': HardDrive,
   'telephones-tablettes': Smartphone,
-  't-shirt': Shirt,
-  'jacket': Shirt,
-  'shirt': Shirt,
-  'jeans': Shirt,
-  'bag': ShoppingBag,
-  'shoes': Speaker, // Placeholder, find better icon
-  'watches': Watch,
-  'cap': Speaker, // Placeholder
+  'accessoires': Plug,
+  'audio': Headphones,
 };

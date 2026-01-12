@@ -41,6 +41,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import type { Order, OrderStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { OrderDetailDialog } from './order-detail-dialog';
 
 const statusColors: Record<OrderStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -98,6 +99,8 @@ function StatusSelector({ order }: { order: Order }) {
 }
 
 export function OrderList({ orders }: { orders: Order[] }) {
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+  
   return (
     <>
       <Card>
@@ -158,7 +161,9 @@ export function OrderList({ orders }: { orders: Order[] }) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Voir les détails</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSelectedOrder(order)}>
+                          Voir les détails
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -168,6 +173,17 @@ export function OrderList({ orders }: { orders: Order[] }) {
           </Table>
         </CardContent>
       </Card>
+      {selectedOrder && (
+        <OrderDetailDialog 
+          order={selectedOrder} 
+          open={!!selectedOrder}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setSelectedOrder(null);
+            }
+          }}
+        />
+      )}
     </>
   );
 }

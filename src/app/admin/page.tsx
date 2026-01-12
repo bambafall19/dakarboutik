@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ProductList } from '@/components/admin/product-list';

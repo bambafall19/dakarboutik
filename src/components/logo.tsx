@@ -24,11 +24,11 @@ export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
         />
       ) : (
          <span className="text-xl font-bold tracking-tight text-foreground">
-            Baobab<span className="text-primary">.</span>
+            Dakar<span className="text-primary">Boutik</span>
         </span>
       )}
       <span className="sr-only text-xl font-bold tracking-tight text-foreground">
-        Baobab High Tech
+        DakarBoutik
       </span>
     </Link>
   );

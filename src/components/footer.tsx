@@ -52,7 +52,7 @@ export function Footer({ logoUrl }: FooterProps) {
         </div>
         <Separator className="my-8 bg-border/50" />
         <div className="text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Baobab High Tech. Une entreprise fièrement sénégalaise.
+          © {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.
         </div>
       </div>
     </footer>

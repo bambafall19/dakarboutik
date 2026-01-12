@@ -1,7 +1,7 @@
-import { getProductBySlug, getCategoryPath } from '@/lib/data';
+import { getCategoryPath } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
-import { getProducts } from '@/lib/data-firebase';
+import { getProducts, getProductBySlug } from '@/lib/data-firebase';
 import { Suspense } from 'react';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 import React from 'react';

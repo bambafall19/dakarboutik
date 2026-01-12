@@ -29,7 +29,8 @@ export function ProductsContent() {
       categories: initialCategory ? [initialCategory] : [],
       sortBy: initialSortBy || 'newest',
     }));
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const brands = useMemo(() => {
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];

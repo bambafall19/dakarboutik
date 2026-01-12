@@ -29,6 +29,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -51,6 +52,7 @@ import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export function ProductList({ products }: { products: Product[] }) {
   const firestore = useFirestore();
@@ -100,6 +102,25 @@ export function ProductList({ products }: { products: Product[] }) {
     }
   };
 
+  const handleMarkAsSold = async (product: Product) => {
+    if (!firestore) return;
+    const productRef = doc(firestore, 'products', product.id);
+
+    try {
+      await updateDoc(productRef, { stock: 0 });
+      toast({
+        title: 'Produit marqué comme vendu',
+        description: `Le stock de "${product.title}" a été mis à 0.`,
+      });
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de marquer le produit comme vendu.',
+      });
+    }
+  };
+
 
   return (
     <>
@@ -135,8 +156,8 @@ export function ProductList({ products }: { products: Product[] }) {
                 </TableHead>
                 <TableHead>Nom</TableHead>
                 <TableHead>Statut</TableHead>
-                <TableHead>Prix</TableHead>
                 <TableHead className="hidden md:table-cell">Stock</TableHead>
+                <TableHead>Prix</TableHead>
                 <TableHead className="hidden md:table-cell">
                   Créé le
                 </TableHead>
@@ -166,11 +187,24 @@ export function ProductList({ products }: { products: Product[] }) {
                       aria-label="product status"
                     />
                   </TableCell>
+                   <TableCell className="hidden md:table-cell">
+                    <Badge
+                      className={cn({
+                        "bg-green-100 text-green-800 border-green-200 hover:bg-green-100": product.stock > 5,
+                        "bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100": product.stock > 0 && product.stock <= 5,
+                        "bg-red-100 text-red-800 border-red-200 hover:bg-red-100": product.stock === 0,
+                      })}
+                      variant="outline"
+                    >
+                      {product.stock > 5
+                        ? 'En stock'
+                        : product.stock > 0
+                        ? `Stock faible (${product.stock})`
+                        : 'Vendu'}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {product.stock} en stock
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {new Date(product.createdAt).toLocaleDateString()}
@@ -186,6 +220,10 @@ export function ProductList({ products }: { products: Product[] }) {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleMarkAsSold(product)}>
+                          Marquer comme vendu
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                         className="text-red-600 focus:text-red-600 focus:bg-red-50"
                         onClick={() => setProductToDelete(product)}

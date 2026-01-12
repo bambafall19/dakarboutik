@@ -56,7 +56,7 @@ export function Testimonials() {
               <div className="p-1">
                 <Card className="bg-secondary">
                   <CardContent className="flex flex-col items-center justify-center p-6 text-center space-y-4">
-                    <p className="text-muted-foreground italic">"{testimonial.text}"</p>
+                    <p className="text-foreground italic">"{testimonial.text}"</p>
                     <div className="flex items-center gap-4 pt-4">
                         <Avatar>
                             <AvatarImage src={testimonial.avatar} alt={testimonial.name} />

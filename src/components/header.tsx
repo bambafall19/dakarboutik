@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -79,7 +78,7 @@ export function Header({ settings, loading }: HeaderProps) {
   );
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background">
+    <header className="sticky top-0 z-40 w-full border-b bg-card">
       {loading ? (
         <Skeleton className="h-8 w-full" />
       ) : (
@@ -92,7 +91,7 @@ export function Header({ settings, loading }: HeaderProps) {
       <div className="container">
         <div className="flex h-20 items-center justify-between gap-6">
           {/* Mobile Menu & Logo */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -109,10 +108,17 @@ export function Header({ settings, loading }: HeaderProps) {
                   </nav>
               </SheetContent>
             </Sheet>
+            <Button variant="ghost" size="icon">
+                <Icons.search className="h-5 w-5" />
+                <span className="sr-only">Rechercher</span>
+            </Button>
           </div>
           
-          <div className="hidden md:flex">
+          <div className="hidden md:flex items-center gap-8">
              <Logo imageUrl={logoUrl} />
+             <nav className="flex items-center gap-6">
+              {categoriesLoading ? <NavLinksSkeleton /> : <NavLinks />}
+            </nav>
           </div>
 
           {/* Search Bar */}
@@ -120,18 +126,14 @@ export function Header({ settings, loading }: HeaderProps) {
             <div className="relative w-full max-w-md">
                 <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                placeholder="Rechercher un produit ou une marque..."
+                placeholder="Rechercher un produit..."
                 className="pl-9 bg-muted border-none"
                 />
             </div>
           </div>
           
           {/* Right section: Actions */}
-          <div className="flex items-center justify-end gap-4">
-            <Button variant="ghost" size="icon" className="md:hidden">
-                  <Icons.search className="h-5 w-5" />
-                  <span className="sr-only">Rechercher</span>
-            </Button>
+          <div className="flex items-center justify-end gap-2">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
@@ -148,19 +150,11 @@ export function Header({ settings, loading }: HeaderProps) {
                 <CartDrawer />
               </SheetContent>
             </Sheet>
-             <Button variant="outline" className="hidden md:flex">
-                  <Icons.user className="mr-2 h-4 w-4" />
-                  Connexion
+             <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <Icons.user className="h-5 w-5" />
+                  <span className="sr-only">Connexion</span>
              </Button>
           </div>
-        </div>
-      </div>
-      <Separator />
-      <div className="hidden md:block">
-        <div className="container">
-           <nav className="flex h-12 items-center justify-center gap-8">
-            {categoriesLoading ? <NavLinksSkeleton /> : <NavLinks />}
-          </nav>
         </div>
       </div>
     </header>

@@ -6,7 +6,7 @@ import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 
 export default function ProductsPage() {
   return (
-    <div className="container">
+    <div className="container py-8">
       <Suspense fallback={<ProductListingSkeleton />}>
         <ProductsContent />
       </Suspense>

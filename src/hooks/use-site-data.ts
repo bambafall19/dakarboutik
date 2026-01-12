@@ -71,8 +71,8 @@ export function useSiteSettings() {
   const { data: settings, loading, error } = useDoc<SiteSettings>(settingsRef);
   
   const defaultSettings: SiteSettings = {
-    logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
-    announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
+    logoUrl: null,
+    announcementMessage: 'Paiement à la livraison disponible partout à Dakar. Commandez en toute confiance.',
     whatsappNumber: '221771234567', // Default placeholder number
   };
 

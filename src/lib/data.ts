@@ -49,8 +49,8 @@ const categories: Category[] = [
 const banners: Banner[] = [
   {
     id: 'banner1',
-    title: 'Up to 50% OFF!',
-    subtitle: 'Redefine Your Everyday Style.',
+    title: 'La tech à votre portée',
+    subtitle: 'Les dernières nouveautés smartphones, ordinateurs et accessoires au meilleur prix.',
     image: findImage('banner-1'),
     linkUrl: '/products?category=telephones-tablettes',
   },
@@ -94,3 +94,4 @@ export const getCategoryBySlug = (slug: string) =>
   categories.find((c) => c.slug === slug);
   
 export const getBanners = () => banners;
+

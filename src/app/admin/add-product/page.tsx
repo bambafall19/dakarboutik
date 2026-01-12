@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/breadcrumb';
 
 export default async function AddProductPage() {
-  const categories = getSimpleCategories();
+  const categories = await getSimpleCategories();
 
   return (
     <div className="py-12">

@@ -6,6 +6,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
+import { getSimpleCategories } from '@/lib/data';
 
 // This new component will wrap the logic and be suspended.
 function ProductsPageContent() {
@@ -15,6 +16,7 @@ function ProductsPageContent() {
 
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
+  const simpleCategories = useMemo(() => getSimpleCategories(), []);
   
   // Initialize state from URL search params
   const initialCategory = searchParams.get('category');
@@ -110,7 +112,7 @@ function ProductsPageContent() {
   return (
     <ProductListing
       products={filteredProducts}
-      categories={categories.filter(c => !c.subCategories || c.subCategories.length === 0)}
+      categories={simpleCategories}
       brands={brands}
       filters={filters}
       onFilterChange={setFilters}
@@ -121,7 +123,7 @@ function ProductsPageContent() {
 
 export default function ProductsPage() {
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <Suspense fallback={<ProductListingSkeleton />}>
         <ProductsPageContent />
       </Suspense>

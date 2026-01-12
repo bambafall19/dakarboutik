@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -13,7 +14,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { CategoryIcons } from './icons';
+import { CategoryIcons, Icons } from './icons';
 
 interface MainNavProps {
   items: Category[];
@@ -23,9 +24,7 @@ export function MainNav({ items }: MainNavProps) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {items.map((item) => {
-          const Icon = CategoryIcons[item.slug];
-          return (
+        {items.map((item) => (
             <NavigationMenuItem key={item.id}>
               {item.subCategories && item.subCategories.length > 0 ? (
                 <>
@@ -38,7 +37,13 @@ export function MainNav({ items }: MainNavProps) {
                           title={component.name}
                           href={`/products?category=${component.slug}`}
                         >
-                          {/* Optional: Add descriptions to subcategories in data.ts */}
+                          {component.subCategories && (
+                            <div className='flex flex-wrap gap-2 mt-2'>
+                              {component.subCategories.map(sub => (
+                                <Link key={sub.id} href={`/products?category=${sub.slug}`} className='text-xs text-muted-foreground hover:text-primary'>{sub.name}</Link>
+                              ))}
+                            </div>
+                          )}
                         </ListItem>
                       ))}
                     </ul>
@@ -52,8 +57,7 @@ export function MainNav({ items }: MainNavProps) {
                 </Link>
               )}
             </NavigationMenuItem>
-          );
-        })}
+          ))}
       </NavigationMenuList>
     </NavigationMenu>
   );
@@ -75,9 +79,9 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          {children && <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
-          </p>
+          </div>}
         </a>
       </NavigationMenuLink>
     </li>

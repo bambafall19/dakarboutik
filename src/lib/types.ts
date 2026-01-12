@@ -29,15 +29,19 @@ export type SubCategory = {
   slug: string;
 };
 
+// Allow for nested categories/sub-categories
 export type Category = {
   id: string;
   name: string;
   slug: string;
   icon?: React.ComponentType<{ className?: string }>;
-  subCategories?: SubCategory[];
+  subCategories?: (SubCategory & { subCategories?: SubCategory[] })[];
 };
 
-export type SimpleCategory = Omit<Category, 'icon'>;
+export type SimpleCategory = Omit<Category, 'icon' | 'subCategories'> & {
+  subCategories?: SimpleCategory[];
+};
+
 
 export type Banner = {
   id: string;

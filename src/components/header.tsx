@@ -91,13 +91,6 @@ export function Header({ settings, loading }: HeaderProps) {
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/login">
-              <Icons.user className="h-5 w-5" />
-              <span className="sr-only">Mon compte</span>
-            </Link>
-          </Button>
-
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">

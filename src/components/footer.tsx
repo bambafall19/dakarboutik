@@ -22,11 +22,9 @@ const footerLinks = {
   ],
 };
 
-interface FooterProps {
-  logoUrl?: string;
-}
+interface FooterProps {}
 
-export function Footer({ logoUrl }: FooterProps) {
+export function Footer({}: FooterProps) {
   return (
     <footer className="bg-secondary text-secondary-foreground mt-16">
       <div className="container py-12">

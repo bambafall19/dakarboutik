@@ -11,7 +11,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="relative flex min-h-screen flex-col">
       <Header settings={settings} loading={loading} />
       <main className="flex-1 container">{children}</main>
-      <Footer logoUrl={settings?.logoUrl} />
+      <Footer />
     </div>
   );
 }

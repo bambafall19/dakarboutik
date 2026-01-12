@@ -3,10 +3,13 @@
 
 import { ProductListing } from '@/components/product-listing';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
-import { useMemo } from 'react';
+import { useMemo, Suspense } from 'react';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
+import { useSearchParams } from 'next/navigation';
 
-export default function ProductsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
+function ProductsContent() {
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category');
   const { products, loading: productsLoading } = useProducts();
   const { categories, loading: categoriesLoading } = useCategories();
   
@@ -23,7 +26,15 @@ export default function ProductsPage({ searchParams }: { searchParams: { [key: s
         products={products}
         categories={categories}
         brands={allBrands}
-        initialCategory={searchParams.category as string}
+        initialCategory={initialCategory || undefined}
     />
   )
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductListingSkeleton />}>
+      <ProductsContent />
+    </Suspense>
+  );
 }

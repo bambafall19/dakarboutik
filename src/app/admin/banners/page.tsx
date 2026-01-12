@@ -1,3 +1,4 @@
+'use client';
 
 import {
   Breadcrumb,
@@ -8,10 +9,11 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { BannerForm } from '@/components/admin/banner-form';
-import { getBanners } from '@/lib/data-firebase';
+import { useBanners } from '@/hooks/use-site-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function BannersPage() {
-  const banners = await getBanners();
+export default function BannersPage() {
+  const { banners, loading } = useBanners();
   const mainBanner = banners.find(b => b.id === 'banner1');
 
   return (
@@ -29,7 +31,11 @@ export default async function BannersPage() {
       </Breadcrumb>
       <h1 className="text-3xl font-bold mb-8">Gestion des Bannières</h1>
       <div className="max-w-2xl">
-        <BannerForm banner={mainBanner} />
+        {loading ? (
+          <Skeleton className="h-[400px] w-full" />
+        ) : (
+          <BannerForm banner={mainBanner} />
+        )}
       </div>
     </div>
   );

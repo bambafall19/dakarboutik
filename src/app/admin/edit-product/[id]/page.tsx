@@ -1,3 +1,4 @@
+'use client';
 
 import { EditProductForm } from '@/components/admin/edit-product-form';
 import { getSimpleCategories } from '@/lib/data';
@@ -9,27 +10,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { doc, getDoc } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase/server';
+import { useProductsById } from '@/hooks/use-site-data';
+import { useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import type { Product } from '@/lib/types';
 
-async function getProductById(id: string) {
-    const { firestore } = initializeFirebase();
-    const productRef = doc(firestore, 'products', id);
-    const productSnap = await getDoc(productRef);
+export default function EditProductPage({ params }: { params: { id: string } }) {
+  const categories = useMemo(() => getSimpleCategories(), []);
+  const { product, loading } = useProductsById(params.id);
 
-    if (!productSnap.exists()) {
-        return null;
-    }
-
-    return { id: productSnap.id, ...productSnap.data() } as Product;
-}
-
-
-export default async function EditProductPage({ params }: { params: { id: string } }) {
-  const categories = await getSimpleCategories();
-  const product = await getProductById(params.id);
+  if (loading) {
+    return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  }
 
   if (!product) {
     notFound();

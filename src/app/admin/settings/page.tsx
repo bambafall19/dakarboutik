@@ -1,5 +1,6 @@
+'use client';
 
-import { getSiteSettings } from '@/lib/data-firebase';
+import { useSiteSettings } from '@/hooks/use-site-data';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,9 +10,10 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { SettingsForm } from '@/components/admin/settings-form';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function SettingsPage() {
-  const settings = await getSiteSettings();
+export default function SettingsPage() {
+  const { settings, loading } = useSiteSettings();
 
   return (
     <div className="py-12">
@@ -28,9 +30,8 @@ export default async function SettingsPage() {
       </Breadcrumb>
       <h1 className="text-3xl font-bold mb-8">Réglages du site</h1>
       <div className="max-w-2xl">
-        <SettingsForm settings={settings} />
+        {loading ? <Skeleton className="h-96 w-full" /> : <SettingsForm settings={settings} />}
       </div>
     </div>
   );
 }
-

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -31,6 +30,18 @@ export function useAdminProducts() {
   const { data: products, loading, error } = useCollection<Product>(productsQuery);
 
   return { products: products || [], loading, error };
+}
+
+export function useProductsById(id: string) {
+    const firestore = useFirestore();
+    const productRef = useMemo(() => {
+        if (!firestore || !id) return null;
+        return doc(firestore, 'products', id);
+    }, [firestore, id]);
+
+    const { data, loading, error } = useDoc<Product>(productRef);
+
+    return { product: data, loading, error };
 }
 
 export function useProductsBySlug(slug: string) {

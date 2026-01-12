@@ -14,31 +14,81 @@ import {
 import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
-import { getCategories } from '@/lib/data';
 import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
 import { useState } from 'react';
-
-const categories = getCategories();
+import { useCategories } from '@/hooks/use-site-data';
+import { Skeleton } from './ui/skeleton';
 
 interface HeaderProps {
-  settings?: SiteSettings;
+  settings?: SiteSettings | null;
+  loading: boolean;
 }
 
-export function Header({ settings }: HeaderProps) {
+export function Header({ settings, loading }: HeaderProps) {
   const { totalItems } = useCart();
+  const { categories, loading: categoriesLoading } = useCategories();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const logoUrl = settings?.logoUrl;
   const announcementMessage = settings?.announcementMessage;
 
+  const NavLinks = () => (
+    <>
+    {categories.map((category) => (
+      <Link
+        key={category.id}
+        href={`/products?category=${category.slug}`}
+        className="hover:text-primary transition-colors"
+      >
+        {category.name}
+      </Link>
+    ))}
+    </>
+  );
+
+  const NavLinksSkeleton = () => (
+    <>
+      <Skeleton className="h-4 w-20" />
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-4 w-28" />
+    </>
+  );
+  
+  const MobileNavLinks = () => (
+     <>
+      {categories.map((category) => (
+        <SheetClose asChild key={category.id}>
+          <Link
+            href={`/products?category=${category.slug}`}
+            className="font-medium text-foreground/80 hover:text-foreground"
+          >
+            {category.name}
+          </Link>
+        </SheetClose>
+      ))}
+     </>
+  );
+
+  const MobileNavLinksSkeleton = () => (
+    <>
+      <Skeleton className="h-5 w-32" />
+      <Skeleton className="h-5 w-36" />
+      <Skeleton className="h-5 w-40" />
+    </>
+  );
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card">
-      {announcementMessage && (
-        <div className="bg-primary text-primary-foreground text-center text-sm p-2">
-          {announcementMessage}
-        </div>
+      {loading ? (
+        <Skeleton className="h-8 w-full" />
+      ) : (
+        announcementMessage && (
+          <div className="bg-primary text-primary-foreground text-center text-sm p-2">
+            {announcementMessage}
+          </div>
+        )
       )}
       <div className="container flex h-16 items-center justify-between gap-4">
         {/* Left section: Mobile Menu and Desktop Logo */}
@@ -56,16 +106,7 @@ export function Header({ settings }: HeaderProps) {
                 </div>
                 <Separator />
                 <nav className="flex flex-col gap-4 p-4">
-                  {categories.map((category) => (
-                    <SheetClose asChild key={category.id}>
-                      <Link
-                        href={`/products?category=${category.slug}`}
-                        className="font-medium text-foreground/80 hover:text-foreground"
-                      >
-                        {category.name}
-                      </Link>
-                    </SheetClose>
-                  ))}
+                  {categoriesLoading ? <MobileNavLinksSkeleton /> : <MobileNavLinks />}
                 </nav>
             </SheetContent>
           </Sheet>
@@ -93,15 +134,7 @@ export function Header({ settings }: HeaderProps) {
 
         {/* Desktop Navigation - Centered */}
         <nav className="hidden md:flex flex-1 items-center justify-center gap-6 text-sm font-medium text-muted-foreground">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/products?category=${category.slug}`}
-              className="hover:text-primary transition-colors"
-            >
-              {category.name}
-            </Link>
-          ))}
+          {categoriesLoading ? <NavLinksSkeleton /> : <NavLinks />}
         </nav>
         
         {/* Right section: Search and Cart */}

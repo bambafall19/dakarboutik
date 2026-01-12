@@ -2,19 +2,6 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner, Category, Product, SimpleCategory, SiteSettings } from './types';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  limit,
-  orderBy,
-} from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase/server';
-
-const { firestore } = initializeFirebase();
 
 const categories: Category[] = [
   {
@@ -91,29 +78,6 @@ const banners: Banner[] = [
   },
 ];
 
-async function fetchProducts(q?: any): Promise<Product[]> {
-  const productsCollection = collection(firestore, 'products');
-  const finalQuery =
-    q || query(productsCollection, where('status', '==', 'active'));
-  const querySnapshot = await getDocs(finalQuery);
-  return querySnapshot.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() } as Product)
-  );
-}
-
-export const getProducts = async () => {
-  return await fetchProducts();
-};
-
-export const getProductBySlug = async (slug: string) => {
-  const q = query(
-    collection(firestore, 'products'),
-    where('slug', '==', slug),
-    limit(1)
-  );
-  const products = await fetchProducts(q);
-  return products[0] || null;
-};
 
 export const getCategories = (): Category[] => categories;
 
@@ -123,38 +87,5 @@ export const getSimpleCategories = (): SimpleCategory[] => {
 
 export const getCategoryBySlug = (slug: string) =>
   categories.find((c) => c.slug === slug);
+  
 export const getBanners = () => banners;
-
-export const getNewArrivals = async (count: number = 4) =>
-  await fetchProducts(
-    query(
-      collection(firestore, 'products'),
-      orderBy('createdAt', 'desc'),
-      limit(count)
-    )
-  );
-
-export const getBestsellers = async (count: number = 4) =>
-  await fetchProducts(
-    query(
-      collection(firestore, 'products'),
-      where('isBestseller', '==', true),
-      where('status', '==', 'active'),
-      limit(count)
-    )
-  );
-
-export const getSiteSettings = async (): Promise<SiteSettings> => {
-  const settingsRef = doc(firestore, 'settings', 'siteConfig');
-  const docSnap = await getDoc(settingsRef);
-
-  if (docSnap.exists()) {
-    return docSnap.data() as SiteSettings;
-  } else {
-    // Return default settings if nothing is in the database
-    return {
-      logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
-      announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
-    };
-  }
-};

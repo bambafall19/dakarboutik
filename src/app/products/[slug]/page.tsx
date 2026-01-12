@@ -1,21 +1,33 @@
 
+'use client';
+
 import { ProductDetails } from '@/components/product-details';
-import { getProductBySlug, getProducts } from '@/lib/data';
+import { useProductsBySlug, useProducts } from '@/hooks/use-site-data';
 import { notFound } from 'next/navigation';
+import { useMemo } from 'react';
+import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 
 
-export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const product = await getProductBySlug(params.slug);
+export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+  const { product, loading: productLoading } = useProductsBySlug(params.slug);
+  const { products: allProducts, loading: allProductsLoading } = useProducts();
+  
+  const relatedProducts = useMemo(() => {
+    if (!product || allProducts.length === 0) return [];
+    return allProducts
+      .filter(p => p.category === product.category && p.id !== product.id)
+      .slice(0, 4);
+  }, [product, allProducts]);
+
+  const loading = productLoading || allProductsLoading;
+
+  if (loading) {
+    return <ProductDetailsSkeleton />;
+  }
 
   if (!product) {
     notFound();
   }
-  
-  // Fetch related products from the same category, excluding the current one
-  const allProducts = await getProducts();
-  const relatedProducts = allProducts
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
 
   return <ProductDetails product={product} relatedProducts={relatedProducts} />;
 }

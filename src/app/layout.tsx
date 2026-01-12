@@ -1,33 +1,29 @@
+'use client';
 
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
-import { getSiteSettings } from '@/lib/data';
-
+import { AppShell } from '@/components/app-shell';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
-export const metadata: Metadata = {
-  title: 'Dakarboutik - Électronique de pointe à Dakar',
-  description:
-    'Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis.',
-};
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await getSiteSettings();
-
   return (
     <html lang="fr-SN" className="h-full">
+      <head>
+        <title>Dakarboutik - Électronique de pointe à Dakar</title>
+        <meta
+          name="description"
+          content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."
+        />
+      </head>
       <body
         className={cn(
           'relative h-full bg-background font-body antialiased',
@@ -36,11 +32,7 @@ export default async function RootLayout({
       >
         <FirebaseClientProvider>
           <CartProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <Header settings={settings} />
-              <main className="flex-1">{children}</main>
-              <Footer logoUrl={settings.logoUrl} />
-            </div>
+            <AppShell>{children}</AppShell>
             <Toaster />
           </CartProvider>
         </FirebaseClientProvider>

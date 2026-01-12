@@ -6,7 +6,7 @@ import type { Banner, Category, Product, SimpleCategory, SiteSettings } from './
 const categories: Category[] = [
   {
     id: 'cat-accessoires',
-    name: 'Accessoires Informatiques',
+    name: 'Accessoires',
     slug: 'accessoires-informatiques',
     subCategories: [
       { id: 'sub-lecteur-multimedia', name: 'Lecteur multimédia', slug: 'lecteur-multimedia' },
@@ -57,24 +57,24 @@ const categories: Category[] = [
 const banners: Banner[] = [
   {
     id: 'banner1',
-    title: 'Les nouveaux smartphones sont arrivés !',
-    subtitle: 'Découvrez les derniers modèles avec des performances et des appareils photo exceptionnels.',
+    title: 'Les nouveaux iPhone 16 Pro Max',
+    subtitle: 'Découvrez la puissance et l\'élégance à partir de 750.000 F CFA.',
     image: findImage('banner-1'),
     linkUrl: '/products?category=telephones-tablettes',
   },
   {
-    id: 'banner2',
-    title: 'Le son immersif à votre portée',
-    subtitle: 'Explorez notre sélection de casques et écouteurs pour une expérience audio inégalée.',
-    image: findImage('banner-2'),
-    linkUrl: '/products?category=accessoires-informatiques',
+    id: 'banner-sale',
+    title: 'SOLDES',
+    subtitle: 'Jusqu\'à -50%',
+    image: findImage('banner-sale'),
+    linkUrl: '/products',
   },
   {
     id: 'banner3',
-    title: 'Boostez votre productivité',
-    subtitle: 'Trouvez l\'ordinateur portable et les accessoires parfaits pour le travail ou les études.',
-    image: findImage('banner-3'),
-    linkUrl: '/products?category=informatique',
+    title: 'Le son immersif à votre portée',
+    subtitle: 'Explorez notre sélection de casques et écouteurs.',
+    image: findImage('banner-2'),
+    linkUrl: '/products?category=accessoires-informatiques',
   },
 ];
 

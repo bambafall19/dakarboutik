@@ -1,63 +1,81 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { getBanners } from '@/lib/data';
 import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
 
 export function HeroSection() {
   const banners = getBanners();
 
+  // Assuming first banner is the main hero and second is the side banner
+  const mainBanner = banners[0];
+  const sideBanner = banners.find(b => b.id === 'banner-sale') || banners[1];
+
   return (
-    <section className="w-full">
-      <Carousel
-        className="w-full"
-        opts={{
-          loop: true,
-        }}
-      >
-        <CarouselContent>
-          {banners.map((banner) => (
-            <CarouselItem key={banner.id}>
-              <div className="relative aspect-[16/6] w-full overflow-hidden">
-                <Image
-                  src={banner.image.imageUrl}
-                  alt={banner.title}
-                  data-ai-hint={banner.image.imageHint}
-                  fill
-                  priority
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col items-center justify-end text-center pb-12 md:pb-20">
-                  <div className="px-4 md:px-6">
-                    <div className="max-w-3xl text-white">
-                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">
-                        {banner.title}
-                      </h1>
-                      {banner.subtitle && (
-                        <p className="mt-4 max-w-xl mx-auto text-base md:text-lg text-white/90">
-                          {banner.subtitle}
-                        </p>
-                      )}
-                       <Button asChild className="mt-6" size="lg">
-                        <Link href={banner.linkUrl}>Découvrir</Link>
-                      </Button>
-                    </div>
-                  </div>
+    <section className="w-full container py-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Main Banner */}
+        <div className="md:col-span-2">
+           <Card className="overflow-hidden h-full">
+            <div className="relative aspect-[16/8] w-full">
+              <Image
+                src={mainBanner.image.imageUrl}
+                alt={mainBanner.title}
+                data-ai-hint={mainBanner.image.imageHint}
+                fill
+                priority
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex flex-col items-start justify-center p-8 md:p-12">
+                <div className="max-w-md text-white">
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                    {mainBanner.title}
+                  </h1>
+                  {mainBanner.subtitle && (
+                    <p className="mt-4 max-w-xl text-base md:text-lg text-white/90">
+                      {mainBanner.subtitle}
+                    </p>
+                  )}
+                    <Button asChild className="mt-6" size="lg">
+                    <Link href={mainBanner.linkUrl}>Acheter maintenant</Link>
+                  </Button>
                 </div>
               </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:inline-flex" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:inline-flex" />
-      </Carousel>
+            </div>
+          </Card>
+        </div>
+
+        {/* Side Banner */}
+        <div className="md:col-span-1">
+          <Card className="overflow-hidden h-full">
+            <div className="relative aspect-[9/10] w-full h-full">
+              <Image
+                src={sideBanner.image.imageUrl}
+                alt={sideBanner.title}
+                data-ai-hint={sideBanner.image.imageHint}
+                fill
+                className="object-cover"
+              />
+               <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="text-white">
+                     <h2 className="text-3xl font-bold tracking-tight">
+                        {sideBanner.title}
+                      </h2>
+                      {sideBanner.subtitle && (
+                        <p className="mt-2 text-lg text-white/90">
+                          {sideBanner.subtitle}
+                        </p>
+                      )}
+                       <Button asChild className="mt-4" variant="secondary">
+                        <Link href={sideBanner.linkUrl}>Profiter</Link>
+                      </Button>
+                  </div>
+               </div>
+            </div>
+          </Card>
+        </div>
+      </div>
     </section>
   );
 }

@@ -2,7 +2,6 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -21,12 +20,14 @@ export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
           alt="Dakarboutik Logo"
           width={32}
           height={32}
-          className="h-8 w-8 rounded-full object-cover"
+          className="h-8 w-auto rounded-sm object-contain"
         />
       ) : (
-        <ShoppingBag className="h-7 w-7 text-primary" />
+         <span className="text-2xl font-bold tracking-tight text-foreground">
+            Dakarboutik
+        </span>
       )}
-      <span className="text-xl font-bold tracking-tight text-foreground">
+      <span className="sr-only text-xl font-bold tracking-tight text-foreground">
         Dakarboutik
       </span>
     </Link>

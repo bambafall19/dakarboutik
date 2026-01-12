@@ -23,6 +23,7 @@ import {
   Tablet,
   Filter,
   PlusCircle,
+  User,
 } from 'lucide-react';
 
 export const Icons = {
@@ -44,6 +45,7 @@ export const Icons = {
   heart: Heart,
   chevronDown: ChevronDown,
   filter: Filter,
+  user: User,
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {

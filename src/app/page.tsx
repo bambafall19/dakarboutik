@@ -8,7 +8,7 @@ import { Testimonials } from '@/components/testimonials';
 
 export default async function HomePage() {
   const allProducts = await getProducts();
-  const newArrivals = allProducts
+  const newArrivals = [...allProducts] // Create a shallow copy before sorting
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 8);
   const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);

@@ -10,8 +10,9 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
 
   const stableQueryKey = useMemo(() => {
     if (!q) return null;
+    // A stable key for the query to use in useEffect dependencies
     // @ts-ignore
-    return `${q.path}-${JSON.stringify(q._query.filters)}`;
+    return `${q.path}-${JSON.stringify(q._query?.filters || [])}`;
   }, [q]);
 
   useEffect(() => {

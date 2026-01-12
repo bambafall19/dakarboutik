@@ -5,14 +5,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ShoppingBasket } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
 
 interface LogoProps {
   className?: string;
   onClick?: () => void;
   imageUrl?: string | null;
+  loading?: boolean;
 }
 
-export const Logo = ({ className, onClick, imageUrl }: LogoProps) => {
+export const Logo = ({ className, onClick, imageUrl, loading }: LogoProps) => {
+
+  if (loading) {
+    return <Skeleton className="h-8 w-32" />
+  }
+
   return (
     <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
       {imageUrl ? (

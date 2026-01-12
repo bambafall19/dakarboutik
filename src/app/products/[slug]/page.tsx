@@ -1,15 +1,16 @@
-
 'use client';
 
 import { ProductDetails } from '@/components/product-details';
 import { useProductsBySlug, useProducts } from '@/hooks/use-site-data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const { product, loading: productLoading } = useProductsBySlug(params.slug);
+export default function ProductDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   
   const relatedProducts = useMemo(() => {

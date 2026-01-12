@@ -3,7 +3,6 @@
 
 import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -51,9 +50,10 @@ export function ProductFilters({ categories, brands, filters, onFilterChange }: 
 
   const clearFilters = () => {
     onFilterChange({
-      ...filters,
       categories: [],
       brands: [],
+      priceRange: [0, 1000000],
+      sortBy: 'newest'
     });
   }
 

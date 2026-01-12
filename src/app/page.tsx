@@ -2,11 +2,13 @@
 'use client';
 
 import { FeaturedCategories } from '@/components/featured-categories';
-import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
 import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { Icons } from '@/components/icons';
+import { Engagements } from '@/components/engagements';
+import { Testimonials } from '@/components/testimonials';
+import { HeroSection } from '@/components/hero-section';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -27,7 +29,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-8 md:gap-12">
       <HeroSection />
-      <div className="container space-y-12 my-12">
+      <div className="space-y-12 my-12">
         <FeaturedCategories />
         
         {loading ? (
@@ -82,6 +84,10 @@ export default function HomePage() {
             />
           )
         )}
+
+        <Engagements />
+
+        <Testimonials />
       </div>
     </div>
   );

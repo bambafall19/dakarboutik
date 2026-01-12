@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -17,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCategories } from '@/hooks/use-site-data';
+import { MainNav } from './main-nav';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -40,27 +42,17 @@ export function Header({ settings, loading }: HeaderProps) {
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <Logo imageUrl={logoUrl} />
+          <div className="hidden lg:flex">
+            <MainNav items={categories} />
+          </div>
         </div>
 
-        <div className="flex-1 hidden md:flex">
-          <div className="relative w-full max-w-xl mx-auto flex">
-            <Select defaultValue="all">
-              <SelectTrigger className="w-[150px] rounded-r-none border-r-0 focus:ring-0">
-                <SelectValue placeholder="Catégories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.slug}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex-1 hidden md:flex max-w-xs">
+          <div className="relative w-full mx-auto flex">
             <div className="relative flex-1">
               <Input
-                placeholder="Rechercher un produit, une marque..."
-                className="rounded-l-none focus-visible:ring-primary"
+                placeholder="Rechercher un produit..."
+                className="focus-visible:ring-primary"
               />
               <Button
                 size="icon"

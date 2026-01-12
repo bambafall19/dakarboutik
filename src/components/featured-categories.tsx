@@ -6,11 +6,22 @@ import { Card, CardContent } from './ui/card';
 export function FeaturedCategories() {
   const categories = getCategories();
 
+  // We only want to feature top-level categories here
+  const featured = categories.filter(c => !c.subCategories || c.subCategories.length === 0 || c.slug === 'informatique');
+  const otherCats = categories.filter(c => c.slug !== 'informatique' && (!c.subCategories || c.subCategories.length === 0));
+
+  const mainCategories = [
+    categories.find(c => c.slug === 'informatique'),
+    categories.find(c => c.slug === 'telephones-tablettes'),
+    categories.find(c => c.slug === 'accessoires'),
+  ].filter(Boolean) as (typeof categories);
+
+
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-10 gap-4">
-          {categories.map((category) => {
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4">
+          {mainCategories.map((category) => {
             const Icon = CategoryIcons[category.slug];
             return (
               <Link key={category.id} href={`/products?category=${category.slug}`} className="group">
@@ -20,7 +31,7 @@ export function FeaturedCategories() {
                         <Icon className="h-6 w-6" />
                       </div>
                     )}
-                    <h3 className="font-medium text-xs text-muted-foreground group-hover:text-primary">{category.name}</h3>
+                    <h3 className="font-medium text-sm text-muted-foreground group-hover:text-primary">{category.name}</h3>
                   </div>
               </Link>
             );

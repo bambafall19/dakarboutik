@@ -42,12 +42,8 @@ const categories: Category[] = [
       },
     ],
   },
-  { id: 'cat-accessoires', name: 'Accessoires', slug: 'accessoires' },
-  {
-    id: 'cat-telephones-tablettes',
-    name: 'Téléphones',
-    slug: 'telephones-tablettes',
-  },
+  { id: 'cat-telephones-tablettes', name: 'Téléphones & Tablettes', slug: 'telephones-tablettes' },
+  { id: 'cat-accessoires', name: 'Accessoires Informatiques', slug: 'accessoires' },
 ];
 
 const banners: Banner[] = [

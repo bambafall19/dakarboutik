@@ -51,8 +51,7 @@ export const Icons = {
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
-  'ordinateurs': Laptop,
-  'supports-stockage': HardDrive,
+  'informatique': Laptop,
   'telephones-tablettes': Smartphone,
   'accessoires': Plug,
   'audio': Headphones,

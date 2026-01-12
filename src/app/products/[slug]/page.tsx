@@ -1,3 +1,4 @@
+
 'use client';
 
 import { getCategoryPath } from '@/lib/data';
@@ -45,10 +46,13 @@ function ProductDetailsContent({ slug }: { slug: string }) {
   );
 }
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+// This is now an async Server Component
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const slug = params.slug;
+
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductDetailsContent slug={params.slug} />
+      <ProductDetailsContent slug={slug} />
     </Suspense>
   );
 }

@@ -63,6 +63,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     const defaultSettings: SiteSettings = {
         logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
         announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
+        whatsappNumber: '221771234567', // Default placeholder
     };
 
     try {
@@ -70,7 +71,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         const docSnap = await getDoc(settingsRef);
 
         if (docSnap.exists()) {
-            return docSnap.data() as SiteSettings;
+            return { ...defaultSettings, ...docSnap.data() } as SiteSettings;
         }
         return defaultSettings;
     } catch (error) {

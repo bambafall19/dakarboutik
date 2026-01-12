@@ -24,7 +24,7 @@ function slugify(text: string) {
     .replace(/-+$/, ''); // Trim - from end of text
 }
 
-export async function updateSiteSettings(settings: SiteSettings) {
+export async function updateSiteSettings(settings: Partial<SiteSettings>) {
   const { firestore } = initializeFirebase();
   if (!firestore) {
     throw new Error('Firestore is not initialized.');

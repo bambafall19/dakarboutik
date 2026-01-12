@@ -16,6 +16,8 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { ProductGrid } from './product-grid';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useSiteSettings } from '@/hooks/use-site-data';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductDetailsProps {
   product: Product;
@@ -27,6 +29,8 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const { addToCart } = useCart();
+  const { settings } = useSiteSettings();
+  const { toast } = useToast();
   
   useEffect(() => {
     const initialVariants: Record<string, string> = {};
@@ -43,9 +47,6 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       return product.stock;
     }
     
-    // This logic assumes a simple variant structure. For complex variants (e.g. color AND size),
-    // a more sophisticated way to find the stock for the specific combination is needed.
-    // For now, we find the stock for the first selected variant option we can.
     for (const variant of product.variants) {
       const selectedOptionValue = selectedVariants[variant.name];
       if (selectedOptionValue) {
@@ -65,6 +66,22 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       : undefined;
       
     addToCart(product, quantity, variantInfo);
+  };
+
+  const handleWhatsAppOrder = () => {
+    if (!settings.whatsappNumber) {
+      toast({
+        variant: "destructive",
+        title: "Configuration requise",
+        description: "Le numéro WhatsApp n'a pas été configuré par l'administrateur.",
+      });
+      return;
+    }
+
+    const variantText = Object.values(selectedVariants).join(', ');
+    const message = `Bonjour, je suis intéressé(e) par le produit : ${product.title} ${variantText ? `(${variantText})` : ''}.`;
+    const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
   
   const stockStatus = currentStock > 10 ? 'En stock' : currentStock > 0 ? 'Stock limité' : 'Épuisé';
@@ -150,18 +167,23 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
           <p className="text-muted-foreground leading-relaxed mt-4">{product.description}</p>
           
-          <div className="mt-6 flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}>
-                <Icons.minus className="h-4 w-4" />
-              </Button>
-              <span className="font-bold text-lg w-12 text-center">{quantity}</span>
-              <Button variant="outline" size="icon" onClick={() => setQuantity(q => q+1)}>
-                <Icons.plus className="h-4 w-4" />
-              </Button>
+          <div className="mt-6 flex flex-col gap-4">
+            <div className='flex items-center gap-4'>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}>
+                    <Icons.minus className="h-4 w-4" />
+                  </Button>
+                  <span className="font-bold text-lg w-12 text-center">{quantity}</span>
+                  <Button variant="outline" size="icon" onClick={() => setQuantity(q => q+1)}>
+                    <Icons.plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
+                  <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
+                </Button>
             </div>
-            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
-              <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
+             <Button variant="outline" size="lg" onClick={handleWhatsAppOrder}>
+                <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
             </Button>
           </div>
 

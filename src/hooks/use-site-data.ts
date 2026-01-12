@@ -61,6 +61,7 @@ export function useSiteSettings() {
   const defaultSettings: SiteSettings = {
     logoUrl: "https://picsum.photos/seed/dakarboutik-logo/100/100",
     announcementMessage: 'Livraison gratuite à partir de 50 000 F CFA !',
+    whatsappNumber: '221771234567', // Default placeholder number
   };
 
   return { settings: settings || defaultSettings, loading, error };

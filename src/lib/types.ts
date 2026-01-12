@@ -82,6 +82,7 @@ export type CartItem = {
 export type SiteSettings = {
   logoUrl?: string;
   announcementMessage?: string;
+  whatsappNumber?: string;
 };
 
 export type CustomerInfo = {

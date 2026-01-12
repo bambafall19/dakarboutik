@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
@@ -16,6 +16,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useFirestore } from "@/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { SHIPPING_COSTS } from "@/components/order-summary";
+import { useSiteSettings } from "@/hooks/use-site-data";
+import { Icons } from "./icons";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
@@ -37,6 +39,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   const { state, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { settings } = useSiteSettings();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,6 +59,32 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     onDeliveryMethodChange(deliveryMethod);
   }, [deliveryMethod, onDeliveryMethodChange]);
 
+
+  const handleWhatsAppOrder = () => {
+    if (!settings.whatsappNumber) {
+      toast({
+        variant: "destructive",
+        title: "Configuration requise",
+        description: "Le numéro WhatsApp n'a pas été configuré par l'administrateur.",
+      });
+      return;
+    }
+
+    const shippingCost = SHIPPING_COSTS[deliveryMethod] || 0;
+    const grandTotal = totalPrice + shippingCost;
+    
+    let message = "Bonjour, je souhaite passer la commande suivante depuis votre site :\n\n";
+    state.items.forEach(item => {
+      const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
+      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''}\n`;
+    });
+    message += `\nSous-total : ${totalPrice.toLocaleString('fr-SN')} XOF`;
+    message += `\nLivraison : ${shippingCost.toLocaleString('fr-SN')} XOF`;
+    message += `\n\n*Total : ${grandTotal.toLocaleString('fr-SN')} XOF*`;
+    
+    const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -226,10 +255,34 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               )}
             />
         </div>
+        
+        <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Finalisation</h2>
+             <FormDescription>
+                Choisissez une option pour finaliser votre commande. Le paiement se fait à la livraison.
+              </FormDescription>
 
-        <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Traitement...' : 'Procéder au paiement'}
-        </Button>
+            <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Traitement...' : 'Finaliser la commande (Paiement à la livraison)'}
+            </Button>
+            
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Ou
+                </span>
+              </div>
+            </div>
+
+             <Button type="button" variant="outline" size="lg" className="w-full" onClick={handleWhatsAppOrder}>
+                <Icons.whatsapp className="mr-2 h-5 w-5"/>
+                Commander via WhatsApp
+            </Button>
+        </div>
+
       </form>
     </Form>
   );

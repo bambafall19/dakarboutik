@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,7 @@ import { Separator } from '../ui/separator';
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
   announcementMessage: z.string().optional(),
+  whatsappNumber: z.string().min(9, 'Veuillez entrer un numéro valide.').optional().or(z.literal('')),
 });
 
 interface SettingsFormProps {
@@ -39,6 +41,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     defaultValues: {
       logoUrl: settings.logoUrl || '',
       announcementMessage: settings.announcementMessage || '',
+      whatsappNumber: settings.whatsappNumber || '',
     },
   });
 
@@ -66,9 +69,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Apparence du site</CardTitle>
+            <CardTitle>Informations Générales</CardTitle>
             <CardDescription>
-              Gérez les éléments visuels de votre boutique.
+              Gérez les informations et l'apparence de votre boutique.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -94,6 +97,22 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                   <FormControl>
                     <Input placeholder="Livraison gratuite pour les commandes de plus de..." {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="whatsappNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Numéro de téléphone WhatsApp</FormLabel>
+                  <FormControl>
+                    <Input placeholder="221771234567" {...field} />
+                  </FormControl>
+                   <FormDescription>
+                    Entrez le numéro (avec l'indicatif pays) pour les commandes WhatsApp.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -37,18 +37,17 @@ export function HeroSection() {
           priority
           className="object-cover rounded-lg"
         />
-        <div className="absolute inset-0 bg-black/40 rounded-lg" />
+        <div className="absolute inset-0 bg-black/20 rounded-lg" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+            <p className="text-lg md:text-xl drop-shadow-md">
+                {mainBanner.subtitle}
+            </p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg">
             {mainBanner.title}
           </h1>
-          {mainBanner.subtitle && (
-            <p className="max-w-2xl mt-4 text-base md:text-lg text-neutral-200 drop-shadow-md">
-              {mainBanner.subtitle}
-            </p>
-          )}
+          
           <Button asChild className="mt-6" size="lg">
-            <Link href={mainBanner.linkUrl}>Explorer les produits</Link>
+            <Link href={mainBanner.linkUrl}>Découvrir</Link>
           </Button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Inter } from 'next/font/google';
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full">
       <head>
-        <title>Dakarboutik - Électronique de pointe à Dakar</title>
+        <title>Baobab High Tech</title>
         <meta
           name="description"
           content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."

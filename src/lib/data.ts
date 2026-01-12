@@ -59,10 +59,10 @@ const categories: Category[] = [
 const banners: Banner[] = [
   {
     id: 'banner1',
-    title: 'La tech à votre portée',
-    subtitle: 'Les dernières nouveautés smartphones, ordinateurs et accessoires au meilleur prix.',
+    title: 'Baobab High Tech',
+    subtitle: 'Bienvenue !',
     image: findImage('banner-1'),
-    linkUrl: '/products?category=telephonie',
+    linkUrl: '/products',
   },
   {
     id: 'banner-sale',

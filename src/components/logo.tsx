@@ -23,12 +23,12 @@ export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
           className="h-8 w-auto rounded-sm object-contain"
         />
       ) : (
-         <span className="text-2xl font-bold tracking-tight text-foreground">
-            Dakarboutik
+         <span className="text-xl font-bold tracking-tight text-foreground">
+            Baobab<span className="text-primary">.</span>
         </span>
       )}
       <span className="sr-only text-xl font-bold tracking-tight text-foreground">
-        Dakarboutik
+        Baobab High Tech
       </span>
     </Link>
   );

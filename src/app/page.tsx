@@ -12,7 +12,7 @@ import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 export default function HomePage() {
   const { products, loading } = useProducts();
   
-  const newArrivals = products
+  const newArrivals = [...products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 8);
     
@@ -26,7 +26,7 @@ export default function HomePage() {
   )
 
   return (
-    <div className="bg-background">
+    <div className="bg-background overflow-hidden">
       <HeroSection />
       <div className="container space-y-16 my-16">
         <FeaturedCategories />

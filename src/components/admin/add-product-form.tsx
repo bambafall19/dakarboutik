@@ -52,7 +52,8 @@ const formSchema = z.object({
   stock: z.coerce.number().min(0, 'Le stock doit être positif.'),
   category: z.string().min(1, 'La catégorie est requise.'),
   subCategory: z.string().optional(),
-  imageUrl: z.string().url("Veuillez entrer une URL d'image valide."),
+  imageUrl1: z.string().url("Veuillez entrer une URL d'image valide."),
+  imageUrl2: z.string().url("Veuillez entrer une URL d'image valide.").optional().or(z.literal('')),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
 });
@@ -75,7 +76,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       stock: 0,
       category: '',
       subCategory: '',
-      imageUrl: '',
+      imageUrl1: '',
+      imageUrl2: '',
       isNew: true,
       isBestseller: false,
     },
@@ -106,6 +108,24 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       const categoryToSave = values.subCategory || values.category;
       const slug = slugify(values.title);
 
+      const images = [];
+      if (values.imageUrl1) {
+        images.push({
+          id: `product-${slug}-1`,
+          description: values.title,
+          imageUrl: values.imageUrl1,
+          imageHint: 'product',
+        });
+      }
+      if (values.imageUrl2) {
+        images.push({
+          id: `product-${slug}-2`,
+          description: values.title,
+          imageUrl: values.imageUrl2,
+          imageHint: 'product detail',
+        });
+      }
+
       const newProduct: Omit<Product, 'id'> = {
         title: values.title,
         description: values.description,
@@ -118,14 +138,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
         slug,
         status: 'active',
         createdAt: new Date().toISOString(),
-        images: [
-          {
-            id: `product-${slug}-1`,
-            description: values.title,
-            imageUrl: values.imageUrl,
-            imageHint: 'product',
-          },
-        ],
+        images: images,
         specs: {},
         variants: [],
         currency: 'XOF',
@@ -191,13 +204,29 @@ export function AddProductForm({ categories }: AddProductFormProps) {
               />
               <FormField
                 control={form.control}
-                name="imageUrl"
+                name="imageUrl1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Adresse (lien) de l'image du produit</FormLabel>
+                    <FormLabel>Adresse (lien) de l'image principale</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="https://exemple.com/image.png"
+                        placeholder="https://exemple.com/image-principale.png"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="imageUrl2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse (lien) de la deuxième image (optionnel)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://exemple.com/image-secondaire.png"
                         {...field}
                       />
                     </FormControl>

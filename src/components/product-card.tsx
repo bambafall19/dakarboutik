@@ -23,6 +23,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   const [soldCount, setSoldCount] = useState<number | null>(null);
 
   useEffect(() => {
+    // Generate random number only on the client side after hydration
     setSoldCount(Math.floor(Math.random() * 500) + 50);
   }, []);
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -26,9 +27,7 @@ export const Logo = ({ className, imageUrl, onClick }: LogoProps) => {
             Dakar<span className="text-primary">Boutik</span>
         </span>
       )}
-      <span className="sr-only">
-        DakarBoutik
-      </span>
+       <span className="sr-only">DakarBoutik</span>
     </Link>
   );
 };

@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { getCategories } from '@/lib/data';
 import { CategoryIcons } from './icons';
@@ -7,21 +8,13 @@ export function FeaturedCategories() {
   const categories = getCategories();
 
   // We only want to feature top-level categories here
-  const featured = categories.filter(c => !c.subCategories || c.subCategories.length === 0 || c.slug === 'informatique');
-  const otherCats = categories.filter(c => c.slug !== 'informatique' && (!c.subCategories || c.subCategories.length === 0));
-
-  const mainCategories = [
-    categories.find(c => c.slug === 'informatique'),
-    categories.find(c => c.slug === 'telephones-tablettes'),
-    categories.find(c => c.slug === 'accessoires'),
-  ].filter(Boolean) as (typeof categories);
-
+  const featured = categories;
 
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {mainCategories.map((category) => {
+        <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          {featured.map((category) => {
             const Icon = CategoryIcons[category.slug];
             return (
               <Link key={category.id} href={`/products?category=${category.slug}`} className="group">

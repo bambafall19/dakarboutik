@@ -2,7 +2,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type { Category, SimpleCategory } from '@/lib/types';
+import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -13,11 +13,10 @@ import { Button } from './ui/button';
 
 interface ProductFiltersProps {
   allCategories: Category[];
-  filterableCategories: SimpleCategory[];
   brands: string[];
 }
 
-export function ProductFilters({ allCategories, filterableCategories, brands }: ProductFiltersProps) {
+export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -41,7 +40,7 @@ export function ProductFilters({ allCategories, filterableCategories, brands }: 
     }
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    router.replace(`${pathname}${query}`);
+    router.push(`${pathname}${query}`, { scroll: false });
   };
 
   const handleCategoryChange = (slug: string, checked: boolean) => {
@@ -67,35 +66,41 @@ export function ProductFilters({ allCategories, filterableCategories, brands }: 
   };
 
   const clearFilters = () => {
-    router.replace(pathname);
+    router.push(pathname, { scroll: false });
   };
   
   const renderCategoryFilters = (categories: Category[]) => {
     return categories.map(cat => {
-      if (cat.subCategories && cat.subCategories.length > 0) {
+      const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
+      
+      const categoryCheckbox = (
+         <div className="flex items-center space-x-2 py-1">
+            <Checkbox
+              id={`cat-${cat.id}`}
+              checked={selectedCategories.includes(cat.slug)}
+              onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
+            />
+            <Label htmlFor={`cat-${cat.id}`} className="font-normal text-sm flex-1 cursor-pointer">{cat.name}</Label>
+          </div>
+      );
+
+      if (hasSubCategories) {
         return (
-          <Accordion key={cat.id} type="single" collapsible className="w-full pl-4">
-            <AccordionItem value={cat.slug}>
-              <AccordionTrigger className="py-2 text-sm hover:no-underline">
-                {cat.name}
+          <Accordion key={cat.id} type="single" collapsible className="w-full">
+            <AccordionItem value={cat.slug} className="border-b-0">
+               <AccordionTrigger className="py-0 text-sm hover:no-underline font-normal [&[data-state=open]>svg]:text-primary">
+                 <div className="flex-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCategoryChange(cat.slug, !selectedCategories.includes(cat.slug))}}>
+                    {categoryCheckbox}
+                 </div>
               </AccordionTrigger>
-              <AccordionContent className="pb-0">
+              <AccordionContent className="pb-0 pl-4 border-l ml-2">
                 {renderCategoryFilters(cat.subCategories)}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         );
       }
-      return (
-        <div key={cat.id} className="flex items-center space-x-2 pl-4 py-1">
-          <Checkbox
-            id={`cat-${cat.id}`}
-            checked={selectedCategories.includes(cat.slug)}
-            onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
-          />
-          <Label htmlFor={`cat-${cat.id}`} className="font-normal text-sm">{cat.name}</Label>
-        </div>
-      );
+      return <div key={cat.id}>{categoryCheckbox}</div>;
     });
   };
 
@@ -122,17 +127,8 @@ export function ProductFilters({ allCategories, filterableCategories, brands }: 
       <Accordion type="multiple" defaultValue={['category', 'price', 'brand']} className="w-full">
         <AccordionItem value="category">
           <AccordionTrigger>Catégorie</AccordionTrigger>
-          <AccordionContent className="space-y-2 pt-2">
-            {allCategories.map(cat => (
-              <div key={cat.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`cat-root-${cat.id}`}
-                  checked={selectedCategories.includes(cat.slug)}
-                  onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
-                />
-                <Label htmlFor={`cat-root-${cat.id}`} className="font-normal">{cat.name}</Label>
-              </div>
-            ))}
+          <AccordionContent className="space-y-1 pt-2">
+             {renderCategoryFilters(allCategories)}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="brand">
@@ -158,8 +154,8 @@ export function ProductFilters({ allCategories, filterableCategories, brands }: 
                 min={0}
                 max={1000000}
                 step={10000}
-                value={priceRange}
-                onValueChange={handlePriceChange}
+                defaultValue={priceRange}
+                onValueChangeEnd={handlePriceChange}
               />
               <div className="flex justify-between mt-3 text-sm text-muted-foreground">
                 <Price price={priceRange[0]} currency="XOF" className="font-normal"/>

@@ -5,6 +5,11 @@ import type { Banner, Category, SimpleCategory } from './types';
 
 const categories: Category[] = [
   {
+    id: 'cat-telephones-tablettes',
+    name: 'Téléphones & Tablettes',
+    slug: 'telephones-tablettes',
+  },
+  {
     id: 'cat-informatique',
     name: 'Informatique',
     slug: 'informatique',
@@ -47,7 +52,6 @@ const categories: Category[] = [
       },
     ],
   },
-  { id: 'cat-telephones-tablettes', name: 'Téléphones & Tablettes', slug: 'telephones-tablettes' },
   { id: 'cat-audio', name: 'Audio', slug: 'audio' },
   { id: 'cat-accessoires', name: 'Accessoires', slug: 'accessoires' },
 ];
@@ -125,15 +129,23 @@ export const getCategoryBySlug = (slug: string) => {
 export const getBanners = () => banners;
 
 export function getAllChildCategorySlugs(parentSlug: string): string[] {
-  const parentCategory = getCategoryBySlug(parentSlug);
-  if (!parentCategory) return [];
-
   const allCategories = getCategories();
-  const parentWithChildren = allCategories.find(c => c.slug === parentSlug) 
-    || allCategories.flatMap(c => c.subCategories || []).find(sc => sc.slug === parentSlug)
-    || allCategories.flatMap(c => c.subCategories || []).flatMap(sc => sc.subCategories || []).find(ssc => ssc.slug === parentSlug);
+  
+  // Find the category (at any level)
+  let parentCategory: Category | undefined;
+  const findInCategory = (cats: Category[]): Category | undefined => {
+      for (const cat of cats) {
+          if (cat.slug === parentSlug) return cat;
+          if (cat.subCategories) {
+              const found = findInCategory(cat.subCategories);
+              if (found) return found;
+          }
+      }
+      return undefined;
+  }
+  parentCategory = findInCategory(allCategories);
 
-  if (!parentWithChildren) return [parentSlug];
+  if (!parentCategory) return [parentSlug];
 
   const slugs: string[] = [];
   const recurse = (category: Category) => {
@@ -143,6 +155,6 @@ export function getAllChildCategorySlugs(parentSlug: string): string[] {
     }
   };
 
-  recurse(parentWithChildren);
+  recurse(parentCategory);
   return slugs;
 }

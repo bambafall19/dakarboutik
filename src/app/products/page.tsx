@@ -87,8 +87,10 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<ProductListingSkeleton />}>
-      <ProductsContent />
-    </Suspense>
+    <div className="container">
+      <Suspense fallback={<ProductListingSkeleton />}>
+        <ProductsContent />
+      </Suspense>
+    </div>
   );
 }

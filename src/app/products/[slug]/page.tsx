@@ -23,12 +23,20 @@ export default function ProductDetailPage() {
   const loading = productLoading || allProductsLoading;
 
   if (loading) {
-    return <ProductDetailsSkeleton />;
+    return (
+        <div className="container">
+            <ProductDetailsSkeleton />
+        </div>
+    );
   }
 
   if (!product) {
     notFound();
   }
 
-  return <ProductDetails product={product} relatedProducts={relatedProducts} />;
+  return (
+    <div className="container">
+        <ProductDetails product={product} relatedProducts={relatedProducts} />
+    </div>
+  );
 }

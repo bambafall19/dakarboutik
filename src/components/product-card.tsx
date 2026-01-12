@@ -60,10 +60,10 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card border rounded-lg hover:shadow-lg">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-secondary border border-transparent hover:border-primary rounded-lg">
       <div className="relative overflow-hidden p-4">
         <Link href={`/products/${product.slug}`} className="block">
-          <div className="aspect-square relative w-full bg-card">
+          <div className="aspect-square relative w-full">
             <Image
               src={product.images[0].imageUrl}
               alt={product.title}
@@ -93,7 +93,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         <div className="mt-4 flex items-end justify-between">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             className="h-9 w-9 rounded-full bg-card/60"
             onClick={handleAddToCart}

@@ -26,7 +26,7 @@ const engagements = [
 
 export function Engagements() {
   return (
-    <section className="bg-muted rounded-lg py-12">
+    <section className="bg-secondary rounded-lg py-12">
       <div className="container">
         <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">Pourquoi nous choisir ?</h2>
@@ -35,7 +35,7 @@ export function Engagements() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {engagements.map((engagement) => (
             <div key={engagement.title} className="flex flex-col items-center text-center">
-              <div className="bg-background p-4 rounded-full mb-4 border">
+              <div className="bg-background p-4 rounded-full mb-4 border-2 border-primary/50">
                 <engagement.icon className="h-8 w-8 text-primary" />
               </div>
               <h3 className="font-bold text-lg">{engagement.title}</h3>

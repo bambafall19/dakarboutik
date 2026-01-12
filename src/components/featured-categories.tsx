@@ -14,7 +14,7 @@ export function FeaturedCategories() {
             <Link key={category.id} href={`/products?category=${category.slug}`} className="group">
                 <div className="flex flex-col items-center justify-center p-2 gap-2 text-center">
                   {Icon && (
-                    <div className="bg-muted text-foreground rounded-full p-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                    <div className="bg-secondary text-foreground rounded-full p-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
                       <Icon className="h-7 w-7" />
                     </div>
                   )}

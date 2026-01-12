@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr-SN" className="h-full">
+    <html lang="fr-SN" className="h-full dark">
       <head>
         <title>Dakarboutik - Électronique de pointe à Dakar</title>
         <meta

@@ -78,7 +78,7 @@ export function Header({ settings, loading }: HeaderProps) {
   );
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-card">
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
       {loading ? (
         <Skeleton className="h-8 w-full" />
       ) : (
@@ -88,73 +88,70 @@ export function Header({ settings, loading }: HeaderProps) {
           </div>
         )
       )}
-      <div className="container">
-        <div className="flex h-20 items-center justify-between gap-6">
-          {/* Mobile Menu & Logo */}
-          <div className="flex items-center gap-2 md:hidden">
-             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
+      <div className="container flex h-20 items-center justify-between gap-6">
+        {/* Mobile Menu & Logo */}
+        <div className="flex items-center gap-2 md:hidden">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Icons.menu />
-                  <span className="sr-only">Ouvrir le menu</span>
+                <Icons.menu />
+                <span className="sr-only">Ouvrir le menu</span>
                 </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col">
-                 <div className="p-4 border-b">
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col">
+                <div className="p-4 border-b">
                     <Logo imageUrl={logoUrl} onClick={() => setIsMobileMenuOpen(false)} />
-                  </div>
-                  <nav className="flex flex-col gap-4 p-4">
+                </div>
+                <nav className="flex flex-col gap-4 p-4">
                     {categoriesLoading ? <MobileNavLinksSkeleton /> : <MobileNavLinks />}
-                  </nav>
-              </SheetContent>
+                </nav>
+            </SheetContent>
             </Sheet>
-            <Button variant="ghost" size="icon">
-                <Icons.search className="h-5 w-5" />
-                <span className="sr-only">Rechercher</span>
-            </Button>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-8">
-             <Logo imageUrl={logoUrl} />
-             <nav className="flex items-center gap-6">
-              {categoriesLoading ? <NavLinksSkeleton /> : <NavLinks />}
+        </div>
+        
+        <div className="hidden md:flex items-center gap-8">
+            <Logo imageUrl={logoUrl} />
+            <nav className="flex items-center gap-6">
+            {categoriesLoading ? <NavLinksSkeleton /> : <NavLinks />}
             </nav>
-          </div>
+        </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 hidden md:flex justify-center">
-            <div className="relative w-full max-w-md">
-                <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                placeholder="Rechercher un produit..."
-                className="pl-9 bg-muted border-none"
-                />
-            </div>
+        {/* Search Bar & Actions */}
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <div className="relative w-full max-w-xs lg:max-w-md hidden md:block">
+              <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+              placeholder="Rechercher un produit..."
+              className="pl-9 bg-muted border-none"
+              />
           </div>
-          
-          {/* Right section: Actions */}
-          <div className="flex items-center justify-end gap-2">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Icons.shoppingBag className="h-5 w-5" />
-                  <span className="sr-only">Ouvrir le panier</span>
-                  {totalItems > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                      {totalItems}
-                    </span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="flex flex-col">
-                <CartDrawer />
-              </SheetContent>
-            </Sheet>
-             <Button variant="ghost" size="icon" className="hidden md:flex">
-                  <Icons.user className="h-5 w-5" />
-                  <span className="sr-only">Connexion</span>
-             </Button>
-          </div>
+        
+          <Button variant="ghost" size="icon" className='md:hidden'>
+              <Icons.search className="h-5 w-5" />
+              <span className="sr-only">Rechercher</span>
+          </Button>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <Icons.shoppingBag className="h-5 w-5" />
+                <span className="sr-only">Ouvrir le panier</span>
+                {totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {totalItems}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="flex flex-col">
+              <CartDrawer />
+            </SheetContent>
+          </Sheet>
+
+          <Button variant="ghost" size="icon">
+              <Icons.user className="h-5 w-5" />
+              <span className="sr-only">Connexion</span>
+          </Button>
         </div>
       </div>
     </header>

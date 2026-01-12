@@ -1,17 +1,15 @@
-
 import { getProductBySlug, getCategoryPath } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
-import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 import { getProducts } from '@/lib/data-firebase';
+import { Suspense } from 'react';
+import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 
 type ProductDetailPageProps = {
   params: { slug: string };
 };
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { slug } = params;
-
+async function ProductDetailsContent({ slug }: { slug: string }) {
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -24,7 +22,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 5);
   
-  const categoryPath = getCategoryPath(product.category);
+  const categoryPath = getCategoryPath(product.category) || [];
 
   return (
     <ProductDetails 
@@ -32,5 +30,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       relatedProducts={relatedProducts}
       categoryPath={categoryPath}
     />
+  );
+}
+
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  return (
+    <Suspense fallback={<ProductDetailsSkeleton />}>
+      <ProductDetailsContent slug={params.slug} />
+    </Suspense>
   );
 }

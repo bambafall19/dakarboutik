@@ -14,19 +14,12 @@ export function HeroSection() {
 
   if (loading) {
     return (
-      <section className="w-full bg-secondary/50">
-        <div className="container py-8 md:py-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-                <div className="space-y-4 text-center md:text-left">
-                    <Skeleton className="h-12 w-3/4 mx-auto md:mx-0" />
-                    <Skeleton className="h-6 w-full max-w-md mx-auto md:mx-0" />
-                    <Skeleton className="h-12 w-48 mt-6 mx-auto md:mx-0" />
-                </div>
-                <Skeleton className="aspect-square w-full rounded-lg" />
-            </div>
+      <section className="w-full">
+        <div className="container px-0">
+          <Skeleton className="aspect-video w-full" />
         </div>
       </section>
-    )
+    );
   }
 
   if (!mainBanner) {
@@ -34,36 +27,29 @@ export function HeroSection() {
   }
 
   return (
-    <section className="w-full bg-secondary/50">
-      <div className="container py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-            <div className="space-y-4 text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-                {mainBanner.title}
-              </h1>
-              {mainBanner.subtitle && (
-                <p className="max-w-xl text-base md:text-lg text-muted-foreground mx-auto md:mx-0">
-                  {mainBanner.subtitle}
-                </p>
-              )}
-              <Button asChild className="mt-6" size="lg">
-                <Link href={mainBanner.linkUrl}>Explorer les produits</Link>
-              </Button>
-            </div>
-            <Card className="overflow-hidden">
-                <CardContent className="p-0">
-                    <div className="relative aspect-square w-full">
-                        <Image
-                        src={mainBanner.image.imageUrl}
-                        alt={mainBanner.title}
-                        data-ai-hint={mainBanner.image.imageHint}
-                        fill
-                        priority
-                        className="object-cover"
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+    <section className="w-full">
+      <div className="container relative aspect-video">
+        <Image
+          src={mainBanner.image.imageUrl}
+          alt={mainBanner.title}
+          data-ai-hint={mainBanner.image.imageHint}
+          fill
+          priority
+          className="object-cover rounded-lg"
+        />
+        <div className="absolute inset-0 bg-black/40 rounded-lg" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg">
+            {mainBanner.title}
+          </h1>
+          {mainBanner.subtitle && (
+            <p className="max-w-2xl mt-4 text-base md:text-lg text-neutral-200 drop-shadow-md">
+              {mainBanner.subtitle}
+            </p>
+          )}
+          <Button asChild className="mt-6" size="lg">
+            <Link href={mainBanner.linkUrl}>Explorer les produits</Link>
+          </Button>
         </div>
       </div>
     </section>

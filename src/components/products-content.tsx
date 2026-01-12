@@ -5,7 +5,6 @@ import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useMemo, useState } from 'react';
-import type { Product } from '@/lib/types';
 
 export function ProductsContent() {
   const searchParams = useSearchParams();

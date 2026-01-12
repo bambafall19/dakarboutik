@@ -60,7 +60,18 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   }, [deliveryMethod, onDeliveryMethodChange]);
 
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
+     // Trigger validation for all fields
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast({
+        variant: "destructive",
+        title: "Formulaire incomplet",
+        description: "Veuillez remplir tous les champs avant de commander via WhatsApp.",
+      });
+      return;
+    }
+
     if (!settings.whatsappNumber) {
       toast({
         variant: "destructive",
@@ -69,18 +80,26 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       });
       return;
     }
-
-    const shippingCost = SHIPPING_COSTS[deliveryMethod] || 0;
+    
+    const values = form.getValues();
+    const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
     const grandTotal = totalPrice + shippingCost;
     
-    let message = "Bonjour, je souhaite passer la commande suivante depuis votre site :\n\n";
+    let message = "*Nouvelle Commande via le site*\n\n";
+    message += "*Client :*\n";
+    message += `- Nom : ${values.name}\n`;
+    message += `- Tél : ${values.phone}\n`;
+    message += `- Adresse : ${values.address}, ${values.city}\n\n`;
+
+    message += "*Panier :*\n";
     state.items.forEach(item => {
       const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
       message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''}\n`;
     });
-    message += `\nSous-total : ${totalPrice.toLocaleString('fr-SN')} XOF`;
-    message += `\nLivraison : ${shippingCost.toLocaleString('fr-SN')} XOF`;
-    message += `\n\n*Total : ${grandTotal.toLocaleString('fr-SN')} XOF*`;
+    message += "\n";
+    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} XOF\n`;
+    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} XOF\n`;
+    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} XOF*`;
     
     const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');

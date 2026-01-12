@@ -53,6 +53,71 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Input } from '../ui/input';
+
+function EditableStock({ product }: { product: Product }) {
+  const [stock, setStock] = useState(product.stock);
+  const [isEditing, setIsEditing] = useState(false);
+  const firestore = useFirestore();
+  const { toast } = useToast();
+
+  const handleStockUpdate = async () => {
+    setIsEditing(false);
+    if (stock === product.stock) return; // No change
+
+    if (!firestore) {
+       toast({ variant: 'destructive', title: 'Erreur', description: 'Firestore non disponible.'});
+       return;
+    }
+
+    const productRef = doc(firestore, 'products', product.id);
+    try {
+      await updateDoc(productRef, { stock: stock });
+      toast({
+        title: 'Stock mis à jour',
+        description: `Le stock de "${product.title}" est maintenant de ${stock}.`,
+      });
+    } catch (error) {
+      setStock(product.stock); // Revert on error
+      toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour le stock.',
+      });
+    }
+  };
+
+  return (
+    <div className="w-24">
+      {isEditing ? (
+        <Input
+          type="number"
+          value={stock}
+          onChange={(e) => setStock(Number(e.target.value))}
+          onBlur={handleStockUpdate}
+          onKeyDown={(e) => e.key === 'Enter' && handleStockUpdate()}
+          autoFocus
+          className="h-8"
+        />
+      ) : (
+        <button
+          onClick={() => setIsEditing(true)}
+          className={cn(
+            "w-full text-left px-2 py-1 rounded-md text-sm",
+            {
+              "text-green-800 bg-green-100": stock > 5,
+              "text-yellow-800 bg-yellow-100": stock > 0 && stock <= 5,
+              "text-red-800 bg-red-100": stock === 0,
+            }
+          )}
+        >
+          {stock > 0 ? `${stock} en stock` : 'Vendu'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 
 export function ProductList({ products }: { products: Product[] }) {
   const firestore = useFirestore();
@@ -101,26 +166,6 @@ export function ProductList({ products }: { products: Product[] }) {
       });
     }
   };
-
-  const handleMarkAsSold = async (product: Product) => {
-    if (!firestore) return;
-    const productRef = doc(firestore, 'products', product.id);
-
-    try {
-      await updateDoc(productRef, { stock: 0 });
-      toast({
-        title: 'Produit marqué comme vendu',
-        description: `Le stock de "${product.title}" a été mis à 0.`,
-      });
-    } catch (error) {
-       toast({
-        variant: 'destructive',
-        title: 'Erreur',
-        description: 'Impossible de marquer le produit comme vendu.',
-      });
-    }
-  };
-
 
   return (
     <>
@@ -188,20 +233,7 @@ export function ProductList({ products }: { products: Product[] }) {
                     />
                   </TableCell>
                    <TableCell className="hidden md:table-cell">
-                    <Badge
-                      className={cn({
-                        "bg-green-100 text-green-800 border-green-200 hover:bg-green-100": product.stock > 5,
-                        "bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100": product.stock > 0 && product.stock <= 5,
-                        "bg-red-100 text-red-800 border-red-200 hover:bg-red-100": product.stock === 0,
-                      })}
-                      variant="outline"
-                    >
-                      {product.stock > 5
-                        ? 'En stock'
-                        : product.stock > 0
-                        ? `Stock faible (${product.stock})`
-                        : 'Vendu'}
-                    </Badge>
+                      <EditableStock product={product} />
                   </TableCell>
                   <TableCell>
                     <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
@@ -220,9 +252,6 @@ export function ProductList({ products }: { products: Product[] }) {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleMarkAsSold(product)}>
-                          Marquer comme vendu
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                         className="text-red-600 focus:text-red-600 focus:bg-red-50"

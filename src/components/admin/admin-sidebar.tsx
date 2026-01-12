@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -74,7 +75,7 @@ export function AdminSidebar() {
                        <nav className="grid gap-1">
                           {item.subItems.map(subItem => (
                             <Link
-                              key={subItem.href}
+                              key={subItem.label}
                               href={subItem.href}
                               className={cn(
                                 'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
@@ -90,7 +91,7 @@ export function AdminSidebar() {
                   </AccordionItem>
                 ) : (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',

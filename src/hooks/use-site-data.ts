@@ -72,7 +72,7 @@ export function useSiteSettings() {
   
   const defaultSettings: SiteSettings = {
     logoUrl: null,
-    announcementMessage: 'Paiement à la livraison disponible partout à Dakar. Commandez en toute confiance.',
+    announcementMessage: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
     whatsappNumber: '221771234567', // Default placeholder number
   };
 

@@ -7,6 +7,18 @@
       "imageHint": "woman headphones"
     },
     {
+      "id": "banner-laptops",
+      "description": "Person working on a modern laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "laptop work"
+    },
+    {
+      "id": "banner-accessories",
+      "description": "Various tech accessories on a desk",
+      "imageUrl": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "tech accessories"
+    },
+    {
       "id": "banner-1",
       "description": "Baobab High Tech Banner",
       "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/baobab-banner.png",

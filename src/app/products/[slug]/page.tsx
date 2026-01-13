@@ -48,7 +48,7 @@ function ProductDetailsContent({ slug }: { slug: string }) {
 
 // This is now an async Server Component
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const slug = params.slug;
+  const { slug } = params;
 
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>

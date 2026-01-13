@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Header } from '@/components/header';
@@ -6,7 +7,7 @@ import { useSiteSettings, useCategories } from '@/hooks/use-site-data';
 import { MainSidebar } from './main-sidebar';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Sheet, SheetContent } from './ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <SheetContent side="left" className="w-full max-w-sm">
+        <SheetTitle className="sr-only">Menu de navigation</SheetTitle>
         <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
       </SheetContent>
     </Sheet>

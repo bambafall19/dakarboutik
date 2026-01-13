@@ -1,6 +1,12 @@
 {
   "placeholderImages": [
     {
+      "id": "banner-headphones",
+      "description": "Woman wearing headphones for a promo banner",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/woman-headphones.png",
+      "imageHint": "woman headphones"
+    },
+    {
       "id": "banner-1",
       "description": "Baobab High Tech Banner",
       "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/baobab-banner.png",

@@ -9,7 +9,8 @@ import { Icons } from '@/components/icons';
 import { HeroSection } from '@/components/hero-section';
 import { Testimonials } from '@/components/testimonials';
 import { Engagements } from '@/components/engagements';
-import { HomeSidebar } from '@/components/home-sidebar';
+import { ProductFilters } from '@/components/product-filters';
+import { useMemo } from 'react';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -21,55 +22,40 @@ export default function HomePage() {
   const bestsellers = products.filter(p => p.isBestseller).slice(0, 8);
   const saleProducts = products.filter(p => p.salePrice).slice(0, 8);
 
+  const brands = useMemo(() => {
+    const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
+    return [...new Set(allBrands)];
+  }, [products]);
+
+
   return (
     <div className="flex flex-col gap-8 md:gap-12">
       <HeroSection />
       
-      <div className="container grid grid-cols-1 lg:grid-cols-12 gap-12 px-4 md:px-8">
-        <aside className="hidden lg:block lg:col-span-3">
-          <HomeSidebar />
-        </aside>
-        
-        <main className="col-span-12 lg:col-span-9 space-y-8 md:space-y-12">
-            {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-              </div>
-            ) : (
-              <>
-                {saleProducts.length > 0 && (
-                    <ProductGrid
-                        title="Flash Sale"
-                        products={saleProducts}
-                        link={{ href: '/products', text: 'Voir tout' }}
-                        gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                        icon={<Icons.flash className="h-6 w-6 text-primary" />}
-                    />
-                )}
-                {newArrivals.length > 0 && (
-                  <ProductGrid
-                    title="Nouveautés"
-                    products={newArrivals}
-                    link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  />
-                )}
-                {bestsellers.length > 0 && (
-                  <ProductGrid
-                    title="Meilleures Ventes"
-                    products={bestsellers}
-                    link={{ href: '/products', text: 'Voir tout' }}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  />
-                )}
-              </>
-            )}
-        </main>
+      <div className="container">
+        <ProductFilters brands={brands} showCategoryFilter={false} />
       </div>
 
-        <FeaturedCategories />
-        <Engagements />
-        <Testimonials />
+      <div className="container space-y-8 md:space-y-12">
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+            </div>
+          ) : (
+            <>
+              {newArrivals.length > 0 && (
+                <ProductGrid
+                  title="Produits pour vous !"
+                  products={newArrivals}
+                  gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                />
+              )}
+            </>
+          )}
+      </div>
+      
+      <Engagements />
+      <Testimonials />
     </div>
   );
 }

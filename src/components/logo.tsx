@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { ShoppingBasket } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 
 interface LogoProps {
@@ -26,15 +26,15 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
       {imageUrl ? (
         <Image src={imageUrl} alt="Dakarboutik Logo" width={32} height={32} className="h-8 w-auto rounded-sm object-contain" />
       ) : (
-        <ShoppingBasket className="h-6 w-6 text-primary" />
+        <ShoppingCart className="h-8 w-8 text-primary" />
       )}
       <span className={cn(
-        "text-xl font-bold tracking-tight text-foreground",
+        "text-2xl font-bold tracking-tight text-foreground",
         hideTextOnMobile && "hidden sm:inline"
       )}>
-        Dakar<span className="text-primary">Boutik</span>
+        Shopcart
       </span>
-      <span className="sr-only">DakarBoutik</span>
+      <span className="sr-only">Shopcart</span>
     </Link>
   );
 };

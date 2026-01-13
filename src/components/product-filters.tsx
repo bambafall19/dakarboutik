@@ -2,94 +2,71 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Price } from './price';
-import { Checkbox } from './ui/checkbox';
-import { Separator } from './ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Button } from './ui/button';
+import { Icons } from './icons';
 
 interface ProductFiltersProps {
   brands: string[];
+  showCategoryFilter?: boolean;
 }
 
-export function ProductFilters({ brands }: ProductFiltersProps) {
+const filters = [
+    { id: 'type', name: 'Type', options: ['Sans fil', 'Avec fil'] },
+    { id: 'price', name: 'Prix', options: ['Moins de 50 000', '50 000 - 100 000'] },
+    { id: 'review', name: 'Avis', options: ['5 étoiles', '4 étoiles et plus'] },
+    { id: 'color', name: 'Couleur', options: ['Noir', 'Blanc', 'Rouge'] },
+    { id: 'material', name: 'Matériau', options: ['Plastique', 'Métal'] },
+    { id: 'offer', name: 'Offre', options: ['En solde', 'Livraison gratuite'] },
+]
+
+export function ProductFilters({ brands, showCategoryFilter = true }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Get filters from URL
-  const selectedBrands = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-  const priceRangeParam = searchParams.get('priceRange');
-
-  const priceRange: [number, number] = priceRangeParam
-    ? priceRangeParam.split('-').map(Number) as [number, number]
-    : [0, 1000000];
-
-  const updateSearchParams = (key: string, value: string | null) => {
+  const handleSortChange = (value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (value === null || value === '') {
-      current.delete(key);
-    } else {
-      current.set(key, value);
-    }
+    current.set('sortBy', value);
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    // Use replaceState to avoid polluting browser history on every filter change.
-    // The parent component can decide when to push to history if needed.
     router.push(`${pathname}${query}`, { scroll: false });
   };
   
-  const handleBrandChange = (brand: string, checked: boolean) => {
-    const newBrands = checked
-      ? [...selectedBrands, brand]
-      : selectedBrands.filter(b => b !== brand);
-    updateSearchParams('brands', newBrands.length > 0 ? newBrands.join(',') : null);
-  };
-  
-  const handlePriceChange = (value: number[]) => {
-    updateSearchParams('priceRange', `${value[0]}-${value[1]}`);
-  };
+  const sortBy = searchParams.get('sortBy') || 'relevance';
+
 
   return (
-    <div className="space-y-6">
-      <Separator />
-       <h3 className="font-semibold text-lg">Filtres</h3>
-      <Accordion type="multiple" defaultValue={['brand', 'price']} className="w-full">
-        <AccordionItem value="brand">
-          <AccordionTrigger>Marque</AccordionTrigger>
-          <AccordionContent className="space-y-2 pt-2">
-            {brands.map(brand => (
-              <div key={brand} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`brand-${brand}`}
-                  checked={selectedBrands.includes(brand)}
-                  onCheckedChange={(checked) => handleBrandChange(brand, !!checked)}
-                />
-                <Label htmlFor={`brand-${brand}`} className="font-normal">{brand}</Label>
-              </div>
+    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+        <div className="flex-1 flex flex-wrap items-center gap-2">
+            {filters.map(filter => (
+                <Select key={filter.id}>
+                    <SelectTrigger className="w-auto h-9 text-sm bg-card rounded-full focus:ring-0">
+                        <SelectValue placeholder={filter.name} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {filter.options.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}
+                    </SelectContent>
+                </Select>
             ))}
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="price">
-          <AccordionTrigger>Prix</AccordionTrigger>
-          <AccordionContent>
-            <div className="px-1 pt-2">
-              <Slider
-                min={0}
-                max={1000000}
-                step={10000}
-                value={priceRange}
-                onValueChange={handlePriceChange}
-              />
-              <div className="flex justify-between mt-3 text-sm text-muted-foreground">
-                <Price price={priceRange[0]} currency="XOF" className="font-normal"/>
-                <Price price={priceRange[1]} currency="XOF" className="font-normal"/>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            <Button variant="outline" size="sm" className="h-9 rounded-full">
+                Tous les filtres <Icons.filter className="ml-2 h-4 w-4" />
+            </Button>
+        </div>
+        <div className='flex items-center gap-2'>
+            <span className="text-sm text-muted-foreground hidden md:inline">Trier par:</span>
+             <Select value={sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger className="w-auto h-9 text-sm bg-card rounded-full focus:ring-0">
+                    <SelectValue placeholder="Trier par" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="relevance">Pertinence</SelectItem>
+                    <SelectItem value="newest">Nouveautés</SelectItem>
+                    <SelectItem value="price_asc">Prix: Croissant</SelectItem>
+                    <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
     </div>
   );
 }

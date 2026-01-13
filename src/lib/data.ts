@@ -1,11 +1,17 @@
 
-
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
 import type { Banner } from './types';
 
 
 const banners: Banner[] = [
+  {
+    id: 'banner-headphones',
+    title: 'Jusqu\'à 50% de réduction sur une sélection de casques',
+    subtitle: 'Ne manquez pas nos offres exceptionnelles !',
+    image: findImage('banner-headphones'),
+    linkUrl: '/products?category=audio',
+  },
   {
     id: 'banner1',
     title: 'Baobab High Tech',

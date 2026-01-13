@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 98%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 350 80% 50%; /* Adjusted to a red tone */
+    --primary: 158 80% 20%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 96%; /* Lighter secondary */
+    --secondary: 220 13% 96%;
     --secondary-foreground: 224 71.4% 4.1%;
-    --muted: 220 13% 96%; /* Lighter muted */
+    --muted: 220 13% 91%;
     --muted-foreground: 220 9% 46%;
-    --accent: 220 13% 96%; /* Lighter accent */
+    --accent: 220 13% 85%;
     --accent-foreground: 224 71.4% 4.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 350 80% 50%;
-    --nav: 224 71.4% 4.1%; /* Dark for nav */
+    --ring: 158 80% 20%;
+    --nav: 158 80% 15%;
     --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -40,7 +40,7 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 350 80% 50%;
+    --primary: 158 80% 25%;
     --primary-foreground: 0 0% 100%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 210 20% 98%;
@@ -52,8 +52,8 @@
     --destructive-foreground: 0 0% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 350 80% 50%;
-    --nav: 224 71.4% 4.1%;
+    --ring: 158 80% 25%;
+    --nav: 158 80% 15%;
     --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;

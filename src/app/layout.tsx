@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full">
       <head>
-        <title>DakarBoutik</title>
+        <title>Shopcart</title>
         <meta
           name="description"
           content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."

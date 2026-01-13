@@ -60,10 +60,10 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border shadow-sm hover:shadow-lg">
-      <div className="relative overflow-hidden">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border-0 shadow-none hover:shadow-lg hover:border">
+      <div className="relative overflow-hidden p-4">
         <Link href={`/products/${product.slug}`} className="block">
-          <div className="aspect-square relative w-full bg-card">
+          <div className="aspect-square relative w-full bg-muted/50 rounded-md">
             <Image
               src={product.images[0].imageUrl}
               alt={product.title}
@@ -76,33 +76,28 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/60 hover:bg-background text-muted-foreground hover:text-red-500">
             <Icons.heart className="h-4 w-4" />
         </Button>
-        {product.isNew && (
-            <div className="absolute top-2 left-2">
-                <div className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">NOUVEAU</div>
-            </div>
-        )}
       </div>
-      <CardContent className="p-4 flex-1 flex flex-col">
-        <div className="flex-1">
-            <span className="text-xs text-muted-foreground">{product.category}</span>
-          <h3 className="font-semibold text-sm leading-snug mb-2 mt-1 min-h-[40px]">
+      <CardContent className="p-4 pt-0 flex-1 flex flex-col">
+        <div className="flex-1 mb-2">
+          <h3 className="font-semibold text-base leading-snug mb-2 min-h-[40px]">
             <Link href={`/products/${product.slug}`}>{product.title}</Link>
           </h3>
-           <div className="flex items-center gap-1 text-xs text-muted-foreground">
+           <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
             <Star className="w-4 h-4 fill-amber-400 text-amber-400"/>
             <span className="font-semibold text-sm text-foreground">4.9</span>
             {soldCount !== null && <span>({soldCount})</span>}
-          </div>
         </div>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-auto flex items-center justify-between">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           <Button
-            size="icon"
+            size="sm"
             variant="outline"
-            className="h-9 w-9 rounded-full"
+            className="rounded-full"
             onClick={handleAddToCart}
           >
-            <Icons.plus className="h-4 w-4" />
+            Ajouter
           </Button>
         </div>
       </CardContent>

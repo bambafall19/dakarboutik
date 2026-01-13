@@ -40,29 +40,27 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
 
   if (variant === 'horizontal') {
     return (
-      <div className="flex items-center gap-4 group">
+      <Link href={`/products/${product.slug}`} className="flex items-center gap-4 group p-2 -m-2 rounded-lg hover:bg-accent">
         <div className="relative shrink-0">
-          <Link href={`/products/${product.slug}`} className="block">
-            <div className="aspect-square relative w-24 bg-card rounded-lg border">
+            <div className="aspect-square relative w-16 bg-card rounded-md border">
               <Image
                 src={product.images[0].imageUrl}
                 alt={product.title}
                 data-ai-hint={product.images[0].imageHint}
                 fill
-                className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-          </Link>
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-sm leading-snug">
-            <Link href={`/products/${product.slug}`}>{product.title}</Link>
+          <h3 className="font-semibold text-sm leading-snug line-clamp-2">
+            {product.title}
           </h3>
-          <div className="mt-2">
+          <div className="mt-1">
             <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           </div>
         </div>
-      </div>
+      </Link>
     )
   }
 
@@ -82,13 +80,11 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         </div>
       </Link>
       <CardContent className="p-4 pt-0 flex-1 flex flex-col">
-        <h3 className="font-semibold text-lg leading-tight">
+        {product.brand && <span className="text-xs text-muted-foreground uppercase font-semibold">{product.brand}</span>}
+        <h3 className="font-semibold text-lg leading-tight flex-1">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>
-        <p className="text-sm text-muted-foreground mt-1 truncate">
-            {product.description}
-        </p>
-
+        
         <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
@@ -98,7 +94,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             <span className="text-xs font-bold px-2 py-0.5 bg-muted rounded-full">{rating.score}</span>
         </div>
         
-        <div className="mt-4 flex-1 flex items-end justify-between">
+        <div className="mt-4 flex flex-1 flex items-end justify-between">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           <Button size="sm" onClick={handleAddToCart} className="shrink-0">
             <Icons.shoppingBag className="mr-2 h-4 w-4" />

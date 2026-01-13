@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -10,9 +10,11 @@ import { Button } from './ui/button';
 import { useRecentProducts } from '@/hooks/use-recent-products';
 import { ProductCard } from './product-card';
 import { ScrollArea } from './ui/scroll-area';
-import { useCategories } from '@/hooks/use-site-data';
+import { useCategories, useProducts } from '@/hooks/use-site-data';
 import Link from 'next/link';
 import { Separator } from './ui/separator';
+import { Product } from '@/lib/types';
+import { useDebounce } from '@/hooks/use-debounce';
 
 interface SearchSheetProps {
     open: boolean;
@@ -23,11 +25,23 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [query, setQuery] = useState(searchParams.get('q') || '');
+    const debouncedQuery = useDebounce(query, 300);
+
     const { recentProducts } = useRecentProducts();
     const { categories } = useCategories();
+    const { products } = useProducts();
 
     const suggestedSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
     const suggestedCategories = categories.filter(c => suggestedSlugs.includes(c.slug));
+    
+    const searchResults = useMemo(() => {
+        if (debouncedQuery.length < 2) return [];
+        return products.filter(p => 
+            p.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            p.description.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            (p.brand && p.brand.toLowerCase().includes(debouncedQuery.toLowerCase()))
+        ).slice(0, 10); // Limit results for performance
+    }, [debouncedQuery, products]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,6 +56,8 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
             setQuery('');
         }
     }, [open]);
+
+    const showSuggestions = query.length < 2;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -62,28 +78,47 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
                 </div>
                 <ScrollArea className="max-h-[calc(100vh-10rem)]">
                     <div className="p-6 space-y-8">
-                        {recentProducts.length > 0 && (
-                             <div>
-                                <h3 className="font-semibold mb-4">Récemment consultés</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {recentProducts.slice(0,2).map(product => (
-                                        <ProductCard key={product.id} product={product} variant="horizontal" />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        {suggestedCategories.length > 0 && (
+                        {showSuggestions ? (
+                            <>
+                                {recentProducts.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold mb-4">Récemment consultés</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {recentProducts.slice(0,2).map(product => (
+                                                <ProductCard key={product.id} product={product} variant="horizontal" />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {suggestedCategories.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold mb-4">Catégories populaires</h3>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {suggestedCategories.map(category => (
+                                                <Button key={category.id} variant="outline" asChild className="justify-start">
+                                                    <Link href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)}>
+                                                        {category.name}
+                                                    </Link>
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
                             <div>
-                                <h3 className="font-semibold mb-4">Catégories populaires</h3>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {suggestedCategories.map(category => (
-                                        <Button key={category.id} variant="outline" asChild className="justify-start">
-                                            <Link href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)}>
-                                                {category.name}
-                                            </Link>
-                                        </Button>
-                                    ))}
-                                </div>
+                                {searchResults.length > 0 ? (
+                                    <>
+                                        <h3 className="font-semibold mb-4">Résultats de la recherche</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {searchResults.map(product => (
+                                                 <ProductCard key={product.id} product={product} variant="horizontal" />
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p className="text-center text-muted-foreground py-8">Aucun produit trouvé pour "{debouncedQuery}"</p>
+                                )}
                             </div>
                         )}
                     </div>

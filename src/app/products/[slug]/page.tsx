@@ -14,8 +14,8 @@ type ProductDetailPageProps = {
   params: { slug: string };
 };
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { product, loading: productLoading } = useProductsBySlug(params.slug);
+function ProductDetailsContent({ slug }: { slug: string }) {
+  const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
   const { addRecentProduct } = useRecentProducts();
@@ -47,12 +47,18 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   }
 
   return (
-    <Suspense fallback={<ProductDetailsSkeleton />}>
       <ProductDetails 
         product={product} 
         relatedProducts={relatedProducts}
         categoryPath={categoryPath}
       />
+  );
+}
+
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  return (
+    <Suspense fallback={<ProductDetailsSkeleton />}>
+      <ProductDetailsContent slug={params.slug} />
     </Suspense>
   );
 }

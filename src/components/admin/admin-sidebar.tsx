@@ -33,7 +33,7 @@ const menuItems = [
     subItems: [
       { href: '/admin', label: 'Tous les produits', icon: Boxes },
       { href: '/admin/add-product', label: 'Ajouter un produit', icon: Boxes },
-      { href: '#', label: 'Catégories', icon: Tags },
+      { href: '/admin/categories', label: 'Catégories', icon: Tags },
     ],
   },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },

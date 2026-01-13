@@ -2,7 +2,7 @@
 
 import type { ImagePlaceholder } from './placeholder-images';
 import { findImage } from './placeholder-images';
-import type { Banner, Category, SimpleCategory } from './types';
+import type { Banner } from './types';
 
 
 const banners: Banner[] = [

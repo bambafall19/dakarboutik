@@ -1,4 +1,3 @@
-
 'use client';
 
 import { getCategoryPath } from '@/lib/data-helpers';
@@ -15,8 +14,7 @@ type ProductDetailPageProps = {
 };
 
 function ProductDetailsContent({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const { product, loading: productLoading } = useProductsBySlug(slug);
+  const { product, loading: productLoading } = useProductsBySlug(params.slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
   const { addRecentProduct } = useRecentProducts();

@@ -25,16 +25,17 @@ import {
 } from '@/components/ui/accordion';
 
 const menuItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   {
     label: 'Produits',
     icon: Package,
     subItems: [
-      { href: '/admin', label: 'Tous les produits', icon: Boxes },
+      { href: '/admin/products', label: 'Tous les produits', icon: Boxes },
       { href: '/admin/add-product', label: 'Ajouter un produit', icon: Boxes },
       { href: '/admin/categories', label: 'Catégories', icon: Tags },
     ],
+    basePath: '/admin/products',
   },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '#', label: 'Clients', icon: Users },
@@ -45,12 +46,21 @@ const menuItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
 
-  const isLinkActive = (href?: string, subItems?: any[]) => {
-    if (href && pathname === href) return true;
-    return subItems?.some(item => pathname.startsWith(item.href)) ?? false;
+  const isLinkActive = (item: (typeof menuItems)[number]) => {
+    if (item.exact) {
+      return pathname === item.href;
+    }
+    if (item.href) {
+      return pathname.startsWith(item.href);
+    }
+    if (item.subItems) {
+      return item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product');
+    }
+    return false;
   };
   
-  const defaultActiveAccordion = menuItems.find(item => isLinkActive(undefined, item.subItems))?.label;
+  const defaultActiveAccordion = menuItems.find(item => item.subItems && (item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product')))?.label;
+
 
   return (
     <div className="hidden border-r bg-card lg:block">
@@ -67,7 +77,7 @@ export function AdminSidebar() {
               {menuItems.map((item) =>
                 item.subItems ? (
                   <AccordionItem key={item.label} value={item.label} className="border-b-0">
-                     <AccordionTrigger className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:no-underline", isLinkActive(undefined, item.subItems) && 'text-primary bg-muted')}>
+                     <AccordionTrigger className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:no-underline", isLinkActive(item) && 'text-primary bg-muted')}>
                         <item.icon className="h-4 w-4" />
                         {item.label}
                      </AccordionTrigger>
@@ -92,10 +102,10 @@ export function AdminSidebar() {
                 ) : (
                   <Link
                     key={item.label}
-                    href={item.href}
+                    href={item.href!}
                     className={cn(
                       'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-                      pathname === item.href && 'bg-muted text-primary'
+                      isLinkActive(item) && 'bg-muted text-primary'
                     )}
                   >
                     <item.icon className="h-4 w-4" />

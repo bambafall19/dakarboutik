@@ -26,8 +26,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
   
   const handleSearchClick = () => {
-    // For desktop, the header search input click will open the search sheet
-    // For mobile, the bottom nav search button click will open it.
     setIsSearchSheetOpen(true);
   }
 

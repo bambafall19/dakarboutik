@@ -25,7 +25,7 @@ export default function HomePage() {
     <div className="flex flex-col gap-8 md:gap-12">
       <HeroSection />
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="container grid grid-cols-1 lg:grid-cols-12 gap-12 px-4 md:px-8">
         <aside className="hidden lg:block lg:col-span-3">
           <HomeSidebar />
         </aside>
@@ -42,7 +42,7 @@ export default function HomePage() {
                         title="Flash Sale"
                         products={saleProducts}
                         link={{ href: '/products', text: 'Voir tout' }}
-                        gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                        gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                         icon={<Icons.flash className="h-6 w-6 text-primary" />}
                     />
                 )}
@@ -51,7 +51,7 @@ export default function HomePage() {
                     title="Nouveautés"
                     products={newArrivals}
                     link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                   />
                 )}
                 {bestsellers.length > 0 && (
@@ -59,7 +59,7 @@ export default function HomePage() {
                     title="Meilleures Ventes"
                     products={bestsellers}
                     link={{ href: '/products', text: 'Voir tout' }}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                   />
                 )}
               </>

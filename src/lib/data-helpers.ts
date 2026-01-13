@@ -1,24 +1,15 @@
 
-
 import type { Category } from "./types";
 
 /**
  * Builds a nested category tree from a flat array of categories.
  */
-export const buildCategoryHierarchy = (
-    rawCategories: Category[], 
-    categoryIcons: { [key: string]: React.ComponentType<{ className?: string }> }
-): Category[] => {
-    const categoriesWithIcons = rawCategories.map(cat => ({
-        ...cat,
-        icon: categoryIcons[cat.slug] || undefined
-    }));
-    
+export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] => {
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
     // First pass: create a map of all categories and initialize children array.
-    for (const category of categoriesWithIcons) {
+    for (const category of rawCategories) {
         categoryMap[category.id] = { 
             ...category, 
             children: [],

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useMemo, useCallback, useState } from 'react';
@@ -120,7 +119,12 @@ export function useCategories() {
 
   const categories = useMemo(() => {
     if (!rawCategories) return [];
-    return buildCategoryHierarchy(rawCategories, CategoryIcons);
+    
+    const categoriesWithIcons = rawCategories.map(cat => ({
+        ...cat,
+        icon: CategoryIcons[cat.slug] || undefined
+    }));
+    return buildCategoryHierarchy(categoriesWithIcons);
   }, [rawCategories]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {

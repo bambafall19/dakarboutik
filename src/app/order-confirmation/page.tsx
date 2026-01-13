@@ -13,7 +13,7 @@ function OrderConfirmationContent() {
     const orderId = searchParams.get('orderId');
 
     return (
-        <div className="flex min-h-[calc(100vh-20rem)] items-center justify-center py-12 md:py-20">
+        <div className="flex min-h-[calc(100vh-20rem)] items-center justify-center">
             <Card className="w-full max-w-lg text-center">
                 <CardHeader className="items-center">
                     <div className="bg-primary/10 rounded-full p-3">

@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="py-8">
+    <div>
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

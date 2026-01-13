@@ -19,9 +19,10 @@ interface HeaderProps {
   loading: boolean;
   categories: Category[];
   onOpenMobileMenu: () => void;
+  pathname: string;
 }
 
-export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
+export function Header({ settings, loading, onOpenMobileMenu, pathname }: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -61,11 +62,11 @@ export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
       )}
       <div className="container flex h-20 items-center justify-between gap-4">
         <div className="flex items-center gap-2 md:gap-4">
-            <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="md:hidden">
+            <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden">
                 <Icons.menu className="h-6 w-6" />
                 <span className="sr-only">Ouvrir le menu</span>
             </Button>
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
                 <Logo loading={loading} imageUrl={settings?.logoUrl} />
             </div>
         </div>

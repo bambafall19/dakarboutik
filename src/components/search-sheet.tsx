@@ -46,6 +46,7 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="p-0 gap-0 top-20 translate-y-0 sm:max-w-2xl">
+                 <DialogTitle className="sr-only">Panneau de recherche</DialogTitle>
                 <div className="flex items-center gap-2 border-b p-4">
                     <form onSubmit={handleSearch} className="flex-1 relative">
                         <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

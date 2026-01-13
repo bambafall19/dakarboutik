@@ -72,15 +72,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
               </div>
 
               <div className="flex items-center gap-2">
-                  <Button variant="outline" className="h-12 rounded-lg bg-blue-100 border-blue-200 text-blue-800 hover:bg-blue-200">
-                    PROMO
-                  </Button>
                   <Button variant="ghost" size="icon" className="h-12 w-12 rounded-lg bg-muted/50">
                     <Icons.heart className="h-6 w-6 text-muted-foreground" />
-                  </Button>
-                   <Button variant="ghost" className="h-12 rounded-lg bg-muted/50 gap-2 px-4">
-                    <Icons.user className="h-6 w-6 text-muted-foreground" />
-                    <span className="font-semibold">Compte</span>
                   </Button>
 
                   <Sheet>

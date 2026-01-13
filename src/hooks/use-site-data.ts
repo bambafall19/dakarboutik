@@ -122,9 +122,12 @@ export function useCategories() {
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];
-    return rawCategories.map(({ icon, subCategories, ...rest }) => rest);
+    // Strips icon and subcategories for a flat list
+    return rawCategories.map(({ id, name, slug, parentId }) => ({ id, name, slug, parentId }));
   }, [rawCategories]);
 
 
   return { categories, rawCategories: rawCategories || [], simpleCategories, loading, error, refetch };
 }
+
+    

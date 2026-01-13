@@ -73,8 +73,8 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
       description: product.description || '',
       price: product.price || 0,
       stock: product.stock || 0,
-      category: product.category || '', // This needs more logic for parent/child
-      subCategory: '',
+      category: '', // Will be set in useEffect
+      subCategory: '', // Will be set in useEffect
       imageUrl1: product.images[0]?.imageUrl || '',
       imageUrl2: product.images[1]?.imageUrl || '',
       isNew: product.isNew || false,
@@ -89,10 +89,33 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   
   useEffect(() => {
     // This is complex because a slug could be a child or parent.
-    // This form setup doesn't handle deep nesting well for pre-population.
-    // A simpler approach for now.
-    form.setValue('category', product.category);
-  }, [product.category, form]);
+    const findCategoryAndParent = (slug: string, cats: Category[]): {parent?: Category, child?: Category} => {
+        for (const cat of cats) {
+            if (cat.slug === slug) {
+                // It's a top-level category
+                return { parent: cat };
+            }
+            if (cat.subCategories) {
+                const subCat = cat.subCategories.find(sub => sub.slug === slug);
+                if (subCat) {
+                    return { parent: cat, child: subCat };
+                }
+            }
+        }
+        return {};
+    }
+
+    const { parent, child } = findCategoryAndParent(product.category, categories);
+
+    if (child && parent) {
+        form.setValue('category', parent.slug);
+        form.setValue('subCategory', child.slug);
+    } else if (parent) {
+        form.setValue('category', parent.slug);
+        form.setValue('subCategory', '');
+    }
+
+  }, [product.category, categories, form]);
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -269,7 +292,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                       <FormLabel>Catégorie</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -376,3 +399,5 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     </Card>
   );
 }
+
+    

@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './
 import type { Category } from '@/lib/types';
 import { Logo } from './logo';
 import { Separator } from './ui/separator';
+import { ScrollArea } from './ui/scroll-area';
 
 interface MobileNavProps {
   items: Category[];
@@ -19,19 +20,21 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], isSub: boolean = false) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = cat.icon;
+      const Icon = CategoryIcons[cat.slug] || null;
 
       if (hasSubCategories) {
         return (
-          <AccordionItem key={cat.id} value={cat.slug}>
-            <AccordionTrigger className="py-3 text-base hover:no-underline">
-                <span className="flex items-center gap-3">
-                    {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
+          <AccordionItem key={cat.id} value={cat.slug} className="border-b-0">
+            <AccordionTrigger className="py-3 text-base font-medium hover:no-underline">
+                <span className="flex items-center gap-4">
+                    {Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />}
                     {cat.name}
                 </span>
             </AccordionTrigger>
-            <AccordionContent className="pl-8 border-l ml-3">
-                {renderCategoryLinks(cat.subCategories, true)}
+            <AccordionContent className="pl-6 border-l ml-5">
+                <div className="flex flex-col gap-1">
+                    {renderCategoryLinks(cat.subCategories, true)}
+                </div>
             </AccordionContent>
           </AccordionItem>
         );
@@ -41,11 +44,11 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
         <Link
           key={cat.id}
           href={`/products?category=${cat.slug}`}
-          className="flex items-center gap-3 py-3 text-base"
+          className="flex items-center gap-4 py-3 text-base"
           onClick={onLinkClick}
         >
-          {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
-          {cat.name}
+          {isSub ? null : (Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />)}
+          <span className={isSub ? 'font-normal' : 'font-medium'}>{cat.name}</span>
         </Link>
       );
     });
@@ -53,22 +56,22 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b -mt-6 -mx-6 mb-4 bg-background sticky top-0 z-10">
+      <div className="p-4 border-b -mx-6 mb-2 bg-background sticky top-0 z-10">
         <Logo onClick={onLinkClick} />
       </div>
 
       <div className="relative mb-4">
-        <Input placeholder="Rechercher..." className="pr-10" />
-        <Button size="icon" variant="ghost" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
-          <Icons.search className="h-4 w-4" />
+        <Input placeholder="Rechercher..." className="pr-10 h-11" />
+        <Button size="icon" variant="ghost" className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9">
+          <Icons.search className="h-5 w-5 text-muted-foreground" />
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto -mr-4 pr-4">
-        <Accordion type="multiple">
+      <ScrollArea className="flex-1 -mr-4 pr-4">
+        <Accordion type="multiple" className="flex flex-col gap-1">
           {renderCategoryLinks(items)}
         </Accordion>
-      </div>
+      </ScrollArea>
       
       <Separator className='my-4' />
       

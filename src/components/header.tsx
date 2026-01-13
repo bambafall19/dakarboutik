@@ -113,11 +113,7 @@ export function Header({ settings, loading, categories }: HeaderProps) {
           </Sheet>
         </div>
       </div>
-      <nav className="bg-nav text-nav-foreground hidden lg:block">
-        <div className="container">
-          <MainNav items={categories} />
-        </div>
-      </nav>
+      
     </header>
   );
 }

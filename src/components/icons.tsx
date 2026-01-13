@@ -26,6 +26,9 @@ import {
   PlusCircle,
   User,
   Zap,
+  Cable,
+  Power,
+  BatteryCharging,
 } from 'lucide-react';
 
 // Custom WhatsApp icon
@@ -71,6 +74,8 @@ export const Icons = {
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
   'informatique': Laptop,
   'telephonie': Smartphone,
-  'accessoires': Plug,
+  'accessoires': Cable,
   'audio': Headphones,
+  'chargeurs': BatteryCharging,
+  'power-banks': Power,
 };

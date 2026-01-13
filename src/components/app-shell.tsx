@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
         />
         <main className="flex-1 bg-background pb-20">
-            <div className="container py-6">{children}</div>
+            <div className="container md:py-6">{children}</div>
         </main>
         <Footer settings={settings} />
         <MobileBottomNav 

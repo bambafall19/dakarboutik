@@ -13,7 +13,7 @@ export function HeroSection() {
   
   if (loading) {
     return (
-      <section className="w-full">
+      <section className="w-full px-4 md:px-0">
         <Skeleton className="aspect-video md:aspect-[16/6] w-full rounded-lg" />
       </section>
     );
@@ -35,16 +35,16 @@ export function HeroSection() {
         <CarouselContent>
             {banners.map((banner) => (
                  <CarouselItem key={banner.id}>
-                    <div className="container relative aspect-[4/3] sm:aspect-video md:aspect-[16/7] lg:aspect-[16/6] p-0">
+                    <div className="container relative aspect-video md:aspect-[16/7] lg:aspect-[16/6] p-0">
                         <Image
                             src={banner.image.imageUrl}
                             alt={banner.title}
                             data-ai-hint={banner.image.imageHint}
                             fill
                             priority
-                            className="object-cover rounded-lg"
+                            className="object-cover md:rounded-lg"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent rounded-lg" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent md:rounded-lg" />
                         <div className="absolute inset-0 flex flex-col items-start justify-center text-white p-6 md:p-12 lg:p-16 w-full sm:w-4/5 md:w-3/5">
                             <p className="text-base md:text-lg lg:text-xl drop-shadow-md font-medium">
                                 {banner.subtitle}

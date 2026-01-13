@@ -25,12 +25,12 @@ export function FeaturedCategories() {
   
   if (loading) {
     return (
-        <div className="py-16">
-            <div className="text-center mb-12">
+        <div className="py-8 md:py-16">
+             <div className="text-center mb-8 md:mb-12 px-4 md:px-0">
                 <Skeleton className="h-8 w-48 mx-auto" />
                 <Skeleton className="h-4 w-64 mx-auto mt-2" />
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-0">
                 {[...Array(4)].map((_, i) => (
                     <Skeleton key={i} className="aspect-square w-full rounded-lg" />
                 ))}
@@ -44,12 +44,12 @@ export function FeaturedCategories() {
   }
 
   return (
-    <div className="py-16">
-        <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight">Catégories</h2>
+    <div className="py-8 md:py-16">
+        <div className="text-center mb-8 md:mb-12 px-4 md:px-0">
+            <h2 className="text-xl md:text-3xl font-bold tracking-tight">Catégories</h2>
             <p className="mt-2 text-muted-foreground">Parcourez nos univers de produits.</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-0">
           {featured.map((category) => {
             const imageId = categoryImages[category.slug] || 'product-phone-1a';
             const image = findImage(imageId);

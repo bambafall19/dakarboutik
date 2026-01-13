@@ -23,12 +23,12 @@ export function ProductGrid({ title, products, link, gridClass, icon }: ProductG
   }
 
   return (
-    <section>
+    <section className="px-4 md:px-0">
       {title && (
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 md:mb-6">
           <div className="flex items-center gap-3">
             {icon}
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h2>
+            <h2 className="text-xl md:text-3xl font-bold tracking-tight">{title}</h2>
           </div>
           {link && (
             <Button variant="ghost" asChild>

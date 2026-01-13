@@ -27,7 +27,9 @@ export function MainNav({ items }: MainNavProps) {
             <NavigationMenuItem key={item.id}>
               {item.subCategories && item.subCategories.length > 0 ? (
                 <>
-                  <NavigationMenuTrigger>{item.name}</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="h-14 bg-transparent text-base hover:bg-white/10 focus:bg-white/10 data-[active]:bg-white/10 data-[state=open]:bg-white/10">
+                    {item.name}
+                  </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
                       {item.subCategories.map((component) => (
@@ -49,7 +51,7 @@ export function MainNav({ items }: MainNavProps) {
                   </NavigationMenuContent>
                 </>
               ) : (
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base hover:bg-white/10 focus:bg-white/10 data-[active]:bg-white/10")}>
                   <Link href={`/products?category=${item.slug}`}>
                     {item.name}
                   </Link>

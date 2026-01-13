@@ -10,7 +10,7 @@ import { Price } from "./price";
 import { Star } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Icons } from "./icons";
-import { Card } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -23,7 +23,6 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   const [soldCount, setSoldCount] = useState<number | null>(null);
 
   useEffect(() => {
-    // Generate random number only on the client side after hydration
     setSoldCount(Math.floor(Math.random() * 500) + 50);
   }, []);
 
@@ -70,7 +69,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
               alt={product.title}
               data-ai-hint={product.images[0].imageHint}
               fill
-              className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
+              className="object-contain group-hover:scale-105 transition-transform duration-300 p-4"
             />
           </div>
         </Link>
@@ -83,16 +82,16 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             </div>
         )}
       </div>
-      <div className="p-4 flex-1 flex flex-col">
+      <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
-          <h3 className="font-semibold text-sm leading-snug mb-2 truncate">
+            <span className="text-xs text-muted-foreground">{product.category}</span>
+          <h3 className="font-semibold text-sm leading-snug mb-2 mt-1 min-h-[40px]">
             <Link href={`/products/${product.slug}`}>{product.title}</Link>
           </h3>
            <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Star className="w-4 h-4 fill-amber-400 text-amber-400"/>
             <span className="font-semibold text-sm text-foreground">4.9</span>
-            {soldCount !== null && <span>•</span>}
-            {soldCount !== null && <span className="text-gray-400">{soldCount}+ vendus</span>}
+            {soldCount !== null && <span>({soldCount})</span>}
           </div>
         </div>
         <div className="mt-4 flex items-center justify-between">
@@ -106,7 +105,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             <Icons.plus className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }

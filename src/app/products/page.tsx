@@ -10,7 +10,6 @@ import { getAllChildCategorySlugs } from '@/lib/data-helpers';
 import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
 
-
 function ProductsPageContent() {
   const searchParams = useSearchParams();
   const { products, loading: productsLoading } = useProducts();
@@ -92,7 +91,7 @@ function ProductsPageContent() {
 
 export default function ProductsPage() {
   return (
-    <div className="py-8">
+    <div className="py-2">
       <Suspense fallback={<ProductListingSkeleton />}>
         <ProductsPageContent />
       </Suspense>

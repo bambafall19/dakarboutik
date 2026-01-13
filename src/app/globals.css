@@ -10,7 +10,7 @@
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 184 78% 28%; /* New teal color */
+    --primary: 217 91% 60%; /* Adjusted blue for vibrancy */
     --primary-foreground: 0 0% 100%;
     --secondary: 220 13% 91%;
     --secondary-foreground: 224 71.4% 4.1%;
@@ -22,7 +22,9 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 184 78% 28%;
+    --ring: 217 91% 60%;
+    --nav: 221 39% 11%; /* Dark blue for nav */
+    --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -38,7 +40,7 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 184 78% 32%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 210 20% 98%;
@@ -50,7 +52,9 @@
     --destructive-foreground: 0 0% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 184 78% 32%;
+    --ring: 217 91% 60%;
+    --nav: 221 39% 11%;
+    --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -66,4 +70,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.bg-nav {
+    background-color: hsl(var(--nav));
+}
+.text-nav-foreground {
+    color: hsl(var(--nav-foreground));
 }

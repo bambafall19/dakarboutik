@@ -13,6 +13,8 @@ import type { SiteSettings, Category } from '@/lib/types';
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { MobileNav } from './mobile-nav';
+import { MainNav } from './main-nav';
+import { Price } from './price';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -21,11 +23,10 @@ interface HeaderProps {
 }
 
 export function Header({ settings, loading, categories }: HeaderProps) {
-  const { totalItems } = useCart();
+  const { totalItems, totalPrice } = useCart();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
 
   const announcementMessages = useMemo(() => {
     if (!settings) return [];
@@ -43,8 +44,8 @@ export function Header({ settings, loading, categories }: HeaderProps) {
         setTimeout(() => {
           setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % announcementMessages.length);
           setIsFading(false);
-        }, 500); // Corresponds to the fade-out duration
-      }, 5000); // Change message every 5 seconds
+        }, 500);
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [announcementMessages.length]);
@@ -54,55 +55,56 @@ export function Header({ settings, loading, categories }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       {currentAnnouncement && !loading && (
-        <div className="bg-primary text-primary-foreground text-center text-sm p-2.5 transition-opacity duration-500">
-           <span
-            className={cn(
-              'transition-opacity duration-500 ease-in-out',
-              isFading ? 'opacity-0' : 'opacity-100'
-            )}
-          >
+        <div className="bg-primary text-primary-foreground text-center text-sm p-2 transition-opacity duration-500">
+          <span className={cn('transition-opacity duration-500 ease-in-out', isFading ? 'opacity-0' : 'opacity-100')}>
             {currentAnnouncement}
           </span>
         </div>
       )}
-      <div className="container flex h-14 items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-2">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
-                  <Icons.menu className="h-5 w-5" />
-                  <span className="sr-only">Ouvrir le menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-full max-w-sm">
-                <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
-              </SheetContent>
-            </Sheet>
-            <div className="lg:hidden">
-              <Logo loading={loading} imageUrl={settings?.logoUrl} />
-            </div>
+      <div className="container flex h-20 items-center justify-between gap-4">
+        <div className="lg:hidden flex items-center">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Icons.menu className="h-6 w-6" />
+                <span className="sr-only">Ouvrir le menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-full max-w-sm">
+              <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
+            </SheetContent>
+          </Sheet>
         </div>
 
-        <div className="relative flex-1">
-            <Icons.search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Rechercher un produit..."
-              className="w-full bg-background pl-8 md:w-[200px] lg:w-[300px]"
-            />
-          </div>
+        <div className="hidden lg:block">
+          <Logo loading={loading} imageUrl={settings?.logoUrl} />
+        </div>
 
-        <div className="flex items-center justify-end gap-2">
+        <div className="relative flex-1 mx-4 max-w-xl">
+          <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Rechercher un produit..."
+            className="w-full bg-muted pl-10 h-12 text-base"
+          />
+        </div>
+
+        <div className="flex items-center justify-end gap-2 md:gap-4">
+           <Button variant="ghost" className="hidden md:flex items-center gap-2">
+                <Icons.user className="h-6 w-6"/>
+                <span className="text-sm font-medium">Compte</span>
+            </Button>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Icons.shoppingBag className="h-5 w-5" />
+              <Button variant="outline" className="relative h-12 px-4 rounded-full">
+                <Icons.shoppingBag className="h-6 w-6" />
                 <span className="sr-only">Ouvrir le panier</span>
                 {totalItems > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {totalItems}
                   </span>
                 )}
+                <Price price={totalPrice} currency='XOF' className="ml-2 hidden md:flex" />
               </Button>
             </SheetTrigger>
             <SheetContent className="flex flex-col">
@@ -111,6 +113,11 @@ export function Header({ settings, loading, categories }: HeaderProps) {
           </Sheet>
         </div>
       </div>
+      <nav className="bg-nav text-nav-foreground hidden lg:block">
+        <div className="container">
+          <MainNav items={categories} />
+        </div>
+      </nav>
     </header>
   );
 }

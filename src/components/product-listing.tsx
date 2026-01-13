@@ -3,19 +3,17 @@
 
 import { useSearchParams } from 'next/navigation';
 import type { Product, Category } from '@/lib/types';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductCard } from './product-card';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Icons } from './icons';
 import { useMemo, useState } from 'react';
-import { getCategoryBySlug } from '@/lib/data-helpers';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ProductFilters } from './product-filters';
-import { CategorySidebar } from './category-sidebar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { usePathname, useRouter } from 'next/navigation';
-
+import Image from 'next/image';
+import { findImage } from '@/lib/placeholder-images';
 
 interface ProductListingProps {
     products: Product[];
@@ -34,7 +32,6 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
 
   const selectedCategory = useMemo(() => {
     if (selectedCategorySlug) {
-      // Need to search in nested categories
       const findCat = (cats: Category[]): Category | undefined => {
         for (const cat of cats) {
           if (cat.slug === selectedCategorySlug) return cat;
@@ -50,6 +47,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   }, [selectedCategorySlug, allCategories]);
 
   const selectedCategoryName = selectedCategory?.name || 'Tous les produits';
+  const categoryImage = selectedCategory ? findImage(`product-${selectedCategory.slug}-1a`) : findImage('banner-1');
 
   const updateSearchParams = (key: string, value: string | null) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -68,7 +66,6 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   };
   
   const clearFilters = () => {
-    // Keep category and sort
     const category = searchParams.get('category');
     const sortBy = searchParams.get('sortBy');
     const newParams = new URLSearchParams();
@@ -87,32 +84,42 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
 
   return (
     <>
-       <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{selectedCategoryName}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr] gap-8">
-        <aside className="hidden md:block md:col-span-1">
-          <CategorySidebar categories={allCategories} />
-        </aside>
-        <main>
-          <div className="flex justify-between items-center mb-4">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">{selectedCategoryName}</h1>
-                <p className="text-muted-foreground mt-1">{products.length} résultat(s)</p>
-            </div>
-            <div className='flex items-center gap-2'>
-              <div className='hidden md:flex items-center gap-2'>
-                <p className='text-sm text-muted-foreground'>Trier par</p>
+      <div className="relative h-64 md:h-80 rounded-lg overflow-hidden mb-8">
+        <Image src={categoryImage.imageUrl} alt={selectedCategoryName} fill className="object-cover" />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 flex items-center justify-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-white text-center drop-shadow-lg">{selectedCategoryName}</h1>
+        </div>
+      </div>
+      
+      <main>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <p className="text-muted-foreground">{products.length} résultat(s)</p>
+            
+            <div className='flex items-center gap-4'>
+                <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline">
+                            <Icons.filter className="mr-2 h-4 w-4" />
+                            Filtrer
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0" align="end">
+                        <SheetHeader className='p-4 border-b'>
+                            <SheetTitle>Filtres</SheetTitle>
+                        </SheetHeader>
+                        <div className="p-4">
+                          {filterNode}
+                        </div>
+                        <div className="p-4 border-t flex justify-between">
+                          <Button onClick={clearFilters} variant="ghost" size="sm">Effacer</Button>
+                          <Button onClick={() => setIsFiltersOpen(false)} size="sm">Appliquer</Button>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+
                 <Select value={sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className='w-[180px]'>
+                  <SelectTrigger className='w-[200px]'>
                     <SelectValue placeholder="Trier par..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -121,48 +128,10 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
                     <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-                  <PopoverTrigger asChild>
-                      <Button variant="outline">
-                          <Icons.filter className="mr-2 h-4 w-4" />
-                          Filtrer
-                      </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0" align="end">
-                      <SheetHeader className='p-4 border-b'>
-                          <SheetTitle>Filtres</SheetTitle>
-                      </SheetHeader>
-                      <div className="p-4">
-                        {filterNode}
-                      </div>
-                       <div className="p-4 border-t flex justify-end">
-                        <Button onClick={clearFilters} variant="ghost" size="sm" className='mr-2'>Effacer</Button>
-                        <Button onClick={() => setIsFiltersOpen(false)} size="sm">Appliquer</Button>
-                      </div>
-                  </PopoverContent>
-              </Popover>
-
-              <Sheet>
-                  <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="md:hidden">
-                          <Icons.menu className="h-5 w-5" />
-                      </Button>
-                  </SheetTrigger>
-                  <SheetContent className="flex flex-col w-full sm:max-w-xs">
-                      <SheetHeader>
-                          <SheetTitle>Catégories</SheetTitle>
-                      </SheetHeader>
-                      <div className="flex-1 overflow-y-auto -mx-6 px-6 py-4">
-                        <CategorySidebar categories={allCategories} />
-                      </div>
-                  </SheetContent>
-              </Sheet>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -174,7 +143,6 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
             </div>
           )}
         </main>
-      </div>
     </>
   );
 }

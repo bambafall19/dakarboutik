@@ -14,14 +14,16 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount).replace(/\s/g, ' '); // use space for compact display
+    }).format(amount).replace('F CFA', 'FCFA').replace(/\s/g, ' ');
   };
+
+  const hasSale = typeof salePrice === 'number' && salePrice > 0;
 
   return (
     <div className={cn("flex items-baseline gap-2", className)}>
-      {salePrice ? (
+      {hasSale ? (
         <>
-          <span className="font-bold text-base text-red-500">
+          <span className="font-bold text-base text-destructive">
             {formatPrice(salePrice)}
           </span>
           <span className="text-sm text-muted-foreground line-through">
@@ -29,7 +31,7 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
           </span>
         </>
       ) : (
-        <span className="font-bold text-base text-primary">
+        <span className="font-bold text-base">
           {formatPrice(price)}
         </span>
       )}

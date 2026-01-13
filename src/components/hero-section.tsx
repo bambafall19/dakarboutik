@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useBanners } from '@/hooks/use-site-data';
 import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
 import { Skeleton } from './ui/skeleton';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 export function HeroSection() {
   const { banners, loading } = useBanners();
@@ -14,10 +14,8 @@ export function HeroSection() {
 
   if (loading) {
     return (
-      <section className="w-full">
-        <div className="container px-0">
-          <Skeleton className="aspect-video w-full rounded-lg" />
-        </div>
+      <section className="w-full py-8">
+        <Skeleton className="aspect-[16/6] w-full rounded-lg" />
       </section>
     );
   }
@@ -27,30 +25,46 @@ export function HeroSection() {
   }
 
   return (
-    <section className="w-full">
-      <div className="container relative aspect-video">
-        <Image
-          src={mainBanner.image.imageUrl}
-          alt={mainBanner.title}
-          data-ai-hint={mainBanner.image.imageHint}
-          fill
-          priority
-          className="object-cover rounded-lg"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-            <p className="text-lg md:text-xl drop-shadow-md font-medium">
-                {mainBanner.subtitle}
-            </p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg mt-2">
-            {mainBanner.title}
-          </h1>
-          
-          <Button asChild className="mt-8" size="lg">
-            <Link href={mainBanner.linkUrl}>Découvrir</Link>
-          </Button>
-        </div>
-      </div>
+    <section className="w-full mb-12">
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+            {banners.map((banner) => (
+                 <CarouselItem key={banner.id}>
+                    <div className="container relative aspect-[16/6] p-0">
+                        <Image
+                            src={banner.image.imageUrl}
+                            alt={banner.title}
+                            data-ai-hint={banner.image.imageHint}
+                            fill
+                            priority
+                            className="object-cover rounded-lg"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent rounded-lg" />
+                        <div className="absolute inset-0 flex flex-col items-start justify-center text-white p-8 md:p-16 w-full md:w-3/5">
+                            <p className="text-lg md:text-xl drop-shadow-md font-medium">
+                                {banner.subtitle}
+                            </p>
+                        <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg mt-2">
+                            {banner.title}
+                        </h1>
+                        
+                        <Button asChild className="mt-8" size="lg">
+                            <Link href={banner.linkUrl}>Découvrir</Link>
+                        </Button>
+                        </div>
+                    </div>
+                 </CarouselItem>
+            ))}
+        </CarouselContent>
+        <CarouselPrevious className="left-4 hidden md:flex" />
+        <CarouselNext className="right-4 hidden md:flex" />
+      </Carousel>
     </section>
   );
 }

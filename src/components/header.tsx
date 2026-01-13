@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -59,24 +60,25 @@ export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
         </div>
       )}
       <div className="container flex h-20 items-center justify-between gap-4">
-        <div className="lg:hidden flex items-center">
-          <Button variant="ghost" size="icon" onClick={onOpenMobileMenu}>
+        <div className="flex items-center">
+          <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden">
             <Icons.menu className="h-6 w-6" />
             <span className="sr-only">Ouvrir le menu</span>
           </Button>
+          <div className="hidden lg:block">
+            <Logo loading={loading} imageUrl={settings?.logoUrl} />
+          </div>
         </div>
 
-        <div className="hidden lg:block">
-          <Logo loading={loading} imageUrl={settings?.logoUrl} />
-        </div>
-
-        <div className="relative flex-1 mx-4 max-w-xl">
-          <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Rechercher un produit..."
-            className="w-full bg-muted pl-10 h-12 text-base"
-          />
+        <div className="flex-1 flex justify-center lg:mx-4">
+            <div className="relative w-full max-w-xl">
+                <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    type="search"
+                    placeholder="Rechercher un produit..."
+                    className="w-full bg-muted pl-10 h-12 text-base"
+                />
+            </div>
         </div>
 
         <div className="flex items-center justify-end gap-2 md:gap-4">
@@ -86,7 +88,7 @@ export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
             </Button>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" className="relative h-12 px-4 rounded-full">
+              <Button variant="outline" className="relative h-12 px-2 md:px-4 rounded-full">
                 <Icons.shoppingBag className="h-6 w-6" />
                 <span className="sr-only">Ouvrir le panier</span>
                 {totalItems > 0 && (

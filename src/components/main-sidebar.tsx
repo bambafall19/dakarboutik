@@ -9,6 +9,7 @@ import { Skeleton } from './ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
+import { CategoryIcons } from './icons';
 
 interface MainSidebarProps {
     categories: Category[];
@@ -28,7 +29,7 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
   )
 
   return (
-    <div className="hidden border-r bg-card lg:flex flex-col items-center">
+    <aside className="hidden lg:flex flex-col items-center border-r bg-card">
         <div className="flex h-20 items-center justify-center border-b w-full">
             <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90" onClick={onOpenMobileMenu}>
                 <Menu className="h-6 w-6" />
@@ -41,8 +42,7 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                     {loading ? <SidebarSkeleton /> : (
                         categories.map(category => {
                             const isSelected = activeCategorySlug === category.slug;
-                            const Icon = category.icon;
-                            // Extract first letter for the fallback icon
+                            const Icon = CategoryIcons[category.slug];
                             const categoryInitial = category.name.charAt(0).toUpperCase();
                             return (
                                 <Tooltip key={category.id}>
@@ -70,6 +70,6 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                 </div>
             </TooltipProvider>
         </nav>
-    </div>
+    </aside>
   );
 }

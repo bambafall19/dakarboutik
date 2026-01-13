@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -71,3 +72,4 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
     </div>
   );
 }
+

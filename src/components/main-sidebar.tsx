@@ -8,7 +8,7 @@ import type { Category } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Button } from './ui/button';
-import { Menu, Package } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 interface MainSidebarProps {
     categories: Category[];
@@ -17,14 +17,13 @@ interface MainSidebarProps {
 }
 
 export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSidebarProps) {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeCategorySlug = searchParams.get('category');
 
 
   const SidebarSkeleton = () => (
     <div className="px-4 space-y-4">
-        {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-10 w-10 rounded-full" />)}
+        {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-12 rounded-full" />)}
     </div>
   )
 
@@ -42,6 +41,7 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                     {loading ? <SidebarSkeleton /> : (
                         categories.map(category => {
                             const isSelected = activeCategorySlug === category.slug;
+                            const Icon = category.icon;
                             // Extract first letter for the fallback icon
                             const categoryInitial = category.name.charAt(0).toUpperCase();
                             return (
@@ -56,7 +56,7 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                                                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                                             )}
                                         >
-                                            {categoryInitial}
+                                          {Icon ? <Icon className="h-6 w-6" /> : categoryInitial}
                                             <span className="sr-only">{category.name}</span>
                                         </Link>
                                     </TooltipTrigger>

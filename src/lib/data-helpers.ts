@@ -1,6 +1,7 @@
 
 
 import type { Category, SimpleCategory } from "./types";
+import { CategoryIcons } from "@/components/icons";
 
 
 /**
@@ -14,6 +15,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
     for (const category of categories) {
         categoryMap[category.id] = { 
             ...category, 
+            icon: CategoryIcons[category.slug] || undefined,
             children: [],
         };
     }
@@ -53,9 +55,9 @@ export function getCategoryBySlug(slug: string, allCategories: Category[]): Cate
  * Finds the entire parental path for a given category slug.
  * Returns an array of SimpleCategory from the root to the direct parent.
  */
-export function getCategoryPath(slug: string, allCategories: Category[]): SimpleCategory[] {
+export function getCategoryPath(slug: string, allCategories: SimpleCategory[]): SimpleCategory[] {
     const path: SimpleCategory[] = [];
-    let current = getCategoryBySlug(slug, allCategories);
+    let current = allCategories.find(c => c.slug === slug);
 
     if (!current) {
         return [];

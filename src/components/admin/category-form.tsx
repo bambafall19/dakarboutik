@@ -57,14 +57,14 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: category?.name || '',
-      parentId: category?.parentId || '',
+      parentId: category?.parentId || undefined,
     },
   });
   
   React.useEffect(() => {
     form.reset({
         name: category?.name || '',
-        parentId: category?.parentId || '',
+        parentId: category?.parentId || undefined,
     })
   }, [category, form, open])
 
@@ -137,7 +137,6 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Aucune</SelectItem>
                       {allCategories.filter(c => c.id !== category?.id).map((cat) => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {cat.name}

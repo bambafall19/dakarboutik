@@ -29,6 +29,7 @@ import {
   Cable,
   Power,
   BatteryCharging,
+  Lamp,
 } from 'lucide-react';
 
 // Custom WhatsApp icon
@@ -78,4 +79,7 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'audio': Headphones,
   'chargeurs': BatteryCharging,
   'power-banks': Power,
+  'electromenager': Lamp,
+  'pc-portables': Laptop,
+  'smartphones': Smartphone,
 };

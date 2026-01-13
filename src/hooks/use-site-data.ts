@@ -117,17 +117,16 @@ export function useCategories() {
     setKey(prev => prev + 1);
   }, []);
 
-  const categoriesWithIcons = useMemo(() => {
+  const categories = useMemo(() => {
     if (!rawCategories) return [];
-    return rawCategories.map(cat => ({
+    
+    const categoriesWithIcons = rawCategories.map(cat => ({
       ...cat,
       icon: CategoryIcons[cat.slug] || undefined,
     }));
-  }, [rawCategories]);
 
-  const categories = useMemo(() => {
     return buildCategoryHierarchy(categoriesWithIcons || []);
-  }, [categoriesWithIcons]);
+  }, [rawCategories]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];

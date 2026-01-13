@@ -16,7 +16,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
         categoryMap[category.id] = { 
             ...category, 
             children: [], 
-            icon: CategoryIcons[category.slug] || undefined 
+            icon: category.icon || CategoryIcons[category.slug] || undefined 
         };
     }
 

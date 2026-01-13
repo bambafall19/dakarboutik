@@ -1,9 +1,12 @@
 
+'use client';
+
 import Link from 'next/link';
-import { getCategories } from '@/lib/data';
 import { Card, CardContent } from './ui/card';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
+import { useCategories } from '@/hooks/use-site-data';
+import { Skeleton } from './ui/skeleton';
 
 const categoryImages = {
     'telephonie': 'product-phone-1a',
@@ -14,10 +17,26 @@ const categoryImages = {
 
 
 export function FeaturedCategories() {
-  const categories = getCategories();
+  const { categories, loading } = useCategories();
 
   // We only want to feature top-level categories here
   const featured = categories;
+  
+  if (loading) {
+    return (
+        <div>
+            <div className="text-center mb-10">
+                <Skeleton className="h-8 w-48 mx-auto" />
+                <Skeleton className="h-4 w-64 mx-auto mt-2" />
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {[...Array(4)].map((_, i) => (
+                    <Skeleton key={i} className="aspect-square w-full" />
+                ))}
+            </div>
+        </div>
+    )
+  }
 
   return (
     <div>

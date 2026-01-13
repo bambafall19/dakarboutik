@@ -10,31 +10,33 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Icons } from './icons';
 import { useMemo } from 'react';
-import { getCategoryBySlug } from '@/lib/data';
+import { getCategoryBySlug } from '@/lib/data-helpers';
 
 interface ProductListingProps {
     products: Product[];
     allCategories: Category[];
+    rawCategories: Category[];
     brands: string[];
 }
 
-export function ProductListing({ products, allCategories, brands }: ProductListingProps) {
+export function ProductListing({ products, allCategories, rawCategories, brands }: ProductListingProps) {
   const searchParams = useSearchParams();
 
   const selectedCategorySlugs = searchParams.get('category')?.split(',') || [];
   
   const selectedCategoryName = useMemo(() => {
     if (selectedCategorySlugs.length === 1) {
-      const cat = getCategoryBySlug(selectedCategorySlugs[0]);
+      const cat = getCategoryBySlug(selectedCategorySlugs[0], rawCategories);
       return cat?.name || 'Produits';
     }
     return 'Tous les produits';
-  }, [selectedCategorySlugs]);
+  }, [selectedCategorySlugs, rawCategories]);
 
   const filterNode = (
     <ProductFilters
         allCategories={allCategories}
         brands={brands}
+        rawCategories={rawCategories}
     />
   );
 

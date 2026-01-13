@@ -76,7 +76,7 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
 }
 
 export default function CategoriesPage() {
-    const { categories, rawCategories, loading } = useCategories();
+    const { categories, rawCategories, loading, refetch } = useCategories();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -113,10 +113,15 @@ export default function CategoriesPage() {
             await deleteDoc(doc(firestore, 'categories', categoryToDelete.id));
             toast({ title: 'Catégorie supprimée' });
             setCategoryToDelete(null);
+            refetch(); // Refetch categories after deletion
         } catch (e) {
             toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de supprimer la catégorie.' });
         }
     }
+    
+    const handleCategoryUpdate = () => {
+      refetch();
+    };
 
     const categoryRows = useMemo(() => {
         const rows: React.ReactNode[] = [];
@@ -190,7 +195,7 @@ export default function CategoriesPage() {
       <CategoryForm 
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
-        onCategoryUpdate={() => {}}
+        onCategoryUpdate={handleCategoryUpdate}
         category={selectedCategory}
         allCategories={rawCategories}
       />

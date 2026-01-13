@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner } from '@/lib/types';
@@ -101,15 +101,24 @@ export function useBanners() {
 // --- Categories ---
 export function useCategories() {
   const firestore = useFirestore();
+  const [key, setKey] = useState(0);
+
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
+    // By changing the key, we force a re-fetch of the query
     return query(collection(firestore, 'categories'), orderBy('name'));
-  }, [firestore]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firestore, key]);
   
   const { data: categories, loading, error } = useCollection<Category>(categoriesQuery);
 
-  const nestedCategories = useMemo(() => {
-    if (!categories) return [];
+  const refetch = useCallback(() => {
+    setKey(prev => prev + 1);
+  }, []);
+
+  const { nested, simple, leaf } = useMemo(() => {
+    if (!categories) return { nested: [], simple: [], leaf: [] };
+
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
@@ -132,9 +141,21 @@ export function useCategories() {
             return { ...rest, subCategories };
         })
     }
+    
+    const getSimpleCats = () => {
+        return categories.map(cat => ({ id: cat.id, name: cat.name, slug: cat.slug, parentId: cat.parentId }));
+    };
 
-    return buildHierarchy(topLevelCategories);
+    const getLeafCats = () => {
+        return categories.filter(c => !categories.some(other => other.parentId === c.id));
+    };
+
+    return {
+        nested: buildHierarchy(topLevelCategories),
+        simple: getSimpleCats(),
+        leaf: getLeafCats(),
+    };
   }, [categories]);
 
-  return { categories: nestedCategories, rawCategories: categories || [], loading, error };
+  return { categories: nested, rawCategories: categories || [], simpleCategories: simple, leafCategories: leaf, loading, error, refetch };
 }

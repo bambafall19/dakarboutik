@@ -56,16 +56,18 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category?.name || '',
-      parentId: category?.parentId || undefined,
+      name: '',
+      parentId: undefined,
     },
   });
   
   React.useEffect(() => {
-    form.reset({
-        name: category?.name || '',
-        parentId: category?.parentId || undefined,
-    })
+    if (open) {
+        form.reset({
+            name: category?.name || '',
+            parentId: category?.parentId || undefined,
+        })
+    }
   }, [category, form, open])
 
 

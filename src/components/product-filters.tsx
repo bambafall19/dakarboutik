@@ -2,7 +2,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type { Category, SimpleCategory } from '@/lib/types';
+import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -10,13 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Price } from './price';
 import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
+import { getAllChildCategorySlugs } from '@/lib/data-helpers';
 
 interface ProductFiltersProps {
   allCategories: Category[];
   brands: string[];
+  rawCategories: Category[];
 }
 
-export function ProductFilters({ allCategories, brands }: ProductFiltersProps) {
+export function ProductFilters({ allCategories, brands, rawCategories }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

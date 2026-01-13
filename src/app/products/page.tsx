@@ -5,8 +5,8 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
-import { useProducts } from '@/hooks/use-site-data';
-import { getCategories, getAllChildCategorySlugs, getLeafCategories } from '@/lib/data';
+import { useProducts, useCategories } from '@/hooks/use-site-data';
+import { getAllChildCategorySlugs } from '@/lib/data-helpers';
 import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
 
@@ -14,8 +14,7 @@ import type { Product } from '@/lib/types';
 function ProductsPageContent() {
   const searchParams = useSearchParams();
   const { products, loading: productsLoading } = useProducts();
-  const allCategories = useMemo(() => getCategories(), []);
-  const filterableCategories = useMemo(() => getLeafCategories(), []);
+  const { categories: allCategories, rawCategories, loading: categoriesLoading } = useCategories();
 
   const categoryFilter = searchParams.get('category')?.split(',') || [];
   const brandFilter = searchParams.get('brands')?.split(',') || [];
@@ -38,7 +37,7 @@ function ProductsPageContent() {
 
     // Category
     if (categoryFilter.length > 0) {
-        const allSelectedSlugs = categoryFilter.flatMap(slug => getAllChildCategorySlugs(slug));
+        const allSelectedSlugs = categoryFilter.flatMap(slug => getAllChildCategorySlugs(slug, rawCategories));
         const uniqueSlugs = [...new Set(allSelectedSlugs)];
         filtered = filtered.filter((p) => uniqueSlugs.includes(p.category));
     }
@@ -69,7 +68,7 @@ function ProductsPageContent() {
     }
 
     return filtered;
-  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy]);
+  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories]);
   
   const brands = useMemo(() => {
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
@@ -77,7 +76,7 @@ function ProductsPageContent() {
   }, [products]);
 
 
-  if (productsLoading) {
+  if (productsLoading || categoriesLoading) {
     return <ProductListingSkeleton />;
   }
 
@@ -85,6 +84,7 @@ function ProductsPageContent() {
     <ProductListing
       products={filteredProducts}
       allCategories={allCategories}
+      rawCategories={rawCategories}
       brands={brands}
     />
   );

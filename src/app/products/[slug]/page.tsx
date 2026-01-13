@@ -1,10 +1,10 @@
 
 'use client';
 
-import { getCategoryPath } from '@/lib/data';
+import { getCategoryPath } from '@/lib/data-helpers';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
-import { useProducts, useProductsBySlug } from '@/hooks/use-site-data';
+import { useProducts, useProductsBySlug, useCategories } from '@/hooks/use-site-data';
 import { Suspense } from 'react';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 import React, { useMemo } from 'react';
@@ -16,6 +16,8 @@ type ProductDetailPageProps = {
 function ProductDetailsContent({ slug }: { slug: string }) {
   const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
+  const { rawCategories, loading: categoriesLoading } = useCategories();
+
 
   const relatedProducts = useMemo(() => {
     if (!product || !allProducts) return [];
@@ -25,11 +27,11 @@ function ProductDetailsContent({ slug }: { slug: string }) {
   }, [product, allProducts]);
   
   const categoryPath = useMemo(() => {
-    if (!product) return [];
-    return getCategoryPath(product.category) || [];
-  }, [product]);
+    if (!product || rawCategories.length === 0) return [];
+    return getCategoryPath(product.category, rawCategories) || [];
+  }, [product, rawCategories]);
 
-  if (productLoading || allProductsLoading) {
+  if (productLoading || allProductsLoading || categoriesLoading) {
     return <ProductDetailsSkeleton />;
   }
 
@@ -46,8 +48,7 @@ function ProductDetailsContent({ slug }: { slug: string }) {
   );
 }
 
-// This is now an async Server Component
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = params;
 
   return (

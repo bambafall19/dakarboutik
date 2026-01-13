@@ -17,7 +17,6 @@ import { Price } from './price';
 interface HeaderProps {
   settings?: SiteSettings | null;
   loading: boolean;
-  categories: Category[];
   pathname: string;
   onOpenMobileMenu: () => void;
 }

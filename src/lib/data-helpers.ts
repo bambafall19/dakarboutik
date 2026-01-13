@@ -1,21 +1,25 @@
 
 
-import type { Category, SimpleCategory } from "./types";
+import type { Category } from "./types";
 import { CategoryIcons } from "@/components/icons";
 
 
 /**
  * Builds a nested category tree from a flat array of categories.
  */
-export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
+export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] => {
+    const categoriesWithIcons = rawCategories.map(cat => ({
+        ...cat,
+        icon: CategoryIcons[cat.slug] || undefined
+    }));
+    
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
     // First pass: create a map of all categories and initialize children array.
-    for (const category of categories) {
+    for (const category of categoriesWithIcons) {
         categoryMap[category.id] = { 
             ...category, 
-            icon: CategoryIcons[category.slug],
             children: [],
         };
     }
@@ -35,9 +39,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
         return cats.map(cat => {
             const { children, ...rest } = cat;
             const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
-            // Re-assign icon here to ensure it propagates through recursion
-            const icon = CategoryIcons[cat.slug];
-            return { ...rest, icon, subCategories };
+            return { ...rest, subCategories };
         }).sort((a, b) => a.name.localeCompare(b.name)); // Sort categories alphabetically
     }
     
@@ -55,10 +57,9 @@ export function getCategoryBySlug(slug: string, allCategories: Category[]): Cate
 
 /**
  * Finds the entire parental path for a given category slug.
- * Returns an array of SimpleCategory from the root to the direct parent.
  */
-export function getCategoryPath(slug: string, allCategories: SimpleCategory[]): SimpleCategory[] {
-    const path: SimpleCategory[] = [];
+export function getCategoryPath(slug: string, allCategories: Category[]): Category[] {
+    const path: Category[] = [];
     let current = allCategories.find(c => c.slug === slug);
 
     if (!current) {
@@ -69,7 +70,7 @@ export function getCategoryPath(slug: string, allCategories: SimpleCategory[]): 
     while (current && current.parentId) {
         const parent = allCategories.find(c => c.id === current?.parentId);
         if (parent) {
-            path.unshift({ id: parent.id, name: parent.name, slug: parent.slug, parentId: parent.parentId });
+            path.unshift(parent);
             current = parent;
         } else {
             break;

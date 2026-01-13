@@ -7,6 +7,7 @@ import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
+import { CategoryIcons } from '@/components/icons';
 
 // --- Products ---
 export function useProducts() {
@@ -116,9 +117,17 @@ export function useCategories() {
     setKey(prev => prev + 1);
   }, []);
 
-  const categories = useMemo(() => {
-    return buildCategoryHierarchy(rawCategories || []);
+  const categoriesWithIcons = useMemo(() => {
+    if (!rawCategories) return [];
+    return rawCategories.map(cat => ({
+      ...cat,
+      icon: CategoryIcons[cat.slug] || undefined,
+    }));
   }, [rawCategories]);
+
+  const categories = useMemo(() => {
+    return buildCategoryHierarchy(categoriesWithIcons || []);
+  }, [categoriesWithIcons]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];
@@ -129,5 +138,3 @@ export function useCategories() {
 
   return { categories, rawCategories: rawCategories || [], simpleCategories, loading, error, refetch };
 }
-
-    

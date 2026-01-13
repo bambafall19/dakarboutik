@@ -37,7 +37,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}
-            onOpenMobileMenu={handleSearchClick}
         />
         <main className="flex-1 bg-background">
             <div className="pb-20 md:pb-0">{children}</div>

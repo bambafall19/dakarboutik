@@ -9,7 +9,6 @@ import { Skeleton } from './ui/skeleton';
 interface HeaderWrapperProps {
     settings?: SiteSettings | null;
     settingsLoading: boolean;
-    onOpenMobileMenu: () => void;
 }
 
 function HeaderSkeleton() {
@@ -25,7 +24,7 @@ function HeaderSkeleton() {
     )
 }
 
-export function HeaderWrapper({ settings, settingsLoading, onOpenMobileMenu }: HeaderWrapperProps) {
+export function HeaderWrapper({ settings, settingsLoading }: HeaderWrapperProps) {
     const pathname = usePathname();
 
     return (
@@ -37,7 +36,6 @@ export function HeaderWrapper({ settings, settingsLoading, onOpenMobileMenu }: H
                     settings={settings}
                     loading={settingsLoading}
                     pathname={pathname}
-                    onOpenMobileMenu={onOpenMobileMenu}
                 />
             )}
         </>

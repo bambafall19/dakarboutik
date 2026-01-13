@@ -11,18 +11,21 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings } from '@/lib/types';
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
   loading: boolean;
   pathname: string;
-  onOpenMobileMenu: () => void;
 }
 
 export function Header({ settings, loading, pathname }: HeaderProps) {
   const { totalItems } = useCart();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
+  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  const router = useRouter();
+
 
   const announcementMessages = useMemo(() => {
     if (!settings) return [];
@@ -47,6 +50,10 @@ export function Header({ settings, loading, pathname }: HeaderProps) {
   }, [announcementMessages.length]);
 
   const currentAnnouncement = announcementMessages[currentMessageIndex];
+
+  const handleSearchClick = () => {
+    setIsSearchSheetOpen(true);
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -92,7 +99,7 @@ export function Header({ settings, loading, pathname }: HeaderProps) {
               <input 
                 placeholder="Rechercher un produit..." 
                 className="pl-10 h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                onClick={onOpenMobileMenu} // This will now open the search sheet
+                onClick={handleSearchClick}
                 readOnly
               />
           </div>

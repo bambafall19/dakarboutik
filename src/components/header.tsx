@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Phone } from 'lucide-react';
 import { MainNav } from './main-nav';
+import { Price } from './price';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -24,32 +25,13 @@ interface HeaderProps {
 }
 
 export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
-  const { totalItems } = useCart();
+  const { totalItems, totalPrice } = useCart();
   
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-lg">
-      {/* Top bar */}
-      <div className="bg-nav text-nav-foreground">
-        <div className="container flex h-8 items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-                <Phone className="h-3 w-3"/>
-                <span>+221 77 123 45 67</span>
-            </div>
-            <div className="hidden md:block">
-                <p>
-                    {settings?.announcementMessage1} 
-                    <Link href="/products" className="underline ml-2">Acheter</Link>
-                </p>
-            </div>
-             <div>
-                Eng / Location
-            </div>
-        </div>
-      </div>
-
       {/* Main Header */}
       <div className="border-b">
-        <div className="container flex h-16 items-center">
+        <div className="container flex h-20 items-center">
             {/* Mobile Header: Menu, Logo, Cart */}
             <div className="flex md:hidden items-center justify-between w-full">
                 <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
@@ -76,40 +58,65 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             </div>
             
             {/* Desktop Header: Logo, Nav, Search, Account, Cart */}
-            <div className="hidden md:flex items-center justify-between w-full gap-8">
-            <Logo loading={loading} imageUrl={settings?.logoUrl} />
+            <div className="hidden md:flex items-center justify-between w-full gap-4">
+              <Logo loading={loading} imageUrl={settings?.logoUrl} />
             
-            <div className="flex-1 flex justify-center">
-                <MainNav items={categories} />
-            </div>
+              <div className="flex-1 max-w-xl relative">
+                  <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <input 
+                      placeholder="Recherche de produits..." 
+                      className="pl-12 h-12 w-full rounded-md border border-input bg-muted/50 px-3 py-2" 
+                      onClick={onSearchClick}
+                      readOnly
+                  />
+              </div>
 
-            <div className="flex items-center gap-2">
-                <div className="relative">
-                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input 
-                        placeholder="Rechercher..." 
-                        className="pl-10 h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm max-w-[200px]" 
-                        onClick={onSearchClick}
-                        readOnly
-                    />
-                </div>
-                <Sheet>
-                <SheetTrigger asChild>
-                <Button variant="ghost" className="relative h-12 w-12 rounded-full">
-                    <Icons.shoppingBag className="h-6 w-6" />
-                    <span className="sr-only">Ouvrir le panier</span>
-                    {totalItems > 0 && (
-                    <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                        {totalItems}
-                    </span>
-                    )}
-                </Button>
-                </SheetTrigger>
-                <SheetContent className="flex flex-col">
-                    <CartDrawer />
-                </SheetContent>
-                </Sheet>
+              <div className="flex items-center gap-2">
+                  <Button variant="outline" className="h-12 rounded-lg bg-blue-100 border-blue-200 text-blue-800 hover:bg-blue-200">
+                    PROMO
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-lg bg-muted/50">
+                    <Icons.heart className="h-6 w-6 text-muted-foreground" />
+                  </Button>
+                   <Button variant="ghost" className="h-12 rounded-lg bg-muted/50 gap-2 px-4">
+                    <Icons.user className="h-6 w-6 text-muted-foreground" />
+                    <span className="font-semibold">Compte</span>
+                  </Button>
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button className="h-12 rounded-lg bg-nav text-nav-foreground px-4">
+                          <div className='relative mr-2'>
+                            <Icons.shoppingBag className="h-6 w-6" />
+                             {totalItems > 0 && (
+                              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                  {totalItems}
+                              </span>
+                            )}
+                          </div>
+                          <span className='font-bold'><Price price={totalPrice} currency="XOF" /></span>
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="flex flex-col">
+                        <CartDrawer />
+                    </SheetContent>
+                  </Sheet>
+              </div>
             </div>
+        </div>
+      </div>
+       {/* Bottom bar */}
+       <div className="bg-background border-b hidden md:block">
+        <div className="container flex h-14 items-center justify-between text-sm">
+            <MainNav items={categories} />
+            <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4"/>
+                    <span className='font-semibold'>+221 77 123 45 67</span>
+                </div>
+                 <div>
+                    <span className='text-muted-foreground'>À propos</span>
+                </div>
             </div>
         </div>
       </div>

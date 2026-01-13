@@ -24,24 +24,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-      <div className="grid min-h-screen w-full lg:grid-cols-[88px_1fr]">
-        <MainSidebar 
-          categories={categories} 
-          loading={categoriesLoading} 
+      <div className="flex flex-col min-h-screen">
+        <Header
+          settings={settings}
+          loading={settingsLoading}
+          categories={categories}
           onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
         />
-        <div className="flex flex-col">
-          <Header
-            settings={settings}
-            loading={settingsLoading}
-            categories={categories}
-            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-          />
-          <main className="flex-1 bg-background">
-            <div className="container py-6">{children}</div>
-          </main>
-          <Footer settings={settings} />
-        </div>
+        <main className="flex-1 bg-background">
+          <div className="container py-6">{children}</div>
+        </main>
+        <Footer settings={settings} />
       </div>
       <SheetContent side="left" className="w-full max-w-sm">
         <SheetTitle className="sr-only">Menu de navigation</SheetTitle>

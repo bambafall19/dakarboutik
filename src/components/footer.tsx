@@ -40,11 +40,11 @@ export function Footer({ settings }: FooterProps) {
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:col-span-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:col-span-8 text-center sm:text-left">
             {Object.entries(footerLinks).map(([title, links]) => (
-              <div key={title} className="text-center sm:text-left">
-                <h4 className="font-semibold text-foreground">{title}</h4>
-                <nav className="mt-4 flex flex-col gap-2 text-sm">
+              <div key={title}>
+                <h4 className="font-semibold text-foreground mb-4">{title}</h4>
+                <nav className="flex flex-col gap-2 text-sm">
                   {links.map(link => (
                     <Link key={link.name} href={link.href} className="text-foreground hover:text-primary">{link.name}</Link>
                   ))}

@@ -17,10 +17,10 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ items, onLinkClick }: MobileNavProps) {
-  const renderCategoryLinks = (categories: Category[], isSub: boolean = false) => {
+  const renderCategoryLinks = (categories: Category[], level = 0) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = CategoryIcons[cat.slug] || null;
+      const Icon = cat.icon;
 
       if (hasSubCategories) {
         return (
@@ -33,7 +33,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             </AccordionTrigger>
             <AccordionContent className="pl-6 border-l ml-5">
                 <div className="flex flex-col gap-1">
-                    {renderCategoryLinks(cat.subCategories, true)}
+                    {renderCategoryLinks(cat.subCategories, level + 1)}
                 </div>
             </AccordionContent>
           </AccordionItem>
@@ -46,9 +46,10 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           href={`/products?category=${cat.slug}`}
           className="flex items-center gap-4 py-3 text-base"
           onClick={onLinkClick}
+          style={{ paddingLeft: level > 0 ? `${level * 1}rem` : undefined }}
         >
-          {isSub ? null : (Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />)}
-          <span className={isSub ? 'font-normal' : 'font-medium'}>{cat.name}</span>
+          {level === 0 && (Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />)}
+          <span className={level > 0 ? 'font-normal' : 'font-medium'}>{cat.name}</span>
         </Link>
       );
     });
@@ -56,8 +57,10 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b -mx-6 mb-2 bg-background sticky top-0 z-10">
-        <Logo onClick={onLinkClick} />
+      <div className="p-4 border-b -mx-6 mb-4 bg-background sticky top-0 z-10">
+        <div className='flex justify-between items-center'>
+          <Logo onClick={onLinkClick} />
+        </div>
       </div>
 
       <div className="relative mb-4">
@@ -67,8 +70,8 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
         </Button>
       </div>
 
-      <ScrollArea className="flex-1 -mr-4 pr-4">
-        <Accordion type="multiple" className="flex flex-col gap-1">
+      <ScrollArea className="flex-1 -mr-6 pr-6">
+        <Accordion type="multiple" className="flex flex-col">
           {renderCategoryLinks(items)}
         </Accordion>
       </ScrollArea>

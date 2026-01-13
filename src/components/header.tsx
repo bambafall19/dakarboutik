@@ -59,13 +59,13 @@ export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
           </span>
         </div>
       )}
-      <div className="container flex h-20 items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden">
+      <div className="container flex h-20 items-center justify-between gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+            <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="md:hidden">
                 <Icons.menu className="h-6 w-6" />
                 <span className="sr-only">Ouvrir le menu</span>
             </Button>
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
                 <Logo loading={loading} imageUrl={settings?.logoUrl} />
             </div>
         </div>
@@ -82,7 +82,7 @@ export function Header({ settings, loading, onOpenMobileMenu }: HeaderProps) {
         </div>
 
         <div className="flex items-center justify-end gap-2">
-            <Button variant="ghost" className="hidden md:flex items-center gap-2">
+            <Button variant="ghost" className="hidden lg:flex items-center gap-2">
                 <Icons.user className="h-6 w-6"/>
                 <span className="text-sm font-medium">Compte</span>
             </Button>

@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
 import { CategoryIcons } from './icons';
+import { Suspense } from 'react';
 
 interface MainSidebarProps {
     categories: Category[];
@@ -17,7 +18,7 @@ interface MainSidebarProps {
     onOpenMobileMenu: () => void;
 }
 
-export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSidebarProps) {
+function SidebarContent({ categories, loading, onOpenMobileMenu }: MainSidebarProps) {
   const searchParams = useSearchParams();
   const activeCategorySlug = searchParams.get('category');
 
@@ -42,7 +43,7 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                     {loading ? <SidebarSkeleton /> : (
                         categories.map(category => {
                             const isSelected = activeCategorySlug === category.slug;
-                            const Icon = CategoryIcons[category.slug];
+                            const Icon = category.icon;
                             const categoryInitial = category.name.charAt(0).toUpperCase();
                             return (
                                 <Tooltip key={category.id}>
@@ -72,4 +73,13 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
         </nav>
     </aside>
   );
+}
+
+
+export function MainSidebar(props: MainSidebarProps) {
+    return (
+        <Suspense fallback={null}>
+            <SidebarContent {...props} />
+        </Suspense>
+    )
 }

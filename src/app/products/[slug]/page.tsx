@@ -14,7 +14,7 @@ type ProductDetailPageProps = {
   params: { slug: string };
 };
 
-function ProductDetailsContent({ slug }: { slug: string }) {
+function ProductDetailsPageContent({ slug }: { slug: string }) {
   const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
@@ -56,9 +56,11 @@ function ProductDetailsContent({ slug }: { slug: string }) {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const slug = React.use(Promise.resolve(params.slug));
+
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductDetailsContent slug={params.slug} />
+      <ProductDetailsPageContent slug={slug} />
     </Suspense>
   );
 }

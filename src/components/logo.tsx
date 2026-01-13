@@ -24,7 +24,7 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
   return (
     <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
       {imageUrl ? (
-        <Image src={imageUrl} alt="Dakarboutik Logo" width={32} height={32} className="h-8 w-auto rounded-sm object-contain" />
+        <Image src={imageUrl} alt="DakarBoutik Logo" width={32} height={32} className="h-8 w-auto rounded-sm object-contain" />
       ) : (
         <ShoppingCart className="h-8 w-8 text-primary" />
       )}

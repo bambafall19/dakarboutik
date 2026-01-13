@@ -9,8 +9,6 @@ import { Icons } from '@/components/icons';
 import { HeroSection } from '@/components/hero-section';
 import { Testimonials } from '@/components/testimonials';
 import { Engagements } from '@/components/engagements';
-import { ProductFilters } from '@/components/product-filters';
-import { useMemo } from 'react';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -22,20 +20,11 @@ export default function HomePage() {
   const bestsellers = products.filter(p => p.isBestseller).slice(0, 8);
   const saleProducts = products.filter(p => p.salePrice).slice(0, 8);
 
-  const brands = useMemo(() => {
-    const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
-    return [...new Set(allBrands)];
-  }, [products]);
-
 
   return (
     <div className="flex flex-col gap-8 md:gap-12">
       <HeroSection />
       
-      <div className="container">
-        <ProductFilters brands={brands} showCategoryFilter={false} />
-      </div>
-
       <div className="container space-y-8 md:space-y-12">
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -45,9 +34,10 @@ export default function HomePage() {
             <>
               {newArrivals.length > 0 && (
                 <ProductGrid
-                  title="Produits pour vous !"
+                  title="Nouveaux arrivages"
                   products={newArrivals}
                   gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
                 />
               )}
             </>

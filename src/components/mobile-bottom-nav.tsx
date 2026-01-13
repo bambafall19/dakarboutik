@@ -20,12 +20,11 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
     { href: '/', label: 'Accueil', icon: Home },
     { action: onMenuClick, label: 'Menu', icon: Menu, isAction: true },
     { action: onSearchClick, label: 'Recherche', icon: Search, isAction: true },
-    { href: '/login', label: 'Compte', icon: User },
   ];
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+      <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
         {navItems.map((item) => {
           const isActive = (item.href && pathname === item.href);
           

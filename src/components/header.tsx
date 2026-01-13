@@ -93,12 +93,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                         readOnly
                     />
                 </div>
-                <Link href="/login">
-                <Button variant="ghost" className="items-center gap-2">
-                    <Icons.user className="h-5 w-5"/>
-                    <span>Compte</span>
-                </Button>
-                </Link>
                 <Sheet>
                 <SheetTrigger asChild>
                 <Button variant="ghost" className="relative h-12 w-12 rounded-full">

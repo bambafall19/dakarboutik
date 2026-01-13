@@ -8,7 +8,6 @@ import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { Icons } from '@/components/icons';
 import { HeroSection } from '@/components/hero-section';
 import { Testimonials } from '@/components/testimonials';
-import { Engagements } from '@/components/engagements';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -44,7 +43,6 @@ export default function HomePage() {
           )}
       </div>
       
-      <Engagements />
       <Testimonials />
     </div>
   );

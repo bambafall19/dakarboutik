@@ -12,7 +12,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
     for (const category of categories) {
-      categoryMap[category.id] = { ...category, children: [], icon: CategoryIcons[category.slug] };
+      categoryMap[category.id] = { ...category, children: [], icon: CategoryIcons[category.slug] || undefined };
     }
 
     for (const category of categories) {

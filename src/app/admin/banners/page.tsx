@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -15,6 +16,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function BannersPage() {
   const { banners, loading } = useBanners();
   const mainBanner = banners.find(b => b.id === 'banner1');
+  const topSubBanner = banners.find(b => b.id === 'banner-laptops');
+  const bottomSubBanner = banners.find(b => b.id === 'banner-accessories');
 
   return (
     <div className="py-12">
@@ -30,11 +33,20 @@ export default function BannersPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <h1 className="text-3xl font-bold mb-8">Gestion des Bannières</h1>
-      <div className="max-w-2xl">
+      
+      <div className="space-y-12">
         {loading ? (
-          <Skeleton className="h-[400px] w-full" />
+          <div className="space-y-8">
+            <Skeleton className="h-[400px] w-full max-w-2xl" />
+            <Skeleton className="h-[400px] w-full max-w-2xl" />
+            <Skeleton className="h-[400px] w-full max-w-2xl" />
+          </div>
         ) : (
-          <BannerForm banner={mainBanner} />
+          <>
+            {mainBanner && <BannerForm banner={mainBanner} />}
+            {topSubBanner && <BannerForm banner={topSubBanner} />}
+            {bottomSubBanner && <BannerForm banner={bottomSubBanner} />}
+          </>
         )}
       </div>
     </div>

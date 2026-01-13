@@ -6,31 +6,24 @@ import type { Banner } from './types';
 
 const banners: Banner[] = [
   {
-    id: 'banner-headphones',
-    title: 'Jusqu\'à 50% de réduction sur une sélection de casques',
-    subtitle: 'Ne manquez pas nos offres exceptionnelles !',
-    image: findImage('banner-headphones'),
-    linkUrl: '/products?category=audio',
-  },
-  {
     id: 'banner1',
-    title: 'Baobab High Tech',
-    subtitle: 'Bienvenue !',
-    image: findImage('banner-1'),
+    title: 'La technologie qui vous ressemble',
+    subtitle: 'Smartphones, ordinateurs, accessoires... Tout ce qu\'il vous faut est ici.',
+    image: findImage('banner1'),
     linkUrl: '/products',
   },
   {
-    id: 'banner-sale',
-    title: 'SOLDES',
-    subtitle: 'Jusqu\'à -50%',
-    image: findImage('banner-sale'),
-    linkUrl: '/products',
+    id: 'banner-laptops',
+    title: 'PC Portables Puissants',
+    subtitle: 'Pour le travail ou le jeu',
+    image: findImage('banner-laptops'),
+    linkUrl: '/products?category=informatique',
   },
   {
-    id: 'banner3',
-    title: 'Le son immersif à votre portée',
-    subtitle: 'Explorez notre sélection de casques et écouteurs.',
-    image: findImage('banner-2'),
+    id: 'banner-accessories',
+    title: 'Accessoires Indispensables',
+    subtitle: 'Chargeurs, câbles, coques et plus',
+    image: findImage('banner-accessories'),
     linkUrl: '/products?category=accessoires',
   },
 ];

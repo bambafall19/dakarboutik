@@ -13,8 +13,8 @@ export function HeroSection() {
   
   if (loading) {
     return (
-      <section className="w-full container py-8">
-          <Skeleton className="aspect-video md:aspect-[2/1] lg:aspect-[16/7] w-full" />
+      <section className="w-full container py-2 md:py-8">
+          <Skeleton className="h-[300px] md:h-[480px] w-full" />
       </section>
     );
   }

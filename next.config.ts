@@ -20,9 +20,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA({
+const pwaConfig = {
     dest: 'public',
     register: true,
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
-})(nextConfig);
+}
+
+// Disable PWA in development with Turbopack, as it's not compatible.
+const isDevWithTurbo = process.env.NODE_ENV === 'development' && process.env.TURBOPACK;
+
+export default isDevWithTurbo ? nextConfig : withPWA(pwaConfig)(nextConfig);

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Icons } from './icons';
 import { Button } from './ui/button';
@@ -45,6 +45,7 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="bottom" className="h-full flex flex-col">
+                <SheetTitle className="sr-only">Panneau de recherche</SheetTitle>
                 <div className="flex items-center gap-2 border-b -mx-6 px-4 pb-4">
                     <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-10 w-10">
                         <Icons.arrowRight className="h-5 w-5 rotate-180" />

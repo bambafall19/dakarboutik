@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-      <div className="grid min-h-screen w-full lg:grid-cols-[80px_1fr]">
+      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <MainSidebar 
           categories={categories} 
           loading={categoriesLoading} 

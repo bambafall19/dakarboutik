@@ -66,51 +66,29 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border shadow-sm hover:shadow-xl hover:-translate-y-1">
-      <div className="relative overflow-hidden p-4">
-        <Link href={`/products/${product.slug}`} className="block">
-          <div className="aspect-square relative w-full bg-muted/50 rounded-md">
-            <Image
-              src={product.images[0].imageUrl}
-              alt={product.title}
-              data-ai-hint={product.images[0].imageHint}
-              fill
-              className="object-contain group-hover:scale-105 transition-transform duration-300 p-4"
-            />
-          </div>
-        </Link>
-        <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-9 w-9 rounded-full bg-background/60 hover:bg-background text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Icons.heart className="h-5 w-5" />
-        </Button>
-        {(product.isNew || product.salePrice) && (
-            <div className="absolute top-2 left-2 flex flex-col gap-2">
-                {product.isNew && <Badge variant="secondary" className="bg-blue-100 text-blue-800">NOUVEAU</Badge>}
-                {product.salePrice && <Badge variant="destructive">PROMO</Badge>}
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border shadow-sm hover:shadow-md">
+      <Link href={`/products/${product.slug}`} className="block">
+        <div className="relative overflow-hidden p-0">
+            <div className="aspect-square relative w-full bg-secondary/30">
+              <Image
+                src={product.images[0].imageUrl}
+                alt={product.title}
+                data-ai-hint={product.images[0].imageHint}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
             </div>
-        )}
-      </div>
-      <CardContent className="p-4 pt-0 flex-1 flex flex-col">
-        <div className="flex-1 mb-2">
-          <h3 className="font-semibold text-base leading-snug mb-2 min-h-[40px]">
-            <Link href={`/products/${product.slug}`}>{product.title}</Link>
-          </h3>
-           <p className="text-sm text-muted-foreground line-clamp-2 h-[40px]">{product.description}</p>
+            {product.salePrice && (
+                 <div className="absolute top-3 left-3 h-4 w-4 rounded-full bg-red-500" />
+            )}
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
-            <Star className="w-4 h-4 fill-amber-400 text-amber-400"/>
-            <span className="font-semibold text-sm text-foreground">4.9</span>
-            {soldCount !== null && <span>({soldCount} avis)</span>}
-        </div>
-        <div className="mt-auto flex items-center justify-between">
+      </Link>
+      <CardContent className="p-4 flex-1 flex flex-col">
+        <h3 className="font-semibold text-lg leading-tight flex-1">
+          <Link href={`/products/${product.slug}`}>{product.title}</Link>
+        </h3>
+        <div className="mt-4">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-          <Button
-            size="icon"
-            variant="outline"
-            className="rounded-full h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={handleAddToCart}
-          >
-            <Icons.plus className="h-4 w-4" />
-          </Button>
         </div>
       </CardContent>
     </Card>

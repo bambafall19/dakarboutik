@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -50,38 +50,33 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
     const hasSubCategories = category.subCategories && category.subCategories.length > 0;
     
     return (
-      <>
-        <TableRow>
-          <TableCell style={{ paddingLeft: `${1 + level * 2}rem` }}>
-            <span className="font-medium">{category.name}</span>
-          </TableCell>
-          <TableCell className="hidden md:table-cell">{category.slug}</TableCell>
-          <TableCell className="hidden md:table-cell">{hasSubCategories ? category.subCategories.length : 0}</TableCell>
-          <TableCell>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button aria-haspopup="true" size="icon" variant="ghost">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => onEdit(category)}>Modifier</DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => onDelete(category)}>Supprimer</DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
-          </TableCell>
-        </TableRow>
-        {hasSubCategories && category.subCategories.map(subCat => (
-          <CategoryRow key={subCat.id} category={subCat} level={level + 1} onEdit={onEdit} onDelete={onDelete} />
-        ))}
-      </>
+      <TableRow>
+        <TableCell style={{ paddingLeft: `${1 + level * 2}rem` }}>
+          <span className="font-medium">{category.name}</span>
+        </TableCell>
+        <TableCell className="hidden md:table-cell">{category.slug}</TableCell>
+        <TableCell className="hidden md:table-cell">{hasSubCategories ? category.subCategories.length : 0}</TableCell>
+        <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+              <Button aria-haspopup="true" size="icon" variant="ghost">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Toggle menu</span>
+              </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onEdit(category)}>Modifier</DropdownMenuItem>
+              <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => onDelete(category)}>Supprimer</DropdownMenuItem>
+          </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      </TableRow>
     );
 }
 
 export default function CategoriesPage() {
-    const { categories, rawCategories, loading, error } = useCategories();
+    const { categories, rawCategories, loading } = useCategories();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -107,7 +102,6 @@ export default function CategoriesPage() {
     const confirmDelete = async () => {
         if (!categoryToDelete || !firestore) return;
         
-        // Basic check: prevent deleting category with sub-categories
         const hasChildren = rawCategories.some(c => c.parentId === categoryToDelete.id);
         if(hasChildren) {
             toast({ variant: 'destructive', title: 'Action impossible', description: 'Veuillez supprimer les sous-catégories avant de supprimer la catégorie parente.' });
@@ -123,6 +117,20 @@ export default function CategoriesPage() {
             toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de supprimer la catégorie.' });
         }
     }
+
+    const categoryRows = useMemo(() => {
+        const rows: React.ReactNode[] = [];
+        const generateRows = (cats: Category[], level = 0) => {
+            cats.forEach(cat => {
+                rows.push(<CategoryRow key={cat.id} category={cat} level={level} onEdit={handleEditClick} onDelete={handleDeleteClick} />);
+                if (cat.subCategories) {
+                    generateRows(cat.subCategories, level + 1);
+                }
+            });
+        };
+        generateRows(categories);
+        return rows;
+    }, [categories]);
 
 
   return (
@@ -172,9 +180,7 @@ export default function CategoriesPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {categories.map(cat => (
-                            <CategoryRow key={cat.id} category={cat} onEdit={handleEditClick} onDelete={handleDeleteClick} />
-                        ))}
+                        {categoryRows}
                     </TableBody>
                 </Table>
             )}
@@ -184,7 +190,7 @@ export default function CategoriesPage() {
       <CategoryForm 
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
-        onCategoryUpdate={() => router.refresh()} // This isn't ideal but will work for now
+        onCategoryUpdate={() => {}}
         category={selectedCategory}
         allCategories={rawCategories}
       />

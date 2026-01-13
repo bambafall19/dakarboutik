@@ -177,11 +177,11 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                     <Icons.plus className="h-4 w-4" />
                   </Button>
                 </div>
-                <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
-                  <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
-                </Button>
             </div>
-             <Button variant="outline" size="lg" onClick={handleWhatsAppOrder}>
+            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="w-full">
+                <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
+            </Button>
+            <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="w-full">
                 <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
             </Button>
           </div>

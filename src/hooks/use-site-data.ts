@@ -2,10 +2,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { collection, query, where, doc } from 'firebase/firestore';
+import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner } from '@/lib/types';
-import { getCategories as getStaticCategories } from '@/lib/data';
 import { getBanners as getStaticBanners } from '@/lib/data';
 
 // --- Products ---
@@ -99,8 +98,43 @@ export function useBanners() {
 }
 
 
-// --- Categories (currently static, but wrapped in a hook for consistency) ---
+// --- Categories ---
 export function useCategories() {
-    const categories = useMemo(() => getStaticCategories(), []);
-    return { categories, loading: false, error: null };
+  const firestore = useFirestore();
+  const categoriesQuery = useMemo(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'categories'), orderBy('name'));
+  }, [firestore]);
+  
+  const { data: categories, loading, error } = useCollection<Category>(categoriesQuery);
+
+  const nestedCategories = useMemo(() => {
+    if (!categories) return [];
+    const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
+    const topLevelCategories: (Category & { children: Category[] })[] = [];
+
+    for (const category of categories) {
+      categoryMap[category.id] = { ...category, children: [] };
+    }
+
+    for (const category of categories) {
+      if (category.parentId && categoryMap[category.parentId]) {
+        categoryMap[category.parentId].children.push(categoryMap[category.id]);
+      } else {
+        topLevelCategories.push(categoryMap[category.id]);
+      }
+    }
+    
+    const buildHierarchy = (cats: (Category & { children: Category[] })[]): Category[] => {
+        return cats.map(cat => {
+            const { children, ...rest } = cat;
+            const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
+            return { ...rest, subCategories };
+        })
+    }
+
+    return buildHierarchy(topLevelCategories);
+  }, [categories]);
+
+  return { categories: nestedCategories, rawCategories: categories || [], loading, error };
 }

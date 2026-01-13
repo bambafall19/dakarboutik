@@ -47,6 +47,7 @@ export type Category = {
   name: string;
   slug: string;
   icon?: React.ComponentType<{ className?: string }>;
+  parentId?: string | null;
   subCategories?: Category[];
 };
 

@@ -9,8 +9,8 @@ import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
-import { SearchSheet } from './search-sheet';
 import { MainSidebar } from './main-sidebar';
+import { SearchSheet } from './search-sheet';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Icons } from './icons';
 import { Button } from './ui/button';
@@ -44,13 +44,9 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
     }, [open]);
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="bottom" className="h-full flex flex-col">
-                <SheetTitle className="sr-only">Panneau de recherche</SheetTitle>
-                <div className="flex items-center gap-2 border-b -mx-6 px-4 pb-4">
-                    <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-10 w-10">
-                        <Icons.arrowRight className="h-5 w-5 rotate-180" />
-                    </Button>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="p-0 gap-0 top-20 translate-y-0 sm:max-w-2xl">
+                <div className="flex items-center gap-2 border-b p-4">
                     <form onSubmit={handleSearch} className="flex-1 relative">
                         <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
@@ -63,19 +59,18 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
                         />
                     </form>
                 </div>
-                <ScrollArea className="flex-1 -mx-6">
+                <ScrollArea className="max-h-[calc(100vh-10rem)]">
                     <div className="p-6 space-y-8">
                         {recentProducts.length > 0 && (
                              <div>
                                 <h3 className="font-semibold mb-4">Récemment consultés</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    {recentProducts.map(product => (
-                                        <ProductCard key={product.id} product={product} />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {recentProducts.slice(0,2).map(product => (
+                                        <ProductCard key={product.id} product={product} variant="horizontal" />
                                     ))}
                                 </div>
                             </div>
                         )}
-                        <Separator />
                         {suggestedCategories.length > 0 && (
                             <div>
                                 <h3 className="font-semibold mb-4">Catégories populaires</h3>
@@ -92,7 +87,7 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
                         )}
                     </div>
                 </ScrollArea>
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
 }

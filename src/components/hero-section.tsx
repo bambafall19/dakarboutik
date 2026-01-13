@@ -16,7 +16,7 @@ export function HeroSection() {
     return (
       <section className="w-full">
         <div className="container px-0">
-          <Skeleton className="aspect-video w-full" />
+          <Skeleton className="aspect-video w-full rounded-lg" />
         </div>
       </section>
     );
@@ -37,16 +37,16 @@ export function HeroSection() {
           priority
           className="object-cover rounded-lg"
         />
-        <div className="absolute inset-0 bg-black/20 rounded-lg" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-            <p className="text-lg md:text-xl drop-shadow-md">
+            <p className="text-lg md:text-xl drop-shadow-md font-medium">
                 {mainBanner.subtitle}
             </p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight drop-shadow-lg mt-2">
             {mainBanner.title}
           </h1>
           
-          <Button asChild className="mt-6" size="lg">
+          <Button asChild className="mt-8" size="lg">
             <Link href={mainBanner.linkUrl}>Découvrir</Link>
           </Button>
         </div>

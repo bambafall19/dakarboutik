@@ -83,7 +83,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             </div>
         )}
       </div>
-      <div className="p-3 flex-1 flex flex-col">
+      <div className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
           <h3 className="font-semibold text-sm leading-snug mb-2 truncate">
             <Link href={`/products/${product.slug}`}>{product.title}</Link>
@@ -95,12 +95,12 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             {soldCount !== null && <span className="text-gray-400">{soldCount}+ vendus</span>}
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between">
           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8 rounded-full"
+            className="h-9 w-9 rounded-full"
             onClick={handleAddToCart}
           >
             <Icons.plus className="h-4 w-4" />

@@ -28,9 +28,9 @@ export default function HomePage() {
   
 
   return (
-    <div className="flex flex-col gap-8 md:gap-12">
+    <div className="flex flex-col">
       <HeroSection />
-      <div className="space-y-12 my-12">
+      <div className="space-y-16">
         <FeaturedCategories />
         
         {loading ? (

@@ -38,10 +38,10 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section>
-        <div className="text-center mb-10">
+    <section className="py-16">
+        <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight">L'avis de nos Clients</h2>
-            <p className="mt-2 text-foreground">Découvrez pourquoi ils nous font confiance.</p>
+            <p className="mt-2 text-muted-foreground">Découvrez pourquoi ils nous font confiance.</p>
         </div>
       <Carousel
         opts={{
@@ -53,10 +53,10 @@ export function Testimonials() {
         <CarouselContent>
           {testimonials.map((testimonial, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center p-6 text-center space-y-4">
-                    <p className="text-foreground italic">"{testimonial.text}"</p>
+              <div className="p-1 h-full">
+                <Card className="h-full bg-muted/50">
+                  <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4 h-full">
+                    <p className="text-foreground italic flex-1">"{testimonial.text}"</p>
                     <div className="flex items-center gap-4 pt-4">
                         <Avatar>
                             <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
@@ -64,7 +64,7 @@ export function Testimonials() {
                         </Avatar>
                         <div>
                             <p className="font-bold text-sm text-left">{testimonial.name}</p>
-                            <p className="text-xs text-foreground text-left">{testimonial.role}</p>
+                            <p className="text-xs text-muted-foreground text-left">{testimonial.role}</p>
                         </div>
                     </div>
                   </CardContent>

@@ -29,6 +29,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const selectedCategorySlug = searchParams.get('category');
+  const searchQuery = searchParams.get('q');
   const sortBy = searchParams.get('sortBy') || 'newest';
 
   const selectedCategory = useMemo(() => {
@@ -47,7 +48,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
     return null;
   }, [selectedCategorySlug, allCategories]);
 
-  const selectedCategoryName = selectedCategory?.name || 'Tous les produits';
+  const pageTitle = searchQuery ? `Recherche: "${searchQuery}"` : selectedCategory?.name || 'Tous les produits';
   const categoryImage = selectedCategory ? findImage(`product-${selectedCategory.slug}-1a`) : findImage('banner-1');
 
   const updateSearchParams = (key: string, value: string | null) => {
@@ -67,11 +68,15 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   };
   
   const clearFilters = () => {
-    const category = searchParams.get('category');
-    const sortBy = searchParams.get('sortBy');
+    const paramsToKeep = ['category', 'q', 'sortBy'];
     const newParams = new URLSearchParams();
-    if (category) newParams.set('category', category);
-    if (sortBy) newParams.set('sortBy', sortBy);
+    
+    paramsToKeep.forEach(param => {
+        const value = searchParams.get(param);
+        if (value) {
+            newParams.set(param, value);
+        }
+    });
 
     const query = newParams.toString() ? `?${newParams.toString()}` : '';
     router.push(`${pathname}${query}`, { scroll: false });
@@ -87,10 +92,10 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   return (
     <>
       <div className="relative h-64 md:h-80 rounded-lg overflow-hidden mb-8">
-        <Image src={categoryImage.imageUrl} alt={selectedCategoryName} fill className="object-cover" />
+        <Image src={categoryImage.imageUrl} alt={pageTitle} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex items-center justify-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white text-center drop-shadow-lg">{selectedCategoryName}</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-white text-center drop-shadow-lg px-4">{pageTitle}</h1>
         </div>
       </div>
       
@@ -141,7 +146,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
           {products.length === 0 && (
             <div className="text-center py-16 col-span-full">
               <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
-              <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres.</p>
+              <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres ou votre recherche.</p>
             </div>
           )}
         </main>

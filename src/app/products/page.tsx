@@ -21,6 +21,7 @@ function ProductsPageContent() {
   const categoryFilter = searchParams.get('category');
   const brandFilter = searchParams.get('brands')?.split(',').filter(Boolean) || [];
   const priceRangeFilter = searchParams.get('priceRange');
+  const searchQuery = searchParams.get('q');
   const sortBy = searchParams.get('sortBy') || 'newest';
 
   const selectedPriceRange: [number, number] = useMemo(() => {
@@ -36,6 +37,15 @@ function ProductsPageContent() {
   
   const filteredProducts = useMemo(() => {
     let filtered: Product[] = [...products];
+    
+    // Search Query
+    if (searchQuery) {
+        filtered = filtered.filter(p => 
+            p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+    }
 
     // Category
     if (categoryFilter) {
@@ -70,7 +80,7 @@ function ProductsPageContent() {
     }
 
     return filtered;
-  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories]);
+  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories, searchQuery]);
   
   const brands = useMemo(() => {
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];

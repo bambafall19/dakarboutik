@@ -9,12 +9,14 @@ import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
+import { SearchSheet } from './search-sheet';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { settings, loading: settingsLoading } = useSiteSettings();
   const { categories, loading: categoriesLoading } = useCategories();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
 
   const isAdmin = pathname.startsWith('/admin');
   const isLogin = pathname === '/login';
@@ -36,7 +38,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="container py-6">{children}</div>
         </main>
         <Footer settings={settings} />
-        <MobileBottomNav onMenuClick={() => setIsMobileMenuOpen(true)} />
+        <MobileBottomNav 
+          onMenuClick={() => setIsMobileMenuOpen(true)} 
+          onSearchClick={() => setIsSearchSheetOpen(true)}
+        />
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="w-full max-w-sm flex flex-col">
@@ -44,6 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
         </SheetContent>
       </Sheet>
+      <SearchSheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen} />
     </Suspense>
   );
 }

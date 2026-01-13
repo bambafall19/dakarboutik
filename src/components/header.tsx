@@ -9,9 +9,7 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
-import type { SiteSettings } from '@/lib/types';
-import { useCategories } from '@/hooks/use-site-data';
-import { MainNav } from './main-nav';
+import type { SiteSettings, Category } from '@/lib/types';
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { MobileNav } from './mobile-nav';
@@ -19,11 +17,11 @@ import { MobileNav } from './mobile-nav';
 interface HeaderProps {
   settings?: SiteSettings | null;
   loading: boolean;
+  categories: Category[];
 }
 
-export function Header({ settings, loading }: HeaderProps) {
+export function Header({ settings, loading, categories }: HeaderProps) {
   const { totalItems } = useCart();
-  const { categories } = useCategories();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -67,8 +65,8 @@ export function Header({ settings, loading }: HeaderProps) {
           </span>
         </div>
       )}
-      <div className="container flex h-16 items-center justify-between gap-6">
-        <div className="flex items-center gap-2 lg:gap-6">
+      <div className="container flex h-14 items-center justify-between gap-4 px-6">
+        <div className="flex items-center gap-2">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="lg:hidden">
@@ -80,28 +78,19 @@ export function Header({ settings, loading }: HeaderProps) {
                 <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
               </SheetContent>
             </Sheet>
-          <Logo loading={loading} imageUrl={settings?.logoUrl} />
-          <div className="hidden lg:flex">
-            <MainNav items={categories} />
-          </div>
+            <div className="lg:hidden">
+              <Logo loading={loading} imageUrl={settings?.logoUrl} />
+            </div>
         </div>
 
-        <div className="flex-1 hidden md:flex max-w-xs">
-          <div className="relative w-full mx-auto flex">
-            <div className="relative flex-1">
-              <Input
-                placeholder="Rechercher un produit..."
-                className="focus-visible:ring-primary"
-              />
-              <Button
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-              >
-                <Icons.search className="h-4 w-4" />
-              </Button>
-            </div>
+        <div className="relative flex-1">
+            <Icons.search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Rechercher un produit..."
+              className="w-full bg-background pl-8 md:w-[200px] lg:w-[300px]"
+            />
           </div>
-        </div>
 
         <div className="flex items-center justify-end gap-2">
           <Sheet>

@@ -1,7 +1,8 @@
+
 'use client';
 
 import { EditProductForm } from '@/components/admin/edit-product-form';
-import { getSimpleCategories } from '@/lib/data';
+import { useCategories } from '@/hooks/use-site-data';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,12 +12,11 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { useProductsById } from '@/hooks/use-site-data';
-import { useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export default function EditProductPage({ params }: { params: { id: string } }) {
-  const categories = useMemo(() => getSimpleCategories(), []);
+  const { categories } = useCategories();
   const { product, loading } = useProductsById(params.id);
 
   if (loading) {

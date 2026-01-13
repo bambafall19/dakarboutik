@@ -1,6 +1,7 @@
+
 'use client';
 import { AddProductForm } from '@/components/admin/add-product-form';
-import { getSimpleCategories } from '@/lib/data';
+import { useCategories } from '@/hooks/use-site-data';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,10 +10,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { useMemo } from 'react';
 
 export default function AddProductPage() {
-  const categories = useMemo(() => getSimpleCategories(), []);
+  const { categories } = useCategories();
 
   return (
     <div className="py-12">

@@ -9,6 +9,9 @@ import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { getAllChildCategorySlugs } from '@/lib/data-helpers';
 import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
+import { CategorySidebar } from '@/components/category-sidebar';
+import { ProductFilters } from '@/components/product-filters';
+import { Card, CardContent } from '@/components/ui/card';
 
 function ProductsPageContent() {
   const searchParams = useSearchParams();
@@ -16,7 +19,7 @@ function ProductsPageContent() {
   const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
   const categoryFilter = searchParams.get('category');
-  const brandFilter = searchParams.get('brands')?.split(',') || [];
+  const brandFilter = searchParams.get('brands')?.split(',').filter(Boolean) || [];
   const priceRangeFilter = searchParams.get('priceRange');
   const sortBy = searchParams.get('sortBy') || 'newest';
 
@@ -80,11 +83,23 @@ function ProductsPageContent() {
   }
 
   return (
-    <ProductListing
-      products={filteredProducts}
-      allCategories={categories}
-      brands={brands}
-    />
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <aside className="hidden lg:block lg:col-span-1">
+        <Card>
+          <CardContent className="pt-6 space-y-8">
+            <CategorySidebar categories={categories} />
+            <ProductFilters brands={brands} />
+          </CardContent>
+        </Card>
+      </aside>
+      <main className="lg:col-span-3">
+        <ProductListing
+          products={filteredProducts}
+          allCategories={categories}
+          brands={brands}
+        />
+      </main>
+    </div>
   );
 }
 

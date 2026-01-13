@@ -8,12 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Icons } from './icons';
 import { useMemo, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { ProductFilters } from './product-filters';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
+import { ProductFilters } from './product-filters';
+import { CategorySidebar } from './category-sidebar';
+import { Card, CardContent } from './ui/card';
 
 interface ProductListingProps {
     products: Product[];
@@ -77,9 +78,10 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   };
 
   const filterNode = (
-    <ProductFilters
-        brands={brands}
-    />
+    <div className="space-y-8">
+        <CategorySidebar categories={allCategories} />
+        <ProductFilters brands={brands} />
+    </div>
   );
 
   return (
@@ -97,26 +99,26 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
             <p className="text-muted-foreground">{products.length} résultat(s)</p>
             
             <div className='flex items-center gap-4'>
-                <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-                    <PopoverTrigger asChild>
-                        <Button variant="outline">
+                <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" className='lg:hidden'>
                             <Icons.filter className="mr-2 h-4 w-4" />
                             Filtrer
                         </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-0" align="end">
-                        <SheetHeader className='p-4 border-b'>
-                            <SheetTitle>Filtres</SheetTitle>
+                    </SheetTrigger>
+                    <SheetContent className='flex flex-col'>
+                         <SheetHeader className='-mx-6 px-6 pb-4 border-b'>
+                            <SheetTitle>Filtres & Catégories</SheetTitle>
                         </SheetHeader>
-                        <div className="p-4">
+                        <div className="flex-1 overflow-y-auto -mx-6 px-6">
                           {filterNode}
                         </div>
-                        <div className="p-4 border-t flex justify-between">
+                        <div className="-mx-6 px-6 pt-4 border-t flex justify-between">
                           <Button onClick={clearFilters} variant="ghost" size="sm">Effacer</Button>
                           <Button onClick={() => setIsFiltersOpen(false)} size="sm">Appliquer</Button>
                         </div>
-                    </PopoverContent>
-                </Popover>
+                    </SheetContent>
+                </Sheet>
 
                 <Select value={sortBy} onValueChange={handleSortChange}>
                   <SelectTrigger className='w-[200px]'>
@@ -131,7 +133,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}

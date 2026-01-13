@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Price } from './price';
 import { Checkbox } from './ui/checkbox';
+import { Separator } from './ui/separator';
 
 interface ProductFiltersProps {
   brands: string[];
@@ -34,10 +35,9 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
     }
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    // We don't push the router here, the parent component will handle it.
-    // This makes the filter component more reusable.
-    // The parent can decide to apply filters on change or on button click.
-    window.history.replaceState({}, '', `${pathname}${query}`);
+    // Use replaceState to avoid polluting browser history on every filter change.
+    // The parent component can decide when to push to history if needed.
+    router.push(`${pathname}${query}`, { scroll: false });
   };
   
   const handleBrandChange = (brand: string, checked: boolean) => {
@@ -53,6 +53,8 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
 
   return (
     <div className="space-y-6">
+      <Separator />
+       <h3 className="font-semibold text-lg">Filtres</h3>
       <Accordion type="multiple" defaultValue={['brand', 'price']} className="w-full">
         <AccordionItem value="brand">
           <AccordionTrigger>Marque</AccordionTrigger>
@@ -77,8 +79,8 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
                 min={0}
                 max={1000000}
                 step={10000}
-                defaultValue={priceRange}
-                onValueCommit={handlePriceChange}
+                value={priceRange}
+                onValueChange={handlePriceChange}
               />
               <div className="flex justify-between mt-3 text-sm text-muted-foreground">
                 <Price price={priceRange[0]} currency="XOF" className="font-normal"/>

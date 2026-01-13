@@ -1,3 +1,4 @@
+
 'use client';
 
 import { getCategoryPath } from '@/lib/data-helpers';
@@ -13,8 +14,8 @@ type ProductDetailPageProps = {
   params: { slug: string };
 };
 
-function ProductDetailsContent({ params }: { params: { slug: string } }) {
-  const { product, loading: productLoading } = useProductsBySlug(params.slug);
+function ProductDetailsContent({ slug }: { slug: string }) {
+  const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
   const { addRecentProduct } = useRecentProducts();
@@ -58,7 +59,7 @@ function ProductDetailsContent({ params }: { params: { slug: string } }) {
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductDetailsContent params={params} />
+      <ProductDetailsContent slug={params.slug} />
     </Suspense>
   );
 }

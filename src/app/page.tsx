@@ -9,6 +9,7 @@ import { Icons } from '@/components/icons';
 import { HeroSection } from '@/components/hero-section';
 import { Testimonials } from '@/components/testimonials';
 import { Engagements } from '@/components/engagements';
+import { HomeSidebar } from '@/components/home-sidebar';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -21,47 +22,55 @@ export default function HomePage() {
   const saleProducts = products.filter(p => p.salePrice).slice(0, 8);
 
   return (
-    <div className="flex flex-col gap-12 md:gap-20">
+    <div className="flex flex-col gap-12 md:gap-16">
       <HeroSection />
       
-        {loading ? (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-              {Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-            </div>
-             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-              {Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-            </div>
-          </>
-        ) : (
-          <>
-            {saleProducts.length > 0 && (
-                <ProductGrid
-                    title="Flash Sale"
-                    products={saleProducts}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <aside className="lg:col-span-3">
+          <HomeSidebar />
+        </aside>
+        
+        <main className="lg:col-span-9 space-y-12 md:space-y-16">
+            {loading ? (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  {Array.from({ length: 3 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  {Array.from({ length: 3 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+                </div>
+              </>
+            ) : (
+              <>
+                {saleProducts.length > 0 && (
+                    <ProductGrid
+                        title="Flash Sale"
+                        products={saleProducts}
+                        link={{ href: '/products', text: 'Voir tout' }}
+                        gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                        icon={<Icons.flash className="h-6 w-6 text-primary" />}
+                    />
+                )}
+                {newArrivals.length > 0 && (
+                  <ProductGrid
+                    title="Nouveautés"
+                    products={newArrivals}
+                    link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
+                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                  />
+                )}
+                {bestsellers.length > 0 && (
+                  <ProductGrid
+                    title="Meilleures Ventes"
+                    products={bestsellers}
                     link={{ href: '/products', text: 'Voir tout' }}
-                    gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-                    icon={<Icons.flash className="h-6 w-6 text-primary" />}
-                />
+                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                  />
+                )}
+              </>
             )}
-            {newArrivals.length > 0 && (
-              <ProductGrid
-                title="Nouveautés"
-                products={newArrivals}
-                link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
-                gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              />
-            )}
-            {bestsellers.length > 0 && (
-              <ProductGrid
-                title="Meilleures Ventes"
-                products={bestsellers}
-                link={{ href: '/products', text: 'Voir tout' }}
-                gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              />
-            )}
-          </>
-        )}
+        </main>
+      </div>
 
         <FeaturedCategories />
         <Engagements />

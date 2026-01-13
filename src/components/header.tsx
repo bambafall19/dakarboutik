@@ -9,9 +9,6 @@ import { Logo } from '@/components/logo';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
-import { useEffect, useMemo, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Phone } from 'lucide-react';
 import { MainNav } from './main-nav';
 import { Price } from './price';
 
@@ -61,20 +58,28 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             <div className="hidden md:flex items-center justify-between w-full gap-4">
               <Logo loading={loading} imageUrl={settings?.logoUrl} />
             
-              <div className="flex-1 max-w-xl relative">
+              <div className="flex-1 max-w-2xl relative">
                   <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <input 
                       placeholder="Recherche de produits..." 
-                      className="pl-12 h-12 w-full rounded-md border border-input bg-muted/50 px-3 py-2" 
+                      className="pl-12 h-12 w-full rounded-full border border-input bg-muted/50 px-3 py-2" 
                       onClick={onSearchClick}
                       readOnly
                   />
               </div>
 
-              <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-lg bg-muted/50">
+              <div className="flex items-center gap-1">
+                  <Button variant="ghost" className="h-12 rounded-lg px-4 flex-col gap-1 items-center justify-center">
                     <Icons.heart className="h-6 w-6 text-muted-foreground" />
+                    <span className='text-xs font-medium text-muted-foreground'>Favoris</span>
                   </Button>
+                  
+                  <Link href="/login">
+                    <Button variant="ghost" className="h-12 rounded-lg px-4 flex-col gap-1 items-center justify-center">
+                      <Icons.user className="h-6 w-6 text-muted-foreground" />
+                      <span className='text-xs font-medium text-muted-foreground'>Compte</span>
+                    </Button>
+                  </Link>
 
                   <Sheet>
                     <SheetTrigger asChild>
@@ -103,13 +108,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
         <div className="container flex h-14 items-center justify-between text-sm">
             <MainNav items={categories} />
             <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4"/>
-                    <span className='font-semibold'>+221 77 123 45 67</span>
-                </div>
-                 <div>
-                    <span className='text-muted-foreground'>À propos</span>
-                </div>
+                <p>À propos</p>
+                <p>Contact</p>
             </div>
         </div>
       </div>

@@ -32,9 +32,9 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
         "text-2xl font-bold tracking-tight text-foreground",
         hideTextOnMobile && "hidden sm:inline"
       )}>
-        Shopcart
+        DakarBoutik
       </span>
-      <span className="sr-only">Shopcart</span>
+      <span className="sr-only">DakarBoutik</span>
     </Link>
   );
 };

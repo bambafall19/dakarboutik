@@ -135,7 +135,7 @@ export default function CategoriesPage() {
         };
         generateRows(categories);
         return rows;
-    }, [categories]);
+    }, [categories, handleEditClick, handleDeleteClick]);
 
 
   return (

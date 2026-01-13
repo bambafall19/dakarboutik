@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <MainSidebar categories={categories} loading={categoriesLoading} />
         <div className="flex flex-col">
             <Header settings={settings} loading={settingsLoading} categories={categories} />
-            <main className="flex-1 bg-muted/30">
+            <main className="flex-1 bg-background">
                 <div className="container py-6">
                 {children}
                 </div>

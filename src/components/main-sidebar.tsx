@@ -2,13 +2,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
+import { SheetTrigger } from './ui/sheet';
 
 interface MainSidebarProps {
     categories: Category[];
@@ -17,8 +18,8 @@ interface MainSidebarProps {
 
 export function MainSidebar({ categories, loading }: MainSidebarProps) {
   const pathname = usePathname();
-  const searchParams = usePathname();
-  const activeCategorySlug = new URLSearchParams(searchParams).get('category');
+  const searchParams = useSearchParams();
+  const activeCategorySlug = searchParams.get('category');
 
 
   const SidebarSkeleton = () => (
@@ -30,10 +31,12 @@ export function MainSidebar({ categories, loading }: MainSidebarProps) {
   return (
     <div className="hidden border-r bg-card lg:flex flex-col items-center">
         <div className="flex h-20 items-center justify-center border-b w-full">
-             <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Menu</span>
-             </Button>
+            <SheetTrigger asChild>
+                <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Menu</span>
+                </Button>
+            </SheetTrigger>
         </div>
         <nav className="flex-1 overflow-y-auto py-6">
             <TooltipProvider>

@@ -61,59 +61,58 @@ export function Header({ settings, loading, categories }: HeaderProps) {
           </span>
         </div>
       )}
-      <div className="container flex h-20 items-center justify-between gap-4">
-        <div className="lg:hidden flex items-center">
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Icons.menu className="h-6 w-6" />
-                <span className="sr-only">Ouvrir le menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-sm">
-              <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
-            </SheetContent>
-          </Sheet>
-        </div>
+       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <div className="container flex h-20 items-center justify-between gap-4">
+            <div className="lg:hidden flex items-center">
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Icons.menu className="h-6 w-6" />
+                  <span className="sr-only">Ouvrir le menu</span>
+                </Button>
+              </SheetTrigger>
+            </div>
 
-        <div className="hidden lg:block">
-          <Logo loading={loading} imageUrl={settings?.logoUrl} />
-        </div>
+            <div className="hidden lg:block">
+              <Logo loading={loading} imageUrl={settings?.logoUrl} />
+            </div>
 
-        <div className="relative flex-1 mx-4 max-w-xl">
-          <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Rechercher un produit..."
-            className="w-full bg-muted pl-10 h-12 text-base"
-          />
-        </div>
+            <div className="relative flex-1 mx-4 max-w-xl">
+              <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Rechercher un produit..."
+                className="w-full bg-muted pl-10 h-12 text-base"
+              />
+            </div>
 
-        <div className="flex items-center justify-end gap-2 md:gap-4">
-           <Button variant="ghost" className="hidden md:flex items-center gap-2">
-                <Icons.user className="h-6 w-6"/>
-                <span className="text-sm font-medium">Compte</span>
-            </Button>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="relative h-12 px-4 rounded-full">
-                <Icons.shoppingBag className="h-6 w-6" />
-                <span className="sr-only">Ouvrir le panier</span>
-                {totalItems > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {totalItems}
-                  </span>
-                )}
-                <Price price={totalPrice} currency='XOF' className="ml-2 hidden md:flex" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="flex flex-col">
-              <CartDrawer />
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-      
+            <div className="flex items-center justify-end gap-2 md:gap-4">
+              <Button variant="ghost" className="hidden md:flex items-center gap-2">
+                    <Icons.user className="h-6 w-6"/>
+                    <span className="text-sm font-medium">Compte</span>
+                </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="relative h-12 px-4 rounded-full">
+                    <Icons.shoppingBag className="h-6 w-6" />
+                    <span className="sr-only">Ouvrir le panier</span>
+                    {totalItems > 0 && (
+                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                        {totalItems}
+                      </span>
+                    )}
+                    <Price price={totalPrice} currency='XOF' className="ml-2 hidden md:flex" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="flex flex-col">
+                  <CartDrawer />
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+          <SheetContent side="left" className="w-full max-w-sm">
+            <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
+          </SheetContent>
+      </Sheet>
     </header>
   );
 }

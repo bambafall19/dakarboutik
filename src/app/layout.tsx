@@ -27,7 +27,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'relative h-full bg-muted/20 font-body antialiased',
+          'relative h-full bg-background font-body antialiased',
           inter.className
         )}
       >

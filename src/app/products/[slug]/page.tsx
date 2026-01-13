@@ -56,10 +56,10 @@ function ProductDetailsContent({ slug }: { slug: string }) {
   );
 }
 
-export default function ProductDetailPage({ params: { slug } }: ProductDetailPageProps) {
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductDetailsContent slug={slug} />
+      <ProductDetailsContent slug={params.slug} />
     </Suspense>
   );
 }

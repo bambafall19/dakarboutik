@@ -12,9 +12,10 @@ interface LogoProps {
   onClick?: () => void;
   imageUrl?: string | null;
   loading?: boolean;
+  hideTextOnMobile?: boolean;
 }
 
-export const Logo = ({ className, onClick, imageUrl, loading }: LogoProps) => {
+export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
 
   if (loading) {
     return <Skeleton className="h-8 w-32" />
@@ -27,7 +28,10 @@ export const Logo = ({ className, onClick, imageUrl, loading }: LogoProps) => {
       ) : (
         <ShoppingBasket className="h-6 w-6 text-primary" />
       )}
-      <span className="text-xl font-bold tracking-tight text-foreground">
+      <span className={cn(
+        "text-xl font-bold tracking-tight text-foreground",
+        hideTextOnMobile && "hidden sm:inline"
+      )}>
         Dakar<span className="text-primary">Boutik</span>
       </span>
       <span className="sr-only">DakarBoutik</span>

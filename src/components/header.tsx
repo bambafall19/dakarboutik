@@ -19,9 +19,10 @@ interface HeaderProps {
   loading: boolean;
   categories: Category[];
   pathname: string;
+  onOpenMobileMenu: () => void;
 }
 
-export function Header({ settings, loading, pathname }: HeaderProps) {
+export function Header({ settings, loading, pathname, onOpenMobileMenu }: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -53,46 +54,50 @@ export function Header({ settings, loading, pathname }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       {currentAnnouncement && !loading && (
-        <div className="bg-primary text-primary-foreground text-center text-sm p-2 transition-opacity duration-500">
+        <div className="bg-primary text-primary-foreground text-center text-sm p-2 transition-opacity duration-500 hidden md:block">
           <span className={cn('transition-opacity duration-500 ease-in-out', isFading ? 'opacity-0' : 'opacity-100')}>
             {currentAnnouncement}
           </span>
         </div>
       )}
-      <div className="container flex h-20 items-center justify-between gap-4">
-        <div className="flex items-center gap-2 md:gap-4">
+      <div className="container flex h-16 items-center justify-between gap-4">
+        <div className="lg:hidden">
+          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+        </div>
+        <div className="hidden lg:flex items-center gap-2 md:gap-4">
             <div className="hidden lg:block">
                 <Logo loading={loading} imageUrl={settings?.logoUrl} />
             </div>
         </div>
 
-        <div className="flex-1 flex justify-center px-4">
+        <div className="hidden md:flex flex-1 justify-center px-4">
             <div className="relative w-full max-w-xl">
                 <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                     type="search"
-                    placeholder="Rechercher..."
+                    placeholder="Rechercher un produit..."
                     className="w-full bg-muted pl-10 h-11 text-base"
                 />
             </div>
         </div>
 
         <div className="flex items-center justify-end gap-2">
-            <Button variant="ghost" className="hidden lg:flex items-center gap-2">
-                <Icons.user className="h-6 w-6"/>
-                <span className="text-sm font-medium">Compte</span>
-            </Button>
+            <Link href="/login" className="hidden lg:flex">
+              <Button variant="ghost" className="items-center gap-2">
+                  <Icons.user className="h-6 w-6"/>
+                  <span className="text-sm font-medium">Compte</span>
+              </Button>
+            </Link>
             <Sheet>
                 <SheetTrigger asChild>
-                <Button variant="outline" className="relative h-12 w-12 md:w-auto md:px-4 rounded-full">
+                <Button variant="ghost" className="relative h-10 w-10 md:h-12 md:w-12 rounded-full">
                     <Icons.shoppingBag className="h-6 w-6" />
                     <span className="sr-only">Ouvrir le panier</span>
                     {totalItems > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                         {totalItems}
                     </span>
                     )}
-                    <Price price={totalPrice} currency='XOF' className="ml-2 hidden md:flex" />
                 </Button>
                 </SheetTrigger>
                 <SheetContent className="flex flex-col">

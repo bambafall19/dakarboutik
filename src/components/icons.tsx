@@ -1,4 +1,4 @@
-
+'use client';
 import {
   Smartphone,
   Headphones,
@@ -74,12 +74,12 @@ export const Icons = {
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
   'informatique': Laptop,
+  'pc-portables': Laptop,
   'telephonie': Smartphone,
+  'smartphones': Smartphone,
   'accessoires': Cable,
   'audio': Headphones,
   'chargeurs': BatteryCharging,
   'power-banks': Power,
   'electromenager': Lamp,
-  'pc-portables': Laptop,
-  'smartphones': Smartphone,
 };

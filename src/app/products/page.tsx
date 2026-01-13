@@ -14,9 +14,9 @@ import type { Product } from '@/lib/types';
 function ProductsPageContent() {
   const searchParams = useSearchParams();
   const { products, loading: productsLoading } = useProducts();
-  const { categories: allCategories, rawCategories, loading: categoriesLoading } = useCategories();
+  const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
-  const categoryFilter = searchParams.get('category')?.split(',') || [];
+  const categoryFilter = searchParams.get('category');
   const brandFilter = searchParams.get('brands')?.split(',') || [];
   const priceRangeFilter = searchParams.get('priceRange');
   const sortBy = searchParams.get('sortBy') || 'newest';
@@ -36,8 +36,8 @@ function ProductsPageContent() {
     let filtered: Product[] = [...products];
 
     // Category
-    if (categoryFilter.length > 0) {
-        const allSelectedSlugs = categoryFilter.flatMap(slug => getAllChildCategorySlugs(slug, rawCategories));
+    if (categoryFilter) {
+        const allSelectedSlugs = getAllChildCategorySlugs(categoryFilter, rawCategories);
         const uniqueSlugs = [...new Set(allSelectedSlugs)];
         filtered = filtered.filter((p) => uniqueSlugs.includes(p.category));
     }
@@ -83,8 +83,7 @@ function ProductsPageContent() {
   return (
     <ProductListing
       products={filteredProducts}
-      allCategories={allCategories}
-      rawCategories={rawCategories}
+      allCategories={categories}
       brands={brands}
     />
   );

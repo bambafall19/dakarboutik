@@ -6,6 +6,7 @@ import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
+import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
 // --- Products ---
 export function useProducts() {
@@ -105,57 +106,19 @@ export function useCategories() {
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
-    // By changing the key, we force a re-fetch of the query
     return query(collection(firestore, 'categories'), orderBy('name'));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firestore, key]);
   
-  const { data: categories, loading, error } = useCollection<Category>(categoriesQuery);
+  const { data: rawCategories, loading, error } = useCollection<Category>(categoriesQuery);
 
   const refetch = useCallback(() => {
     setKey(prev => prev + 1);
   }, []);
 
-  const { nested, simple, leaf } = useMemo(() => {
-    if (!categories) return { nested: [], simple: [], leaf: [] };
+  const categories = useMemo(() => {
+    return buildCategoryHierarchy(rawCategories || []);
+  }, [rawCategories]);
 
-    const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
-    const topLevelCategories: (Category & { children: Category[] })[] = [];
 
-    for (const category of categories) {
-      categoryMap[category.id] = { ...category, children: [] };
-    }
-
-    for (const category of categories) {
-      if (category.parentId && categoryMap[category.parentId]) {
-        categoryMap[category.parentId].children.push(categoryMap[category.id]);
-      } else {
-        topLevelCategories.push(categoryMap[category.id]);
-      }
-    }
-    
-    const buildHierarchy = (cats: (Category & { children: Category[] })[]): Category[] => {
-        return cats.map(cat => {
-            const { children, ...rest } = cat;
-            const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
-            return { ...rest, subCategories };
-        })
-    }
-    
-    const getSimpleCats = () => {
-        return categories.map(cat => ({ id: cat.id, name: cat.name, slug: cat.slug, parentId: cat.parentId }));
-    };
-
-    const getLeafCats = () => {
-        return categories.filter(c => !categories.some(other => other.parentId === c.id));
-    };
-
-    return {
-        nested: buildHierarchy(topLevelCategories),
-        simple: getSimpleCats(),
-        leaf: getLeafCats(),
-    };
-  }, [categories]);
-
-  return { categories: nested, rawCategories: categories || [], simpleCategories: simple, leafCategories: leaf, loading, error, refetch };
+  return { categories, rawCategories: rawCategories || [], loading, error, refetch };
 }

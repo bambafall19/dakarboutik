@@ -1,5 +1,39 @@
 
+
 import type { Category, SimpleCategory } from "./types";
+import { CategoryIcons } from "@/components/icons";
+
+
+/**
+ * Builds a nested category tree from a flat array of categories.
+ */
+export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
+    const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
+    const topLevelCategories: (Category & { children: Category[] })[] = [];
+
+    for (const category of categories) {
+      categoryMap[category.id] = { ...category, children: [], icon: CategoryIcons[category.slug] };
+    }
+
+    for (const category of categories) {
+      if (category.parentId && categoryMap[category.parentId]) {
+        categoryMap[category.parentId].children.push(categoryMap[category.id]);
+      } else {
+        topLevelCategories.push(categoryMap[category.id]);
+      }
+    }
+    
+    const buildHierarchy = (cats: (Category & { children: Category[] })[]): Category[] => {
+        return cats.map(cat => {
+            const { children, ...rest } = cat;
+            const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
+            return { ...rest, subCategories };
+        })
+    }
+    
+    return buildHierarchy(topLevelCategories);
+}
+
 
 /**
  * Finds a category by its slug from a flat list of categories.

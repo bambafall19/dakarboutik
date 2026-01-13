@@ -9,6 +9,8 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const queryKey = q ? JSON.stringify(q) : 'null';
+
   useEffect(() => {
     if (q === null) {
       setData([]);
@@ -40,7 +42,7 @@ export function useCollection<T extends { id: string }>(q: Query | null) {
 
     return () => unsubscribe();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(q)]);
+  }, [queryKey]);
 
   return { data, loading, error };
 }

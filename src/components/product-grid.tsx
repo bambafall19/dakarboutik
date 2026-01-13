@@ -23,7 +23,7 @@ export function ProductGrid({ title, products, link, gridClass, icon }: ProductG
   }
 
   return (
-    <section className="px-4 md:px-0">
+    <section className="container px-4 md:px-8">
       {title && (
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <div className="flex items-center gap-3">

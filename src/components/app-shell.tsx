@@ -24,22 +24,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isAdmin || isLogin) {
     return <>{children}</>;
   }
+  
+  const handleSearchClick = () => {
+    // For desktop, the header search input click will open the search sheet
+    // For mobile, the bottom nav search button click will open it.
+    setIsSearchSheetOpen(true);
+  }
 
   return (
     <Suspense>
-      <div className="flex flex-col min-h-screen bg-muted/40">
+      <div className="flex flex-col min-h-screen">
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}
-            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+            onOpenMobileMenu={handleSearchClick}
         />
-        <main className="flex-1 bg-background pb-20 md:pb-0">
-            <div className="container md:py-6">{children}</div>
+        <main className="flex-1 bg-background">
+            <div className="pb-20 md:pb-0">{children}</div>
         </main>
         <Footer settings={settings} />
         <MobileBottomNav 
           onMenuClick={() => setIsMobileMenuOpen(true)} 
-          onSearchClick={() => setIsSearchSheetOpen(true)}
+          onSearchClick={handleSearchClick}
         />
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>

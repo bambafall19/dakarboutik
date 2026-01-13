@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useMemo, useCallback, useState } from 'react';
@@ -7,6 +8,7 @@ import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
+import { CategoryIcons } from '@/components/icons';
 
 // --- Products ---
 export function useProducts() {
@@ -118,7 +120,7 @@ export function useCategories() {
 
   const categories = useMemo(() => {
     if (!rawCategories) return [];
-    return buildCategoryHierarchy(rawCategories);
+    return buildCategoryHierarchy(rawCategories, CategoryIcons);
   }, [rawCategories]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {

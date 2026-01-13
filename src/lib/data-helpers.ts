@@ -1,16 +1,17 @@
 
 
 import type { Category } from "./types";
-import { CategoryIcons } from "@/components/icons";
-
 
 /**
  * Builds a nested category tree from a flat array of categories.
  */
-export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] => {
+export const buildCategoryHierarchy = (
+    rawCategories: Category[], 
+    categoryIcons: { [key: string]: React.ComponentType<{ className?: string }> }
+): Category[] => {
     const categoriesWithIcons = rawCategories.map(cat => ({
         ...cat,
-        icon: CategoryIcons[cat.slug] || undefined
+        icon: categoryIcons[cat.slug] || undefined
     }));
     
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};

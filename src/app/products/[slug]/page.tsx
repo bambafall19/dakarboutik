@@ -56,7 +56,8 @@ function ProductDetailsPageContent({ slug }: { slug: string }) {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const slug = React.use(Promise.resolve(params.slug));
+  const resolvedParams = React.use(params);
+  const slug = resolvedParams.slug;
 
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>

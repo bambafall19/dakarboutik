@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { SimpleCategory, Product } from '@/lib/types';
+import type { Category, Product } from '@/lib/types';
 import { Card, CardContent } from '../ui/card';
 import { useEffect } from 'react';
 import { useFirestore } from '@/firebase';
@@ -59,7 +59,7 @@ const formSchema = z.object({
 });
 
 interface AddProductFormProps {
-  categories: SimpleCategory[];
+  categories: Category[];
 }
 
 export function AddProductForm({ categories }: AddProductFormProps) {

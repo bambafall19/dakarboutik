@@ -1,3 +1,4 @@
+
 'use client';
 import { AddProductForm } from '@/components/admin/add-product-form';
 import { useCategories } from '@/hooks/use-site-data';
@@ -11,7 +12,7 @@ import {
 } from '@/components/ui/breadcrumb';
 
 export default function AddProductPage() {
-  const { simpleCategories: categories } = useCategories();
+  const { categories } = useCategories();
 
   return (
     <div className="py-12">

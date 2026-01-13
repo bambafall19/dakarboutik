@@ -1,3 +1,4 @@
+
 'use client';
 
 import { EditProductForm } from '@/components/admin/edit-product-form';
@@ -15,7 +16,7 @@ import { Loader2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export default function EditProductPage({ params }: { params: { id: string } }) {
-  const { simpleCategories: categories } = useCategories();
+  const { categories } = useCategories();
   const { product, loading } = useProductsById(params.id);
 
   if (loading) {

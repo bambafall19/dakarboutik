@@ -4,7 +4,7 @@
 import { useMemo, useCallback, useState } from 'react';
 import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
-import type { Product, SiteSettings, Category, Banner } from '@/lib/types';
+import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
@@ -49,7 +49,7 @@ export function useProductsBySlug(slug: string) {
     const firestore = useFirestore();
     const productQuery = useMemo(() => {
         if (!firestore || !slug) return null;
-        return query(collection(firestore, 'products'), where('slug', '==', slug));
+        return query(collection(firestore, 'products'), where('slug', '==', slug), where('status', '==', 'active'));
     }, [firestore, slug]);
 
     const { data, loading, error } = useCollection<Product>(productQuery);
@@ -107,6 +107,7 @@ export function useCategories() {
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'categories'), orderBy('name'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firestore, key]);
   
   const { data: rawCategories, loading, error } = useCollection<Category>(categoriesQuery);
@@ -118,7 +119,12 @@ export function useCategories() {
   const categories = useMemo(() => {
     return buildCategoryHierarchy(rawCategories || []);
   }, [rawCategories]);
+  
+  const simpleCategories = useMemo((): SimpleCategory[] => {
+    if (!rawCategories) return [];
+    return rawCategories.map(({ icon, subCategories, ...rest }) => rest);
+  }, [rawCategories]);
 
 
-  return { categories, rawCategories: rawCategories || [], loading, error, refetch };
+  return { categories, rawCategories: rawCategories || [], simpleCategories, loading, error, refetch };
 }

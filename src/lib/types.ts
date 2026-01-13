@@ -51,7 +51,7 @@ export type Category = {
   subCategories?: Category[];
 };
 
-export type SimpleCategory = Omit<Category, 'icon' | 'subCategories'>;
+export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'parentId'>;
 
 export type Banner = {
   id: string;

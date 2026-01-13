@@ -26,7 +26,8 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
     const { recentProducts } = useRecentProducts();
     const { categories } = useCategories();
 
-    const topLevelCategories = categories.slice(0, 4);
+    const suggestedSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
+    const suggestedCategories = categories.filter(c => suggestedSlugs.includes(c.slug));
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,11 +76,11 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
                             </div>
                         )}
                         <Separator />
-                        {topLevelCategories.length > 0 && (
+                        {suggestedCategories.length > 0 && (
                             <div>
                                 <h3 className="font-semibold mb-4">Catégories populaires</h3>
                                 <div className="grid grid-cols-2 gap-3">
-                                    {topLevelCategories.map(category => (
+                                    {suggestedCategories.map(category => (
                                         <Button key={category.id} variant="outline" asChild className="justify-start">
                                             <Link href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)}>
                                                 {category.name}

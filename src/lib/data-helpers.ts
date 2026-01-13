@@ -11,12 +11,11 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
-    // First pass: create a map of all categories and initialize children array and icon.
+    // First pass: create a map of all categories and initialize children array.
     for (const category of categories) {
         categoryMap[category.id] = { 
             ...category, 
-            children: [], 
-            icon: category.icon || CategoryIcons[category.slug] || undefined 
+            children: [],
         };
     }
 

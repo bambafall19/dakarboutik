@@ -73,15 +73,6 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
         </Accordion>
       </ScrollArea>
       
-      <Separator className='my-4' />
-      
-       <div className="p-4">
-        <Link href="/login" className="flex items-center gap-3 py-2 text-base" onClick={onLinkClick}>
-            <Icons.user className="h-5 w-5 text-muted-foreground" />
-            Espace Admin
-        </Link>
-      </div>
-
     </div>
   );
 }

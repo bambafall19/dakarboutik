@@ -63,7 +63,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border shadow-sm hover:shadow-lg">
       <div className="relative overflow-hidden">
         <Link href={`/products/${product.slug}`} className="block">
-          <div className="aspect-square relative w-full bg-secondary/30">
+          <div className="aspect-square relative w-full bg-card">
             <Image
               src={product.images[0].imageUrl}
               alt={product.title}

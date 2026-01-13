@@ -41,21 +41,22 @@ export function MainSidebar({ categories, loading, onOpenMobileMenu }: MainSideb
                 <div className="flex flex-col items-center gap-4">
                     {loading ? <SidebarSkeleton /> : (
                         categories.map(category => {
-                            const Icon = category.icon || Package; // Use Package as a fallback
                             const isSelected = activeCategorySlug === category.slug;
+                            // Extract first letter for the fallback icon
+                            const categoryInitial = category.name.charAt(0).toUpperCase();
                             return (
                                 <Tooltip key={category.id}>
                                     <TooltipTrigger asChild>
                                         <Link 
                                             href={`/products?category=${category.slug}`}
                                             className={cn(
-                                                "flex items-center justify-center h-12 w-12 rounded-full transition-colors duration-200",
+                                                "flex items-center justify-center h-12 w-12 rounded-full transition-colors duration-200 font-bold text-lg",
                                                 isSelected 
-                                                    ? "bg-primary/10 text-primary" 
-                                                    : "text-muted-foreground hover:bg-muted"
+                                                    ? "bg-primary text-primary-foreground" 
+                                                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                                             )}
                                         >
-                                            <Icon className="h-6 w-6" />
+                                            {categoryInitial}
                                             <span className="sr-only">{category.name}</span>
                                         </Link>
                                     </TooltipTrigger>

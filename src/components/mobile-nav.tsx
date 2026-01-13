@@ -19,14 +19,12 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], isSub: boolean = false) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = cat.icon;
 
       if (hasSubCategories) {
         return (
           <AccordionItem key={cat.id} value={cat.slug}>
             <AccordionTrigger className="py-3 text-base hover:no-underline">
                 <span className="flex items-center gap-3">
-                    {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
                     {cat.name}
                 </span>
             </AccordionTrigger>
@@ -44,7 +42,6 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           className="flex items-center gap-3 py-3 text-base"
           onClick={onLinkClick}
         >
-          {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
           {cat.name}
         </Link>
       );

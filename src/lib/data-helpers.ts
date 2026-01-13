@@ -1,7 +1,6 @@
 
 
 import type { Category, SimpleCategory } from "./types";
-import { CategoryIcons } from "@/components/icons";
 
 
 /**

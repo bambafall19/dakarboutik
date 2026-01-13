@@ -9,6 +9,7 @@ import { Logo } from './logo';
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
+import { SheetTitle } from './ui/sheet';
 
 interface MobileNavProps {
   items: Category[];
@@ -57,6 +58,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b bg-background sticky top-0 z-10">
+        <SheetTitle className="sr-only">Menu Principal</SheetTitle>
         <div className='flex justify-between items-center'>
           <Logo onClick={onLinkClick} />
            <Button variant="ghost" size="icon" onClick={onLinkClick}>

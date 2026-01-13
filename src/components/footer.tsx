@@ -31,16 +31,18 @@ export function Footer({ settings }: FooterProps) {
   return (
     <footer className="bg-secondary text-secondary-foreground mt-16">
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-1">
-            <Logo imageUrl={settings?.logoUrl} />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <div className="md:col-span-4 text-center md:text-left">
+            <div className='flex justify-center md:justify-start'>
+                <Logo imageUrl={settings?.logoUrl} />
+            </div>
             <p className="mt-4 text-sm text-foreground">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 md:col-span-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:col-span-8">
             {Object.entries(footerLinks).map(([title, links]) => (
-              <div key={title}>
+              <div key={title} className="text-center sm:text-left">
                 <h4 className="font-semibold text-foreground">{title}</h4>
                 <nav className="mt-4 flex flex-col gap-2 text-sm">
                   {links.map(link => (

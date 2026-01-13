@@ -59,7 +59,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
     <div className="flex flex-col h-full">
       <div className="p-4 border-b -mx-6 mb-4 bg-background sticky top-0 z-10">
         <div className='flex justify-between items-center'>
-          <Logo onClick={onLinkClick} hideTextOnMobile />
+          <Logo onClick={onLinkClick} />
         </div>
       </div>
       

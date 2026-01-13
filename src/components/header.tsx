@@ -65,12 +65,16 @@ export function Header({ settings, loading, pathname, onOpenMobileMenu }: Header
              <Logo loading={loading} imageUrl={settings?.logoUrl} />
         </div>
         
-        <div className="flex flex-1 justify-center">
-             <div className="md:hidden">
-                <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
-            </div>
+        <div className="flex flex-1 justify-center md:hidden">
+             <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
         </div>
 
+        <div className="hidden md:flex flex-1 items-center gap-4">
+            <div className="relative flex-1">
+                <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input placeholder="Rechercher un produit..." className="pl-10" />
+            </div>
+        </div>
 
         <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden lg:flex">

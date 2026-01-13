@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             settingsLoading={settingsLoading}
             onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
         />
-        <main className="flex-1 bg-background pb-20">
+        <main className="flex-1 bg-background pb-20 md:pb-0">
             <div className="container md:py-6">{children}</div>
         </main>
         <Footer settings={settings} />

@@ -11,24 +11,32 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
     const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
     const topLevelCategories: (Category & { children: Category[] })[] = [];
 
+    // First pass: create a map of all categories and initialize children array and icon.
     for (const category of categories) {
-      categoryMap[category.id] = { ...category, children: [], icon: CategoryIcons[category.slug] || undefined };
+        categoryMap[category.id] = { 
+            ...category, 
+            children: [], 
+            icon: CategoryIcons[category.slug] || undefined 
+        };
     }
 
-    for (const category of categories) {
-      if (category.parentId && categoryMap[category.parentId]) {
-        categoryMap[category.parentId].children.push(categoryMap[category.id]);
-      } else {
-        topLevelCategories.push(categoryMap[category.id]);
-      }
+    // Second pass: build the hierarchy.
+    for (const categoryId in categoryMap) {
+        const category = categoryMap[categoryId];
+        if (category.parentId && categoryMap[category.parentId]) {
+            categoryMap[category.parentId].children.push(category);
+        } else {
+            topLevelCategories.push(category);
+        }
     }
     
+    // Recursive function to build the final nested structure.
     const buildHierarchy = (cats: (Category & { children: Category[] })[]): Category[] => {
         return cats.map(cat => {
             const { children, ...rest } = cat;
             const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
             return { ...rest, subCategories };
-        })
+        }).sort((a, b) => a.name.localeCompare(b.name)); // Sort categories alphabetically
     }
     
     return buildHierarchy(topLevelCategories);

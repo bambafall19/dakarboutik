@@ -54,6 +54,9 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
           </Link>
         </div>
         <div className="flex-1">
+          {product.brand && (
+            <p className="text-xs text-muted-foreground">{product.brand}</p>
+          )}
           <h3 className="font-semibold text-sm leading-snug">
             <Link href={`/products/${product.slug}`}>{product.title}</Link>
           </h3>
@@ -79,11 +82,14 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
               />
             </div>
             {product.salePrice && (
-                 <div className="absolute top-3 left-3 h-4 w-4 rounded-full bg-red-500" />
+                 <Badge className="absolute top-2 left-2" variant="destructive">PROMO</Badge>
             )}
         </div>
       </Link>
       <CardContent className="p-4 flex-1 flex flex-col">
+        {product.brand && (
+            <p className="text-sm text-muted-foreground">{product.brand}</p>
+        )}
         <h3 className="font-semibold text-lg leading-tight flex-1">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>

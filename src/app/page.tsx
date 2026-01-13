@@ -32,14 +32,9 @@ export default function HomePage() {
         
         <main className="col-span-12 lg:col-span-9 space-y-12 md:space-y-16">
             {loading ? (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                  {Array.from({ length: 3 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                  {Array.from({ length: 3 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-                </div>
-              </>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+              </div>
             ) : (
               <>
                 {saleProducts.length > 0 && (

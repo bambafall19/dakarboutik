@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { Footer } from '@/components/footer';
 import { useSiteSettings, useCategories } from '@/hooks/use-site-data';
 import { HeaderWrapper } from './header-wrapper';
@@ -10,6 +10,21 @@ import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SearchSheet } from './search-sheet';
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { settings, loading: settingsLoading } = useSiteSettings();
@@ -44,10 +59,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="pb-20 md:pb-0">{children}</div>
         </main>
         <Footer settings={settings} />
-        <MobileBottomNav 
-          onMenuClick={() => setIsMobileMenuOpen(true)} 
-          onSearchClick={handleSearchClick}
-        />
+        <ClientOnly>
+          <MobileBottomNav 
+            onMenuClick={() => setIsMobileMenuOpen(true)} 
+            onSearchClick={handleSearchClick}
+          />
+        </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="w-full max-w-sm flex flex-col">

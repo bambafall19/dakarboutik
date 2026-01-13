@@ -49,7 +49,19 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
   }, [selectedCategorySlug, allCategories]);
 
   const pageTitle = searchQuery ? `Recherche: "${searchQuery}"` : selectedCategory?.name || 'Tous les produits';
-  const categoryImage = selectedCategory ? findImage(`product-${selectedCategory.slug}-1a`) : findImage('banner-1');
+  
+  const categoryImageId = selectedCategory ? `product-${selectedCategory.slug}-1a` : 'banner-1';
+  // Fallback if specific category image doesn't exist
+  let categoryImage;
+  try {
+    categoryImage = findImage(categoryImageId);
+    if (categoryImage.id === 'not-found') {
+        categoryImage = findImage('banner-1'); // Default fallback
+    }
+  } catch(e) {
+    categoryImage = findImage('banner-1');
+  }
+
 
   const updateSearchParams = (key: string, value: string | null) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -91,7 +103,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
 
   return (
     <>
-      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8">
+      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8 bg-muted">
         <Image src={categoryImage.imageUrl} alt={pageTitle} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex items-center justify-center">

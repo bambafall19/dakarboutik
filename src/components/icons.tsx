@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Smartphone,
@@ -113,10 +114,8 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'audio': Headphones,
   'chargeurs': BatteryCharging,
   'power-banks': Power,
-  'electromenager': Lamp,
   'composants-electroniques': Component,
   'electronique-grand-public': Monitor,
-  'equipements-fournitures-electriques': PowerOff,
 
   // Generic E-commerce
   'agriculture-aliments-boissons': Carrot,
@@ -128,8 +127,10 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'cadeaux-artisanat': Gift,
   'chaussures-accessoires': Footprints,
   'construction-immobilier': Building,
+  'electromenager': Lamp,
   'emballage-impression': Printer,
   'energies-renouvelables': Wind,
+  'equipements-fournitures-electriques': PowerOff,
   'equipements-et-machines-commerciaux': Truck,
   'fournitures-outils-auto': Car,
   'fournitures-de-bureau': Pen,
@@ -139,16 +140,16 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'machines-industrielles': Factory,
   'machines-pour-le-batiment-la-construction': Hammer,
   'maison-jardin': Home,
-  'manutention': Truck, // Re-using truck
+  'manutention': Truck,
   'medical-sante': HeartPulse,
   'meubles': Sofa,
   'parents-enfants-jouets': Baby,
   'pieces-accessoires-pour-vehicules': Cog,
   'produits-de-beaute': Brush,
-  'services-de-fabrication': Factory, // Re-using factory
+  'services-de-fabrication': Factory,
   'sports-loisirs': Bike,
   'surete-securite': Shield,
   'transmission-d-energie': Zap,
-  'vehicules-et-transport': Truck, // Re-using truck
+  'vehicules-et-transport': Truck,
   'vetements-accessoires': Shirt,
 };

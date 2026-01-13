@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Icons } from './icons';
+import { Icons, CategoryIcons } from './icons';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import type { Category } from '@/lib/types';
 import { Logo } from './logo';

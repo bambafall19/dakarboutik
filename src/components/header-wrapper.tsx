@@ -2,9 +2,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
-import { MobileNav } from './mobile-nav';
 import { Header } from './header';
 import type { SiteSettings, Category } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
@@ -33,27 +30,19 @@ function HeaderSkeleton() {
 
 export function HeaderWrapper({ settings, settingsLoading, categories }: HeaderWrapperProps) {
     const pathname = usePathname();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
         <>
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                {settingsLoading ? (
-                    <HeaderSkeleton />
-                ) : (
-                    <Header
-                        settings={settings}
-                        loading={settingsLoading}
-                        categories={categories}
-                        onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-                        pathname={pathname}
-                    />
-                )}
-                <SheetContent side="left" className="w-full max-w-sm">
-                    <SheetTitle className="sr-only">Menu de navigation</SheetTitle>
-                    <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
-                </SheetContent>
-            </Sheet>
+            {settingsLoading ? (
+                <HeaderSkeleton />
+            ) : (
+                <Header
+                    settings={settings}
+                    loading={settingsLoading}
+                    categories={categories}
+                    pathname={pathname}
+                />
+            )}
         </>
     );
 }

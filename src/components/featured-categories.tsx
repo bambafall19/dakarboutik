@@ -8,7 +8,7 @@ import { findImage } from '@/lib/placeholder-images';
 import { useCategories } from '@/hooks/use-site-data';
 import { Skeleton } from './ui/skeleton';
 
-const categoryImages = {
+const categoryImages: { [key: string]: string } = {
     'telephonie': 'product-phone-1a',
     'informatique': 'product-laptop-1a',
     'audio': 'product-headphones-1a',
@@ -19,8 +19,9 @@ const categoryImages = {
 export function FeaturedCategories() {
   const { categories, loading } = useCategories();
 
-  // We only want to feature top-level categories here
-  const featured = categories;
+  // Suggestion: Manually select the top 4 categories to feature.
+  const featuredSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
+  const featured = categories.filter(c => featuredSlugs.includes(c.slug));
   
   if (loading) {
     return (
@@ -37,6 +38,10 @@ export function FeaturedCategories() {
         </div>
     )
   }
+  
+  if (featured.length === 0) {
+    return null;
+  }
 
   return (
     <div className="py-16">
@@ -46,7 +51,7 @@ export function FeaturedCategories() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {featured.map((category) => {
-            const imageId = categoryImages[category.slug as keyof typeof categoryImages] || 'product-phone-1a';
+            const imageId = categoryImages[category.slug] || 'product-phone-1a';
             const image = findImage(imageId);
 
             return (

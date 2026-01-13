@@ -91,22 +91,22 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
 
   return (
     <>
-      <div className="relative h-64 md:h-80 rounded-lg overflow-hidden mb-8">
+      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8">
         <Image src={categoryImage.imageUrl} alt={pageTitle} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex items-center justify-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white text-center drop-shadow-lg px-4">{pageTitle}</h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-white text-center drop-shadow-lg px-4">{pageTitle}</h1>
         </div>
       </div>
       
       <main>
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-muted-foreground">{products.length} résultat(s)</p>
+            <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
             
-            <div className='flex items-center gap-4'>
+            <div className='flex items-center gap-2'>
                 <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="outline" className='lg:hidden'>
+                        <Button variant="outline" className='md:hidden'>
                             <Icons.filter className="mr-2 h-4 w-4" />
                             Filtrer
                         </Button>
@@ -126,7 +126,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
                 </Sheet>
 
                 <Select value={sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className='w-[200px]'>
+                  <SelectTrigger className='w-auto md:w-[200px] text-sm'>
                     <SelectValue placeholder="Trier par..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -138,7 +138,7 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}

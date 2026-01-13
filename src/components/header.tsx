@@ -62,24 +62,31 @@ export function Header({ settings, loading, pathname, onOpenMobileMenu }: Header
       )}
       <div className="container flex h-16 items-center justify-between gap-4">
         <div className="lg:hidden">
-          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+            <Button variant="ghost" size="icon" onClick={onOpenMobileMenu}>
+                <Icons.menu className="h-6 w-6" />
+                <span className="sr-only">Ouvrir le menu</span>
+            </Button>
         </div>
-        <div className="hidden lg:flex items-center gap-2 md:gap-4">
-            <div className="hidden lg:block">
-                <Logo loading={loading} imageUrl={settings?.logoUrl} />
+        <div className="hidden lg:flex">
+             <Logo loading={loading} imageUrl={settings?.logoUrl} />
+        </div>
+        
+        <div className="flex flex-1 justify-end md:justify-center">
+            <div className="w-full max-w-sm lg:max-w-md hidden md:block">
+                 <div className="relative">
+                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Rechercher un produit..."
+                        className="w-full bg-muted pl-10 h-11 text-base"
+                    />
+                </div>
+            </div>
+             <div className="md:hidden">
+                <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
             </div>
         </div>
 
-        <div className="hidden md:flex flex-1 justify-center px-4">
-            <div className="relative w-full max-w-xl">
-                <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                    type="search"
-                    placeholder="Rechercher un produit..."
-                    className="w-full bg-muted pl-10 h-11 text-base"
-                />
-            </div>
-        </div>
 
         <div className="flex items-center justify-end gap-2">
             <Link href="/login" className="hidden lg:flex">

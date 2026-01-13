@@ -22,7 +22,7 @@ export default function HomePage() {
   const saleProducts = products.filter(p => p.salePrice).slice(0, 8);
 
   return (
-    <div className="flex flex-col gap-12 md:gap-16">
+    <div className="flex flex-col gap-8 md:gap-12">
       <HeroSection />
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -30,7 +30,7 @@ export default function HomePage() {
           <HomeSidebar />
         </aside>
         
-        <main className="col-span-12 lg:col-span-9 space-y-12 md:space-y-16">
+        <main className="col-span-12 lg:col-span-9 space-y-8 md:space-y-12">
             {loading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                 {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}

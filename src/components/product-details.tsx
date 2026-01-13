@@ -112,7 +112,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div>
           <Carousel>
             <CarouselContent>
@@ -134,7 +134,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
             <CarouselNext className="right-2" />
           </Carousel>
         </div>
-        <div>
+        <div className="flex flex-col">
           <span className="text-sm text-muted-foreground">{product.brand}</span>
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
           
@@ -165,7 +165,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
             </div>
           ))}
 
-          <p className="text-muted-foreground leading-relaxed mt-4">{product.description}</p>
+          <p className="text-muted-foreground leading-relaxed mt-4 flex-1">{product.description}</p>
           
           <div className="mt-6 flex flex-col gap-4">
             <div className='flex items-center gap-4'>
@@ -186,8 +186,11 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                 <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
             </Button>
           </div>
+        </div>
+      </div>
 
-          {Object.keys(product.specs).length > 0 && (
+      <div className="mt-12">
+        {Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
               <h3 className="font-semibold text-lg mb-2">Caractéristiques</h3>
               <Table>
@@ -202,7 +205,6 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
               </Table>
             </div>
           )}
-        </div>
       </div>
       
       {relatedProducts && relatedProducts.length > 0 && (

@@ -135,7 +135,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
           </Carousel>
         </div>
         <div className="flex flex-col">
-          <span className="text-sm text-muted-foreground">{product.brand}</span>
+          {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
           
           <div className="mt-4">
@@ -148,8 +148,10 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
           <Separator className="my-6" />
 
+          <p className="text-muted-foreground leading-relaxed flex-1">{product.description}</p>
+
           {product.variants?.map(variant => (
-            <div key={variant.name} className="mb-4">
+            <div key={variant.name} className="mt-4">
               <h3 className="font-semibold text-sm mb-2">{variant.name}</h3>
               <div className="flex flex-wrap gap-2">
                 {variant.options.map(option => (
@@ -164,8 +166,6 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
               </div>
             </div>
           ))}
-
-          <p className="text-muted-foreground leading-relaxed mt-4 flex-1">{product.description}</p>
           
           <div className="mt-6 flex flex-col gap-4">
             <div className='flex items-center gap-4'>
@@ -192,17 +192,19 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       <div className="mt-12">
         {Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
-              <h3 className="font-semibold text-lg mb-2">Caractéristiques</h3>
-              <Table>
-                <TableBody>
-                  {Object.entries(product.specs).map(([key, value]) => (
-                    <TableRow key={key}>
-                      <TableCell className="font-medium text-muted-foreground">{key}</TableCell>
-                      <TableCell>{value}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <h3 className="font-semibold text-xl mb-4">Caractéristiques Techniques</h3>
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableBody>
+                    {Object.entries(product.specs).map(([key, value]) => (
+                      <TableRow key={key}>
+                        <TableCell className="font-medium text-muted-foreground w-1/3">{key}</TableCell>
+                        <TableCell>{value}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
       </div>

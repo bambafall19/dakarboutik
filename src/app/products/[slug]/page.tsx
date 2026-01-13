@@ -14,7 +14,8 @@ type ProductDetailPageProps = {
   params: { slug: string };
 };
 
-function ProductDetailsContent({ slug }: { slug: string }) {
+function ProductDetailPageContent({ params }: ProductDetailPageProps) {
+  const { slug } = params;
   const { product, loading: productLoading } = useProductsBySlug(slug);
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
@@ -25,7 +26,6 @@ function ProductDetailsContent({ slug }: { slug: string }) {
       addRecentProduct(product);
     }
   }, [product, addRecentProduct]);
-
 
   const relatedProducts = useMemo(() => {
     if (!product || !allProducts) return [];
@@ -59,7 +59,7 @@ function ProductDetailsContent({ slug }: { slug: string }) {
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>
-      <ProductDetailsContent slug={params.slug} />
+      <ProductDetailPageContent params={params} />
     </Suspense>
   );
 }

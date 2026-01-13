@@ -14,10 +14,9 @@ import { Price } from '@/components/price';
 import { Icons } from '@/components/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { ProductGrid } from './product-grid';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
 import { useSiteSettings } from '@/hooks/use-site-data';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 interface ProductDetailsProps {
   product: Product;

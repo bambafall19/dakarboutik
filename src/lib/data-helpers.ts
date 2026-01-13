@@ -15,7 +15,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
     for (const category of categories) {
         categoryMap[category.id] = { 
             ...category, 
-            icon: CategoryIcons[category.slug] || undefined,
+            icon: CategoryIcons[category.slug],
             children: [],
         };
     }
@@ -36,7 +36,7 @@ export const buildCategoryHierarchy = (categories: Category[]): Category[] => {
             const { children, ...rest } = cat;
             const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
             // Re-assign icon here to ensure it propagates through recursion
-            const icon = CategoryIcons[cat.slug] || undefined;
+            const icon = CategoryIcons[cat.slug];
             return { ...rest, icon, subCategories };
         }).sort((a, b) => a.name.localeCompare(b.name)); // Sort categories alphabetically
     }

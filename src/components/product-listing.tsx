@@ -17,39 +17,19 @@ import { ProductGrid } from './product-grid';
 
 interface ProductListingProps {
     products: Product[];
-    allCategories: Category[];
     suggestedProducts?: Product[];
-    totalProducts: number;
     searchParams: { [key: string]: string | null };
 }
 
-export function ProductListing({ products, allCategories, suggestedProducts, totalProducts, searchParams }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, searchParams }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
+  
   const { category: selectedCategorySlug, q: searchQuery, sortBy = 'newest' } = searchParams;
 
-  const selectedCategory = useMemo(() => {
-    if (selectedCategorySlug) {
-      const findCat = (cats: Category[]): Category | undefined => {
-        for (const cat of cats) {
-          if (cat.slug === selectedCategorySlug) return cat;
-          if (cat.subCategories) {
-            const found = findCat(cat.subCategories);
-            if (found) return found;
-          }
-        }
-      }
-      return findCat(allCategories)
-    }
-    return null;
-  }, [selectedCategorySlug, allCategories]);
-
-  const pageTitle = searchQuery ? `Recherche: "${searchQuery}"` : selectedCategory?.name || 'Tous les produits';
+  const pageTitle = searchQuery ? `Recherche: "${searchQuery}"` : 'Tous les produits';
   
-  const categoryImageId = selectedCategory ? `product-${selectedCategory.slug}-1a` : 'banner-1';
-  // Fallback if specific category image doesn't exist
+  const categoryImageId = selectedCategorySlug ? `product-${selectedCategorySlug}-1a` : 'banner-1';
   let categoryImage;
   try {
     categoryImage = findImage(categoryImageId);
@@ -84,31 +64,6 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     updateSearchParams('sortBy', value);
   };
   
-  const clearFilters = () => {
-    const paramsToKeep: { [key: string]: string | null } = {
-        category: searchParams.category || null,
-        q: searchParams.q || null,
-        sortBy: searchParams.sortBy || null,
-    };
-    const newParams = new URLSearchParams();
-    
-    for (const [key, value] of Object.entries(paramsToKeep)) {
-        if (value) {
-            newParams.set(key, value);
-        }
-    }
-
-    const query = newParams.toString() ? `?${newParams.toString()}` : '';
-    router.push(`${pathname}${query}`, { scroll: false });
-  };
-
-  const filterNode = (
-    <div className="space-y-8">
-        <CategorySidebar categories={allCategories} totalProducts={totalProducts} searchParams={searchParams} />
-        <ProductFilters searchParams={searchParams} />
-    </div>
-  );
-
   return (
     <>
       <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8 bg-muted">
@@ -119,32 +74,11 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
         </div>
       </div>
       
-      <main>
+      <div>
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
             
             <div className='flex items-center gap-2'>
-                <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" className='md:hidden'>
-                            <Icons.filter className="mr-2 h-4 w-4" />
-                            Filtrer
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent className='flex flex-col'>
-                         <SheetHeader className='-mx-6 px-6 pb-4 border-b'>
-                            <SheetTitle>Filtres & Catégories</SheetTitle>
-                        </SheetHeader>
-                        <div className="flex-1 overflow-y-auto -mx-6 px-6">
-                          {filterNode}
-                        </div>
-                        <div className="-mx-6 px-6 pt-4 border-t flex justify-between">
-                          <Button onClick={clearFilters} variant="ghost" size="sm">Effacer</Button>
-                          <Button onClick={() => setIsFiltersOpen(false)} size="sm">Appliquer</Button>
-                        </div>
-                    </SheetContent>
-                </Sheet>
-
                 <Select value={sortBy} onValueChange={handleSortChange}>
                   <SelectTrigger className='w-auto md:w-[200px] text-sm'>
                     <SelectValue placeholder="Trier par..." />
@@ -158,11 +92,12 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+
           {products.length === 0 && (
             <div className="text-center py-16 col-span-full space-y-8">
               <div>
@@ -178,7 +113,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
               )}
             </div>
           )}
-        </main>
+        </div>
     </>
   );
 }

@@ -7,6 +7,14 @@ import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
 import { getProducts, getCategories } from '@/lib/data-firebase';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Filter } from 'lucide-react';
+
 
 // This is a server-side only function
 function getCategoriesWithCounts(rawCategories: Category[], allProducts: Product[]): Category[] {
@@ -129,26 +137,49 @@ export default async function ProductsPage({
     q: searchQuery,
     sortBy: sortBy,
   };
+  
+  const filterNode = (
+    <div className="space-y-8">
+      <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={currentSearchParams} />
+      <ProductFilters searchParams={currentSearchParams} />
+    </div>
+  );
 
   return (
-    <div className="py-2">
+    <div className="py-2 container">
       <Suspense fallback={<ProductListingSkeleton />}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <aside className="hidden md:block md:col-span-1">
             <div className="sticky top-24">
               <Card>
-                <CardContent className="pt-6 space-y-8">
-                  <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={currentSearchParams} />
-                  <ProductFilters searchParams={currentSearchParams} />
+                <CardContent className="pt-6">
+                  {filterNode}
                 </CardContent>
               </Card>
             </div>
           </aside>
+          
           <main className="md:col-span-3">
+             <div className="md:hidden mb-4">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="filters">
+                  <AccordionTrigger>
+                    <div className='flex items-center gap-2 text-lg font-semibold'>
+                      <Filter className="h-5 w-5" />
+                      Filtres et Catégories
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className='pt-4'>
+                      {filterNode}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+            
             <ProductListing
               products={filteredProducts}
-              allCategories={categories}
-              totalProducts={totalProducts}
               suggestedProducts={bestsellers}
               searchParams={currentSearchParams}
             />

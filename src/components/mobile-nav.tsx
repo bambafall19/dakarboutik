@@ -10,6 +10,8 @@ import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
 import { X } from 'lucide-react';
+import { ThemeToggle } from './theme-toggle';
+import { Separator } from './ui/separator';
 
 interface MobileNavProps {
   items: Category[];
@@ -69,6 +71,13 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           {renderCategoryLinks(items)}
         </Accordion>
       </ScrollArea>
+
+      <div className="mt-auto p-4 border-t">
+        <div className="flex items-center justify-between">
+          <span className='text-sm font-medium'>Changer de thème</span>
+          <ThemeToggle />
+        </div>
+      </div>
       
     </div>
   );

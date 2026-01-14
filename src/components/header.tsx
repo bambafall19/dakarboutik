@@ -38,7 +38,13 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             <div className="flex md:hidden items-center justify-between w-full">
                 <Logo onMenuClick={onMobileMenuClick} loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
                 <div className="flex items-center">
-                  <ThemeToggle />
+                  {(settings?.supportPhone || settings?.supportEmail) && (
+                    <Button variant="ghost" size="icon" asChild>
+                       <a href={`tel:${settings.supportPhone}`}>
+                         <Headset className="h-6 w-6 text-primary" />
+                       </a>
+                    </Button>
+                  )}
                   <Sheet>
                       <SheetTrigger asChild>
                       <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -76,8 +82,16 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                 <div className="flex items-center gap-3">
                   <Headset className="h-10 w-10 text-primary" />
                   <div>
-                    <p className="font-semibold text-sm">Support {settings.supportPhone}</p>
-                    <p className="text-xs text-muted-foreground">Email: {settings.supportEmail}</p>
+                    {settings.supportPhone && (
+                      <a href={`tel:${settings.supportPhone}`} className="font-semibold text-sm hover:underline">
+                        Support {settings.supportPhone}
+                      </a>
+                    )}
+                    {settings.supportEmail && (
+                      <a href={`mailto:${settings.supportEmail}`} className="text-xs text-muted-foreground block hover:underline">
+                        Email: {settings.supportEmail}
+                      </a>
+                    )}
                   </div>
                 </div>
               )}

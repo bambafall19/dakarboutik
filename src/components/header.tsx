@@ -14,6 +14,7 @@ import { MainNav } from './main-nav';
 import { Price } from './price';
 import { ThemeToggle } from './theme-toggle';
 import { Headset } from 'lucide-react';
+import { AnnouncementBar } from './announcement-bar';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -29,6 +30,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
   
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-lg">
+       <AnnouncementBar settings={settings} />
       {/* Main Header */}
       <div className="border-b">
         <div className="container flex h-20 items-center">

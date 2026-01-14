@@ -52,7 +52,7 @@ export type Category = {
   productCount?: number;
 };
 
-export type SimpleCategory = Omit<Category, 'icon' | 'subCategories'>;
+export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'productCount'>;
 
 export type Banner = {
   id: string;
@@ -76,6 +76,7 @@ export type CartItem = {
 
 
 export type SiteSettings = {
+  id: string;
   logoUrl?: string | null;
   announcementMessage1?: string;
   announcementMessage2?: string;

@@ -72,6 +72,7 @@ export function useSiteSettings() {
   const { data: settings, loading, error } = useDoc<SiteSettings>(settingsRef);
   
   const defaultSettings: SiteSettings = {
+    id: 'siteConfig',
     logoUrl: null,
     announcementMessage1: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
     whatsappNumber: '221771234567', // Default placeholder number

@@ -92,9 +92,9 @@ export function ProductListing({ products, suggestedProducts, searchParams }: Pr
             </div>
           </div>
           
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {products.map(product => (
-              <ProductCard key={product.id} product={product} variant="horizontal" />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
@@ -107,9 +107,9 @@ export function ProductListing({ products, suggestedProducts, searchParams }: Pr
               {suggestedProducts && suggestedProducts.length > 0 && (
                 <div>
                   <h3 className="text-xl font-semibold mb-4">Nos meilleures ventes</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
                     {suggestedProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} variant="horizontal" />
+                      <ProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 </div>

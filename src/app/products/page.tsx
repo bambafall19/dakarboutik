@@ -1,4 +1,5 @@
 
+
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
@@ -15,6 +16,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 
 // This is a server-side only function
@@ -132,36 +135,56 @@ export default async function ProductsPage({
 
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
-
-  const currentSearchParams = {
-    category: categoryFilter,
-    brands: brandFilter.join(','),
-    priceRange: priceRangeFilter,
-    q: searchQuery,
-    sortBy: sortBy,
-  };
   
   const filterNode = (
     <div className="space-y-8">
       <CategorySidebar categories={categories} totalProducts={totalProducts} selectedCategorySlug={categoryFilter} />
-      <ProductFilters availableBrands={availableBrands} searchParams={currentSearchParams} />
+      <ProductFilters 
+        availableBrands={availableBrands} 
+        currentBrands={brandFilter}
+        currentPriceRange={selectedPriceRange}
+        currentSortBy={sortBy}
+        currentQuery={searchQuery}
+        currentCategory={categoryFilter}
+      />
     </div>
   );
 
   return (
     <div className="py-2 container">
-       <div className="grid grid-cols-[200px_1fr] md:grid-cols-4 gap-4 md:gap-8">
-        <aside className="col-span-1">
+      {/* Mobile Filter Button */}
+      <div className='md:hidden mb-4'>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="w-full">
+              <Filter className="mr-2 h-4 w-4" />
+              Filtres et Catégories
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className='p-0'>
+             <SheetHeader className='p-4 border-b'>
+                <SheetTitle>Filtres</SheetTitle>
+              </SheetHeader>
+            <div className="p-4 overflow-y-auto">
+              {filterNode}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8">
+        <aside className="hidden md:block md:col-span-1">
             <div className="sticky top-24">
                 {filterNode}
             </div>
         </aside>
         
-        <main className="col-span-1 md:col-span-3">
+        <main className="md:col-span-3">
           <ProductListing
             products={filteredProducts}
             suggestedProducts={bestsellers}
-            searchParams={currentSearchParams}
+            sortBy={sortBy}
+            category={categoryFilter}
           />
         </main>
       </div>

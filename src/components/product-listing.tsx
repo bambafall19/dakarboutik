@@ -1,67 +1,45 @@
 
+
 "use client";
 
-import type { Product, Category } from '@/lib/types';
+import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Icons } from './icons';
-import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
-import { ProductFilters } from './product-filters';
-import { CategorySidebar } from './category-sidebar';
-import { ProductGrid } from './product-grid';
 
 interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
-    searchParams: { [key: string]: string | null };
+    sortBy: string;
+    category: string | null;
 }
 
-export function ProductListing({ products, suggestedProducts, searchParams }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, sortBy, category }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const { category: selectedCategorySlug, q: searchQuery, sortBy = 'newest' } = searchParams;
-
-  const pageTitle = searchQuery ? `Recherche: "${searchQuery}"` : 'Tous les produits';
+  const pageTitle = category ? (category.charAt(0).toUpperCase() + category.slice(1)).replace('-', ' ') : 'Tous les produits';
   
-  const categoryImageId = selectedCategorySlug ? `product-${selectedCategorySlug}-1a` : 'banner-1';
+  const categoryImageId = category ? `product-${category}-1a` : 'banner1';
   let categoryImage;
   try {
     categoryImage = findImage(categoryImageId);
     if (categoryImage.id === 'not-found') {
-        categoryImage = findImage('banner-1'); // Default fallback
+        categoryImage = findImage('banner1'); // Default fallback
     }
   } catch(e) {
-    categoryImage = findImage('banner-1');
+    categoryImage = findImage('banner1');
   }
 
 
-  const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams();
-    for (const [k, v] of Object.entries(searchParams)) {
-        if (v) {
-            current.set(k, v);
-        }
-    }
-    
-
-    if (value === null || value === '') {
-      current.delete(key);
-    } else {
-      current.set(key, value);
-    }
+  const handleSortChange = (value: string) => {
+    const current = new URLSearchParams(window.location.search);
+    current.set('sortBy', value);
     const search = current.toString();
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`, { scroll: false });
-  };
-  
-  const handleSortChange = (value: string) => {
-    updateSearchParams('sortBy', value);
   };
   
   return (
@@ -92,9 +70,9 @@ export function ProductListing({ products, suggestedProducts, searchParams }: Pr
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 gap-4">
             {products.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} variant="horizontal" />
             ))}
           </div>
 
@@ -107,9 +85,9 @@ export function ProductListing({ products, suggestedProducts, searchParams }: Pr
               {suggestedProducts && suggestedProducts.length > 0 && (
                 <div>
                   <h3 className="text-xl font-semibold mb-4">Nos meilleures ventes</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+                   <div className="grid grid-cols-1 gap-4 max-w-lg mx-auto">
                     {suggestedProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard key={product.id} product={product} variant="horizontal" />
                     ))}
                   </div>
                 </div>

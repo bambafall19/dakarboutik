@@ -59,7 +59,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 border bg-card shadow-sm h-full">
+    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 border shadow-sm h-full">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="absolute top-2 right-2 z-10">
             <Button size="icon" variant="ghost" className="rounded-full bg-black/10 hover:bg-black/30 border-none text-white h-8 w-8">

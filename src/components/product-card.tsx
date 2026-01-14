@@ -79,7 +79,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
                     alt={product.title}
                     data-ai-hint={product.images[0].imageHint}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
                 />
             </div>
              <Button size="icon" onClick={handleAddToCart} className="absolute -bottom-5 right-4 z-20 rounded-full h-12 w-12 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg group-hover:scale-110 transition-transform duration-300">

@@ -7,7 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Price } from "./price";
-import { Heart } from "lucide-react";
+import { Heart, MoreVertical, ShoppingBag } from "lucide-react";
 import { Icons } from "./icons";
 import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
@@ -59,11 +59,11 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 border shadow-sm h-full">
+    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 shadow-sm h-full bg-card">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="absolute top-2 right-2 z-10">
-            <Button size="icon" variant="ghost" className="rounded-full bg-black/10 hover:bg-black/30 border-none text-white h-8 w-8">
-                <Heart className="h-4 w-4" />
+            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white h-8 w-8">
+                <MoreVertical className="h-4 w-4" />
             </Button>
         </div>
         {product.isNew && (
@@ -72,33 +72,29 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!product.isNew && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative h-32 sm:h-48 w-full bg-muted/30 p-2">
+        <div className="relative h-48 w-full bg-muted/30">
             <div className="relative h-full w-full">
                 <Image
                     src={product.images[0].imageUrl}
                     alt={product.title}
                     data-ai-hint={product.images[0].imageHint}
                     fill
-                    className="object-contain group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
             </div>
+             <Button size="icon" onClick={handleAddToCart} className="absolute -bottom-5 right-4 z-20 rounded-full h-12 w-12 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <ShoppingBag className="h-6 w-6" />
+            </Button>
         </div>
       </Link>
-      <div className="p-2 sm:p-4 flex-1 flex flex-col">
-        <h3 className="font-semibold text-sm sm:text-base leading-tight line-clamp-2 flex-grow">
-          <Link href={`/products/${product.slug}`}>{product.title}</Link>
-        </h3>
-        
-        <div className="mt-auto pt-2 sm:pt-4">
-           <div>
-            <span className="text-xs text-muted-foreground">PRIX</span>
-             <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-          </div>
-          <Button size="sm" onClick={handleAddToCart} className="shrink-0 w-full mt-2 h-9 text-sm">
-            Ajouter
-          </Button>
+      <div className="p-4 flex-1 flex flex-col mt-2">
+        <div className="flex-grow">
+            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+            <h3 className="font-medium text-muted-foreground text-base leading-tight line-clamp-2 mt-1">
+              <Link href={`/products/${product.slug}`}>{product.title}</Link>
+            </h3>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

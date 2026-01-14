@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { Suspense } from 'react';
+import { Suspense, use } from 'react';
 
 function OrderConfirmationContent({ orderId }: { orderId: string | null }) {
     return (

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, use } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
@@ -107,7 +107,7 @@ function ProductsPageContent({
         <div className="sticky top-24">
           <Card>
             <CardContent className="pt-6 space-y-8">
-              <CategorySidebar categories={categories} totalProducts={totalProducts} />
+              <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={searchParams} />
               <ProductFilters searchParams={searchParams} />
             </CardContent>
           </Card>

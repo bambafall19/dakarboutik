@@ -64,14 +64,12 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
 
   const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams();
-    for (const [k, v] of Object.entries(searchParams)) {
-        if (typeof v === 'string') {
-            current.set(k, v);
-        } else if (Array.isArray(v)) {
-            v.forEach(val => current.append(k, val));
-        }
-    }
+    const current = new URLSearchParams(
+      Array.from(Object.entries(searchParams))
+        .flatMap(([key, value]) => 
+          Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]]
+        )
+    );
 
     if (value === null || value === '') {
       current.delete(key);
@@ -103,8 +101,8 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
   const filterNode = (
     <div className="space-y-8">
-        <CategorySidebar categories={allCategories} totalProducts={totalProducts} />
-        <ProductFilters />
+        <CategorySidebar categories={allCategories} totalProducts={totalProducts} searchParams={searchParams} />
+        <ProductFilters searchParams={searchParams} />
     </div>
   );
 

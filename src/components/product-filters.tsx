@@ -33,15 +33,12 @@ export function ProductFilters({ searchParams }: ProductFiltersProps) {
   }, [priceRange]);
 
   useEffect(() => {
-    const current = new URLSearchParams();
-    // Copy existing params from the prop
-    for (const [key, value] of Object.entries(searchParams)) {
-      if (typeof value === 'string') {
-        current.set(key, value);
-      } else if (Array.isArray(value)) {
-        value.forEach(v => current.append(key, v));
-      }
-    }
+    const current = new URLSearchParams(
+      Array.from(Object.entries(searchParams))
+        .flatMap(([key, value]) => 
+          Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]]
+        )
+    );
     
     if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
         current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);

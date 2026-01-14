@@ -7,43 +7,62 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { Home, LayoutGrid, Search } from 'lucide-react';
+import { ThemeToggle } from './theme-toggle';
 
 interface MobileBottomNavProps {
     onMenuClick: () => void;
     onSearchClick: () => void;
 }
 
+const NavItem = ({ href, label, icon: Icon, isActive, onClick }: { href?: string, label: string, icon: React.ElementType, isActive?: boolean, onClick?: () => void }) => {
+    const content = (
+        <>
+            <Icon className={cn("w-6 h-6 mb-1", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")} />
+            <span className={cn("text-xs", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")}>{label}</span>
+        </>
+    );
+
+    if (href) {
+        return (
+            <Link href={href} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <button type="button" onClick={onClick} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+            {content}
+        </button>
+    );
+}
+
+
 export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavProps) {
   const pathname = usePathname();
 
-  const navItems = [
-    { href: '/', label: 'Accueil', icon: Home },
-    { action: onMenuClick, label: 'Catégories', icon: LayoutGrid, isAction: true },
-    { action: onSearchClick, label: 'Recherche', icon: Search, isAction: true },
-  ];
-
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
-        {navItems.map((item) => {
-          const isActive = (item.href && pathname === item.href);
-          
-          if (item.isAction) {
-            return (
-                 <button key={item.label} type="button" onClick={item.action} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
-                    <item.icon className={cn("w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")} />
-                    <span className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary">{item.label}</span>
-                </button>
-            )
-          }
-
-          return (
-            <Link key={item.label} href={item.href || '#'} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
-              <item.icon className={cn("w-6 h-6 mb-1", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")} />
-              <span className={cn("text-xs", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")}>{item.label}</span>
-            </Link>
-          );
-        })}
+      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+        <NavItem 
+            href="/" 
+            label="Accueil" 
+            icon={Home} 
+            isActive={pathname === '/'}
+        />
+        <NavItem 
+            onClick={onMenuClick} 
+            label="Catégories" 
+            icon={LayoutGrid} 
+        />
+        <NavItem 
+            onClick={onSearchClick} 
+            label="Recherche" 
+            icon={Search} 
+        />
+         <div className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+            <ThemeToggle />
+         </div>
       </div>
     </div>
   );

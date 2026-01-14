@@ -52,7 +52,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                        </a>
                     </Button>
                   )}
-                  <ThemeToggle />
                   <Sheet>
                       <SheetTrigger asChild>
                       <Button variant="ghost" className="relative h-10 w-10">

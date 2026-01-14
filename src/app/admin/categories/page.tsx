@@ -84,16 +84,14 @@ export default function CategoriesPage() {
     const { toast } = useToast();
 
     const handleAddClick = useCallback(() => {
-        refetch(); // Refetch before opening the form
         setSelectedCategory(null);
         setIsFormOpen(true);
-    }, [refetch]);
+    }, []);
 
     const handleEditClick = useCallback((category: Category) => {
-        refetch(); // Refetch before opening the form
         setSelectedCategory(category);
         setIsFormOpen(true);
-    }, [refetch]);
+    }, []);
 
     const handleDeleteClick = (category: Category) => {
         setCategoryToDelete(category);
@@ -119,9 +117,9 @@ export default function CategoriesPage() {
         }
     }
     
-    const handleCategoryUpdate = () => {
+    const handleCategoryUpdate = useCallback(() => {
       refetch();
-    };
+    }, [refetch]);
 
     const categoryRows = useMemo(() => {
         const rows: React.ReactNode[] = [];

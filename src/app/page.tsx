@@ -6,6 +6,7 @@ import { ProductGrid } from '@/components/product-grid';
 import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { HeroSection } from '@/components/hero-section';
+import { PromoBanners } from '@/components/promo-banners';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -23,6 +24,7 @@ export default function HomePage() {
       <div className="container">
           <main className="space-y-8 md:space-y-16">
             <FeaturedCategories />
+            <PromoBanners />
             {loading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}

@@ -31,9 +31,11 @@ const formSchema = z.object({
 
 interface BannerFormProps {
   banner?: Banner;
+  title?: string;
+  description?: string;
 }
 
-export function BannerForm({ banner }: BannerFormProps) {
+export function BannerForm({ banner, title, description }: BannerFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const firestore = useFirestore();
@@ -79,7 +81,7 @@ export function BannerForm({ banner }: BannerFormProps) {
 
       toast({
         title: 'Bannière mise à jour !',
-        description: 'La bannière principale a été modifiée avec succès.',
+        description: 'La bannière a été modifiée avec succès.',
       });
        router.refresh();
     } catch (error) {
@@ -98,10 +100,12 @@ export function BannerForm({ banner }: BannerFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Bannière Principale</CardTitle>
-            <CardDescription>
-              Modifiez le contenu de la bannière affichée en haut de la page d'accueil.
-            </CardDescription>
+            <CardTitle>{title || `Bannière: ${banner?.id}`}</CardTitle>
+            {description && (
+                <CardDescription>
+                    {description}
+                </CardDescription>
+            )}
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -161,11 +165,11 @@ export function BannerForm({ banner }: BannerFormProps) {
                 </FormItem>
               )}
             />
+             <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
+            </Button>
           </CardContent>
         </Card>
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
-        </Button>
       </form>
     </Form>
   );

@@ -26,6 +26,20 @@ const banners: Banner[] = [
     image: findImage('banner-accessories'),
     linkUrl: '/products?category=accessoires',
   },
+  {
+    id: 'promo-banner-1',
+    title: 'Le Son Immersif',
+    subtitle: 'Casques et écouteurs haute-fidélité',
+    image: findImage('banner-headphones'),
+    linkUrl: '/products?category=audio',
+  },
+  {
+    id: 'promo-banner-2',
+    title: 'Restez Connecté',
+    subtitle: 'Toute notre gamme de smartphones',
+    image: findImage('product-phone-1a'),
+    linkUrl: '/products?category=telephonie',
+  },
 ];
   
 export const getBanners = () => banners;

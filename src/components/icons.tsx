@@ -120,6 +120,8 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'ecouteurs': Headphones,
   'disques-durs': HardDrive,
   'cle-usb': MemoryStick,
+  'imprimantes': Printer,
+  'tablettes': Tablet,
 
   // Generic E-commerce - Keep for potential future use but less relevant now
   'agriculture-aliments-boissons': Carrot,
@@ -157,6 +159,3 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'vehicules-et-transport': Truck,
   'vetements-accessoires': Shirt,
 };
-
-
-    

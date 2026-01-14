@@ -18,8 +18,8 @@ interface MainSidebarProps {
 
 export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarProps) {
     const pathname = usePathname();
-    const searchParams = usePathname();
-    const currentCategorySlug = searchParams.split('/products/')[1]?.split('/')[0] || '';
+    const searchParams = useSearchParams();
+    const currentCategorySlug = searchParams.get('category');
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
@@ -52,7 +52,7 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
                  )}
                  {!loading && categories.map((category) => {
                     const Icon = CategoryIcons[category.slug] || Icons.smartphone;
-                    const isActive = pathname.includes(`/products?category=${category.slug}`);
+                    const isActive = currentCategorySlug === category.slug;
 
                     return (
                         <TooltipProvider key={category.id}>

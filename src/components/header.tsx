@@ -74,13 +74,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                     <span className='text-xs font-medium text-muted-foreground'>Favoris</span>
                   </Button>
                   
-                  <Link href="/login">
-                    <Button variant="ghost" className="h-12 rounded-lg px-4 flex-col gap-1 items-center justify-center">
-                      <Icons.user className="h-6 w-6 text-muted-foreground" />
-                      <span className='text-xs font-medium text-muted-foreground'>Compte</span>
-                    </Button>
-                  </Link>
-
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button className="h-12 rounded-lg bg-nav text-nav-foreground px-4">

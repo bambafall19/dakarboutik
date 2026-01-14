@@ -108,6 +108,7 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   // Electronics
   'informatique': Laptop,
   'pc-portables': Laptop,
+  'pc-portable': Laptop,
   'telephonie': Smartphone,
   'smartphones': Smartphone,
   'accessoires': Cable,
@@ -153,3 +154,6 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'vehicules-et-transport': Truck,
   'vetements-accessoires': Shirt,
 };
+
+
+    

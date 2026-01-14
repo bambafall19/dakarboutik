@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Suspense>
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr]">
+      <div className="grid min-h-screen w-full md:grid-cols-[80px_1fr]">
         <MainSidebar 
           categories={categories} 
           loading={categoriesLoading}

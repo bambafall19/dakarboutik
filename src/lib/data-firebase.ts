@@ -1,7 +1,7 @@
 import 'server-only';
 import { initializeFirebase } from '@/firebase/server';
-import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
-import type { Banner, Product, SiteSettings } from './types';
+import { collection, getDocs, query, where, doc, getDoc, orderBy } from 'firebase/firestore';
+import type { Banner, Category, Product, SiteSettings } from './types';
 import { getBanners as getStaticBanners } from './data';
 
 // This is a server-side only function
@@ -31,4 +31,18 @@ export async function getProductBySlug(slug: string) {
 
     const doc = querySnapshot.docs[0];
     return { id: doc.id, ...doc.data() } as Product;
+}
+
+export async function getCategories() {
+  const { firestore } = initializeFirebase();
+  const categoriesRef = collection(firestore, 'categories');
+  const q = query(categoriesRef, orderBy('name'));
+  const querySnapshot = await getDocs(q);
+
+  const categories = querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Category[];
+
+  return categories;
 }

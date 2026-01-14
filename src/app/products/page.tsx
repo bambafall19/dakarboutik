@@ -1,43 +1,32 @@
 
-import { Suspense, useMemo } from 'react';
+import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
-import { useProducts, useCategories } from '@/hooks/use-site-data';
-import { getAllChildCategorySlugs } from '@/lib/data-helpers';
-import type { Product } from '@/lib/types';
+import { getAllChildCategorySlugs, buildCategoryHierarchy } from '@/lib/data-helpers';
+import type { Product, Category } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
+import { getProducts, getCategories } from '@/lib/data-firebase';
 
-type ProductsPageContentProps = {
-  categoryFilter: string | null;
-  brandFilter: string[];
-  priceRangeFilter: string | null;
-  searchQuery: string | null;
-  sortBy: string;
-};
+// This is the Server Component that fetches data and handles filtering logic.
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  // Safely extract search parameters on the server
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
+  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
-// This is the main component that fetches data and handles filtering logic.
-// It remains a client component because it uses hooks like `useProducts` and `useMemo`.
-function ProductsPageContent({
-  categoryFilter,
-  brandFilter,
-  priceRangeFilter,
-  searchQuery,
-  sortBy,
-}: ProductsPageContentProps) {
-  const { products, loading: productsLoading } = useProducts();
-  const { categories, rawCategories, loading: categoriesLoading } = useCategories();
+  const [allProducts, rawCategories] = await Promise.all([getProducts(), getCategories()]);
 
-  const searchParams = {
-    category: categoryFilter,
-    brands: brandFilter.join(','),
-    priceRange: priceRangeFilter,
-    q: searchQuery,
-    sortBy: sortBy,
-  };
+  const categories = buildCategoryHierarchy(rawCategories);
 
-  const selectedPriceRange: [number, number] = useMemo(() => {
+  const selectedPriceRange: [number, number] = (() => {
     let range: [number, number] = [0, 1000000];
     if (priceRangeFilter) {
       const [min, max] = priceRangeFilter.split('-').map(Number);
@@ -46,12 +35,11 @@ function ProductsPageContent({
       }
     }
     return range;
-  }, [priceRangeFilter]);
-  
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
-    let filtered: Product[] = [...products];
-    
+  })();
+
+  const filteredProducts = (() => {
+    let filtered: Product[] = [...allProducts];
+
     // Search Query
     if (searchQuery) {
         filtered = filtered.filter(p => 
@@ -94,63 +82,43 @@ function ProductsPageContent({
     }
 
     return filtered;
-  }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories, searchQuery]);
-  
-  if (productsLoading || categoriesLoading) {
-    return <ProductListingSkeleton />;
-  }
-  
-  const bestsellers = products?.filter(p => p.isBestseller).slice(0, 4) || [];
-  const totalProducts = products?.length || 0;
+  })();
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-      <aside className="hidden md:block md:col-span-1">
-        <div className="sticky top-24">
-          <Card>
-            <CardContent className="pt-6 space-y-8">
-              <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={searchParams} />
-              <ProductFilters searchParams={searchParams} />
-            </CardContent>
-          </Card>
-        </div>
-      </aside>
-      <main className="md:col-span-3">
-        <ProductListing
-          products={filteredProducts}
-          allCategories={categories}
-          totalProducts={totalProducts}
-          suggestedProducts={bestsellers}
-          searchParams={searchParams}
-        />
-      </main>
-    </div>
-  );
-}
+  const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
+  const totalProducts = allProducts?.length || 0;
 
-// This is the Server Component that reads searchParams and passes them to the client component.
-export default function ProductsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  // Safely extract search parameters on the server
-  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
-  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
-  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
-  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
-  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
+  const currentSearchParams = {
+    category: categoryFilter,
+    brands: brandFilter.join(','),
+    priceRange: priceRangeFilter,
+    q: searchQuery,
+    sortBy: sortBy,
+  };
 
   return (
     <div className="py-2">
       <Suspense fallback={<ProductListingSkeleton />}>
-        <ProductsPageContent 
-          categoryFilter={categoryFilter}
-          brandFilter={brandFilter}
-          priceRangeFilter={priceRangeFilter}
-          searchQuery={searchQuery}
-          sortBy={sortBy}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <aside className="hidden md:block md:col-span-1">
+            <div className="sticky top-24">
+              <Card>
+                <CardContent className="pt-6 space-y-8">
+                  <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={currentSearchParams} />
+                  <ProductFilters searchParams={currentSearchParams} />
+                </CardContent>
+              </Card>
+            </div>
+          </aside>
+          <main className="md:col-span-3">
+            <ProductListing
+              products={filteredProducts}
+              allCategories={categories}
+              totalProducts={totalProducts}
+              suggestedProducts={bestsellers}
+              searchParams={currentSearchParams}
+            />
+          </main>
+        </div>
       </Suspense>
     </div>
   );

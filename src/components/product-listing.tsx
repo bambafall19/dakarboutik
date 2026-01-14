@@ -14,6 +14,7 @@ import { findImage } from '@/lib/placeholder-images';
 import { ProductFilters } from './product-filters';
 import { CategorySidebar } from './category-sidebar';
 import { ProductGrid } from './product-grid';
+import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
 interface ProductListingProps {
     products: Product[];
@@ -180,3 +181,4 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     </>
   );
 }
+

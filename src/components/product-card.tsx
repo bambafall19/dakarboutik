@@ -54,20 +54,20 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300">
+    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 border bg-card shadow-sm">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="absolute top-3 right-3 z-10">
-            <Button size="icon" variant="ghost" className="rounded-full bg-black/10 hover:bg-black/30 border-none text-white h-9 w-9">
-                <Heart className="h-5 w-5" />
+        <div className="absolute top-2 right-2 z-10">
+            <Button size="icon" variant="ghost" className="rounded-full bg-black/10 hover:bg-black/30 border-none text-white h-8 w-8">
+                <Heart className="h-4 w-4" />
             </Button>
         </div>
         {product.isNew && (
-            <Badge className="absolute top-3 left-3 z-10 bg-red-600 text-white">NOUVEAU</Badge>
+            <Badge className="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs px-1.5 py-0.5">NOUVEAU</Badge>
         )}
         {!product.isNew && product.isBestseller && (
-            <Badge className="absolute top-3 left-3 z-10" variant="secondary">TOP VENTE</Badge>
+            <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative h-60 w-full bg-muted p-4">
+        <div className="relative h-32 sm:h-48 w-full bg-muted/30 p-2">
             <div className="relative h-full w-full">
                 <Image
                     src={product.images[0].imageUrl}
@@ -79,20 +79,17 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             </div>
         </div>
       </Link>
-      <div className="bg-card p-4 flex-1 flex flex-col">
-        <h3 className="font-bold text-xl leading-tight">
+      <div className="p-2 sm:p-4 flex-1 flex flex-col">
+        <h3 className="font-semibold text-sm sm:text-base leading-tight line-clamp-2">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>
-        <p className="text-muted-foreground text-sm mt-2 line-clamp-2 flex-1">
-            {product.description}
-        </p>
         
-        <div className="mt-4 flex items-end justify-between">
+        <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between">
           <div>
             <span className="text-xs text-muted-foreground">PRIX</span>
              <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           </div>
-          <Button size="default" onClick={handleAddToCart} className="shrink-0">
+          <Button size="sm" onClick={handleAddToCart} className="shrink-0 text-xs h-8 sm:h-9 sm:text-sm">
             Ajouter
           </Button>
         </div>

@@ -1,3 +1,4 @@
+
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
@@ -148,36 +149,14 @@ export default async function ProductsPage({
   return (
     <div className="py-2 container">
       <Suspense fallback={<ProductListingSkeleton />}>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <aside className="hidden md:block md:col-span-1">
+        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-8">
+          <aside className="col-span-1">
             <div className="sticky top-24">
-              <Card>
-                <CardContent className="pt-6">
-                  {filterNode}
-                </CardContent>
-              </Card>
+                {filterNode}
             </div>
           </aside>
           
-          <main className="md:col-span-3">
-             <div className="md:hidden mb-4">
-              <Accordion type="single" collapsible>
-                <AccordionItem value="filters">
-                  <AccordionTrigger>
-                    <div className='flex items-center gap-2 text-lg font-semibold'>
-                      <Filter className="h-5 w-5" />
-                      Filtres et Catégories
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className='pt-4'>
-                      {filterNode}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-            
+          <main className="col-span-3">
             <ProductListing
               products={filteredProducts}
               suggestedProducts={bestsellers}

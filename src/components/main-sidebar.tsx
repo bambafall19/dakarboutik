@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Icons, CategoryIcons } from './icons';
+import { Icons } from './icons';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,9 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const currentCategorySlug = searchParams.get('category');
+
+    const featuredSlugs = ['informatique', 'telephonie', 'accessoires', 'audio'];
+    const featuredCategories = categories.filter(c => featuredSlugs.includes(c.slug));
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
@@ -50,7 +53,7 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
                         <Skeleton className="h-10 w-20 rounded-lg" />
                     </>
                  )}
-                 {!loading && categories.map((category) => {
+                 {!loading && featuredCategories.map((category) => {
                     const isActive = currentCategorySlug === category.slug;
 
                     return (
@@ -68,3 +71,4 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
         </aside>
     )
 }
+

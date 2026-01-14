@@ -67,26 +67,7 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
 
   return (
     <div className="flex flex-col gap-4">
-        <Accordion type="multiple" defaultValue={['brands', 'price']} className="w-full">
-            <AccordionItem value="brands">
-                <AccordionTrigger className="font-semibold">Marques</AccordionTrigger>
-                <AccordionContent>
-                    <div className="flex flex-col gap-2">
-                        {brands.map(brand => (
-                            <div key={brand} className="flex items-center space-x-2">
-                                <Checkbox 
-                                    id={`brand-${brand}`} 
-                                    checked={selectedBrands.includes(brand)}
-                                    onCheckedChange={(checked) => handleBrandChange(brand, checked)}
-                                />
-                                <label htmlFor={`brand-${brand}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                    {brand}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-                </AccordionContent>
-            </AccordionItem>
+        <Accordion type="multiple" defaultValue={['price']} className="w-full">
             <AccordionItem value="price">
                 <AccordionTrigger className="font-semibold">Prix</AccordionTrigger>
                 <AccordionContent>

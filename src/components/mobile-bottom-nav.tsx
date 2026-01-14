@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
-import { Home, LayoutGrid, Search, User, Menu } from 'lucide-react';
+import { Home, LayoutGrid, Search, User } from 'lucide-react';
 
 interface MobileBottomNavProps {
     onMenuClick: () => void;
@@ -18,13 +18,14 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
 
   const navItems = [
     { href: '/', label: 'Accueil', icon: Home },
-    { action: onMenuClick, label: 'Menu', icon: Menu, isAction: true },
+    { action: onMenuClick, label: 'Catégories', icon: LayoutGrid, isAction: true },
     { action: onSearchClick, label: 'Recherche', icon: Search, isAction: true },
+    { href: '/login', label: 'Compte', icon: User },
   ];
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
+      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
         {navItems.map((item) => {
           const isActive = (item.href && pathname === item.href);
           

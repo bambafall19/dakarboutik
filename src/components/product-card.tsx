@@ -11,6 +11,7 @@ import { Heart } from "lucide-react";
 import { Icons } from "./icons";
 import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
   product: Product;
@@ -60,6 +61,12 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
                 <Heart className="h-5 w-5" />
             </Button>
         </div>
+        {product.isNew && (
+            <Badge className="absolute top-3 left-3 z-10 bg-red-600 text-white">NOUVEAU</Badge>
+        )}
+        {!product.isNew && product.isBestseller && (
+            <Badge className="absolute top-3 left-3 z-10" variant="secondary">TOP VENTE</Badge>
+        )}
         <div className="relative h-60 w-full bg-muted p-4">
             <div className="relative h-full w-full">
                 <Image
@@ -86,7 +93,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
              <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
           </div>
           <Button size="default" onClick={handleAddToCart} className="shrink-0">
-            Ajouter au panier
+            Ajouter
           </Button>
         </div>
       </div>

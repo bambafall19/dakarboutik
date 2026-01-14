@@ -8,7 +8,6 @@ import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { HeroSection } from '@/components/hero-section';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
-import { Testimonials } from '@/components/testimonials';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -54,9 +53,6 @@ export default function HomePage() {
           </main>
       </div>
       <Engagements />
-       <div className="container">
-        <Testimonials />
-      </div>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 shadow-sm h-full bg-card">
+    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full border-0 shadow-none">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="absolute top-2 right-2 z-10">
             <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white h-8 w-8">
@@ -72,7 +72,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!product.isNew && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative h-48 w-full bg-muted/30">
+        <div className="relative h-48 w-full bg-muted/30 rounded-lg">
             <div className="relative h-full w-full">
                 <Image
                     src={product.images[0].imageUrl}

@@ -1,6 +1,4 @@
 
-'use client';
-
 import { Suspense, useMemo } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';

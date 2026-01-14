@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -7,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { Home, LayoutGrid, Search, ShoppingBag, User } from 'lucide-react';
-import { ThemeToggle } from './theme-toggle';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { CartDrawer } from './cart-drawer';
 import { useCart } from '@/hooks/use-cart';
@@ -19,67 +17,76 @@ interface MobileBottomNavProps {
 
 const NavItem = ({ href, label, icon: Icon, isActive, onClick }: { href?: string, label: string, icon: React.ElementType, isActive?: boolean, onClick?: () => void }) => {
     const content = (
-        <>
-            <Icon className={cn("w-6 h-6 mb-1", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")} />
-            <span className={cn("text-xs", isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-primary")}>{label}</span>
-        </>
+        <div className={cn(
+            "flex items-center justify-center h-12 transition-all duration-300 ease-in-out",
+            isActive ? "bg-primary text-primary-foreground rounded-full px-4 gap-2" : "w-12"
+        )}>
+            <Icon className="h-6 w-6" />
+            {isActive && <span className="text-sm font-medium">{label}</span>}
+        </div>
     );
 
     if (href) {
         return (
-            <Link href={href} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group h-full">
+            <Link href={href} className="flex-1 flex justify-center items-center">
                 {content}
             </Link>
         );
     }
 
     return (
-        <button type="button" onClick={onClick} className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group h-full">
+        <button type="button" onClick={onClick} className="flex-1 flex justify-center items-center">
             {content}
         </button>
     );
-}
+};
 
 
 export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavProps) {
   const pathname = usePathname();
   const { totalItems } = useCart();
 
+  const navItems = [
+    { href: '/', label: 'Accueil', icon: Home, isActive: pathname === '/' },
+    { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
+    { onClick: onSearchClick, label: 'Recherche', icon: Search },
+    { isCart: true, label: 'Panier', icon: ShoppingBag },
+  ]
+
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-        <NavItem 
-            href="/" 
-            label="Accueil" 
-            icon={Home} 
-            isActive={pathname === '/'}
-        />
-        <NavItem 
-            onClick={onMenuClick} 
-            label="Catégories" 
-            icon={LayoutGrid} 
-        />
-        <NavItem 
-            onClick={onSearchClick} 
-            label="Recherche" 
-            icon={Search} 
-        />
-        <Sheet>
-            <SheetTrigger asChild>
-                <button type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group h-full relative">
-                    <ShoppingBag className="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary" />
-                    <span className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-primary">Panier</span>
-                    {totalItems > 0 && (
-                        <span className="absolute top-1 right-3 text-xs w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground">
-                            {totalItems}
-                        </span>
-                    )}
-                </button>
-            </SheetTrigger>
-            <SheetContent className="flex flex-col">
-                <CartDrawer />
-            </SheetContent>
-        </Sheet>
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:hidden">
+      <div className="bg-background/80 backdrop-blur-lg border rounded-full shadow-lg flex items-center justify-around h-16 px-2">
+        {navItems.map((item, index) => {
+            if (item.isCart) {
+                return (
+                    <Sheet key={index}>
+                        <SheetTrigger asChild>
+                            <button className="flex-1 flex justify-center items-center h-12 w-12 relative">
+                                <ShoppingBag className="w-6 h-6 text-foreground" />
+                                {totalItems > 0 && (
+                                    <span className="absolute top-0 right-0 text-xs w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </button>
+                        </SheetTrigger>
+                        <SheetContent className="flex flex-col">
+                            <CartDrawer />
+                        </SheetContent>
+                    </Sheet>
+                )
+            }
+            return (
+                 <NavItem 
+                    key={index}
+                    href={item.href} 
+                    label={item.label} 
+                    icon={item.icon}
+                    isActive={item.isActive}
+                    onClick={item.onClick}
+                />
+            )
+        })}
       </div>
     </div>
   );

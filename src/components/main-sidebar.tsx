@@ -31,7 +31,6 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
              <div className="flex h-14 items-center justify-center border-b px-4 w-full">
                 <Logo 
-                    onMenuClick={onMenuClick} 
                     imageUrl={settings?.logoUrl} 
                     loading={settingsLoading} 
                     hideTextOnMobile={true} 

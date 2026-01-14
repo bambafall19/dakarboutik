@@ -4,7 +4,7 @@
 import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { Badge } from './ui/badge';
@@ -13,13 +13,13 @@ import { ChevronDown } from 'lucide-react';
 interface CategorySidebarProps {
   categories: Category[];
   totalProducts: number;
-  searchParams: { [key: string]: string | null };
+  selectedCategorySlug: string | null;
 }
 
-export function CategorySidebar({ categories, totalProducts, searchParams }: CategorySidebarProps) {
+export function CategorySidebar({ categories, totalProducts, selectedCategorySlug }: CategorySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const selectedCategorySlug = searchParams.category;
+  const searchParams = useSearchParams();
   
   const defaultOpen = useMemo(() => {
     if (!selectedCategorySlug) return [];
@@ -42,13 +42,7 @@ export function CategorySidebar({ categories, totalProducts, searchParams }: Cat
   }, [categories, selectedCategorySlug]);
 
   const createCategoryUrl = (slug: string) => {
-    const current = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(searchParams)) {
-        if (value) {
-            current.set(key, value);
-        }
-    }
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set('category', slug);
     return `${pathname}?${current.toString()}`;
   }

@@ -28,9 +28,9 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
-            <Link href="/" className="flex items-center justify-center">
+             <div className="flex items-center justify-center">
                 <Logo />
-            </Link>
+            </div>
 
             <nav className="flex flex-col items-center gap-2 mt-4 w-full">
                  {loading && (

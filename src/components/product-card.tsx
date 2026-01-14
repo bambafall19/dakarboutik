@@ -53,14 +53,14 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <div className="relative group flex flex-col rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
-       <Link href={`/products/${product.slug}`} className="block">
+    <div className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300">
+      <Link href={`/products/${product.slug}`} className="block">
         <div className="absolute top-3 right-3 z-10">
-            <Button size="icon" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white">
+            <Button size="icon" variant="ghost" className="rounded-full bg-black/10 hover:bg-black/30 border-none text-white h-9 w-9">
                 <Heart className="h-5 w-5" />
             </Button>
         </div>
-        <div className="relative h-60 w-full bg-muted/60 p-4">
+        <div className="relative h-60 w-full bg-muted p-4">
             <div className="relative h-full w-full">
                 <Image
                     src={product.images[0].imageUrl}
@@ -72,7 +72,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
             </div>
         </div>
       </Link>
-      <div className="bg-background p-4 flex-1 flex flex-col">
+      <div className="bg-card p-4 flex-1 flex flex-col">
         <h3 className="font-bold text-xl leading-tight">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>

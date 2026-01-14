@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 250 40% 98%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 0 72% 51%;
+    --primary: 250 21% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 96%;
+    --secondary: 250 30% 95%;
     --secondary-foreground: 224 71.4% 4.1%;
-    --muted: 220 13% 91%;
+    --muted: 250 30% 90%;
     --muted-foreground: 220 9% 46%;
-    --accent: 220 13% 85%;
+    --accent: 250 30% 85%;
     --accent-foreground: 224 71.4% 4.1%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 0 72% 51%;
+    --ring: 250 21% 50%;
     --nav: 224 71.4% 4.1%;
     --nav-foreground: 0 0% 98%;
     --chart-1: 220 70% 50%;
@@ -40,7 +40,7 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 0 72% 51%;
+    --primary: 250 21% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 210 20% 98%;
@@ -52,7 +52,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 0 72% 51%;
+    --ring: 250 21% 50%;
     --nav: 0 72% 51%;
     --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
@@ -78,3 +78,4 @@
 .text-nav-foreground {
     color: hsl(var(--nav-foreground));
 }
+

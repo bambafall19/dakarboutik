@@ -13,12 +13,13 @@ import { useMemo } from 'react';
 export default function HomePage() {
   const { products, loading } = useProducts();
   
-  const newArrivals = useMemo(() => 
-    [...products]
+  const newArrivals = useMemo(() => {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    return products
+      .filter(p => new Date(p.createdAt) > twentyFourHoursAgo)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 8),
-    [products]
-  );
+      .slice(0, 8);
+  }, [products]);
     
   const bestsellers = useMemo(() => 
     products.filter(p => p.isBestseller).slice(0, 8),

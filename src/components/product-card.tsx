@@ -7,10 +7,8 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Price } from "./price";
-import { Heart, MoreVertical, ShoppingBag } from "lucide-react";
-import { Icons } from "./icons";
-import { Card, CardContent } from "./ui/card";
-import { cn } from "@/lib/utils";
+import { MoreVertical, ShoppingBag } from "lucide-react";
+import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
@@ -26,10 +24,13 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     e.stopPropagation();
     addToCart(product, 1);
   };
+  
+  const isRecent = new Date(product.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const showNewBadge = product.isNew || isRecent;
 
   if (variant === 'horizontal') {
     return (
-      <Card className="w-full">
+      <Card className="w-full shadow-sm">
         <Link href={`/products/${product.slug}`} className="flex items-center gap-4 group p-4">
           <div className="relative shrink-0">
               <div className="aspect-square relative w-24 bg-card rounded-md border">
@@ -59,17 +60,17 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full border-0 shadow-none">
+    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full shadow-sm">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="absolute top-2 right-2 z-10">
             <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white h-8 w-8">
                 <MoreVertical className="h-4 w-4" />
             </Button>
         </div>
-        {product.isNew && (
+        {showNewBadge && (
             <Badge className="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs px-1.5 py-0.5">NOUVEAU</Badge>
         )}
-        {!product.isNew && product.isBestseller && (
+        {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
         <div className="relative h-48 w-full bg-muted/30 rounded-lg">

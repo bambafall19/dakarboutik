@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -44,7 +44,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
-import { useRouter } from 'next/navigation';
 
 function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Category, level?: number, onEdit: (cat: Category) => void, onDelete: (cat: Category) => void }) {
     const hasSubCategories = category.subCategories && category.subCategories.length > 0;
@@ -83,17 +82,18 @@ export default function CategoriesPage() {
     
     const firestore = useFirestore();
     const { toast } = useToast();
-    const router = useRouter();
 
-    const handleAddClick = () => {
+    const handleAddClick = useCallback(() => {
+        refetch(); // Refetch before opening the form
         setSelectedCategory(null);
         setIsFormOpen(true);
-    };
+    }, [refetch]);
 
-    const handleEditClick = (category: Category) => {
+    const handleEditClick = useCallback((category: Category) => {
+        refetch(); // Refetch before opening the form
         setSelectedCategory(category);
         setIsFormOpen(true);
-    }
+    }, [refetch]);
 
     const handleDeleteClick = (category: Category) => {
         setCategoryToDelete(category);
@@ -135,7 +135,7 @@ export default function CategoriesPage() {
         };
         generateRows(categories);
         return rows;
-    }, [categories]);
+    }, [categories, handleEditClick]);
 
 
   return (

@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
-import { buildCategoryHierarchy, getAllChildCategorySlugs } from '@/lib/data-helpers';
+import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
 // --- Products ---
 export function useProducts() {
@@ -103,7 +103,7 @@ export function useBanners() {
 export function useCategories() {
   const firestore = useFirestore();
   const [key, setKey] = useState(0);
-  const { products } = useProducts();
+  const { products, loading: productsLoading } = useProducts();
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
@@ -111,67 +111,62 @@ export function useCategories() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firestore, key]);
   
-  const { data: rawCategories, loading, error } = useCollection<Category>(categoriesQuery);
+  const { data: rawCategories, loading: categoriesLoading, error } = useCollection<Category>(categoriesQuery);
 
   const refetch = useCallback(() => {
     setKey(prev => prev + 1);
   }, []);
-
+  
   const categoriesWithCounts = useMemo(() => {
-    if (!rawCategories || !products) return rawCategories || [];
+    if (!rawCategories || !products) return [];
 
     const productCounts: { [categorySlug: string]: number } = {};
     products.forEach(product => {
-      const catSlugs = product.category ? [product.category] : [];
-      // This part handles parent categories if needed, but for now we just count direct
-      // To get parent counts, we would need to traverse up from product.category
-      catSlugs.forEach(slug => {
-        productCounts[slug] = (productCounts[slug] || 0) + 1;
-      })
+      productCounts[product.category] = (productCounts[product.category] || 0) + 1;
     });
-    
-    const allCategories = rawCategories.map(c => ({...c})); // Create a mutable copy
 
-    const categoryMap: { [id: string]: Category & { children?: Category[] } } = {};
-    allCategories.forEach(cat => {
-        categoryMap[cat.id] = { ...cat, productCount: 0, subCategories: [] };
+    const categoryMap: { [id: string]: Category } = {};
+    rawCategories.forEach(cat => {
+      categoryMap[cat.id] = { ...cat, productCount: 0, subCategories: [] };
     });
 
     const getChildrenCount = (catId: string): number => {
-        const cat = categoryMap[catId];
-        if (!cat) return 0;
-
-        let total = productCounts[cat.slug] || 0;
-        
-        const children = allCategories.filter(c => c.parentId === catId);
-        for(const child of children) {
-            total += getChildrenCount(child.id);
-        }
-        return total;
+      const cat = categoryMap[catId];
+      if (!cat) return 0;
+      let total = productCounts[cat.slug] || 0;
+      
+      const children = rawCategories.filter(c => c.parentId === catId);
+      for (const child of children) {
+          total += getChildrenCount(child.id);
+      }
+      return total;
     }
-    
-    allCategories.forEach(cat => {
-        cat.productCount = getChildrenCount(cat.id);
-    });
 
-    return allCategories;
+    return rawCategories.map(cat => ({
+      ...cat,
+      productCount: getChildrenCount(cat.id),
+    }));
 
   }, [rawCategories, products]);
 
 
   const categories = useMemo(() => {
     if (!categoriesWithCounts) return [];
-     // Filter out categories with no products before building the hierarchy
-    const categoriesWithProducts = categoriesWithCounts.filter(c => c.productCount && c.productCount > 0);
-    return buildCategoryHierarchy(categoriesWithProducts);
+    return buildCategoryHierarchy(categoriesWithCounts.filter(c => c.productCount && c.productCount > 0));
   }, [categoriesWithCounts]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];
-    // Strips icon and subcategories for a flat list
     return rawCategories.map(({ id, name, slug, parentId }) => ({ id, name, slug, parentId }));
   }, [rawCategories]);
 
 
-  return { categories, rawCategories: rawCategories || [], simpleCategories, loading, error, refetch };
+  return { 
+    categories, 
+    rawCategories: rawCategories || [], 
+    simpleCategories, 
+    loading: categoriesLoading || productsLoading, 
+    error, 
+    refetch 
+  };
 }

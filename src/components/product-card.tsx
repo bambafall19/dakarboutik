@@ -7,8 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Price } from "./price";
-import { Star } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Heart } from "lucide-react";
 import { Icons } from "./icons";
 import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
@@ -20,17 +19,6 @@ interface ProductCardProps {
 
 export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const { addToCart } = useCart();
-  const [rating, setRating] = useState({ score: 0, reviews: 0 });
-
-  useEffect(() => {
-    // This should be based on real data, but for now, we'll simulate it.
-    if (product && product.id) {
-        const charCodeSum = product.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const score = 4 + (charCodeSum % 10) / 10; // score between 4.0 and 4.9
-        const reviews = 10 + (charCodeSum % 150);
-        setRating({ score: parseFloat(score.toFixed(1)), reviews });
-    }
-  }, [product]);
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -65,43 +53,43 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group bg-card rounded-lg border shadow-sm hover:shadow-lg">
-      <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative overflow-hidden p-4">
-            <div className="aspect-square relative w-full">
-              <Image
-                src={product.images[0].imageUrl}
-                alt={product.title}
-                data-ai-hint={product.images[0].imageHint}
-                fill
-                className="object-contain group-hover:scale-105 transition-transform duration-300"
-              />
+    <div className="relative group flex flex-col rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+       <Link href={`/products/${product.slug}`} className="block">
+        <div className="absolute top-3 right-3 z-10">
+            <Button size="icon" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white">
+                <Heart className="h-5 w-5" />
+            </Button>
+        </div>
+        <div className="relative h-60 w-full bg-muted/60 p-4">
+            <div className="relative h-full w-full">
+                <Image
+                    src={product.images[0].imageUrl}
+                    alt={product.title}
+                    data-ai-hint={product.images[0].imageHint}
+                    fill
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
+                />
             </div>
         </div>
       </Link>
-      <CardContent className="p-4 pt-0 flex-1 flex flex-col">
-        {product.brand && <span className="text-xs text-muted-foreground uppercase font-semibold">{product.brand}</span>}
-        <h3 className="font-semibold text-lg leading-tight flex-1">
+      <div className="bg-background p-4 flex-1 flex flex-col">
+        <h3 className="font-bold text-xl leading-tight">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>
+        <p className="text-muted-foreground text-sm mt-2 line-clamp-2 flex-1">
+            {product.description}
+        </p>
         
-        <div className="flex items-center gap-2 mt-2">
-            <div className="flex items-center gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn("h-4 w-4", i < Math.floor(rating.score) ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50")} />
-                ))}
-            </div>
-            <span className="text-xs font-bold px-2 py-0.5 bg-muted rounded-full">{rating.score}</span>
-        </div>
-        
-        <div className="mt-4 flex flex-1 flex items-end justify-between">
-          <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-          <Button size="sm" onClick={handleAddToCart} className="shrink-0">
-            <Icons.shoppingBag className="mr-2 h-4 w-4" />
-            Ajouter
+        <div className="mt-4 flex items-end justify-between">
+          <div>
+            <span className="text-xs text-muted-foreground">PRIX</span>
+             <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+          </div>
+          <Button size="default" onClick={handleAddToCart} className="shrink-0">
+            Ajouter au panier
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

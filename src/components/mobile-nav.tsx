@@ -10,6 +10,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
 import { Blocks, ChevronRight, X } from 'lucide-react';
+import { Icons } from './icons';
 
 interface MobileNavProps {
   items: Category[];
@@ -20,7 +21,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], level = 0) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = CategoryIcons[cat.slug] || Blocks;
+      const Icon = CategoryIcons[cat.slug] || Icons.smartphone;
 
       if (hasSubCategories) {
         return (

@@ -127,7 +127,7 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'composants-electroniques': Component,
   'electronique-grand-public': Monitor,
 
-  // Generic E-commerce - Kept for potential future use but less relevant now
+  // Generic E-commerce
   'agriculture-aliments-boissons': Carrot,
   'matieres-premieres': Blocks,
   'animalerie': Dog,

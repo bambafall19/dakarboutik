@@ -20,18 +20,17 @@ interface ProductListingProps {
     allCategories: Category[];
     suggestedProducts?: Product[];
     totalProducts: number;
-    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductListing({ products, allCategories, suggestedProducts, totalProducts, searchParams }: ProductListingProps) {
+export function ProductListing({ products, allCategories, suggestedProducts, totalProducts }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const currentSearchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const selectedCategorySlug = typeof searchParams.category === 'string' ? searchParams.category : null;
-  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
-  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
+  const selectedCategorySlug = searchParams.get('category');
+  const searchQuery = searchParams.get('q');
+  const sortBy = searchParams.get('sortBy') || 'newest';
 
   const selectedCategory = useMemo(() => {
     if (selectedCategorySlug) {
@@ -65,7 +64,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
 
   const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams(Array.from(currentSearchParams.entries()));
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
     if (value === null || value === '') {
       current.delete(key);
     } else {
@@ -85,7 +84,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     const newParams = new URLSearchParams();
     
     paramsToKeep.forEach(param => {
-        const value = currentSearchParams.get(param);
+        const value = searchParams.get(param);
         if (value) {
             newParams.set(param, value);
         }

@@ -117,8 +117,11 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'power-banks': Power,
   'composants-electroniques': Component,
   'electronique-grand-public': Monitor,
+  'ecouteurs': Headphones,
+  'disques-durs': HardDrive,
+  'cle-usb': MemoryStick,
 
-  // Generic E-commerce
+  // Generic E-commerce - Keep for potential future use but less relevant now
   'agriculture-aliments-boissons': Carrot,
   'matieres-premieres': Blocks,
   'animalerie': Dog,

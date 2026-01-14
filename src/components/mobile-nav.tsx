@@ -10,6 +10,7 @@ import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
+import { Blocks } from 'lucide-react';
 
 interface MobileNavProps {
   items: Category[];
@@ -20,14 +21,14 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], level = 0) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = cat.icon;
+      const Icon = cat.icon || Blocks; // Use Blocks as a default fallback
 
       if (hasSubCategories) {
         return (
           <AccordionItem key={cat.id} value={cat.slug} className="border-b-0">
             <AccordionTrigger className="py-3 text-base font-medium hover:no-underline px-4">
                 <span className="flex items-center gap-4">
-                    {Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />}
+                    <Icon className="h-6 w-6 text-muted-foreground" />
                     {cat.name}
                 </span>
             </AccordionTrigger>
@@ -48,7 +49,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           onClick={onLinkClick}
           style={{ paddingLeft: level > 0 ? `${level * 1.5 + 1}rem` : undefined }}
         >
-          {level === 0 && (Icon ? <Icon className="h-6 w-6 text-muted-foreground" /> : <div className="h-6 w-6" />)}
+          {level === 0 && <Icon className="h-6 w-6 text-muted-foreground" />}
           <span className={level > 0 ? 'font-normal text-sm' : 'font-medium'}>{cat.name}</span>
         </Link>
       );

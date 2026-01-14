@@ -33,7 +33,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             </AccordionTrigger>
             <AccordionContent className="pl-6 border-l ml-6">
                 <div className="flex flex-col">
-                    {renderCategoryLinks(cat.subCategories, level + 1)}
+                    {renderCategoryLinks(cat.subCategories!, level + 1)}
                 </div>
             </AccordionContent>
           </AccordionItem>

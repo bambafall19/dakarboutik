@@ -151,9 +151,9 @@ export function useCategories() {
 
 
   const categories = useMemo(() => {
-    if (!categoriesWithCounts) return [];
-    return buildCategoryHierarchy(categoriesWithCounts.filter(c => c.productCount && c.productCount > 0));
-  }, [categoriesWithCounts]);
+    if (!rawCategories) return [];
+    return buildCategoryHierarchy(rawCategories);
+  }, [rawCategories]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];

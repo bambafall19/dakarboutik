@@ -160,6 +160,6 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'sports-loisirs': Bike,
   'surete-securite': Shield,
   'transmission-d-energie': Zap,
-  'vehicules-et-transport': Truck,
+  'vehicules-et-transport': Car,
   'vetements-accessoires': Shirt,
 };

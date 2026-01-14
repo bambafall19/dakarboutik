@@ -17,10 +17,10 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 function EditProductPageContent({ id }: { id: string }) {
-  const { categories } = useCategories();
-  const { product, loading } = useProductsById(id);
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { product, loading: productLoading } = useProductsById(id);
 
-  if (loading) {
+  if (productLoading || categoriesLoading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
 

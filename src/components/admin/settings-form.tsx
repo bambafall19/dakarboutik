@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +29,8 @@ const formSchema = z.object({
   announcementMessage2: z.string().optional(),
   announcementMessage3: z.string().optional(),
   whatsappNumber: z.string().min(9, 'Veuillez entrer un numéro valide.').optional().or(z.literal('')),
+  supportPhone: z.string().optional(),
+  supportEmail: z.string().email("Veuillez entrer un email valide.").optional().or(z.literal('')),
 });
 
 interface SettingsFormProps {
@@ -47,6 +50,8 @@ export function SettingsForm({ settings }: SettingsFormProps) {
       announcementMessage2: settings.announcementMessage2 || '',
       announcementMessage3: settings.announcementMessage3 || '',
       whatsappNumber: settings.whatsappNumber || '',
+      supportPhone: settings.supportPhone || '',
+      supportEmail: settings.supportEmail || '',
     },
   });
 
@@ -155,6 +160,32 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                    <FormDescription>
                     Entrez le numéro (avec l'indicatif pays) pour les commandes WhatsApp.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="supportPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Téléphone du support</FormLabel>
+                  <FormControl>
+                    <Input placeholder="338123456 / 771234567" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="supportEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email du support</FormLabel>
+                  <FormControl>
+                    <Input placeholder="contact@maboutique.com" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

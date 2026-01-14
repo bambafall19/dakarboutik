@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -12,6 +13,7 @@ import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { Price } from './price';
 import { ThemeToggle } from './theme-toggle';
+import { Headset } from 'lucide-react';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -58,7 +60,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             <div className="hidden md:flex items-center justify-between w-full gap-4">
               <Logo loading={loading} imageUrl={settings?.logoUrl} />
             
-              <div className="flex-1 max-w-2xl relative">
+              <div className="flex-1 max-w-lg relative">
                   <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <input 
                       placeholder="Recherche de produits..." 
@@ -67,6 +69,16 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                       readOnly
                   />
               </div>
+
+              {(settings?.supportPhone || settings?.supportEmail) && (
+                <div className="flex items-center gap-3">
+                  <Headset className="h-10 w-10 text-primary" />
+                  <div>
+                    <p className="font-semibold text-sm">Support {settings.supportPhone}</p>
+                    <p className="text-xs text-muted-foreground">Email: {settings.supportEmail}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-center gap-1">
                   <ThemeToggle />

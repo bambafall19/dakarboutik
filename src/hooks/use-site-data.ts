@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useMemo, useCallback, useState, useEffect } from 'react';
@@ -74,6 +75,8 @@ export function useSiteSettings() {
     logoUrl: null,
     announcementMessage1: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
     whatsappNumber: '221771234567', // Default placeholder number
+    supportPhone: '33 123 45 67',
+    supportEmail: 'contact@exemple.com'
   };
 
   return { settings: settings || defaultSettings, loading, error };

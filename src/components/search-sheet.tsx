@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,7 @@ interface SearchSheetProps {
     onOpenChange: (open: boolean) => void;
 }
 
-export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
+function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [query, setQuery] = useState(searchParams.get('q') || '');
@@ -126,4 +126,12 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
             </DialogContent>
         </Dialog>
     );
+}
+
+export function SearchSheet(props: SearchSheetProps) {
+    return (
+        <Suspense fallback={null}>
+            <SearchSheetContent {...props} />
+        </Suspense>
+    )
 }

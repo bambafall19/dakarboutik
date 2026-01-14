@@ -36,6 +36,7 @@ function ProductsPageContent() {
   }, [priceRangeFilter]);
   
   const filteredProducts = useMemo(() => {
+    if (!products) return [];
     let filtered: Product[] = [...products];
     
     // Search Query
@@ -83,6 +84,7 @@ function ProductsPageContent() {
   }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories, searchQuery]);
   
   const brands = useMemo(() => {
+    if (!products) return [];
     const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
     return [...new Set(allBrands)];
   }, [products]);
@@ -92,8 +94,8 @@ function ProductsPageContent() {
     return <ProductListingSkeleton />;
   }
   
-  const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
-  const totalProducts = products.length;
+  const bestsellers = products?.filter(p => p.isBestseller).slice(0, 4) || [];
+  const totalProducts = products?.length || 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

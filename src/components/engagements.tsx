@@ -1,5 +1,13 @@
 
 import { ShieldCheck, MessageSquareHeart, Truck, CreditCard } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 const engagements = [
   {
@@ -32,7 +40,9 @@ export function Engagements() {
             <h2 className="text-3xl font-bold tracking-tight">Pourquoi nous choisir ?</h2>
             <p className="mt-2 text-muted-foreground">Votre satisfaction est notre priorité absolue.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        {/* Grille pour les écrans md et plus grands */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {engagements.map((engagement) => (
             <div key={engagement.title} className="flex flex-col items-center text-center p-6 rounded-lg transition-all duration-300 hover:bg-background hover:shadow-lg">
               <div className="bg-primary/10 p-4 rounded-full mb-4 border-2 border-primary/20">
@@ -43,6 +53,30 @@ export function Engagements() {
             </div>
           ))}
         </div>
+        
+        {/* Carrousel pour les écrans plus petits que md */}
+        <div className="md:hidden">
+          <Carousel opts={{ align: "start", loop: true }} className="w-full">
+            <CarouselContent>
+              {engagements.map((engagement, index) => (
+                <CarouselItem key={index} className="basis-full sm:basis-1/2">
+                  <div className="p-1">
+                    <div className="flex flex-col items-center text-center p-6 rounded-lg h-full">
+                      <div className="bg-primary/10 p-4 rounded-full mb-4 border-2 border-primary/20">
+                        <engagement.icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="font-bold text-lg">{engagement.title}</h3>
+                      <p className="text-muted-foreground mt-1 text-sm">{engagement.description}</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-[-10px]" />
+            <CarouselNext className="absolute right-[-10px]" />
+          </Carousel>
+        </div>
+
       </div>
     </section>
   );

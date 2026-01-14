@@ -18,4 +18,3 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     </Suspense>
   );
 }
-

@@ -10,19 +10,20 @@ import { Skeleton } from './ui/skeleton';
 interface LogoProps {
   className?: string;
   onClick?: () => void;
+  onMenuClick?: () => void;
   imageUrl?: string | null;
   loading?: boolean;
   hideTextOnMobile?: boolean;
 }
 
-export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
+export const Logo = ({ className, onClick, onMenuClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
 
   if (loading) {
     return <Skeleton className="h-8 w-32" />
   }
 
-  return (
-    <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
+  const content = (
+    <>
       {imageUrl ? (
         <Image src={imageUrl} alt="DakarBoutik Logo" width={32} height={32} className="h-8 w-auto rounded-sm object-contain" />
       ) : (
@@ -30,11 +31,25 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
       )}
       <span className={cn(
         "text-2xl font-bold tracking-tight text-foreground",
-        hideTextOnMobile && "hidden sm:inline"
+        hideTextOnMobile && "hidden"
       )}>
         DakarBoutik
       </span>
       <span className="sr-only">DakarBoutik</span>
+    </>
+  );
+
+  if (onMenuClick) {
+    return (
+      <button onClick={onMenuClick} className={cn('flex items-center gap-2', className)}>
+        {content}
+      </button>
+    )
+  }
+
+  return (
+    <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
+      {content}
     </Link>
   );
 };

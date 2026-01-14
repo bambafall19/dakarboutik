@@ -15,14 +15,16 @@ import { findImage } from '@/lib/placeholder-images';
 import { ProductFilters } from './product-filters';
 import { CategorySidebar } from './category-sidebar';
 import { Card, CardContent } from './ui/card';
+import { ProductGrid } from './product-grid';
 
 interface ProductListingProps {
     products: Product[];
     allCategories: Category[];
     brands: string[];
+    suggestedProducts?: Product[];
 }
 
-export function ProductListing({ products, allCategories, brands }: ProductListingProps) {
+export function ProductListing({ products, allCategories, brands, suggestedProducts }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -156,9 +158,18 @@ export function ProductListing({ products, allCategories, brands }: ProductListi
             ))}
           </div>
           {products.length === 0 && (
-            <div className="text-center py-16 col-span-full">
-              <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
-              <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres ou votre recherche.</p>
+            <div className="text-center py-16 col-span-full space-y-8">
+              <div>
+                <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
+                <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres ou votre recherche.</p>
+              </div>
+              {suggestedProducts && suggestedProducts.length > 0 && (
+                <ProductGrid 
+                  title="Nos meilleures ventes pourraient vous plaire"
+                  products={suggestedProducts}
+                  gridClass='grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3'
+                />
+              )}
             </div>
           )}
         </main>

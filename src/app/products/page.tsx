@@ -91,6 +91,8 @@ function ProductsPageContent() {
   if (productsLoading || categoriesLoading) {
     return <ProductListingSkeleton />;
   }
+  
+  const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -109,6 +111,7 @@ function ProductsPageContent() {
           products={filteredProducts}
           allCategories={categories}
           brands={brands}
+          suggestedProducts={bestsellers}
         />
       </main>
     </div>

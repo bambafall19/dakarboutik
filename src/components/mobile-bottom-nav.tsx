@@ -47,7 +47,7 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
         <NavItem 
             href="/" 
             label="Accueil" 
@@ -80,12 +80,6 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
                 <CartDrawer />
             </SheetContent>
         </Sheet>
-        <NavItem 
-            href="/login" 
-            label="Compte" 
-            icon={User} 
-            isActive={pathname === '/login'}
-        />
       </div>
     </div>
   );

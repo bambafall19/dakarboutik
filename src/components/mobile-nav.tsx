@@ -2,15 +2,14 @@
 'use client';
 
 import Link from 'next/link';
-import { CategoryIcons } from './icons';
+import { CategoryIcons, Icons } from './icons';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import type { Category } from '@/lib/types';
 import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Blocks, ChevronRight, X } from 'lucide-react';
-import { Icons } from './icons';
+import { X } from 'lucide-react';
 
 interface MobileNavProps {
   items: Category[];

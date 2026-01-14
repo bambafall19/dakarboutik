@@ -36,7 +36,12 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
         <div className="container flex h-20 items-center">
             {/* Mobile Header: Menu, Logo, Cart */}
             <div className="flex md:hidden items-center justify-between w-full">
-                <Logo onMenuClick={onMobileMenuClick} loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={onMobileMenuClick} className="h-10 w-10">
+                        <Icons.menu className="h-6 w-6" />
+                    </Button>
+                    <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+                </div>
                 <div className="flex items-center">
                   {(settings?.supportPhone || settings?.supportEmail) && (
                     <Button variant="ghost" size="icon" asChild>

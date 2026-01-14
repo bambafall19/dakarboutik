@@ -10,13 +10,12 @@ import { Skeleton } from './ui/skeleton';
 interface LogoProps {
   className?: string;
   onClick?: () => void;
-  onMenuClick?: () => void;
   imageUrl?: string | null;
   loading?: boolean;
   hideTextOnMobile?: boolean;
 }
 
-export const Logo = ({ className, onClick, onMenuClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
+export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
 
   if (loading) {
     return <Skeleton className="h-8 w-32" />
@@ -31,21 +30,13 @@ export const Logo = ({ className, onClick, onMenuClick, imageUrl, loading, hideT
       )}
       <span className={cn(
         "text-2xl font-bold tracking-tight text-foreground",
-        hideTextOnMobile && "hidden"
+        hideTextOnMobile && "hidden md:inline"
       )}>
         DakarBoutik
       </span>
       <span className="sr-only">DakarBoutik</span>
     </>
   );
-
-  if (onMenuClick) {
-    return (
-      <button onClick={onMenuClick} className={cn('flex items-center gap-2', className)}>
-        {content}
-      </button>
-    )
-  }
 
   return (
     <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>

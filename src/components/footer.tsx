@@ -14,12 +14,13 @@ const footerLinks = {
   Support: [
     { name: 'À propos', href: '#' },
     { name: 'Contact', href: '#' },
+    { name: 'Garantie & SAV', href: '/sav' },
     { name: 'Politique de retour', href: '#' },
     { name: 'CGV', href: '#' },
   ],
   Légal: [
     { name: 'Politique de confidentialité', href: '#' },
-    { name: 'Conditions d\'utilisation', href: '#' },
+    { name: "Conditions d'utilisation", href: '#' },
   ],
 };
 

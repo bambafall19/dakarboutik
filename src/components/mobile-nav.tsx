@@ -9,7 +9,7 @@ import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Blocks, X } from 'lucide-react';
+import { Blocks, ChevronRight, X } from 'lucide-react';
 
 interface MobileNavProps {
   items: Category[];

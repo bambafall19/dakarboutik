@@ -29,27 +29,32 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
 
   if (variant === 'horizontal') {
     return (
-      <Link href={`/products/${product.slug}`} className="flex items-center gap-4 group p-2 -m-2 rounded-lg hover:bg-accent">
-        <div className="relative shrink-0">
-            <div className="aspect-square relative w-16 bg-card rounded-md border">
-              <Image
-                src={product.images[0].imageUrl}
-                alt={product.title}
-                data-ai-hint={product.images[0].imageHint}
-                fill
-                className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-        </div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-sm leading-snug line-clamp-2">
-            {product.title}
-          </h3>
-          <div className="mt-1">
-            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+      <Card className="w-full">
+        <Link href={`/products/${product.slug}`} className="flex items-center gap-4 group p-4">
+          <div className="relative shrink-0">
+              <div className="aspect-square relative w-24 bg-card rounded-md border">
+                <Image
+                  src={product.images[0].imageUrl}
+                  alt={product.title}
+                  data-ai-hint={product.images[0].imageHint}
+                  fill
+                  className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
           </div>
-        </div>
-      </Link>
+          <div className="flex-1">
+            <h3 className="font-semibold text-base leading-snug line-clamp-2">
+              {product.title}
+            </h3>
+            <div className="mt-2">
+              <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+            </div>
+             <Button size="sm" onClick={handleAddToCart} className="mt-4">
+              Ajouter
+            </Button>
+          </div>
+        </Link>
+      </Card>
     )
   }
 

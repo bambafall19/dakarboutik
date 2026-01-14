@@ -10,7 +10,7 @@
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 250 21% 50%;
+    --primary: 215 79% 19%;
     --primary-foreground: 0 0% 100%;
     --secondary: 250 30% 95%;
     --secondary-foreground: 224 71.4% 4.1%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 250 21% 50%;
+    --ring: 215 79% 19%;
     --nav: 224 71.4% 4.1%;
     --nav-foreground: 0 0% 98%;
     --chart-1: 220 70% 50%;
@@ -40,7 +40,7 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 250 21% 50%;
+    --primary: 215 79% 35%;
     --primary-foreground: 0 0% 100%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 210 20% 98%;
@@ -52,7 +52,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 250 21% 50%;
+    --ring: 215 79% 35%;
     --nav: 0 72% 51%;
     --nav-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
@@ -78,4 +78,5 @@
 .text-nav-foreground {
     color: hsl(var(--nav-foreground));
 }
+
 

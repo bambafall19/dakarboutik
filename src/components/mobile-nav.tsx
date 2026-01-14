@@ -46,7 +46,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           href={`/products?category=${cat.slug}`}
           className="flex items-center gap-4 py-3 text-base px-4"
           onClick={onLinkClick}
-          style={{ paddingLeft: level > 0 ? `${level * 1.5 + 1}rem` : undefined }}
+          style={{ paddingLeft: level > 0 ? `calc(${level} * 1.5rem + 1rem)` : '1rem' }}
         >
           {level === 0 && <Icon className="h-6 w-6 text-muted-foreground" />}
           <span className={level > 0 ? 'font-normal text-sm' : 'font-medium'}>{cat.name}</span>
@@ -76,3 +76,4 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
     </div>
   );
 }
+

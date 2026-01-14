@@ -9,6 +9,42 @@ import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
 import { getProducts, getCategories } from '@/lib/data-firebase';
 
+// This is a server-side only function
+function getCategoriesWithCounts(rawCategories: Category[], allProducts: Product[]): Category[] {
+  const productCounts: { [categorySlug: string]: number } = {};
+  allProducts.forEach(product => {
+    productCounts[product.category] = (productCounts[product.category] || 0) + 1;
+  });
+
+  const categoryMap: { [id: string]: Category & { children: Category[] } } = {};
+  rawCategories.forEach(cat => {
+    categoryMap[cat.id] = { ...cat, productCount: 0, children: [] };
+  });
+
+  const getChildrenCount = (catId: string): number => {
+    const cat = categoryMap[catId];
+    if (!cat) return 0;
+
+    // Count products directly in this category
+    let total = productCounts[cat.slug] || 0;
+    
+    // Recursively count products in subcategories
+    const children = rawCategories.filter(c => c.parentId === catId);
+    for (const child of children) {
+        total += getChildrenCount(child.id);
+    }
+    return total;
+  };
+
+  const categoriesWithCounts = rawCategories.map(cat => ({
+    ...cat,
+    productCount: getChildrenCount(cat.id),
+  }));
+
+  return buildCategoryHierarchy(categoriesWithCounts);
+}
+
+
 // This is the Server Component that fetches data and handles filtering logic.
 export default async function ProductsPage({
   searchParams,
@@ -23,8 +59,8 @@ export default async function ProductsPage({
   const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const [allProducts, rawCategories] = await Promise.all([getProducts(), getCategories()]);
-
-  const categories = buildCategoryHierarchy(rawCategories);
+  
+  const categories = getCategoriesWithCounts(rawCategories, allProducts);
 
   const selectedPriceRange: [number, number] = (() => {
     let range: [number, number] = [0, 1000000];

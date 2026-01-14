@@ -9,8 +9,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { cn } from '@/lib/utils';
 import type { Category, SiteSettings } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
-import { LayoutGrid } from 'lucide-react';
+import { Home, LayoutGrid, User } from 'lucide-react';
 import { Logo } from './logo';
+import { Separator } from './ui/separator';
 
 interface MainSidebarProps {
     categories: Category[];
@@ -22,6 +23,7 @@ interface MainSidebarProps {
 
 export function MainSidebar({ categories, loading, settings, settingsLoading, onMenuClick }: MainSidebarProps) {
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const currentCategorySlug = searchParams.get('category');
 
     const featuredSlugs = ['informatique', 'telephonie', 'accessoires', 'audio'];
@@ -29,7 +31,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
-             <div className="flex h-14 items-center justify-center border-b px-4 w-full">
+             <div className="flex h-14 items-center justify-center px-4 w-full">
                 <Logo 
                     imageUrl={settings?.logoUrl} 
                     loading={settingsLoading} 
@@ -37,57 +39,98 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
                 />
             </div>
 
-            <nav className="flex flex-col items-center gap-2 mt-4">
-                 {loading ? (
-                    <div className='w-full space-y-2 px-2'>
-                        <Skeleton className="h-10 w-10" />
-                        <Skeleton className="h-10 w-10" />
-                        <Skeleton className="h-10 w-10" />
-                        <Skeleton className="h-10 w-10" />
-                    </div>
-                 ) : (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                 <Button
-                                    variant={"ghost"}
-                                    className="w-10 h-10"
-                                    onClick={onMenuClick}
+            <nav className="flex flex-col items-center gap-2 mt-4 flex-1">
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             <Link href="/" className="w-full flex justify-center">
+                                <Button
+                                    variant={pathname === '/' ? "secondary" : "ghost"}
+                                    className={cn("w-10 h-10", pathname === '/' && "text-primary")}
+                                    size="icon"
                                 >
-                                    <LayoutGrid className="h-5 w-5" />
+                                    <Home className="h-5 w-5" />
                                 </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                                <p>Menu</p>
-                            </TooltipContent>
-                        </Tooltip>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Accueil</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    
+                    <Separator className='my-2 w-8' />
+                    
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                             <Button
+                                variant={"ghost"}
+                                className="w-10 h-10"
+                                onClick={onMenuClick}
+                            >
+                                <LayoutGrid className="h-5 w-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Toutes les catégories</p>
+                        </TooltipContent>
+                    </Tooltip>
 
-                        {featuredCategories.map((category) => {
-                            const isActive = currentCategorySlug === category.slug;
-                            const Icon = CategoryIcons[category.slug] || LayoutGrid;
+                    {loading ? (
+                        <div className='w-full space-y-2 px-2 mt-2'>
+                            <Skeleton className="h-10 w-10 mx-auto" />
+                            <Skeleton className="h-10 w-10 mx-auto" />
+                            <Skeleton className="h-10 w-10 mx-auto" />
+                            <Skeleton className="h-10 w-10 mx-auto" />
+                        </div>
+                    ) : (
+                        <>
+                            {featuredCategories.map((category) => {
+                                const isActive = currentCategorySlug === category.slug;
+                                const Icon = CategoryIcons[category.slug] || LayoutGrid;
 
-                            return (
-                                <Tooltip key={category.id}>
-                                    <TooltipTrigger asChild>
-                                        <Link href={`/products?category=${category.slug}`} className="w-full flex justify-center">
-                                            <Button
-                                                variant={isActive ? "secondary" : "ghost"}
-                                                className={cn("w-10 h-10", isActive && "text-primary")}
-                                                size="icon"
-                                            >
-                                                <Icon className="h-5 w-5" />
-                                            </Button>
-                                        </Link>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="right">
-                                        <p>{category.name}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            )
-                        })}
-                     </TooltipProvider>
-                 )}
+                                return (
+                                    <Tooltip key={category.id}>
+                                        <TooltipTrigger asChild>
+                                            <Link href={`/products?category=${category.slug}`} className="w-full flex justify-center">
+                                                <Button
+                                                    variant={isActive ? "secondary" : "ghost"}
+                                                    className={cn("w-10 h-10", isActive && "text-primary")}
+                                                    size="icon"
+                                                >
+                                                    <Icon className="h-5 w-5" />
+                                                </Button>
+                                            </Link>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right">
+                                            <p>{category.name}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                )
+                            })}
+                        </>
+                    )}
+                 </TooltipProvider>
             </nav>
+            <div className="mt-auto flex flex-col items-center gap-4">
+                 <TooltipProvider>
+                    <Tooltip>
+                         <TooltipTrigger asChild>
+                             <Link href="/login" className="w-full flex justify-center">
+                                <Button
+                                    variant="ghost"
+                                    className={cn("w-10 h-10", pathname === '/login' && "text-primary")}
+                                    size="icon"
+                                >
+                                    <User className="h-5 w-5" />
+                                </Button>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Compte</p>
+                        </TooltipContent>
+                    </Tooltip>
+                 </TooltipProvider>
+            </div>
         </aside>
     )
 }

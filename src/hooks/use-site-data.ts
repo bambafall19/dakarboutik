@@ -161,7 +161,9 @@ export function useCategories() {
 
   const categories = useMemo(() => {
     if (!categoriesWithCounts) return [];
-    return buildCategoryHierarchy(categoriesWithCounts);
+     // Filter out categories with no products before building the hierarchy
+    const categoriesWithProducts = categoriesWithCounts.filter(c => c.productCount && c.productCount > 0);
+    return buildCategoryHierarchy(categoriesWithProducts);
   }, [categoriesWithCounts]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {

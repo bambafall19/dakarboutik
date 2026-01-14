@@ -1,6 +1,3 @@
-
-'use client';
-
 import { getCategoryPath } from '@/lib/data-helpers';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';

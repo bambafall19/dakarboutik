@@ -100,9 +100,10 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
        <div className="bg-background border-b hidden md:block">
         <div className="container flex h-14 items-center justify-between text-sm">
             <MainNav items={categories} />
-            <div className="flex items-center gap-6">
-                <p>À propos</p>
-                <p>Contact</p>
+            <div className="flex items-center gap-6 text-foreground/80 font-medium">
+                <Link href="#" className='hover:text-primary transition-colors'>À propos</Link>
+                <Link href="#" className='hover:text-primary transition-colors'>Contact</Link>
+                <Link href="/sav" className='hover:text-primary transition-colors'>Garantie & SAV</Link>
             </div>
         </div>
       </div>

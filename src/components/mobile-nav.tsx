@@ -74,8 +74,9 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
 
       <div className="mt-auto p-4 border-t">
         <div className="flex items-center justify-between">
-          <span className='text-sm font-medium'>Changer de thème</span>
-          <ThemeToggle />
+            <Link href="/login" className="text-sm font-medium" onClick={onLinkClick}>
+                Mon compte / Connexion
+            </Link>
         </div>
       </div>
       

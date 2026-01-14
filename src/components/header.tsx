@@ -40,7 +40,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                     <Button variant="ghost" size="icon" onClick={onMobileMenuClick} className="h-10 w-10">
                         <Icons.menu className="h-6 w-6" />
                     </Button>
-                    <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+                    <Logo loading={loading} imageUrl={settings?.logoUrl} />
                 </div>
                 <div className="flex items-center">
                   {(settings?.supportPhone || settings?.supportEmail) && (
@@ -50,6 +50,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                        </a>
                     </Button>
                   )}
+                  <ThemeToggle />
                   <Sheet>
                       <SheetTrigger asChild>
                       <Button variant="ghost" className="relative h-10 w-10 rounded-full">

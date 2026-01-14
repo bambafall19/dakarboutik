@@ -163,3 +163,5 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'vehicules-et-transport': Car,
   'vetements-accessoires': Shirt,
 };
+
+    

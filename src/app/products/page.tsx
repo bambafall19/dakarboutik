@@ -108,7 +108,7 @@ function ProductsPageContent({
           <Card>
             <CardContent className="pt-6 space-y-8">
               <CategorySidebar categories={categories} totalProducts={totalProducts} />
-              <ProductFilters />
+              <ProductFilters searchParams={searchParams} />
             </CardContent>
           </Card>
         </div>

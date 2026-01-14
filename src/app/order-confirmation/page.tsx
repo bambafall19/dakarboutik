@@ -49,6 +49,7 @@ function OrderConfirmationSkeleton() {
     );
 }
 
+// This is the Server Component that reads searchParams and passes them to the client component.
 export default function OrderConfirmationPage({
   searchParams,
 }: {

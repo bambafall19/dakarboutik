@@ -1,25 +1,23 @@
 
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Button } from './ui/button';
-import { Icons } from './icons';
+import { usePathname, useRouter } from 'next/navigation';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { Checkbox } from './ui/checkbox';
 import { Slider } from './ui/slider';
 import React, { useState, useEffect } from 'react';
 import { Price } from './price';
 
 interface ProductFiltersProps {
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductFilters({ }: ProductFiltersProps) {
+export function ProductFilters({ searchParams }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   
-  const initialPriceRange = searchParams.get('priceRange')?.split('-').map(Number) || [0, 1000000];
+  const initialPriceRange = typeof searchParams.priceRange === 'string' 
+    ? searchParams.priceRange.split('-').map(Number) 
+    : [0, 1000000];
 
   const [priceRange, setPriceRange] = useState<[number, number]>(initialPriceRange as [number, number]);
   const [debouncedPriceRange, setDebouncedPriceRange] = useState<[number, number]>(priceRange);
@@ -35,7 +33,15 @@ export function ProductFilters({ }: ProductFiltersProps) {
   }, [priceRange]);
 
   useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams();
+    // Copy existing params from the prop
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (typeof value === 'string') {
+        current.set(key, value);
+      } else if (Array.isArray(value)) {
+        value.forEach(v => current.append(key, v));
+      }
+    }
     
     if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
         current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);
@@ -47,17 +53,6 @@ export function ProductFilters({ }: ProductFiltersProps) {
     const query = search ? `?${search}` : '';
     router.push(`${pathname}${query}`, { scroll: false });
   }, [debouncedPriceRange, pathname, router, searchParams]);
-
-  
-  const handleSortChange = (value: string) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('sortBy', value);
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`, { scroll: false });
-  };
-  
-  const sortBy = searchParams.get('sortBy') || 'newest';
 
   return (
     <div className="flex flex-col gap-4">

@@ -11,6 +11,7 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { Price } from './price';
+import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -69,6 +70,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
               </div>
 
               <div className="flex items-center gap-1">
+                  <ThemeToggle />
                   <Button variant="ghost" className="h-12 rounded-lg px-4 flex-col gap-1 items-center justify-center">
                     <Icons.heart className="h-6 w-6 text-muted-foreground" />
                     <span className='text-xs font-medium text-muted-foreground'>Favoris</span>

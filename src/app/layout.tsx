@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr-SN" className="h-full">
+    <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
         <Script
           strategy="afterInteractive"
@@ -60,12 +61,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       >
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGD258WC"
         height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
-        <FirebaseClientProvider>
-          <CartProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster />
-          </CartProvider>
-        </FirebaseClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <FirebaseClientProvider>
+            <CartProvider>
+              <AppShell>{children}</AppShell>
+              <Toaster />
+            </CartProvider>
+          </FirebaseClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

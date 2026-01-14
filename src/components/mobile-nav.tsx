@@ -2,15 +2,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Icons, CategoryIcons } from './icons';
+import { CategoryIcons } from './icons';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import type { Category } from '@/lib/types';
 import { Logo } from './logo';
-import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Blocks } from 'lucide-react';
+import { Blocks, X } from 'lucide-react';
 
 interface MobileNavProps {
   items: Category[];
@@ -21,7 +20,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], level = 0) => {
     return categories.map((cat) => {
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-      const Icon = cat.icon || Blocks; // Use Blocks as a default fallback
+      const Icon = CategoryIcons[cat.slug] || Blocks;
 
       if (hasSubCategories) {
         return (
@@ -63,7 +62,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
         <div className='flex justify-between items-center'>
           <Logo onClick={onLinkClick} />
            <Button variant="ghost" size="icon" onClick={onLinkClick}>
-            <Icons.close className="h-6 w-6" />
+            <X className="h-6 w-6" />
           </Button>
         </div>
       </div>

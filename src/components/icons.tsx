@@ -113,10 +113,7 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   
   // Aliases and sub-categories
   'pc-portables': Laptop,
-  'pc-portable': Laptop,
-  'ordinateurs': Laptop,
   'smartphones': Smartphone,
-  'telephones': Smartphone,
   'chargeurs': BatteryCharging,
   'power-banks': Power,
   'ecouteurs': Headphones,
@@ -163,5 +160,3 @@ export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: s
   'vehicules-et-transport': Car,
   'vetements-accessoires': Shirt,
 };
-
-    

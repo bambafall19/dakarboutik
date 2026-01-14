@@ -35,16 +35,18 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       <div className="border-b">
         <div className="container flex h-20 items-center">
             {/* Mobile Header: Menu, Logo, Cart */}
-            <div className="flex md:hidden items-center justify-between w-full">
-                <div className="flex items-center gap-2">
+             <div className="grid md:hidden grid-cols-3 items-center w-full">
+                <div className="flex justify-start">
                     <Button variant="ghost" size="icon" onClick={onMobileMenuClick} className="h-10 w-10">
                         <Icons.menu className="h-6 w-6" />
                     </Button>
+                </div>
+                <div className="flex justify-center">
                     <Logo loading={loading} imageUrl={settings?.logoUrl} />
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center justify-end">
                   {(settings?.supportPhone || settings?.supportEmail) && (
-                    <Button variant="ghost" size="icon" asChild>
+                    <Button variant="ghost" size="icon" asChild className="h-10 w-10">
                        <a href={`tel:${settings.supportPhone}`}>
                          <Headset className="h-6 w-6 text-primary" />
                        </a>
@@ -53,7 +55,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                   <ThemeToggle />
                   <Sheet>
                       <SheetTrigger asChild>
-                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Button variant="ghost" className="relative h-10 w-10">
                           <Icons.shoppingBag className="h-6 w-6" />
                           <span className="sr-only">Ouvrir le panier</span>
                           {totalItems > 0 && (

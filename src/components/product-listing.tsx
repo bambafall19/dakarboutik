@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useSearchParams } from 'next/navigation';
 import type { Product, Category } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { Button } from '@/components/ui/button';
@@ -9,12 +8,11 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/co
 import { Icons } from './icons';
 import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 import { ProductFilters } from './product-filters';
 import { CategorySidebar } from './category-sidebar';
-import { Card, CardContent } from './ui/card';
 import { ProductGrid } from './product-grid';
 
 interface ProductListingProps {
@@ -22,17 +20,18 @@ interface ProductListingProps {
     allCategories: Category[];
     suggestedProducts?: Product[];
     totalProducts: number;
+    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductListing({ products, allCategories, suggestedProducts, totalProducts }: ProductListingProps) {
+export function ProductListing({ products, allCategories, suggestedProducts, totalProducts, searchParams }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const currentSearchParams = useSearchParams();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const selectedCategorySlug = searchParams.get('category');
-  const searchQuery = searchParams.get('q');
-  const sortBy = searchParams.get('sortBy') || 'newest';
+  const selectedCategorySlug = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const selectedCategory = useMemo(() => {
     if (selectedCategorySlug) {
@@ -66,7 +65,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
 
   const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(Array.from(currentSearchParams.entries()));
     if (value === null || value === '') {
       current.delete(key);
     } else {
@@ -86,7 +85,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     const newParams = new URLSearchParams();
     
     paramsToKeep.forEach(param => {
-        const value = searchParams.get(param);
+        const value = currentSearchParams.get(param);
         if (value) {
             newParams.set(param, value);
         }

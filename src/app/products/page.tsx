@@ -2,7 +2,6 @@
 'use client';
 
 import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
@@ -13,16 +12,15 @@ import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
 
-function ProductsPageContent() {
-  const searchParams = useSearchParams();
+function ProductsPageContent({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const { products, loading: productsLoading } = useProducts();
   const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
-  const categoryFilter = searchParams.get('category');
-  const brandFilter = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-  const priceRangeFilter = searchParams.get('priceRange');
-  const searchQuery = searchParams.get('q');
-  const sortBy = searchParams.get('sortBy') || 'newest';
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
+  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const selectedPriceRange: [number, number] = useMemo(() => {
     let range: [number, number] = [0, 1000000];
@@ -115,6 +113,7 @@ function ProductsPageContent() {
           allCategories={categories}
           totalProducts={totalProducts}
           suggestedProducts={bestsellers}
+          searchParams={searchParams}
         />
       </main>
     </div>
@@ -122,11 +121,11 @@ function ProductsPageContent() {
 }
 
 
-export default function ProductsPage() {
+export default function ProductsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   return (
     <div className="py-2">
       <Suspense fallback={<ProductListingSkeleton />}>
-        <ProductsPageContent />
+        <ProductsPageContent searchParams={searchParams} />
       </Suspense>
     </div>
   );

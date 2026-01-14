@@ -44,35 +44,24 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
             <nav className="flex flex-col items-center gap-2 mt-4">
                  {loading && (
                     <>
-                        <Skeleton className="h-12 w-12 rounded-lg" />
-                        <Skeleton className="h-12 w-12 rounded-lg" />
-                        <Skeleton className="h-12 w-12 rounded-lg" />
-                        <Skeleton className="h-12 w-12 rounded-lg" />
+                        <Skeleton className="h-10 w-20 rounded-lg" />
+                        <Skeleton className="h-10 w-20 rounded-lg" />
+                        <Skeleton className="h-10 w-20 rounded-lg" />
+                        <Skeleton className="h-10 w-20 rounded-lg" />
                     </>
                  )}
                  {!loading && categories.map((category) => {
-                    const Icon = CategoryIcons[category.slug] || Icons.smartphone;
                     const isActive = currentCategorySlug === category.slug;
 
                     return (
-                        <TooltipProvider key={category.id}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Link href={`/products?category=${category.slug}`}>
-                                        <Button
-                                            variant={isActive ? "secondary" : "ghost"}
-                                            size="icon"
-                                            className={cn("h-12 w-12 rounded-lg", isActive && "text-primary")}
-                                        >
-                                            <Icon className="h-6 w-6" />
-                                        </Button>
-                                    </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right">
-                                    <p>{category.name}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <Link key={category.id} href={`/products?category=${category.slug}`} className="w-full px-2">
+                            <Button
+                                variant={isActive ? "secondary" : "ghost"}
+                                className={cn("w-full justify-start", isActive && "text-primary")}
+                            >
+                                <span className='truncate'>{category.name}</span>
+                            </Button>
+                        </Link>
                     )
                  })}
             </nav>

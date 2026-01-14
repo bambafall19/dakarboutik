@@ -1,3 +1,6 @@
+
+'use client';
+
 import { getCategoryPath } from '@/lib/data-helpers';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
@@ -53,8 +56,7 @@ function ProductDetailsPageContent({ slug }: { slug: string }) {
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const resolvedParams = React.use(params);
-  const slug = resolvedParams.slug;
+  const slug = params.slug;
 
   return (
     <Suspense fallback={<ProductDetailsSkeleton />}>

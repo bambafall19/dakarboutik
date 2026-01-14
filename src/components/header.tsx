@@ -32,11 +32,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
         <div className="container flex h-20 items-center">
             {/* Mobile Header: Menu, Logo, Cart */}
             <div className="flex md:hidden items-center justify-between w-full">
-                <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
-                    <Icons.menu className="h-6 w-6" />
-                    <span className='sr-only'>Menu</span>
-                </Button>
-                <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
+                <Logo onMenuClick={onMobileMenuClick} loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
                 <Sheet>
                     <SheetTrigger asChild>
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">

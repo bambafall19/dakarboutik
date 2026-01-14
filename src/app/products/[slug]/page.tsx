@@ -55,7 +55,7 @@ function ProductDetailsPageContent({ slug }: { slug: string }) {
   );
 }
 
-// This is the Server Component that reads searchParams and passes them to the client component.
+// This is the Server Component that reads params and passes them to the client component.
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const slug = params.slug;
 

@@ -83,15 +83,15 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     },
   });
 
-  const selectedCategorySlug = form.watch('category');
+  const selectedCategoryId = form.watch('category');
   const selectedCategory = categories.find(
-    (cat) => cat.slug === selectedCategorySlug
+    (cat) => cat.id === selectedCategoryId
   );
 
   useEffect(() => {
     // Reset subcategory when category changes
     form.setValue('subCategory', '');
-  }, [selectedCategorySlug, form]);
+  }, [selectedCategoryId, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -104,8 +104,15 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     }
     
     try {
-      // Use subCategory if it exists, otherwise fall back to main category slug
-      const categoryToSave = values.subCategory || values.category;
+      // Find the slug from the ID
+      const finalCategoryId = values.subCategory || values.category;
+      const categoryToSave = categories.flatMap(c => [c, ...(c.subCategories || [])]).find(c => c.id === finalCategoryId)?.slug;
+      
+      if (!categoryToSave) {
+          toast({ variant: 'destructive', title: 'Erreur', description: 'Catégorie invalide sélectionnée.' });
+          return;
+      }
+      
       const slug = slugify(values.title);
 
       const images = [];
@@ -151,10 +158,9 @@ export function AddProductForm({ categories }: AddProductFormProps) {
         title: 'Produit ajouté !',
         description: `Le produit "${values.title}" a été ajouté avec succès.`,
       });
-      // A revalidation on the server would be ideal, but for client-side action,
-      // we just redirect. The data will appear on next server render.
+      
       router.push('/admin');
-      router.refresh(); // Ask Next.js to refresh server components
+      router.refresh();
 
     } catch (error) {
       console.error("Error adding product: ", error);
@@ -284,7 +290,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                         </FormControl>
                         <SelectContent>
                           {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.slug}>
+                            <SelectItem key={cat.id} value={cat.id}>
                               {cat.name}
                             </SelectItem>
                           ))}
@@ -313,7 +319,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                           </FormControl>
                           <SelectContent>
                             {selectedCategory.subCategories.map((subCat) => (
-                              <SelectItem key={subCat.id} value={subCat.slug}>
+                              <SelectItem key={subCat.id} value={subCat.id}>
                                 {subCat.name}
                               </SelectItem>
                             ))}
@@ -382,3 +388,5 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     </Card>
   );
 }
+
+    

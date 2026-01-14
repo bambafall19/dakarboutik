@@ -66,6 +66,8 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
 
+  const allCategoriesFlat = categories.flatMap(c => [c, ...(c.subCategories || [])]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,40 +84,24 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     },
   });
 
-  const selectedCategorySlug = form.watch('category');
+  const selectedCategoryId = form.watch('category');
   const selectedCategory = categories.find(
-    (cat) => cat.slug === selectedCategorySlug
+    (cat) => cat.id === selectedCategoryId
   );
   
   useEffect(() => {
-    // This is complex because a slug could be a child or parent.
-    const findCategoryAndParent = (slug: string, cats: Category[]): {parent?: Category, child?: Category} => {
-        for (const cat of cats) {
-            if (cat.slug === slug) {
-                // It's a top-level category
-                return { parent: cat };
-            }
-            if (cat.subCategories) {
-                const subCat = cat.subCategories.find(sub => sub.slug === slug);
-                if (subCat) {
-                    return { parent: cat, child: subCat };
-                }
-            }
-        }
-        return {};
+    const productCategory = allCategoriesFlat.find(c => c.slug === product.category);
+    if (!productCategory) return;
+    
+    if (productCategory.parentId) {
+      form.setValue('category', productCategory.parentId);
+      form.setValue('subCategory', productCategory.id);
+    } else {
+      form.setValue('category', productCategory.id);
+      form.setValue('subCategory', '');
     }
 
-    const { parent, child } = findCategoryAndParent(product.category, categories);
-
-    if (child && parent) {
-        form.setValue('category', parent.slug);
-        form.setValue('subCategory', child.slug);
-    } else if (parent) {
-        form.setValue('category', parent.slug);
-        form.setValue('subCategory', '');
-    }
-
-  }, [product.category, categories, form]);
+  }, [product.category, allCategoriesFlat, categories, form]);
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -129,7 +115,14 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     }
     
     try {
-      const categoryToSave = values.subCategory || values.category;
+      const finalCategoryId = values.subCategory || values.category;
+      const categoryToSave = allCategoriesFlat.find(c => c.id === finalCategoryId)?.slug;
+
+      if (!categoryToSave) {
+          toast({ variant: 'destructive', title: 'Erreur', description: 'Catégorie invalide sélectionnée.' });
+          return;
+      }
+
       const slug = slugify(values.title);
 
       const images = [];
@@ -301,7 +294,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                         </FormControl>
                         <SelectContent>
                           {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.slug}>
+                            <SelectItem key={cat.id} value={cat.id}>
                               {cat.name}
                             </SelectItem>
                           ))}
@@ -330,7 +323,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                           </FormControl>
                           <SelectContent>
                             {selectedCategory.subCategories.map((subCat) => (
-                              <SelectItem key={subCat.id} value={subCat.slug}>
+                              <SelectItem key={subCat.id} value={subCat.id}>
                                 {subCat.name}
                               </SelectItem>
                             ))}

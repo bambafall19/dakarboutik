@@ -51,6 +51,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <MainSidebar 
           categories={categories} 
           loading={categoriesLoading}
+          settings={settings}
+          settingsLoading={settingsLoading}
           onMenuClick={() => setIsMobileMenuOpen(true)}
         />
         <div className="flex flex-col">

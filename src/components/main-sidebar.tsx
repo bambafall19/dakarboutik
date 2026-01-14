@@ -7,7 +7,7 @@ import { Icons, CategoryIcons } from './icons';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { Category } from '@/lib/types';
+import type { Category, SiteSettings } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
 import { LayoutGrid } from 'lucide-react';
 import { Logo } from './logo';
@@ -15,10 +15,12 @@ import { Logo } from './logo';
 interface MainSidebarProps {
     categories: Category[];
     loading: boolean;
+    settings?: SiteSettings | null;
+    settingsLoading: boolean;
     onMenuClick: () => void;
 }
 
-export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarProps) {
+export function MainSidebar({ categories, loading, settings, settingsLoading, onMenuClick }: MainSidebarProps) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const currentCategorySlug = searchParams.get('category');
@@ -28,17 +30,22 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
-             <div className="flex items-center justify-center">
-                <Logo onMenuClick={onMenuClick} hideTextOnMobile={true} />
+             <div className="flex items-center justify-center h-8">
+                <Logo 
+                    onMenuClick={onMenuClick} 
+                    hideTextOnMobile={true} 
+                    imageUrl={settings?.logoUrl} 
+                    loading={settingsLoading} 
+                />
             </div>
 
             <nav className="flex flex-col items-center gap-2 mt-4 w-full">
                  {loading && (
                     <div className='px-2 w-full space-y-2'>
-                        <Skeleton className="h-10 w-full rounded-lg" />
-                        <Skeleton className="h-10 w-full rounded-lg" />
-                        <Skeleton className="h-10 w-full rounded-lg" />
-                        <Skeleton className="h-10 w-full rounded-lg" />
+                        <Skeleton className="h-12 w-full rounded-lg" />
+                        <Skeleton className="h-12 w-full rounded-lg" />
+                        <Skeleton className="h-12 w-full rounded-lg" />
+                        <Skeleton className="h-12 w-full rounded-lg" />
                     </div>
                  )}
                  {!loading && (

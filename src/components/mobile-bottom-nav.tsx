@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
-import { Home, LayoutGrid, Search, ShoppingBag } from 'lucide-react';
+import { Home, LayoutGrid, Search, ShoppingBag, User } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { CartDrawer } from './cart-drawer';
@@ -80,9 +80,12 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
                 <CartDrawer />
             </SheetContent>
         </Sheet>
-         <div className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group h-full">
-            <ThemeToggle />
-         </div>
+        <NavItem 
+            href="/login" 
+            label="Compte" 
+            icon={User} 
+            isActive={pathname === '/login'}
+        />
       </div>
     </div>
   );

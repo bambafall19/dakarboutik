@@ -52,6 +52,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                        </a>
                     </Button>
                   )}
+                   <ThemeToggle />
                 </div>
             </div>
             

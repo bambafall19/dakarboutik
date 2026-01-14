@@ -11,18 +11,22 @@ import type { Product } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
-import { useSearchParams } from 'next/navigation';
 
-function ProductsPageContent() {
-  const searchParams = useSearchParams();
+// This is now a Client Component that receives searchParams as props
+function ProductsPageContent({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const { products, loading: productsLoading } = useProducts();
   const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
-  const categoryFilter = searchParams.get('category');
-  const brandFilter = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-  const priceRangeFilter = searchParams.get('priceRange');
-  const searchQuery = searchParams.get('q');
-  const sortBy = searchParams.get('sortBy') || 'newest';
+  // Safely extract search parameters
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
+  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const selectedPriceRange: [number, number] = useMemo(() => {
     let range: [number, number] = [0, 1000000];
@@ -115,18 +119,23 @@ function ProductsPageContent() {
           allCategories={categories}
           totalProducts={totalProducts}
           suggestedProducts={bestsellers}
+          searchParams={searchParams}
         />
       </main>
     </div>
   );
 }
 
-
-export default function ProductsPage() {
+// This is the Server Component that reads searchParams and passes them to the client component.
+export default function ProductsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div className="py-2">
       <Suspense fallback={<ProductListingSkeleton />}>
-        <ProductsPageContent />
+        <ProductsPageContent searchParams={searchParams} />
       </Suspense>
     </div>
   );

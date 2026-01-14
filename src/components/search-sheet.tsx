@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Icons } from './icons';
@@ -12,8 +12,6 @@ import { ProductCard } from './product-card';
 import { ScrollArea } from './ui/scroll-area';
 import { useCategories, useProducts } from '@/hooks/use-site-data';
 import Link from 'next/link';
-import { Separator } from './ui/separator';
-import { Product } from '@/lib/types';
 import { useDebounce } from '@/hooks/use-debounce';
 
 interface SearchSheetProps {
@@ -23,8 +21,7 @@ interface SearchSheetProps {
 
 function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const [query, setQuery] = useState(searchParams.get('q') || '');
+    const [query, setQuery] = useState('');
     const debouncedQuery = useDebounce(query, 300);
 
     const { recentProducts } = useRecentProducts();
@@ -129,6 +126,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
 }
 
 export function SearchSheet(props: SearchSheetProps) {
+    // Wrap with Suspense because useSearchParams is used in parent components
     return (
         <Suspense fallback={null}>
             <SearchSheetContent {...props} />

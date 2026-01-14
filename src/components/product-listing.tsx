@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/co
 import { Icons } from './icons';
 import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 import { ProductFilters } from './product-filters';
@@ -20,17 +20,17 @@ interface ProductListingProps {
     allCategories: Category[];
     suggestedProducts?: Product[];
     totalProducts: number;
+    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductListing({ products, allCategories, suggestedProducts, totalProducts }: ProductListingProps) {
+export function ProductListing({ products, allCategories, suggestedProducts, totalProducts, searchParams }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const selectedCategorySlug = searchParams.get('category');
-  const searchQuery = searchParams.get('q');
-  const sortBy = searchParams.get('sortBy') || 'newest';
+  const selectedCategorySlug = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const selectedCategory = useMemo(() => {
     if (selectedCategorySlug) {
@@ -64,7 +64,15 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
 
   const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams();
+    for (const [k, v] of Object.entries(searchParams)) {
+        if (typeof v === 'string') {
+            current.set(k, v);
+        } else if (Array.isArray(v)) {
+            v.forEach(val => current.append(k, val));
+        }
+    }
+
     if (value === null || value === '') {
       current.delete(key);
     } else {
@@ -83,12 +91,11 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     const paramsToKeep = ['category', 'q', 'sortBy'];
     const newParams = new URLSearchParams();
     
-    paramsToKeep.forEach(param => {
-        const value = searchParams.get(param);
-        if (value) {
-            newParams.set(param, value);
+    for (const [key, value] of Object.entries(searchParams)) {
+        if (paramsToKeep.includes(key) && typeof value === 'string') {
+            newParams.set(key, value);
         }
-    });
+    }
 
     const query = newParams.toString() ? `?${newParams.toString()}` : '';
     router.push(`${pathname}${query}`, { scroll: false });
@@ -96,7 +103,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
   const filterNode = (
     <div className="space-y-8">
-        <CategorySidebar categories={allCategories} totalProducts={totalProducts}/>
+        <CategorySidebar categories={allCategories} totalProducts={totalProducts} />
         <ProductFilters />
     </div>
   );

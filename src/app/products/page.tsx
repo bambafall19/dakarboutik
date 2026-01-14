@@ -70,6 +70,8 @@ export default async function ProductsPage({
   
   const categories = getCategoriesWithCounts(rawCategories, allProducts);
 
+  const availableBrands = [...new Set(allProducts.map(p => p.brand).filter(Boolean) as string[])].sort();
+
   const selectedPriceRange: [number, number] = (() => {
     let range: [number, number] = [0, 1000000];
     if (priceRangeFilter) {
@@ -142,29 +144,43 @@ export default async function ProductsPage({
   const filterNode = (
     <div className="space-y-8">
       <CategorySidebar categories={categories} totalProducts={totalProducts} searchParams={currentSearchParams} />
-      <ProductFilters searchParams={currentSearchParams} />
+      <ProductFilters availableBrands={availableBrands} searchParams={currentSearchParams} />
     </div>
   );
 
   return (
     <div className="py-2 container">
-      <Suspense fallback={<ProductListingSkeleton />}>
-        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-8">
-          <aside className="col-span-1">
+       <div className="lg:hidden mb-4">
+        <Accordion type="single" collapsible>
+          <AccordionItem value="filters">
+            <AccordionTrigger>
+              <div className="flex items-center gap-2 font-semibold">
+                <Filter className="h-4 w-4" />
+                Filtres et Catégories
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="p-1">{filterNode}</div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      <div className="grid grid-cols-[1fr] md:grid-cols-4 gap-4 md:gap-8">
+        <aside className="hidden lg:block col-span-1">
             <div className="sticky top-24">
                 {filterNode}
             </div>
-          </aside>
-          
-          <main className="col-span-3">
-            <ProductListing
-              products={filteredProducts}
-              suggestedProducts={bestsellers}
-              searchParams={currentSearchParams}
-            />
-          </main>
-        </div>
-      </Suspense>
+        </aside>
+        
+        <main className="col-span-1 md:col-span-3">
+          <ProductListing
+            products={filteredProducts}
+            suggestedProducts={bestsellers}
+            searchParams={currentSearchParams}
+          />
+        </main>
+      </div>
     </div>
   );
 }

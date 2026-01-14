@@ -147,10 +147,10 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
           <Separator className="my-6" />
 
-          <p className="text-muted-foreground leading-relaxed flex-1">{product.description}</p>
+          <p className="text-muted-foreground leading-relaxed">{product.description}</p>
 
           {product.variants?.map(variant => (
-            <div key={variant.name} className="mt-4">
+            <div key={variant.name} className="mt-6">
               <h3 className="font-semibold text-sm mb-2">{variant.name}</h3>
               <div className="flex flex-wrap gap-2">
                 {variant.options.map(option => (
@@ -189,7 +189,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       </div>
 
       <div className="mt-12">
-        {Object.keys(product.specs).length > 0 && (
+        {product.specs && Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
               <h3 className="font-semibold text-xl mb-4">Caractéristiques Techniques</h3>
               <div className="border rounded-lg overflow-hidden">
@@ -213,6 +213,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
           <ProductGrid 
             title="Produits similaires"
             products={relatedProducts}
+            gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           />
         </div>
       )}

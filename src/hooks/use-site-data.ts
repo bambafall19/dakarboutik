@@ -118,33 +118,52 @@ export function useCategories() {
   }, []);
 
   const categoriesWithCounts = useMemo(() => {
-    if (!rawCategories) return [];
-    
+    if (!rawCategories || !products) return [];
+
     const productCounts: { [categorySlug: string]: number } = {};
-    for (const product of products) {
-        productCounts[product.category] = (productCounts[product.category] || 0) + 1;
-    }
-
-    const categoryMap: { [id: string]: Category & { totalProductCount: number }} = {};
-
-    rawCategories.forEach(cat => {
-        categoryMap[cat.id] = { ...cat, productCount: productCounts[cat.slug] || 0, totalProductCount: 0 };
+    products.forEach(product => {
+      productCounts[product.category] = (productCounts[product.category] || 0) + 1;
     });
 
-    const getChildrenCount = (catId: string): number => {
-        let total = categoryMap[catId].productCount || 0;
-        const children = rawCategories.filter(c => c.parentId === catId);
-        for(const child of children) {
-            total += getChildrenCount(child.id);
+    const categoryMap: { [id: string]: Category & { totalProductCount: number } } = {};
+    const relevantCategories = new Set<string>();
+
+    // First pass: mark all categories that have products
+    rawCategories.forEach(cat => {
+      if (productCounts[cat.slug] > 0) {
+        relevantCategories.add(cat.id);
+        // Also mark all parent categories as relevant
+        let parentId = cat.parentId;
+        while (parentId) {
+          relevantCategories.add(parentId);
+          const parent = rawCategories.find(p => p.id === parentId);
+          parentId = parent?.parentId;
         }
-        return total;
+      }
+    });
+
+    // Second pass: build the map with only relevant categories
+    rawCategories.forEach(cat => {
+      if (relevantCategories.has(cat.id)) {
+        categoryMap[cat.id] = { ...cat, productCount: 0, totalProductCount: 0 };
+      }
+    });
+
+    // Third pass: calculate counts
+    const getChildrenCount = (catId: string): number => {
+      let total = productCounts[categoryMap[catId].slug] || 0;
+      const children = Object.values(categoryMap).filter(c => c.parentId === catId);
+      for(const child of children) {
+        total += getChildrenCount(child.id);
+      }
+      return total;
     }
 
     Object.values(categoryMap).forEach(cat => {
         cat.productCount = getChildrenCount(cat.id);
     });
 
-    return Object.values(categoryMap);
+    return Object.values(categoryMap).filter(c => c.productCount && c.productCount > 0);
 
   }, [rawCategories, products]);
 

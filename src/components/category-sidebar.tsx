@@ -12,9 +12,10 @@ import { ChevronDown } from 'lucide-react';
 
 interface CategorySidebarProps {
   categories: Category[];
+  totalProducts: number;
 }
 
-export function CategorySidebar({ categories }: CategorySidebarProps) {
+export function CategorySidebar({ categories, totalProducts }: CategorySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -33,7 +34,10 @@ export function CategorySidebar({ categories }: CategorySidebarProps) {
       }
       return null;
     }
-    return findPath(categories, selectedCategorySlug) || [];
+    
+    const path = findPath(categories, selectedCategorySlug);
+    // Only open the direct parent, not the full tree
+    return path ? path.slice(0, path.length -1) : [];
 
   }, [categories, selectedCategorySlug]);
 
@@ -60,8 +64,8 @@ export function CategorySidebar({ categories }: CategorySidebarProps) {
       if (hasSubCategories) {
         return (
           <AccordionItem value={category.slug} key={category.id} className="border-b-0">
-            <AccordionTrigger className={cn("hover:no-underline py-2.5", isSelected && "text-primary hover:text-primary")}>
-                <div className="flex items-center justify-between w-full">
+            <AccordionTrigger className={cn("hover:no-underline py-2", isSelected && "text-primary hover:text-primary")}>
+                <div className="flex items-center justify-between w-full pr-1">
                     <span className={cn(isSelected && "font-bold")}>{category.name}</span>
                     <div className='flex items-center gap-2'>
                         <Badge variant={isSelected ? "default" : "secondary"} className={cn("rounded-full h-6 w-auto px-2 min-w-[24px] flex items-center justify-center", isSelected && "bg-primary")}>
@@ -105,7 +109,7 @@ export function CategorySidebar({ categories }: CategorySidebarProps) {
           className={cn('flex items-center justify-between w-full p-2 rounded-md hover:bg-accent', !selectedCategorySlug && 'bg-accent text-primary font-semibold')}>
           <span className={cn(!selectedCategorySlug && "font-bold")}>Tous les produits</span>
           <Badge variant={!selectedCategorySlug ? "default" : "secondary"} className={cn("rounded-full h-6 w-auto px-2 min-w-[24px] flex items-center justify-center", !selectedCategorySlug && "bg-primary")}>
-              {categories.reduce((acc, cat) => acc + (cat.productCount || 0), 0)}
+              {totalProducts}
           </Badge>
         </Link>
         <Accordion type="multiple" defaultValue={defaultOpen} className="w-full space-y-1">

@@ -20,11 +20,11 @@ import { ProductGrid } from './product-grid';
 interface ProductListingProps {
     products: Product[];
     allCategories: Category[];
-    brands: string[];
     suggestedProducts?: Product[];
+    totalProducts: number;
 }
 
-export function ProductListing({ products, allCategories, brands, suggestedProducts }: ProductListingProps) {
+export function ProductListing({ products, allCategories, suggestedProducts, totalProducts }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -98,8 +98,8 @@ export function ProductListing({ products, allCategories, brands, suggestedProdu
 
   const filterNode = (
     <div className="space-y-8">
-        <CategorySidebar categories={allCategories} />
-        <ProductFilters brands={brands} />
+        <CategorySidebar categories={allCategories} totalProducts={totalProducts}/>
+        <ProductFilters />
     </div>
   );
 

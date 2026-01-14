@@ -93,6 +93,7 @@ function ProductsPageContent() {
   }
   
   const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
+  const totalProducts = products.length;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -100,8 +101,8 @@ function ProductsPageContent() {
         <div className="sticky top-24">
           <Card>
             <CardContent className="pt-6 space-y-8">
-              <CategorySidebar categories={categories} />
-              <ProductFilters brands={brands} />
+              <CategorySidebar categories={categories} totalProducts={totalProducts} />
+              <ProductFilters />
             </CardContent>
           </Card>
         </div>
@@ -110,7 +111,7 @@ function ProductsPageContent() {
         <ProductListing
           products={filteredProducts}
           allCategories={categories}
-          brands={brands}
+          totalProducts={totalProducts}
           suggestedProducts={bestsellers}
         />
       </main>

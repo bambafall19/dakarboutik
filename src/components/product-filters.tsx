@@ -12,48 +12,42 @@ import React, { useState, useEffect } from 'react';
 import { Price } from './price';
 
 interface ProductFiltersProps {
-  brands: string[];
 }
 
-export function ProductFilters({ brands }: ProductFiltersProps) {
+export function ProductFilters({ }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-  const initialBrands = searchParams.get('brands')?.split(',') || [];
   const initialPriceRange = searchParams.get('priceRange')?.split('-').map(Number) || [0, 1000000];
 
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(initialBrands);
   const [priceRange, setPriceRange] = useState<[number, number]>(initialPriceRange as [number, number]);
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState<[number, number]>(priceRange);
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedPriceRange(priceRange);
+    }, 500); // 500ms debounce delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [priceRange]);
 
   useEffect(() => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-
-    if (selectedBrands.length > 0) {
-      current.set('brands', selectedBrands.join(','));
-    } else {
-      current.delete('brands');
-    }
     
-    if (priceRange[0] > 0 || priceRange[1] < 1000000) {
-        current.set('priceRange', `${priceRange[0]}-${priceRange[1]}`);
+    if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
+        current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);
     } else {
         current.delete('priceRange');
     }
 
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    // Debounce or use a button to apply filters to avoid too many redirects
-    // For now, applying on change
     router.push(`${pathname}${query}`, { scroll: false });
-  }, [selectedBrands, priceRange, pathname, router, searchParams]);
+  }, [debouncedPriceRange, pathname, router, searchParams]);
 
-  const handleBrandChange = (brand: string, checked: boolean | 'indeterminate') => {
-    setSelectedBrands(prev => 
-      checked ? [...prev, brand] : prev.filter(b => b !== brand)
-    );
-  };
   
   const handleSortChange = (value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -87,19 +81,6 @@ export function ProductFilters({ brands }: ProductFiltersProps) {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
-        <div className='flex items-center gap-2'>
-            <span className="text-sm text-muted-foreground hidden md:inline">Trier par:</span>
-             <Select value={sortBy} onValueChange={handleSortChange}>
-                <SelectTrigger className="w-full h-9 text-sm bg-card rounded-md focus:ring-0">
-                    <SelectValue placeholder="Trier par" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="newest">Nouveautés</SelectItem>
-                    <SelectItem value="price_asc">Prix: Croissant</SelectItem>
-                    <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
     </div>
   );
 }

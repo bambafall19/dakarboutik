@@ -65,11 +65,12 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
   const updateSearchParams = (key: string, value: string | null) => {
     const current = new URLSearchParams(
-      Array.from(Object.entries(searchParams))
-        .flatMap(([key, value]) => 
-          Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]]
-        )
+      Object.entries(searchParams).flatMap(([key, value]) => {
+        if (value === undefined || value === null) return [];
+        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
+      })
     );
+    
 
     if (value === null || value === '') {
       current.delete(key);

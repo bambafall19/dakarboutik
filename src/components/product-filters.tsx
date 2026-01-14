@@ -34,10 +34,10 @@ export function ProductFilters({ searchParams }: ProductFiltersProps) {
 
   useEffect(() => {
     const current = new URLSearchParams(
-      Array.from(Object.entries(searchParams))
-        .flatMap(([key, value]) => 
-          Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]]
-        )
+      Object.entries(searchParams).flatMap(([key, value]) => {
+        if (value === undefined || value === null) return [];
+        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
+      })
     );
     
     if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {

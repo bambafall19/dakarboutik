@@ -11,22 +11,33 @@ import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
 
+type ProductsPageContentProps = {
+  categoryFilter: string | null;
+  brandFilter: string[];
+  priceRangeFilter: string | null;
+  searchQuery: string | null;
+  sortBy: string;
+};
+
 // This is the main component that fetches data and handles filtering logic.
 // It remains a client component because it uses hooks like `useProducts` and `useMemo`.
 function ProductsPageContent({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+  categoryFilter,
+  brandFilter,
+  priceRangeFilter,
+  searchQuery,
+  sortBy,
+}: ProductsPageContentProps) {
   const { products, loading: productsLoading } = useProducts();
   const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
-  // Extract search parameters
-  const categoryFilter = searchParams.category as string | null;
-  const brandFilter = searchParams.brands ? (searchParams.brands as string).split(',').filter(Boolean) : [];
-  const priceRangeFilter = searchParams.priceRange as string | null;
-  const searchQuery = searchParams.q as string | null;
-  const sortBy = (searchParams.sortBy as string) || 'newest';
+  const searchParams = {
+    category: categoryFilter,
+    brands: brandFilter.join(','),
+    priceRange: priceRangeFilter,
+    q: searchQuery,
+    sortBy: sortBy,
+  };
 
   const selectedPriceRange: [number, number] = useMemo(() => {
     let range: [number, number] = [0, 1000000];
@@ -87,13 +98,6 @@ function ProductsPageContent({
     return filtered;
   }, [products, categoryFilter, brandFilter, selectedPriceRange, sortBy, rawCategories, searchQuery]);
   
-  const brands = useMemo(() => {
-    if (!products) return [];
-    const allBrands = products.map((p) => p.brand).filter(Boolean) as string[];
-    return [...new Set(allBrands)];
-  }, [products]);
-
-
   if (productsLoading || categoriesLoading) {
     return <ProductListingSkeleton />;
   }
@@ -132,10 +136,23 @@ export default function ProductsPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  // Safely extract search parameters on the server
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
+  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
+
   return (
     <div className="py-2">
       <Suspense fallback={<ProductListingSkeleton />}>
-        <ProductsPageContent searchParams={searchParams} />
+        <ProductsPageContent 
+          categoryFilter={categoryFilter}
+          brandFilter={brandFilter}
+          priceRangeFilter={priceRangeFilter}
+          searchQuery={searchQuery}
+          sortBy={sortBy}
+        />
       </Suspense>
     </div>
   );

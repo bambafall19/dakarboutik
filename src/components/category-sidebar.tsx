@@ -43,10 +43,10 @@ export function CategorySidebar({ categories, totalProducts, searchParams }: Cat
 
   const createCategoryUrl = (slug: string) => {
     const current = new URLSearchParams(
-      Array.from(Object.entries(searchParams))
-        .flatMap(([key, value]) => 
-          Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]]
-        )
+      Object.entries(searchParams).flatMap(([key, value]) => {
+        if (value === undefined || value === null) return [];
+        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
+      })
     );
     current.set('category', slug);
     return `${pathname}?${current.toString()}`;

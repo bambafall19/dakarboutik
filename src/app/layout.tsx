@@ -20,6 +20,18 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full">
       <head>
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-NM6F58VK9J"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-NM6F58VK9J');
+          `}
+        </Script>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -46,18 +58,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           inter.className
         )}
       >
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-NM6F58VK9J"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-NM6F58VK9J');
-          `}
-        </Script>
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGD258WC"
         height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
         <FirebaseClientProvider>

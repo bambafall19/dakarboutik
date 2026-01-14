@@ -1,18 +1,18 @@
 
 'use client';
 
-import { Suspense, use } from 'react';
+import { Suspense, useMemo } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { getAllChildCategorySlugs } from '@/lib/data-helpers';
-import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
 import { Card, CardContent } from '@/components/ui/card';
 
-// This is now a Client Component that receives searchParams as props
+// This is the main component that fetches data and handles filtering logic.
+// It remains a client component because it uses hooks like `useProducts` and `useMemo`.
 function ProductsPageContent({
   searchParams,
 }: {
@@ -21,12 +21,12 @@ function ProductsPageContent({
   const { products, loading: productsLoading } = useProducts();
   const { categories, rawCategories, loading: categoriesLoading } = useCategories();
 
-  // Safely extract search parameters
-  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
-  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
-  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
-  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
-  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
+  // Extract search parameters
+  const categoryFilter = searchParams.category as string | null;
+  const brandFilter = searchParams.brands ? (searchParams.brands as string).split(',').filter(Boolean) : [];
+  const priceRangeFilter = searchParams.priceRange as string | null;
+  const searchQuery = searchParams.q as string | null;
+  const sortBy = (searchParams.sortBy as string) || 'newest';
 
   const selectedPriceRange: [number, number] = useMemo(() => {
     let range: [number, number] = [0, 1000000];

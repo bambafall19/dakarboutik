@@ -33,22 +33,25 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             {/* Mobile Header: Menu, Logo, Cart */}
             <div className="flex md:hidden items-center justify-between w-full">
                 <Logo onMenuClick={onMobileMenuClick} loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile />
-                <Sheet>
-                    <SheetTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                        <Icons.shoppingBag className="h-6 w-6" />
-                        <span className="sr-only">Ouvrir le panier</span>
-                        {totalItems > 0 && (
-                        <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                            {totalItems}
-                        </span>
-                        )}
-                    </Button>
-                    </SheetTrigger>
-                    <SheetContent className="flex flex-col">
-                        <CartDrawer />
-                    </SheetContent>
-                </Sheet>
+                <div className="flex items-center">
+                  <ThemeToggle />
+                  <Sheet>
+                      <SheetTrigger asChild>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                          <Icons.shoppingBag className="h-6 w-6" />
+                          <span className="sr-only">Ouvrir le panier</span>
+                          {totalItems > 0 && (
+                          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                              {totalItems}
+                          </span>
+                          )}
+                      </Button>
+                      </SheetTrigger>
+                      <SheetContent className="flex flex-col">
+                          <CartDrawer />
+                      </SheetContent>
+                  </Sheet>
+                </div>
             </div>
             
             {/* Desktop Header: Logo, Nav, Search, Account, Cart */}

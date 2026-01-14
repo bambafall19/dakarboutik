@@ -61,12 +61,14 @@ export default function HomePage() {
                   />
                 )}
                 {electronics.length > 0 && (
-                  <ProductGrid
-                    title="Électroniques & Technologies"
-                    products={electronics}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                    link={{ href: '/products?category=electronique-grand-public', text: 'Voir tout' }}
-                  />
+                  <div className="hidden md:block">
+                    <ProductGrid
+                      title="Électroniques & Technologies"
+                      products={electronics}
+                      gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      link={{ href: '/products?category=electronique-grand-public', text: 'Voir tout' }}
+                    />
+                  </div>
                 )}
               </>
             )}

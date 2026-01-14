@@ -105,25 +105,29 @@ export const Icons = {
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
-  // Electronics
+  // Main categories for DakarBoutik
   'informatique': Laptop,
-  'pc-portables': Laptop,
-  'pc-portable': Laptop,
   'telephonie': Smartphone,
-  'smartphones': Smartphone,
   'accessoires': Cable,
   'audio': Headphones,
+  
+  // Aliases and sub-categories
+  'pc-portables': Laptop,
+  'pc-portable': Laptop,
+  'ordinateurs': Laptop,
+  'smartphones': Smartphone,
+  'telephones': Smartphone,
   'chargeurs': BatteryCharging,
   'power-banks': Power,
-  'composants-electroniques': Component,
-  'electronique-grand-public': Monitor,
   'ecouteurs': Headphones,
   'disques-durs': HardDrive,
   'cle-usb': MemoryStick,
   'imprimantes': Printer,
   'tablettes': Tablet,
+  'composants-electroniques': Component,
+  'electronique-grand-public': Monitor,
 
-  // Generic E-commerce - Keep for potential future use but less relevant now
+  // Generic E-commerce - Kept for potential future use but less relevant now
   'agriculture-aliments-boissons': Carrot,
   'matieres-premieres': Blocks,
   'animalerie': Dog,

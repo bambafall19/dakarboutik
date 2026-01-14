@@ -152,7 +152,7 @@ export function ProductListing({ products, allCategories, brands, suggestedProdu
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {products.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -167,7 +167,7 @@ export function ProductListing({ products, allCategories, brands, suggestedProdu
                 <ProductGrid 
                   title="Nos meilleures ventes pourraient vous plaire"
                   products={suggestedProducts}
-                  gridClass='grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3'
+                  gridClass='grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
                 />
               )}
             </div>

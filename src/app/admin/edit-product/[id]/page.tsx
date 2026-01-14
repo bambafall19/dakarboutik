@@ -14,10 +14,11 @@ import {
 import { useProductsById } from '@/hooks/use-site-data';
 import { Loader2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+function EditProductPageContent({ id }: { id: string }) {
   const { categories } = useCategories();
-  const { product, loading } = useProductsById(params.id);
+  const { product, loading } = useProductsById(id);
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
@@ -44,4 +45,13 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
       <EditProductForm categories={categories} product={product} />
     </div>
   );
+}
+
+
+export default function EditProductPage({ params }: { params: { id: string } }) {
+  return (
+    <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+        <EditProductPageContent id={params.id} />
+    </Suspense>
+  )
 }

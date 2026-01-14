@@ -13,13 +13,13 @@ import { ChevronDown } from 'lucide-react';
 interface CategorySidebarProps {
   categories: Category[];
   totalProducts: number;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | null };
 }
 
 export function CategorySidebar({ categories, totalProducts, searchParams }: CategorySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const selectedCategorySlug = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const selectedCategorySlug = searchParams.category;
   
   const defaultOpen = useMemo(() => {
     if (!selectedCategorySlug) return [];
@@ -42,12 +42,13 @@ export function CategorySidebar({ categories, totalProducts, searchParams }: Cat
   }, [categories, selectedCategorySlug]);
 
   const createCategoryUrl = (slug: string) => {
-    const current = new URLSearchParams(
-      Object.entries(searchParams).flatMap(([key, value]) => {
-        if (value === undefined || value === null) return [];
-        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
-      })
-    );
+    const current = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(searchParams)) {
+        if (value) {
+            current.set(key, value);
+        }
+    }
     current.set('category', slug);
     return `${pathname}?${current.toString()}`;
   }

@@ -14,14 +14,13 @@ import { findImage } from '@/lib/placeholder-images';
 import { ProductFilters } from './product-filters';
 import { CategorySidebar } from './category-sidebar';
 import { ProductGrid } from './product-grid';
-import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
 interface ProductListingProps {
     products: Product[];
     allCategories: Category[];
     suggestedProducts?: Product[];
     totalProducts: number;
-    searchParams: { [key: string]: string | string[] | undefined };
+    searchParams: { [key: string]: string | null };
 }
 
 export function ProductListing({ products, allCategories, suggestedProducts, totalProducts, searchParams }: ProductListingProps) {
@@ -29,9 +28,7 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
   const pathname = usePathname();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const selectedCategorySlug = typeof searchParams.category === 'string' ? searchParams.category : null;
-  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
-  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
+  const { category: selectedCategorySlug, q: searchQuery, sortBy = 'newest' } = searchParams;
 
   const selectedCategory = useMemo(() => {
     if (selectedCategorySlug) {
@@ -65,12 +62,12 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
 
 
   const updateSearchParams = (key: string, value: string | null) => {
-    const current = new URLSearchParams(
-      Object.entries(searchParams).flatMap(([key, value]) => {
-        if (value === undefined || value === null) return [];
-        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
-      })
-    );
+    const current = new URLSearchParams();
+    for (const [k, v] of Object.entries(searchParams)) {
+        if (v) {
+            current.set(k, v);
+        }
+    }
     
 
     if (value === null || value === '') {
@@ -88,11 +85,15 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
   };
   
   const clearFilters = () => {
-    const paramsToKeep = ['category', 'q', 'sortBy'];
+    const paramsToKeep: { [key: string]: string | null } = {
+        category: searchParams.category || null,
+        q: searchParams.q || null,
+        sortBy: searchParams.sortBy || null,
+    };
     const newParams = new URLSearchParams();
     
-    for (const [key, value] of Object.entries(searchParams)) {
-        if (paramsToKeep.includes(key) && typeof value === 'string') {
+    for (const [key, value] of Object.entries(paramsToKeep)) {
+        if (value) {
             newParams.set(key, value);
         }
     }
@@ -181,4 +182,3 @@ export function ProductListing({ products, allCategories, suggestedProducts, tot
     </>
   );
 }
-

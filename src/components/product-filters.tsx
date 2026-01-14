@@ -8,14 +8,14 @@ import React, { useState, useEffect } from 'react';
 import { Price } from './price';
 
 interface ProductFiltersProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | null };
 }
 
 export function ProductFilters({ searchParams }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const initialPriceRange = typeof searchParams.priceRange === 'string' 
+  const initialPriceRange = searchParams.priceRange 
     ? searchParams.priceRange.split('-').map(Number) 
     : [0, 1000000];
 
@@ -33,12 +33,12 @@ export function ProductFilters({ searchParams }: ProductFiltersProps) {
   }, [priceRange]);
 
   useEffect(() => {
-    const current = new URLSearchParams(
-      Object.entries(searchParams).flatMap(([key, value]) => {
-        if (value === undefined || value === null) return [];
-        return Array.isArray(value) ? value.map(v => [key, v]) : [[key, value as string]];
-      })
-    );
+    const current = new URLSearchParams();
+    for (const [key, value] of Object.entries(searchParams)) {
+        if (value) {
+            current.set(key, value);
+        }
+    }
     
     if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
         current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);

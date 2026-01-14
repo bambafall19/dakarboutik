@@ -49,6 +49,7 @@ export type Category = {
   icon?: React.ComponentType<{ className?: string }>;
   parentId?: string | null;
   subCategories?: Category[];
+  productCount?: number;
 };
 
 export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'parentId'>;

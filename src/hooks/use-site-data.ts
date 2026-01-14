@@ -6,8 +6,7 @@ import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
 import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
-import { buildCategoryHierarchy } from '@/lib/data-helpers';
-import { CategoryIcons } from '@/components/icons';
+import { buildCategoryHierarchy, getAllChildCategorySlugs } from '@/lib/data-helpers';
 
 // --- Products ---
 export function useProducts() {
@@ -104,6 +103,7 @@ export function useBanners() {
 export function useCategories() {
   const firestore = useFirestore();
   const [key, setKey] = useState(0);
+  const { products } = useProducts();
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
@@ -117,15 +117,42 @@ export function useCategories() {
     setKey(prev => prev + 1);
   }, []);
 
-  const categories = useMemo(() => {
+  const categoriesWithCounts = useMemo(() => {
     if (!rawCategories) return [];
     
-    const categoriesWithIcons = rawCategories.map(cat => ({
-        ...cat,
-        icon: CategoryIcons[cat.slug] || undefined
-    }));
-    return buildCategoryHierarchy(categoriesWithIcons);
-  }, [rawCategories]);
+    const productCounts: { [categorySlug: string]: number } = {};
+    for (const product of products) {
+        productCounts[product.category] = (productCounts[product.category] || 0) + 1;
+    }
+
+    const categoryMap: { [id: string]: Category & { totalProductCount: number }} = {};
+
+    rawCategories.forEach(cat => {
+        categoryMap[cat.id] = { ...cat, productCount: productCounts[cat.slug] || 0, totalProductCount: 0 };
+    });
+
+    const getChildrenCount = (catId: string): number => {
+        let total = categoryMap[catId].productCount || 0;
+        const children = rawCategories.filter(c => c.parentId === catId);
+        for(const child of children) {
+            total += getChildrenCount(child.id);
+        }
+        return total;
+    }
+
+    Object.values(categoryMap).forEach(cat => {
+        cat.productCount = getChildrenCount(cat.id);
+    });
+
+    return Object.values(categoryMap);
+
+  }, [rawCategories, products]);
+
+
+  const categories = useMemo(() => {
+    if (!categoriesWithCounts) return [];
+    return buildCategoryHierarchy(categoriesWithCounts);
+  }, [categoriesWithCounts]);
   
   const simpleCategories = useMemo((): SimpleCategory[] => {
     if (!rawCategories) return [];

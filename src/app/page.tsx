@@ -5,7 +5,6 @@ import { FeaturedCategories } from '@/components/featured-categories';
 import { ProductGrid } from '@/components/product-grid';
 import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
-import { HeroSection } from '@/components/hero-section';
 import { Engagements } from '@/components/engagements';
 import { useMemo } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -37,7 +36,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8 md:gap-12">
-      <HeroSection />
       
       <main className="container space-y-8 md:space-y-16">
         <FeaturedCategories />

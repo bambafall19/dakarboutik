@@ -11,10 +11,12 @@ import { FeaturedCategories } from '@/components/featured-categories';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
 import { Icons } from '@/components/icons';
+import { useRecentProducts } from '@/hooks/use-recent-products';
 
 export default function HomePage() {
   const { products, loading: productsLoading } = useProducts();
   const { banners, loading: bannersLoading } = useBanners();
+  const { recentProducts, isLoaded: recentProductsLoaded } = useRecentProducts();
 
   const newProducts = useMemo(() => {
     return products
@@ -27,7 +29,7 @@ export default function HomePage() {
     return products.filter(p => p.isBestseller).slice(0, 8);
   }, [products]);
   
-  const loading = productsLoading || bannersLoading;
+  const loading = productsLoading || bannersLoading || !recentProductsLoaded;
 
   if (loading) {
     return (
@@ -73,6 +75,17 @@ export default function HomePage() {
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
             />
            </div>
+        )}
+
+        {recentProducts.length > 0 && (
+          <div className="container">
+            <ProductGrid 
+              title="Suggestions pour vous"
+              products={recentProducts}
+              gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+              icon={<Icons.sparkles className="text-primary" />}
+            />
+          </div>
         )}
         
         <Engagements />

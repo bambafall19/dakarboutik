@@ -32,6 +32,7 @@ import {
   Printer,
   Home,
   LayoutGrid,
+  Sparkles,
 } from 'lucide-react';
 
 // Custom WhatsApp icon
@@ -109,6 +110,7 @@ export const Icons = {
   whatsapp: WhatsApp,
   home: Home,
   layoutGrid: LayoutGrid,
+  sparkles: Sparkles,
 };
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {

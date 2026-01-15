@@ -1,4 +1,5 @@
 
+
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug } from '@/lib/data-helpers';
@@ -133,8 +134,12 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  // Convert searchParams object to a query string on the server
-  const currentQueryString = new URLSearchParams(searchParams as Record<string, string>).toString();
+  // Convert searchParams object to a query string on the server, filtering out undefined values.
+  const currentQueryString = new URLSearchParams(
+    Object.entries(searchParams).flatMap(([key, value]) =>
+      value === undefined ? [] : [[key, Array.isArray(value) ? value.join(',') : value]]
+    )
+  ).toString();
   
   const filterNode = (
     <div className="space-y-8">

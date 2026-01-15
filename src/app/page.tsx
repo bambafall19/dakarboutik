@@ -70,7 +70,7 @@ export default function HomePage() {
                     >
                       <CarouselContent className="-ml-2">
                         {newArrivals.map((product, index) => (
-                          <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                          <CarouselItem key={index} className="pl-2 basis-[45%] md:basis-1/4 lg:basis-1/5">
                             <div className="p-1 h-full">
                               <ProductCard product={product} />
                             </div>

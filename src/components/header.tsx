@@ -111,7 +111,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                               </span>
                             )}
                           </div>
-                          <span className='font-bold'><Price price={totalPrice} currency="XOF" /></span>
+                          <span className='font-bold'><Price price={totalPrice} currency="XOF" className="text-lg text-nav-foreground" /></span>
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="flex flex-col">

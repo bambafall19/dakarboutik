@@ -22,7 +22,7 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
     <div className={cn("flex flex-wrap items-baseline gap-x-2", className)}>
       {hasSale ? (
         <>
-          <span className="font-bold text-lg text-destructive">
+          <span className="font-bold">
             {formatPrice(salePrice)} {currency}
           </span>
           <span className="text-sm text-gray-400 line-through">
@@ -30,7 +30,7 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
           </span>
         </>
       ) : (
-        <span className="font-bold text-lg text-destructive">
+        <span className="font-bold">
           {formatPrice(price)} {currency}
         </span>
       )}

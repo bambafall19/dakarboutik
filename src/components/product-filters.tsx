@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Slider } from './ui/slider';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Price } from './price';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
@@ -25,68 +25,49 @@ export function ProductFilters({
   searchParams,
 }: ProductFiltersProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [priceRange, setPriceRange] = useState<[number, number]>(currentPriceRange);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(currentBrands);
-  const [debouncedPriceRange, setDebouncedPriceRange] = useState<[number, number]>(priceRange);
 
-  // Update internal state if props change
-  useEffect(() => {
-    setPriceRange(currentPriceRange);
-    setSelectedBrands(currentBrands);
-  }, [currentPriceRange, currentBrands]);
+  const handlePriceChange = (value: [number, number]) => {
+    setPriceRange(value);
+  };
+  
+  const handlePriceCommit = (value: [number, number]) => {
+      const params = new URLSearchParams();
+      Object.entries(searchParams).forEach(([key, val]) => {
+        if (val) params.set(key, Array.isArray(val) ? val.join(',') : val);
+      });
 
-  // Debounce price range slider to avoid too many re-renders
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedPriceRange(priceRange);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [priceRange]);
+      if (value[0] > 0 || value[1] < 1000000) {
+        params.set('priceRange', `${value[0]}-${value[1]}`);
+      } else {
+        params.delete('priceRange');
+      }
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
   
   const handleBrandChange = (brand: string) => {
-    const newSelectedBrands = selectedBrands.includes(brand)
-      ? selectedBrands.filter(b => b !== brand)
-      : [...selectedBrands, brand];
-    setSelectedBrands(newSelectedBrands);
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, val]) => {
+      if (val) params.set(key, Array.isArray(val) ? val.join(',') : val);
+    });
+    
+    const newBrands = currentBrands.includes(brand)
+      ? currentBrands.filter(b => b !== brand)
+      : [...currentBrands, brand];
+
+    if (newBrands.length > 0) {
+      params.set('brands', newBrands.join(','));
+    } else {
+      params.delete('brands');
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
-
-  // Effect to push changes to URL
+  
   useEffect(() => {
-    const current = new URLSearchParams();
-    for (const key in searchParams) {
-        if (!['brands', 'priceRange'].includes(key) && searchParams[key]) {
-            current.set(key, searchParams[key] as string);
-        }
-    }
-
-    if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
-      current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);
-    }
-
-    if (selectedBrands.length > 0) {
-      current.set('brands', selectedBrands.join(','));
-    }
-
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-
-    // Only push router if the query params have actually changed
-    // This deep comparison is necessary because searchParams object identity changes
-    const oldQuery = new URLSearchParams();
-    for (const key in searchParams) {
-        if(searchParams[key]) {
-            oldQuery.set(key, searchParams[key] as string);
-        }
-    }
-
-    if (current.toString() !== oldQuery.toString()) {
-      router.push(`${basePath}${query}`, { scroll: false });
-    }
-  }, [debouncedPriceRange, selectedBrands, basePath, router, searchParams]);
+    setPriceRange(currentPriceRange);
+  }, [currentPriceRange]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -100,7 +81,8 @@ export function ProductFilters({
                             max={1000000}
                             step={10000}
                             value={priceRange}
-                            onValueChange={(value) => setPriceRange(value as [number, number])}
+                            onValueChange={handlePriceChange}
+                            onValueCommit={handlePriceCommit}
                         />
                         <div className="flex justify-between mt-2 text-sm text-muted-foreground">
                             <Price price={priceRange[0]} currency="XOF" />
@@ -118,7 +100,7 @@ export function ProductFilters({
                                 <div key={brand} className="flex items-center space-x-2">
                                     <Checkbox 
                                         id={`brand-${brand}`} 
-                                        checked={selectedBrands.includes(brand)}
+                                        checked={currentBrands.includes(brand)}
                                         onCheckedChange={() => handleBrandChange(brand)}
                                     />
                                     <Label htmlFor={`brand-${brand}`} className="font-normal text-xs md:text-sm">

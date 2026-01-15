@@ -2,12 +2,12 @@
 'use client';
 
 import type { Category } from '@/lib/types';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Badge } from './ui/badge';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
 interface CategorySidebarProps {
   categories: Category[];
@@ -19,38 +19,33 @@ interface CategorySidebarProps {
 
 export function CategorySidebar({ categories, totalProducts, currentCategorySlug, basePath, searchParams }: CategorySidebarProps) {
   
-  const defaultOpen = useMemo(() => {
-    if (!currentCategorySlug) return [];
-    
-    const findPath = (cats: Category[], slug: string, path: string[] = []): string[] | null => {
-      for (const cat of cats) {
-        if (cat.slug === slug) return [...path, cat.slug];
-        if (cat.subCategories) {
-          const result = findPath(cat.subCategories, slug, [...path, cat.slug]);
-          if (result) return result;
-        }
-      }
-      return null;
-    }
-    
-    const path = findPath(categories, currentCategorySlug);
-    // Only open the direct parent, not the full tree
-    return path ? path.slice(0, path.length -1) : [];
-
-  }, [categories, currentCategorySlug]);
-
   const createCategoryUrl = (slug: string | null) => {
-    const current = new URLSearchParams();
-    for (const key in searchParams) {
-        if (key !== 'category' && searchParams[key]) {
-            current.set(key, searchParams[key] as string);
-        }
-    }
+    const params = new URLSearchParams();
+    // Copy all search params except 'category'
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (key !== 'category' && value) {
+        params.set(key, Array.isArray(value) ? value.join(',') : value);
+      }
+    });
+
     if (slug) {
-        current.set('category', slug);
+      params.set('category', slug);
     }
-    return `${basePath}?${current.toString()}`;
+    
+    const queryString = params.toString();
+    return `${basePath}${queryString ? `?${queryString}` : ''}`;
+  };
+
+  const getOpenState = (cat: Category): boolean => {
+    if (!currentCategorySlug) return false;
+    if (cat.slug === currentCategorySlug) return true;
+    if (cat.subCategories) {
+      return cat.subCategories.some(sub => getOpenState(sub));
+    }
+    return false;
   }
+
+  const defaultOpenSlugs = categories.filter(getOpenState).map(c => c.slug);
 
   const renderCategoryTree = (categories: Category[], level = 0) => {
     return categories.map(category => {
@@ -70,15 +65,9 @@ export function CategorySidebar({ categories, totalProducts, currentCategorySlug
         return (
           <AccordionItem value={category.slug} key={category.id} className="border-b-0">
             <AccordionTrigger className={cn("hover:no-underline py-1.5", isSelected && "text-primary hover:text-primary")}>
-                <div className="flex items-center justify-between w-full pr-1">
+                <Link href={createCategoryUrl(category.slug)} scroll={false} className="flex items-center justify-between w-full pr-1">
                     <span className={cn(isSelected && "font-bold", "text-xs md:text-sm")}>{category.name}</span>
-                    <div className='flex items-center gap-2'>
-                        <Badge variant={isSelected ? "default" : "secondary"} className={cn("rounded-full h-5 w-auto px-1.5 min-w-[20px] flex items-center justify-center text-xs", isSelected && "bg-primary")}>
-                            {category.productCount || 0}
-                        </Badge>
-                        <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-                    </div>
-                </div>
+                </Link>
             </AccordionTrigger>
             <AccordionContent className="pl-2 md:pl-4">
               <div className="flex flex-col">
@@ -117,7 +106,7 @@ export function CategorySidebar({ categories, totalProducts, currentCategorySlug
               {totalProducts}
           </Badge>
         </Link>
-        <Accordion type="multiple" defaultValue={defaultOpen} className="w-full space-y-1">
+        <Accordion type="multiple" defaultValue={defaultOpenSlugs} className="w-full space-y-1">
             {renderCategoryTree(categories)}
         </Accordion>
     </div>

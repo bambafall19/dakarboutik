@@ -52,23 +52,6 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
                     </Tooltip>
                     
                     <Separator className='my-4 w-8' />
-                    
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                             <Link href="/" className="w-full flex justify-center">
-                                <Button
-                                    variant={pathname === '/' ? "secondary" : "ghost"}
-                                    className={cn("w-10 h-10", pathname === '/' && "text-primary")}
-                                    size="icon"
-                                >
-                                    <Home className="h-5 w-5" />
-                                </Button>
-                            </Link>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p>Accueil</p>
-                        </TooltipContent>
-                    </Tooltip>
 
 
                     {loading ? (

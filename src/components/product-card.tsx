@@ -68,13 +68,13 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative w-full bg-muted/30 rounded-t-lg overflow-hidden aspect-[4/5]">
+        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5]">
             <Image
                 src={product.images[0].imageUrl}
                 alt={product.title}
                 data-ai-hint={product.images[0].imageHint}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-contain group-hover:scale-105 transition-transform duration-300"
             />
         </div>
       </Link>

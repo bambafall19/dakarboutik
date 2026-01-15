@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Boxes,
   Tags,
+  Library,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
@@ -40,6 +41,7 @@ const menuItems = [
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '#', label: 'Clients', icon: Users },
   { href: '#', label: 'Rapports', icon: LineChart },
+  { href: '/admin/media', label: 'Médiathèque', icon: Library },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 

@@ -62,7 +62,7 @@ export default function HomePage() {
           </div>
         )}
         
-        <PromoBanners banners={banners} />
+        <PromoBanners banners={banners} loading={bannersLoading} />
 
         {bestsellers.length > 0 && (
            <div className="container">

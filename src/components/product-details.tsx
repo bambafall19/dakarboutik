@@ -149,7 +149,8 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
             <Separator className="my-6" />
 
-            <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+            <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
+
 
             {product.variants?.map(variant => (
                 <div key={variant.name} className="mt-6">
@@ -197,7 +198,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       <div className="mt-12">
         {product.specs && Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
-              <h3 className="font-semibold text-xl mb-4">Caractéristiques Techniques</h3>
+              <h3 className="font-semibold text-xl mb-4">Fiche Technique</h3>
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableBody>

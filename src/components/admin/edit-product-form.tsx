@@ -28,7 +28,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Category, Product, ProductFormData } from '@/lib/types';
 import { Card, CardContent } from '../ui/card';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
@@ -54,6 +54,7 @@ const formSchema = z.object({
   imageUrl2: z.string().url("Veuillez entrer une URL d'image valide.").optional().or(z.literal('')),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
+  specs: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
 });
 
 interface EditProductFormProps {
@@ -65,6 +66,10 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const firestore = useFirestore();
+  
+  const [specFields, setSpecFields] = useState<{ key: string; value: string }[]>(
+    product.specs ? Object.entries(product.specs).map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]
+  );
 
   const allCategoriesFlat = categories.flatMap(c => [c, ...(c.subCategories || [])]);
 
@@ -102,6 +107,21 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     }
 
   }, [product.category, allCategoriesFlat, categories, form]);
+
+  const addSpecField = () => {
+    setSpecFields([...specFields, { key: '', value: '' }]);
+  };
+
+  const handleSpecChange = (index: number, field: 'key' | 'value', value: string) => {
+    const newSpecs = [...specFields];
+    newSpecs[index][field] = value;
+    setSpecFields(newSpecs);
+  };
+
+  const removeSpecField = (index: number) => {
+    const newSpecs = specFields.filter((_, i) => i !== index);
+    setSpecFields(newSpecs);
+  };
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -142,6 +162,14 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
           imageHint: 'product detail',
         });
       }
+      
+      const specsObject = specFields.reduce((obj, item) => {
+        if (item.key && item.value) {
+          obj[item.key] = item.value;
+        }
+        return obj;
+      }, {} as Record<string, string>);
+
 
       const updatedProductData: Partial<ProductFormData> = {
         title: values.title,
@@ -153,6 +181,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
         isNew: values.isNew,
         isBestseller: values.isBestseller,
         images: images,
+        specs: specsObject,
       };
 
       const productRef = doc(firestore, 'products', product.id);
@@ -163,7 +192,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
         description: `Le produit "${values.title}" a été mis à jour avec succès.`,
       });
       
-      router.push('/admin');
+      router.push('/admin/products');
       router.refresh();
 
     } catch (error) {
@@ -334,6 +363,34 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                     )}
                   />
                 )}
+              </div>
+            </div>
+
+            <div>
+              <FormLabel>Fiche Technique</FormLabel>
+              <FormDescription className="mb-4">Ajoutez les caractéristiques techniques du produit.</FormDescription>
+              <div className="space-y-4">
+                {specFields.map((spec, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      placeholder="Caractéristique (ex: Écran)"
+                      value={spec.key}
+                      onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
+                      className="w-1/3"
+                    />
+                    <Input
+                      placeholder="Valeur (ex: 6.7 pouces OLED)"
+                      value={spec.value}
+                      onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                    />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeSpecField(index)}>
+                      <span className="text-red-500">X</span>
+                    </Button>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" size="sm" onClick={addSpecField}>
+                  Ajouter une caractéristique
+                </Button>
               </div>
             </div>
 

@@ -29,7 +29,6 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
       ) : (
         <span className={cn(
           "text-2xl font-bold tracking-wider text-foreground",
-          hideTextOnMobile && "hidden md:inline"
         )}>
           DakarBoutik
         </span>

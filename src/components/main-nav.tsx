@@ -27,9 +27,9 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList>
         <NavigationMenuItem>
            <Link href="/products" legacyBehavior passHref>
-             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
                 BOUTIQUE
-             </NavigationMenuLink>
+            </NavigationMenuLink>
            </Link>
         </NavigationMenuItem>
         

@@ -25,7 +25,7 @@ export function AnnouncementBar({ settings }: AnnouncementBarProps) {
   }
 
   return (
-    <div className="bg-secondary text-secondary-foreground text-sm">
+    <div className="bg-white text-black text-sm border-b">
       <Carousel
         className="w-full"
         plugins={[

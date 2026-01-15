@@ -20,6 +20,9 @@ export default function BannersPage() {
   const bottomSubBanner = banners.find(b => b.id === 'banner-accessories');
   const promoBanner1 = banners.find(b => b.id === 'promo-banner-1');
   const promoBanner2 = banners.find(b => b.id === 'promo-banner-2');
+  const announcement1 = banners.find(b => b.id === 'announcement-1');
+  const announcement2 = banners.find(b => b.id === 'announcement-2');
+  const announcement3 = banners.find(b => b.id === 'announcement-3');
 
 
   return (
@@ -46,6 +49,9 @@ export default function BannersPage() {
           </div>
         ) : (
           <>
+            {announcement1 && <BannerForm banner={announcement1} title="Barre d'annonce - Image 1" description="Première image de la barre d'annonces défilante." />}
+            {announcement2 && <BannerForm banner={announcement2} title="Barre d'annonce - Image 2" description="Deuxième image de la barre d'annonces défilante." />}
+            {announcement3 && <BannerForm banner={announcement3} title="Barre d'annonce - Image 3" description="Troisième image de la barre d'annonces défilante." />}
             {mainBanner && <BannerForm banner={mainBanner} title="Bannière Principale (Hero)" description="Modifiez le contenu de la grande bannière sur la page d'accueil." />}
             {topSubBanner && <BannerForm banner={topSubBanner} title="Sous-bannière Supérieure (Hero)" description="Bannière secondaire dans la section hero." />}
             {bottomSubBanner && <BannerForm banner={bottomSubBanner} title="Sous-bannière Inférieure (Hero)" description="Bannière secondaire dans la section hero." />}

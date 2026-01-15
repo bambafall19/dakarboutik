@@ -1,6 +1,24 @@
 {
   "placeholderImages": [
     {
+      "id": "announcement-1",
+      "description": "Announcement bar image 1",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/announcement-1.png",
+      "imageHint": "livraison gratuite"
+    },
+    {
+      "id": "announcement-2",
+      "description": "Announcement bar image 2",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/announcement-2.png",
+      "imageHint": "paiement livraison"
+    },
+    {
+      "id": "announcement-3",
+      "description": "Announcement bar image 3",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/announcement-3.png",
+      "imageHint": "service client"
+    },
+    {
       "id": "banner-headphones",
       "description": "Woman wearing headphones for a promo banner",
       "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/woman-headphones.png",

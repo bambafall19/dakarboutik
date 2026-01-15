@@ -30,7 +30,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
   
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-lg">
-       <AnnouncementBar settings={settings} />
+       <AnnouncementBar />
       {/* Main Header */}
       <div className="border-b">
         <div className="container flex h-20 items-center">

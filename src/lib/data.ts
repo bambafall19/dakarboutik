@@ -40,6 +40,24 @@ const banners: Banner[] = [
     image: findImage('product-phone-1a'),
     linkUrl: '/products?category=telephonie',
   },
+  {
+    id: 'announcement-1',
+    title: 'Annonce 1',
+    image: findImage('announcement-1'),
+    linkUrl: '/products?sortBy=newest',
+  },
+  {
+    id: 'announcement-2',
+    title: 'Annonce 2',
+    image: findImage('announcement-2'),
+    linkUrl: '/products',
+  },
+  {
+    id: 'announcement-3',
+    title: 'Annonce 3',
+    image: findImage('announcement-3'),
+    linkUrl: '/sav',
+  },
 ];
   
 export const getBanners = () => banners;

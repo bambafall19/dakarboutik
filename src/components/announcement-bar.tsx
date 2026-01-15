@@ -6,26 +6,23 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import type { SiteSettings } from "@/lib/types";
+import type { Banner, SiteSettings } from "@/lib/types";
 import Autoplay from "embla-carousel-autoplay";
+import { useBanners } from "@/hooks/use-site-data";
+import Link from "next/link";
+import Image from "next/image";
 
-interface AnnouncementBarProps {
-  settings?: SiteSettings | null;
-}
+export function AnnouncementBar() {
+  const { banners, loading } = useBanners();
+  
+  const announcementBanners = banners.filter(b => b.id.startsWith('announcement-'));
 
-export function AnnouncementBar({ settings }: AnnouncementBarProps) {
-  const messages = [
-    settings?.announcementMessage1,
-    settings?.announcementMessage2,
-    settings?.announcementMessage3,
-  ].filter((msg): msg is string => !!msg);
-
-  if (messages.length === 0) {
+  if (loading || announcementBanners.length === 0) {
     return null;
   }
 
   return (
-    <div className="bg-white text-black text-sm border-b">
+    <div className="bg-background text-foreground text-sm border-b">
       <Carousel
         className="w-full"
         plugins={[
@@ -39,9 +36,16 @@ export function AnnouncementBar({ settings }: AnnouncementBarProps) {
         }}
       >
         <CarouselContent>
-          {messages.map((message, index) => (
-            <CarouselItem key={index}>
-              <div className="py-2 text-center">{message}</div>
+          {announcementBanners.map((banner) => (
+            <CarouselItem key={banner.id}>
+              <Link href={banner.linkUrl} className="block relative h-10 w-full">
+                <Image 
+                  src={banner.image.imageUrl} 
+                  alt={banner.title} 
+                  fill
+                  className="object-contain"
+                />
+              </Link>
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Work Sans', 'Arial', 'Helvetica', 'sans-serif'],
-        headline: ['Work Sans', 'Arial', 'Helvetica', 'sans-serif'],
+        body: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
+        headline: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

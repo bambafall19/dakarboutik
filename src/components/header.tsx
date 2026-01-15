@@ -12,9 +12,11 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { AnnouncementBar } from './announcement-bar';
-import { User, Heart } from 'lucide-react';
+import { User, Heart, Headset, Sun, Moon } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { Input } from './ui/input';
+import { Price } from './price';
+import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -26,7 +28,7 @@ interface HeaderProps {
 }
 
 export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
-  const { totalItems } = useCart();
+  const { totalItems, totalPrice } = useCart();
   const { user } = useUser();
 
   return (
@@ -43,21 +45,47 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             <form className="hidden lg:block flex-1 max-w-xl">
                 <div className="relative">
                     <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Rechercher un produit..." className="pl-10 h-11 rounded-full bg-muted border-transparent focus:border-primary focus:bg-background" onFocus={onSearchClick} />
+                    <Input placeholder="Recherche de produits..." className="pl-10 h-12 rounded-full bg-muted border-transparent focus:border-primary focus:bg-background" onFocus={onSearchClick} />
                 </div>
             </form>
             
-             <div className="flex items-center justify-end gap-1">
-                  <Button variant="ghost" size="icon" className="lg:hidden" onClick={onSearchClick}>
+             <div className="hidden lg:flex items-center justify-end gap-4">
+                  <div className='flex items-center gap-3'>
+                    <Headset className='h-8 w-8 text-primary' />
+                    <div>
+                        <p className='text-sm font-semibold'>Support {settings?.supportPhone}</p>
+                        <p className='text-xs text-muted-foreground'>Email: {settings?.supportEmail}</p>
+                    </div>
+                  </div>
+                  <ThemeToggle />
+                   <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
+                    <Link href="#">
+                      <Heart className="h-5 w-5" />
+                      <span>Favoris</span>
+                    </Link>
+                  </Button>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                       <Button variant="default" className="relative rounded-full h-11 px-5 bg-foreground text-background hover:bg-foreground/90">
+                        <Icons.shoppingBag className="h-5 w-5 mr-2" />
+                        <Price price={totalPrice} currency='XOF' />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="flex flex-col">
+                        <CartDrawer />
+                    </SheetContent>
+                  </Sheet>
+              </div>
+
+              {/* Mobile Icons */}
+               <div className="flex items-center justify-end gap-1 lg:hidden">
+                  <Button variant="ghost" size="icon" onClick={onSearchClick}>
                     <Icons.search className="h-5 w-5" />
                   </Button>
                    <Button variant="ghost" size="icon" asChild>
                     <Link href={user ? "/admin" : "/login"}>
                       <User className="h-5 w-5" />
                     </Link>
-                  </Button>
-                   <Button variant="ghost" size="icon" className="hidden md:inline-flex">
-                    <Heart className="h-5 w-5" />
                   </Button>
                   <Sheet>
                     <SheetTrigger asChild>
@@ -78,15 +106,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
         </div>
       </div>
       
-      {/* Navigation Bar */}
-      <nav className="bg-background border-b hidden md:block">
-        <div className="container flex justify-center">
-          <MainNav items={categories} />
-        </div>
-      </nav>
-      
        {/* Mobile Header */}
-      <div className="md:hidden p-4 bg-background border-b flex items-center justify-between">
+      <div className="lg:hidden p-4 bg-background border-b flex items-center justify-between">
           <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
               <Icons.menu className="h-6 w-6" />
           </Button>
@@ -111,3 +132,4 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
     </header>
   );
 }
+

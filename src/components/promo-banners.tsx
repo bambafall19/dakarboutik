@@ -87,7 +87,7 @@ export function PromoBanners({ banners, loading }: PromoBannersProps) {
   return (
     <div className="container">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {promoBanners.map(banner => <PromoBanner key={banner.id} banner={banner} />)}
+        {promoBanners.map(banner => banner && <PromoBanner key={banner.id} banner={banner} />)}
       </div>
     </div>
   );

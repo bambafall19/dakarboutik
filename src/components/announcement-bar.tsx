@@ -38,7 +38,7 @@ export function AnnouncementBar() {
         <CarouselContent>
           {announcementBanners.map((banner) => (
             <CarouselItem key={banner.id}>
-              <Link href={banner.linkUrl} className="block relative h-10 w-full">
+              <Link href={banner.linkUrl} className="relative flex h-10 w-full items-center justify-center">
                 <Image 
                   src={banner.image.imageUrl} 
                   alt={banner.title} 

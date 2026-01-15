@@ -16,6 +16,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { CategoryIcons } from './icons';
+import { LayoutGrid } from 'lucide-react';
 
 interface MainNavProps {
   items: Category[];
@@ -26,46 +27,39 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" passHref legacyBehavior>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
+          <Link href="/products" legacyBehavior passHref>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
               BOUTIQUE
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        {items.map((item) => (
-          <NavigationMenuItem key={item.id}>
-            {item.subCategories && item.subCategories.length > 0 ? (
-              <>
-                 <NavigationMenuTrigger className="bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10">{item.name.toUpperCase()}</NavigationMenuTrigger>
-                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                    {item.subCategories.map((subItem) => {
-                      const Icon = CategoryIcons[subItem.slug] || React.Fragment;
-                      return (
-                        <ListItem
-                          key={subItem.name}
-                          title={subItem.name}
-                          href={`/products?category=${subItem.slug}`}
-                        >
-                          <Icon />
-                        </ListItem>
-                      );
-                    })}
-                  </ul>
-                 </NavigationMenuContent>
-              </>
-            ) : (
-              <Link href={`/products?category=${item.slug}`} passHref legacyBehavior>
-                <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
-                  {item.name.toUpperCase()}
-                </NavigationMenuLink>
-              </Link>
-            )}
-          </NavigationMenuItem>
-        ))}
+        
+        <NavigationMenuItem>
+            <NavigationMenuTrigger className="bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs">
+                <LayoutGrid className="h-4 w-4 mr-2" />
+                CATÉGORIES
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                {items.map((item) => {
+                    const Icon = CategoryIcons[item.slug] || React.Fragment;
+                    return (
+                    <ListItem
+                        key={item.id}
+                        title={item.name}
+                        href={`/products?category=${item.slug}`}
+                    >
+                        <Icon />
+                    </ListItem>
+                    );
+                })}
+            </ul>
+            </NavigationMenuContent>
+        </NavigationMenuItem>
+
          <NavigationMenuItem>
-          <Link href="/sav" passHref legacyBehavior>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
+          <Link href="/sav" legacyBehavior passHref>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
               GARANTIE & SAV
             </NavigationMenuLink>
           </Link>

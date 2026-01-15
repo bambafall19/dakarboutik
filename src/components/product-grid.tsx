@@ -19,7 +19,12 @@ interface ProductGridProps {
 
 export function ProductGrid({ title, products, link, gridClass, icon }: ProductGridProps) {
   if (products.length === 0) {
-    return null;
+    return (
+       <div className="text-center py-16 col-span-full">
+          <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
+          <p className="mt-2 text-muted-foreground">Essayez de changer vos filtres.</p>
+        </div>
+    );
   }
 
   return (
@@ -40,7 +45,7 @@ export function ProductGrid({ title, products, link, gridClass, icon }: ProductG
           )}
         </div>
       )}
-      <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6", gridClass)}>
+      <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12", gridClass)}>
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

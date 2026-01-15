@@ -15,7 +15,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { Icons } from './icons';
 
 interface MainNavProps {
   items: Category[];
@@ -26,7 +25,14 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Toutes les catégories</NavigationMenuTrigger>
+          <Link href="/products" legacyBehavior passHref>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+              Shop
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger className="bg-transparent">Catégories</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {items.map((item) => (
@@ -42,23 +48,16 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/products?onSale=true" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Promotions
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-         <NavigationMenuItem>
           <Link href="/products?sortBy=newest" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Nouveautés
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+              Pages
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/brands" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Marques
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+              Elements
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

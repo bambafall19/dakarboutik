@@ -36,14 +36,14 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       
       {/* Main Header */}
       <div className="border-b">
-        <div className="container flex h-20 items-center justify-between gap-8">
-            <div className="flex items-center gap-4">
+        <div className="container flex h-20 items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
                 <div className='lg:hidden'>
                   <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
                       <Icons.menu className="h-6 w-6" />
                   </Button>
                 </div>
-                <Logo loading={loading} imageUrl={settings?.logoUrl} />
+                <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
             </div>
             
             <div className="hidden lg:flex flex-1 max-w-lg">
@@ -58,14 +58,14 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                 </form>
             </div>
             
-             <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost" asChild className="hidden lg:flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
+             <div className="hidden lg:flex items-center justify-end gap-2">
+                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
                   <Link href={user ? "/admin" : "/login"}>
                     <User className="h-5 w-5" />
                     <span>Compte</span>
                   </Link>
                 </Button>
-                <Button variant="ghost" asChild className="hidden lg:flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
+                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
                   <Link href="#">
                     <Heart className="h-5 w-5" />
                     <span>Favoris</span>
@@ -94,12 +94,27 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                   <Button variant="ghost" size="icon" onClick={onSearchClick}>
                     <Icons.search className="h-5 w-5" />
                   </Button>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="ghost" size="icon" className="relative">
+                        <Icons.shoppingBag className="h-6 w-6" />
+                        {totalItems > 0 && (
+                            <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                                {totalItems}
+                            </span>
+                        )}
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="flex flex-col">
+                        <CartDrawer />
+                    </SheetContent>
+                  </Sheet>
               </div>
         </div>
       </div>
       
        {/* Category Nav */}
-      <div className="hidden lg:flex bg-nav text-nav-foreground">
+      <div className="hidden lg:block bg-nav text-nav-foreground">
           <div className="container flex justify-center">
             <MainNav items={categories} />
           </div>

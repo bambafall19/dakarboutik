@@ -24,7 +24,7 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t bg-background shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background shadow-lg">
       <div className="flex h-16 items-center justify-around">
         {navItems.map((item) => {
             const content = (

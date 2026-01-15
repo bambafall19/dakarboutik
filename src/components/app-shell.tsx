@@ -55,17 +55,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onMobileMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={handleSearchClick}
         />
-        <main className="container">
+        <main>
             <div className="pb-24 md:pb-0">
                 {children}
             </div>
         </main>
         <Footer settings={settings} />
         <ClientOnly>
-          <MobileBottomNav 
-            onMenuClick={() => setIsMobileMenuOpen(true)} 
-            onSearchClick={handleSearchClick}
-          />
+          <div className="md:hidden">
+            <MobileBottomNav 
+              onMenuClick={() => setIsMobileMenuOpen(true)} 
+              onSearchClick={handleSearchClick}
+            />
+          </div>
         </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>

@@ -57,9 +57,9 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group rounded-xl">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group rounded-lg">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative overflow-hidden rounded-t-xl">
+        <div className="relative overflow-hidden rounded-t-lg">
           <div className="aspect-square relative w-full bg-secondary/30">
             <Image
               src={product.images[0].imageUrl}
@@ -75,19 +75,19 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
            {hasSale && (
             <Badge variant="destructive" className="absolute top-2 right-2">PROMO</Badge>
           )}
-           <Button size="icon" className="absolute bottom-2 right-2 h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300" onClick={handleAddToCart}>
+           <Button size="icon" className="absolute bottom-2 right-2 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300" onClick={handleAddToCart}>
             <ShoppingCart className="h-4 w-4" />
           </Button>
         </div>
       </Link>
-      <CardContent className="p-3 md:p-4 flex-1 flex flex-col">
+      <CardContent className="p-2 md:p-3 flex-1 flex flex-col">
         <Link href={`/products/${product.slug}`} className="block">
-          <h3 className="font-semibold text-sm md:text-base leading-snug truncate h-10 flex items-center">
+          <h3 className="font-semibold text-xs md:text-sm leading-snug truncate h-10 flex items-center">
             {product.title}
           </h3>
         </Link>
-        <div className="mt-auto pt-2">
-           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+        <div className="mt-auto pt-1">
+           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} className="text-sm" />
         </div>
       </CardContent>
     </Card>

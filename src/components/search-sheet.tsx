@@ -80,7 +80,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                 {recentProducts.length > 0 && (
                                     <div>
                                         <h3 className="font-semibold mb-4">Récemment consultés</h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4">
                                             {recentProducts.slice(0,2).map(product => (
                                                 <ProductCard key={product.id} product={product} variant="horizontal" />
                                             ))}
@@ -107,7 +107,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                 {searchResults.length > 0 ? (
                                     <>
                                         <h3 className="font-semibold mb-4">Résultats de la recherche</h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4">
                                             {searchResults.map(product => (
                                                  <ProductCard key={product.id} product={product} variant="horizontal" />
                                             ))}

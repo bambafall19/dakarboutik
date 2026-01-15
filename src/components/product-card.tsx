@@ -14,9 +14,10 @@ import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
+  variant?: 'default' | 'horizontal';
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const { addToCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -28,6 +29,32 @@ export function ProductCard({ product }: ProductCardProps) {
   const isRecent = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const showNewBadge = product.isNew || isRecent;
   const hasSale = product.salePrice && product.salePrice < product.price;
+
+  if (variant === 'horizontal') {
+    return (
+      <Card className="overflow-hidden transition-all duration-300 group rounded-lg">
+          <Link href={`/products/${product.slug}`} className="flex gap-4 items-center">
+            <div className="relative aspect-square w-24 h-24 flex-shrink-0 bg-secondary/30">
+                <Image
+                    src={product.images[0].imageUrl}
+                    alt={product.title}
+                    data-ai-hint={product.images[0].imageHint}
+                    fill
+                    className="object-contain p-2"
+                />
+            </div>
+            <div className="flex-1 p-2">
+                <h3 className="font-semibold text-sm leading-snug">
+                    {product.title}
+                </h3>
+                <div className="mt-2">
+                    <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+                </div>
+            </div>
+          </Link>
+      </Card>
+    )
+  }
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group rounded-xl">

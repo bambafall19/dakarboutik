@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Category, Product, ProductFormData } from '@/lib/types';
-import { Card, CardContent } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -255,34 +255,38 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
               />
             </div>
 
-            <div>
-              <FormLabel>Images du produit</FormLabel>
-              <FormDescription className="mb-4">Ajoutez une ou plusieurs images pour votre produit.</FormDescription>
-              <div className="space-y-4">
-                {imageFields.map((image, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
-                    <div className='flex-1 space-y-2'>
-                        <Input
-                        placeholder="URL de l'image (ex: https://...)"
-                        value={image.url}
-                        onChange={(e) => handleImageChange(index, 'url', e.target.value)}
-                        />
-                        <Input
-                        placeholder="Description de l'image (optionnel)"
-                        value={image.description}
-                        onChange={(e) => handleImageChange(index, 'description', e.target.value)}
-                        />
+            <Card>
+              <CardHeader>
+                <CardTitle>Images du produit</CardTitle>
+                <FormDescription>Ajoutez une ou plusieurs images pour votre produit. La première image sera l'image principale.</FormDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {imageFields.map((image, index) => (
+                    <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
+                      <div className='flex-1 space-y-2'>
+                          <Input
+                          placeholder="URL de l'image (ex: https://...)"
+                          value={image.url}
+                          onChange={(e) => handleImageChange(index, 'url', e.target.value)}
+                          />
+                          <Input
+                          placeholder="Description de l'image (optionnel)"
+                          value={image.description}
+                          onChange={(e) => handleImageChange(index, 'description', e.target.value)}
+                          />
+                      </div>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
+                        <Trash className="text-red-500" />
+                      </Button>
                     </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
-                      <Trash className="text-red-500" />
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="outline" size="sm" onClick={addImageField}>
-                  Ajouter une autre image
-                </Button>
-              </div>
-            </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={addImageField}>
+                    Ajouter une autre image
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">

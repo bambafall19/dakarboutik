@@ -11,45 +11,54 @@ import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/
 import Autoplay from 'embla-carousel-autoplay';
 import React from 'react';
 
-const PromoBanner = ({ banner }: { banner: Banner }) => {
-    const [api, setApi] = React.useState<CarouselApi>()
- 
-    React.useEffect(() => {
-        if (!api) return;
-        // This is a workaround to force the carousel to re-render after hydration
-        // to fix a bug where it doesn't have the correct size.
-        setTimeout(() => api.reInit(), 0);
-    }, [api])
 
+// This wrapper ensures the component only renders on the client side.
+function ClientOnly({ children }: { children: React.ReactNode }) {
+    const [hasMounted, setHasMounted] = React.useState(false);
+    React.useEffect(() => {
+        setHasMounted(true);
+    }, []);
+
+    if (!hasMounted) {
+        return null;
+    }
+
+    return <>{children}</>;
+}
+
+
+const PromoBanner = ({ banner }: { banner: Banner }) => {
+    
     if (!banner.images || banner.images.length === 0) return null;
     
     return (
         <div className="relative group rounded-lg overflow-hidden aspect-video">
              {banner.images.length > 1 ? (
-                <Carousel 
-                    opts={{ loop: true }} 
-                    plugins={[Autoplay({delay: 5000})]}
-                    className="w-full h-full"
-                    setApi={setApi}
-                >
-                    <CarouselContent>
-                        {banner.images.map((image, index) => (
-                             <CarouselItem key={index}>
-                                <Link href={banner.linkUrl} className="block w-full h-full">
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={banner.title}
-                                        data-ai-hint={image.imageHint}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </Link>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                </Carousel>
+                <ClientOnly>
+                    <Carousel 
+                        opts={{ loop: true }} 
+                        plugins={[Autoplay({delay: 5000})]}
+                        className="w-full h-full"
+                    >
+                        <CarouselContent>
+                            {banner.images.map((image, index) => (
+                                <CarouselItem key={index}>
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={banner.title}
+                                            data-ai-hint={image.imageHint}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                    </Carousel>
+                </ClientOnly>
             ) : (
-                 <Link href={banner.linkUrl} className="block w-full h-full">
+                 <div className="relative w-full h-full">
                     <Image
                         src={banner.images[0].imageUrl}
                         alt={banner.title}
@@ -57,7 +66,7 @@ const PromoBanner = ({ banner }: { banner: Banner }) => {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                </Link>
+                </div>
             )}
             <div className="absolute inset-0 bg-black/30 p-8 flex flex-col justify-end pointer-events-none">
                 {banner.subtitle && <p className="text-white font-semibold">{banner.subtitle}</p>}
@@ -98,7 +107,11 @@ export function PromoBanners({ banners, loading }: PromoBannersProps) {
   return (
     <div className="container">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {promoBanners.map(banner => banner && <PromoBanner key={banner.id} banner={banner} />)}
+        {promoBanners.map(banner => banner && (
+            <Link href={banner.linkUrl} key={banner.id}>
+                <PromoBanner banner={banner} />
+            </Link>
+        ))}
       </div>
     </div>
   );

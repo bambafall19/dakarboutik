@@ -69,7 +69,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                   <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <input 
                       placeholder="Recherche de produits..." 
-                      className="pl-12 h-12 w-full rounded-full border border-input bg-muted/50 px-3 py-2" 
+                      className="pl-12 h-12 w-full rounded-full border border-input bg-white text-black px-3 py-2" 
                       onClick={onSearchClick}
                       readOnly
                   />

@@ -12,6 +12,7 @@ import { ProductCard } from '@/components/product-card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
+import { HeroSection } from '@/components/hero-section';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -38,6 +39,7 @@ export default function HomePage() {
     <div className="flex flex-col gap-8 md:gap-12">
       
       <main className="container space-y-8 md:space-y-16">
+        <HeroSection />
         <FeaturedCategories />
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

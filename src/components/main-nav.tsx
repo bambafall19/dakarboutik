@@ -25,13 +25,13 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-           <Link href="/products" passHref legacyBehavior>
-            <NavigationMenuLink asChild>
+           <Link href="/products" legacyBehavior passHref>
+             <NavigationMenuLink asChild>
                 <a className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
                     BOUTIQUE
                 </a>
-            </NavigationMenuLink>
-          </Link>
+             </NavigationMenuLink>
+           </Link>
         </NavigationMenuItem>
         
         <NavigationMenuItem>

@@ -5,6 +5,7 @@ import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
+import { Card, CardContent } from './ui/card';
 
 interface ProductListingProps {
     products: Product[];
@@ -39,7 +40,8 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
         </div>
       </div>
       
-      <div>
+      <Card>
+        <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
             <SortDropdown 
@@ -73,7 +75,8 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
               )}
             </div>
           )}
-        </div>
+        </CardContent>
+      </Card>
     </>
   );
 }

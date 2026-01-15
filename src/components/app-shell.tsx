@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Suspense>
-      <div className="min-h-screen w-full">
+      <div className="min-h-screen w-full bg-background">
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}
@@ -55,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onMobileMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={handleSearchClick}
         />
-        <main className="flex-1 bg-background">
+        <main className="flex-1">
             <div className="pb-24 md:pb-0">
                 {children}
             </div>

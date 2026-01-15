@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function CheckoutPage() {
   const { totalItems } = useCart();
@@ -30,27 +31,31 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div>
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Commande</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          <h1 className="text-3xl font-bold mb-6">Finaliser ma commande</h1>
-          <CheckoutForm onDeliveryMethodChange={setDeliveryMethod} />
-        </div>
-        <div className="mt-0 lg:mt-16">
-          <OrderSummary deliveryMethod={deliveryMethod} />
-        </div>
-      </div>
+    <div className="container">
+      <Card>
+        <CardContent className="pt-6">
+          <Breadcrumb className="mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Commande</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <h1 className="text-3xl font-bold mb-6">Finaliser ma commande</h1>
+              <CheckoutForm onDeliveryMethodChange={setDeliveryMethod} />
+            </div>
+            <div className="mt-0 lg:mt-16">
+              <OrderSummary deliveryMethod={deliveryMethod} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

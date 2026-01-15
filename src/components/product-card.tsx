@@ -68,7 +68,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5] bg-card">
+        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5]">
             <Image
                 src={product.images[0].imageUrl}
                 alt={product.title}
@@ -87,7 +87,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         </h3>
         
       </div>
-      <div className="absolute bottom-4 right-4 z-10">
+      <div className="absolute bottom-16 right-4 z-10">
           <Button onClick={handleAddToCart} size="icon" className="rounded-full h-12 w-12 shadow-lg">
             <ShoppingBag className="h-6 w-6" />
             <span className="sr-only">Ajouter au panier</span>

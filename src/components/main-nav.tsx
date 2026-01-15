@@ -24,7 +24,7 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" passHref legacyBehavior>
+          <Link href="/products" legacyBehavior passHref>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Shop
             </NavigationMenuLink>
@@ -47,14 +47,14 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-           <Link href="/sav" passHref legacyBehavior>
+           <Link href="/sav" legacyBehavior passHref>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Garantie & SAV
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/admin" passHref legacyBehavior>
+          <Link href="/admin" legacyBehavior passHref>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Admin
             </NavigationMenuLink>
@@ -90,3 +90,4 @@ const ListItem = React.forwardRef<
   );
 });
 ListItem.displayName = 'ListItem';
+

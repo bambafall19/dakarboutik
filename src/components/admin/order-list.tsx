@@ -149,7 +149,7 @@ export function OrderList({ orders }: { orders: Order[] }) {
                     {new Date(order.createdAt).toLocaleDateString()}
                   </TableCell>
                    <TableCell className="text-right">
-                    <Price price={order.grandTotal} currency="XOF" />
+                    <Price price={order.grandTotal} currency="FCA" />
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

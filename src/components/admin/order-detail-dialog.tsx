@@ -78,16 +78,16 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
             <div className="text-sm space-y-1">
               <div className="flex justify-between">
                 <span>Sous-total :</span>
-                <Price price={order.totalPrice} currency="XOF" />
+                <Price price={order.totalPrice} currency="FCA" />
               </div>
               <div className="flex justify-between">
                 <span>Livraison :</span>
-                <Price price={order.shippingCost} currency="XOF" />
+                <Price price={order.shippingCost} currency="FCA" />
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between font-bold">
                 <span>Total :</span>
-                <Price price={order.grandTotal} currency="XOF" />
+                <Price price={order.grandTotal} currency="FCA" />
               </div>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
                                 </TableCell>
                                 <TableCell className='text-center'>{item.quantity}</TableCell>
                                 <TableCell className='text-right'>
-                                    <Price price={item.quantity * (item.product.salePrice ?? item.product.price)} currency='XOF' />
+                                    <Price price={item.quantity * (item.product.salePrice ?? item.product.price)} currency='FCA' />
                                 </TableCell>
                             </TableRow>
                         ))}

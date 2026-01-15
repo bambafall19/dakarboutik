@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface PriceProps {
   price: number;
   salePrice?: number;
-  currency: 'XOF';
+  currency: 'FCA';
   className?: string;
 }
 

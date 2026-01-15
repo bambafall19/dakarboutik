@@ -189,7 +189,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
         images: images,
         specs: specsObject,
         variants: [],
-        currency: 'XOF',
+        currency: 'FCA',
       };
 
       const productsCollection = collection(firestore, 'products');
@@ -292,7 +292,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prix (XOF)</FormLabel>
+                      <FormLabel>Prix (FCA)</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>

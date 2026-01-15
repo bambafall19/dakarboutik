@@ -48,18 +48,18 @@ export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
         <div className="space-y-2 text-sm">
             <div className="flex justify-between">
                 <span>Sous-total</span>
-                <Price price={totalPrice} currency="XOF" className="font-medium" />
+                <Price price={totalPrice} currency="FCA" className="font-medium" />
             </div>
             <div className="flex justify-between">
                 <span>Livraison</span>
-                <Price price={shippingCost} currency="XOF" className="font-medium" />
+                <Price price={shippingCost} currency="FCA" className="font-medium" />
             </div>
         </div>
       </CardContent>
       <CardFooter>
         <div className="w-full flex justify-between font-bold text-lg">
             <span>Total</span>
-            <Price price={grandTotal} currency="XOF" className="text-primary" />
+            <Price price={grandTotal} currency="FCA" className="text-primary" />
         </div>
       </CardFooter>
     </Card>

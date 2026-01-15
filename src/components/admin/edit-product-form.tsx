@@ -295,7 +295,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prix (XOF)</FormLabel>
+                      <FormLabel>Prix (FCA)</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>

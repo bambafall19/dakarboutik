@@ -19,7 +19,7 @@ export type Product = {
   images: ImagePlaceholder[];
   price: number;
   salePrice?: number;
-  currency: 'XOF';
+  currency: 'FCA';
   brand?: string;
   category: string; // slug of category
   specs: Record<string, string>;

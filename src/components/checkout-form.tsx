@@ -98,9 +98,9 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''}\n`;
     });
     message += "\n";
-    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} XOF\n`;
-    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} XOF\n`;
-    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} XOF*`;
+    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCA\n`;
+    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCA\n`;
+    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} FCA*`;
     
     const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');

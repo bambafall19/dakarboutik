@@ -80,7 +80,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                               {totalItems}
                           </span>
                       )}
-                      <Price price={totalPrice} currency='XOF' />
+                      <Price price={totalPrice} currency='FCA' />
                     </Button>
                   </SheetTrigger>
                   <SheetContent className="flex flex-col">

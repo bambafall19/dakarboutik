@@ -9,6 +9,11 @@ import { HeroSection } from '@/components/hero-section';
 import { PromoBanners } from '@/components/promo-banners';
 import { Testimonials } from '@/components/testimonials';
 import { useMemo } from 'react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { ProductCard } from '@/components/product-card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Icons } from '@/components/icons';
 
 export default function HomePage() {
   const { products, loading } = useProducts();
@@ -46,12 +51,36 @@ export default function HomePage() {
             ) : (
               <>
                 {newArrivals.length > 0 && (
-                  <ProductGrid
-                    title="Nouveaux arrivages"
-                    products={newArrivals}
-                    gridClass="grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                    link={{ href: '/products?sortBy=newest', text: 'Voir tout' }}
-                  />
+                  <section>
+                    <div className="flex items-center justify-between mb-4 md:mb-6">
+                      <h2 className="text-xl md:text-2xl font-bold tracking-tight">Nouveaux arrivages</h2>
+                      <Button variant="ghost" asChild>
+                        <Link href={'/products?sortBy=newest'}>
+                          Voir tout
+                          <Icons.arrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                    <Carousel
+                      opts={{
+                        align: "start",
+                        dragFree: true,
+                      }}
+                      className="w-full"
+                    >
+                      <CarouselContent className="-ml-2">
+                        {newArrivals.map((product, index) => (
+                          <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                            <div className="p-1 h-full">
+                              <ProductCard product={product} />
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className='-left-4 hidden md:flex' />
+                      <CarouselNext className='-right-4 hidden md:flex' />
+                    </Carousel>
+                  </section>
                 )}
                  {bestsellers.length > 0 && (
                   <ProductGrid
@@ -73,7 +102,6 @@ export default function HomePage() {
                 )}
               </>
             )}
-            <Testimonials />
           </main>
       </div>
     </div>

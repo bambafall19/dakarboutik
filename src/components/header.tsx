@@ -91,21 +91,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
 
               {/* Mobile Icons */}
                <div className="flex items-center justify-end gap-1 lg:hidden">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="relative">
-                        <Icons.shoppingBag className="h-6 w-6" />
-                        {totalItems > 0 && (
-                            <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                                {totalItems}
-                            </span>
-                        )}
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent className="flex flex-col">
-                        <CartDrawer />
-                    </SheetContent>
-                  </Sheet>
               </div>
         </div>
       </div>

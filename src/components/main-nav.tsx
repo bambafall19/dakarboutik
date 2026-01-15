@@ -26,7 +26,7 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" passHref>
+          <Link href="/products" passHref legacyBehavior>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
               BOUTIQUE
             </NavigationMenuLink>
@@ -55,7 +55,7 @@ export function MainNav({ items }: MainNavProps) {
                  </NavigationMenuContent>
               </>
             ) : (
-              <Link href={`/products?category=${item.slug}`} passHref>
+              <Link href={`/products?category=${item.slug}`} passHref legacyBehavior>
                 <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
                   {item.name.toUpperCase()}
                 </NavigationMenuLink>
@@ -64,7 +64,7 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuItem>
         ))}
          <NavigationMenuItem>
-          <Link href="/sav" passHref>
+          <Link href="/sav" passHref legacyBehavior>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
               GARANTIE & SAV
             </NavigationMenuLink>

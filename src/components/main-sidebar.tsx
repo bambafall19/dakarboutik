@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { cn } from '@/lib/utils';
 import type { Category, SiteSettings } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
-import { User, Menu } from 'lucide-react';
+import { User, Menu, ChevronRight } from 'lucide-react';
 import { Separator } from './ui/separator';
 
 interface MainSidebarProps {
@@ -22,70 +22,39 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const currentCategorySlug = searchParams.get('category');
-
-    const featuredSlugs = ['informatique', 'telephonie', 'accessoires', 'audio'];
-    const featuredCategories = categories.filter(c => featuredSlugs.includes(c.slug));
     
     return (
-        <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background w-[80px]">
-            <nav className="flex flex-col items-center gap-2">
-                 <TooltipProvider>
-                    {loading ? (
-                        <div className='w-full space-y-2 px-2'>
-                            <Skeleton className="h-10 w-10 mx-auto" />
-                            <Skeleton className="h-10 w-10 mx-auto" />
-                            <Skeleton className="h-10 w-10 mx-auto" />
-                            <Skeleton className="h-10 w-10 mx-auto" />
-                        </div>
-                    ) : (
-                        <>
-                            {featuredCategories.map((category) => {
-                                const isActive = currentCategorySlug === category.slug;
-                                const Icon = CategoryIcons[category.slug] || Icons.layoutGrid;
+        <aside className="hidden md:block w-[280px] border-r pr-4">
+            <nav className="flex flex-col gap-1 py-4">
+                {loading ? (
+                    <div className='w-full space-y-2 px-2'>
+                        {[...Array(8)].map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}
+                    </div>
+                ) : (
+                    <>
+                        {categories.map((category) => {
+                            const isActive = currentCategorySlug === category.slug;
+                            const Icon = CategoryIcons[category.slug] || Icons.layoutGrid;
+                            const hasSubCategories = category.subCategories && category.subCategories.length > 0;
 
-                                return (
-                                    <Tooltip key={category.id}>
-                                        <TooltipTrigger asChild>
-                                            <Link href={`/products?category=${category.slug}`} className="w-full flex justify-center">
-                                                <Button
-                                                    variant={isActive ? "secondary" : "ghost"}
-                                                    className={cn("w-10 h-10", isActive && "text-primary")}
-                                                    size="icon"
-                                                >
-                                                    <Icon className="h-5 w-5" />
-                                                </Button>
-                                            </Link>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="right">
-                                            <p>{category.name}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                )
-                            })}
-                        </>
-                    )}
-                 </TooltipProvider>
+                            return (
+                                <Link key={category.id} href={`/products?category=${category.slug}`} className="w-full flex justify-center">
+                                    <Button
+                                        variant={isActive ? "secondary" : "ghost"}
+                                        className={cn("w-full h-10 justify-between px-3", isActive && "text-primary font-bold")}
+                                    >
+                                        <div className='flex items-center gap-2'>
+                                            <Icon className="h-5 w-5" />
+                                            <span>{category.name}</span>
+                                        </div>
+                                        {hasSubCategories && <ChevronRight className="h-4 w-4" />}
+                                    </Button>
+                                </Link>
+                            )
+                        })}
+                    </>
+                )}
             </nav>
-            <div className="mt-auto flex flex-col items-center gap-4">
-                 <TooltipProvider>
-                    <Tooltip>
-                         <TooltipTrigger asChild>
-                             <Link href="/login" className="w-full flex justify-center">
-                                <Button
-                                    variant="ghost"
-                                    className={cn("w-10 h-10", pathname === '/login' && "text-primary")}
-                                    size="icon"
-                                >
-                                    <User className="h-5 w-5" />
-                                </Button>
-                            </Link>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p>Compte</p>
-                        </TooltipContent>
-                    </Tooltip>
-                 </TooltipProvider>
-            </div>
         </aside>
     )
 }

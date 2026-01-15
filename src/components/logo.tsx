@@ -24,17 +24,17 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
   const content = (
     <>
       {imageUrl ? (
-        <Image src={imageUrl} alt="DakarBoutik Logo" width={32} height={32} className="h-8 w-auto rounded-sm object-contain" />
+        <Image src={imageUrl} alt="DakarBoutik Logo" width={40} height={40} className="h-10 w-auto rounded-sm object-contain" />
       ) : (
         <ShoppingCart className="h-8 w-8 text-primary" />
       )}
       <span className={cn(
-        "text-xl md:text-2xl font-bold tracking-tight text-foreground",
+        "text-3xl font-bold tracking-tight text-foreground",
         hideTextOnMobile && "hidden md:inline"
       )}>
-        DakarBoutik
+        electro.
       </span>
-      <span className="sr-only">DakarBoutik</span>
+      <span className="sr-only">electro.</span>
     </>
   );
 

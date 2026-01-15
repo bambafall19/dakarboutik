@@ -31,7 +31,7 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-auto md:h-[480px]">
             {/* Main Banner */}
             {mainBanner && (
-                <div className="lg:col-span-2 h-[300px] md:h-full relative group">
+                <div className="lg:col-span-2 h-[300px] md:h-full relative group bg-secondary/30">
                     <Link href={mainBanner.linkUrl} className="block h-full">
                         <Image
                             src={mainBanner.image.imageUrl}
@@ -39,9 +39,9 @@ export function HeroSection() {
                             data-ai-hint={mainBanner.image.imageHint}
                             fill
                             priority
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="object-contain transition-transform duration-300 group-hover:scale-105 p-4"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10" />
                     </Link>
                 </div>
             )}

@@ -31,6 +31,7 @@ import { Card, CardContent } from '../ui/card';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
+import { Trash } from 'lucide-react';
 
 // Slugify function
 function slugify(text: string) {
@@ -52,8 +53,6 @@ const formSchema = z.object({
   stock: z.coerce.number().min(0, 'Le stock doit être positif.'),
   category: z.string().min(1, 'La catégorie est requise.'),
   subCategory: z.string().optional(),
-  imageUrl1: z.string().url("Veuillez entrer une URL d'image valide."),
-  imageUrl2: z.string().url("Veuillez entrer une URL d'image valide.").optional().or(z.literal('')),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
   specs: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
@@ -72,6 +71,10 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     { key: '', value: '' },
   ]);
 
+  const [imageFields, setImageFields] = useState<{ url: string; description: string }[]>([
+    { url: '', description: '' },
+  ]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -81,8 +84,6 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       stock: 0,
       category: '',
       subCategory: '',
-      imageUrl1: '',
-      imageUrl2: '',
       isNew: true,
       isBestseller: false,
     },
@@ -112,6 +113,21 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     const newSpecs = specFields.filter((_, i) => i !== index);
     setSpecFields(newSpecs);
   };
+  
+  const addImageField = () => {
+    setImageFields([...imageFields, { url: '', description: '' }]);
+  };
+
+  const handleImageChange = (index: number, field: 'url' | 'description', value: string) => {
+    const newImages = [...imageFields];
+    newImages[index][field] = value;
+    setImageFields(newImages);
+  };
+  
+  const removeImageField = (index: number) => {
+    const newImages = imageFields.filter((_, i) => i !== index);
+    setImageFields(newImages);
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -121,6 +137,15 @@ export function AddProductForm({ categories }: AddProductFormProps) {
         description: "Impossible de se connecter à la base de données.",
       });
       return;
+    }
+    
+    if (imageFields.some(img => !img.url)) {
+        toast({
+            variant: 'destructive',
+            title: "Images manquantes",
+            description: "Veuillez fournir une URL pour chaque image.",
+        });
+        return;
     }
     
     try {
@@ -135,23 +160,12 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       
       const slug = slugify(values.title);
 
-      const images = [];
-      if (values.imageUrl1) {
-        images.push({
-          id: `product-${slug}-1`,
-          description: values.title,
-          imageUrl: values.imageUrl1,
-          imageHint: 'product',
-        });
-      }
-      if (values.imageUrl2) {
-        images.push({
-          id: `product-${slug}-2`,
-          description: values.title,
-          imageUrl: values.imageUrl2,
-          imageHint: 'product detail',
-        });
-      }
+      const images = imageFields.map((img, index) => ({
+        id: `product-${slug}-${index + 1}`,
+        description: img.description || values.title,
+        imageUrl: img.url,
+        imageHint: 'product',
+      }));
       
       const specsObject = specFields.reduce((obj, item) => {
         if (item.key && item.value) {
@@ -235,39 +249,37 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="imageUrl1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Adresse (lien) de l'image principale</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://exemple.com/image-principale.png"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="imageUrl2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Adresse (lien) de la deuxième image (optionnel)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://exemple.com/image-secondaire.png"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
+            
+            <div>
+              <FormLabel>Images du produit</FormLabel>
+              <FormDescription className="mb-4">Ajoutez une ou plusieurs images pour votre produit.</FormDescription>
+              <div className="space-y-4">
+                {imageFields.map((image, index) => (
+                  <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
+                    <div className='flex-1 space-y-2'>
+                        <Input
+                        placeholder="URL de l'image (ex: https://...)"
+                        value={image.url}
+                        onChange={(e) => handleImageChange(index, 'url', e.target.value)}
+                        />
+                        <Input
+                        placeholder="Description de l'image (optionnel)"
+                        value={image.description}
+                        onChange={(e) => handleImageChange(index, 'description', e.target.value)}
+                        />
+                    </div>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
+                      <Trash className="text-red-500" />
+                    </Button>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" size="sm" onClick={addImageField}>
+                  Ajouter une autre image
+                </Button>
+              </div>
+            </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
@@ -378,7 +390,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                       onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
                     />
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeSpecField(index)}>
-                      <span className="text-red-500">X</span>
+                      <Trash className="text-red-500"/>
                     </Button>
                   </div>
                 ))}
@@ -443,3 +455,5 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     </Card>
   );
 }
+
+    

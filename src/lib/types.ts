@@ -36,8 +36,6 @@ export type Product = {
 
 export type ProductFormData = Omit<Product, 'id' | 'slug' | 'createdAt' | 'images'> & {
     id?: string;
-    imageUrl1?: string;
-    imageUrl2?: string;
 };
 
 
@@ -111,3 +109,5 @@ export type Order = {
     createdAt: string; // ISO date string
     deliveryMethod: 'dakar' | 'hors-dakar';
 };
+
+    

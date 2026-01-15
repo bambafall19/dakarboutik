@@ -18,7 +18,7 @@
     --muted-foreground: 220 9% 46%;
     --accent: 250 30% 85%;
     --accent-foreground: 224 71.4% 4.1%;
-    --destructive: 0 48% 42%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
@@ -48,7 +48,7 @@
     --muted-foreground: 218 11% 65%;
     --accent: 215 28% 17%;
     --accent-foreground: 210 20% 98%;
-    --destructive: 0 48% 42%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
@@ -68,7 +68,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-b from-gray-50 to-white text-foreground;
+  }
+
+  .dark body {
+    @apply bg-gradient-to-b from-gray-900 to-black;
   }
 }
 
@@ -78,6 +82,7 @@
 .text-nav-foreground {
     color: hsl(var(--nav-foreground));
 }
+
 
 
 

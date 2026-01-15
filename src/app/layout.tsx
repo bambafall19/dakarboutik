@@ -56,7 +56,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </head>
       <body
         className={cn(
-          'relative h-full bg-background font-body antialiased',
+          'relative h-full font-body antialiased',
           workSans.className
         )}
       >

@@ -123,13 +123,13 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
         </div>
       </div>
        {/* Bottom bar */}
-       <div className="bg-background border-b hidden md:block">
+       <div className="bg-nav border-b hidden md:block">
         <div className="container flex h-14 items-center justify-between text-sm">
             <MainNav items={categories} />
-            <div className="flex items-center gap-6 text-foreground/80 font-medium">
-                <Link href="#" className='hover:text-primary transition-colors'>À propos</Link>
-                <Link href="#" className='hover:text-primary transition-colors'>Contact</Link>
-                <Link href="/sav" className='hover:text-primary transition-colors'>Garantie & SAV</Link>
+            <div className="flex items-center gap-6 text-nav-foreground/80 font-medium">
+                <Link href="#" className='hover:text-white transition-colors'>À propos</Link>
+                <Link href="#" className='hover:text-white transition-colors'>Contact</Link>
+                <Link href="/sav" className='hover:text-white transition-colors'>Garantie & SAV</Link>
             </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList>
         {navLinks.map((item) => (
             <NavigationMenuItem key={item.name}>
-                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base font-semibold hover:text-primary focus:text-primary data-[active]:text-primary text-foreground/80")}>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base font-semibold hover:text-white focus:text-white data-[active]:text-white text-nav-foreground/80")}>
                   <Link href={item.href}>
                     {item.name}
                   </Link>

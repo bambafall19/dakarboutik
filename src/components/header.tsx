@@ -35,7 +35,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       <AnnouncementBar settings={settings} loading={loading} />
       
       {/* Main Header */}
-      <div className="border-b">
+      <div className="hidden md:block border-b">
         <div className="container flex h-20 items-center justify-between gap-4">
             <div className="flex items-center gap-2">
                 <div className='lg:hidden'>

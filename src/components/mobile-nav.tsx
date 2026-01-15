@@ -21,6 +21,7 @@ interface MobileNavProps {
 export function MobileNav({ items, onLinkClick }: MobileNavProps) {
   const renderCategoryLinks = (categories: Category[], level = 0) => {
     return categories.map((cat) => {
+      const Icon = CategoryIcons[cat.slug] || Icons.chevronRight;
       const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
 
       if (hasSubCategories) {
@@ -28,6 +29,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           <AccordionItem key={cat.id} value={cat.slug} className="border-b-0">
             <AccordionTrigger className="py-3 text-base font-medium hover:no-underline px-4">
                 <span className="flex items-center gap-4">
+                    <Icon className="h-5 w-5" />
                     {cat.name}
                 </span>
             </AccordionTrigger>
@@ -48,6 +50,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           onClick={onLinkClick}
           style={{ paddingLeft: level > 0 ? `calc(${level} * 1.5rem + 1rem)` : '1rem' }}
         >
+          <Icon className="h-5 w-5" />
           <span className={level > 0 ? 'font-normal text-sm' : 'font-medium'}>{cat.name}</span>
         </Link>
       );
@@ -77,6 +80,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             <Link href="/login" className="text-sm font-medium" onClick={onLinkClick}>
                 Mon compte / Connexion
             </Link>
+            <ThemeToggle />
         </div>
       </div>
       

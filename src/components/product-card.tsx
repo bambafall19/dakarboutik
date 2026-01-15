@@ -7,7 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Price } from "./price";
-import { MoreVertical, ShoppingBag } from "lucide-react";
+import { MoreVertical, ShoppingCart } from "lucide-react";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 
@@ -25,7 +25,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     addToCart(product, 1);
   };
   
-  const isRecent = new Date(product.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const isRecent = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const showNewBadge = product.isNew || isRecent;
 
   if (variant === 'horizontal') {
@@ -60,7 +60,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   }
 
   return (
-    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full shadow-sm">
+    <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full shadow-sm hover:shadow-md">
       <Link href={`/products/${product.slug}`} className="block">
         {showNewBadge && (
             <Badge className="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs px-1.5 py-0.5">NOUVEAU</Badge>
@@ -68,29 +68,28 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5]">
+        <div className="relative w-full rounded-t-lg overflow-hidden aspect-square">
             <Image
                 src={product.images[0].imageUrl}
                 alt={product.title}
                 data-ai-hint={product.images[0].imageHint}
                 fill
-                className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
         </div>
       </Link>
       <div className="p-4 text-center flex-1 flex flex-col">
-        <div className="mt-2">
-           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-        </div>
         <h3 className="font-medium text-foreground text-sm leading-tight h-10 line-clamp-2 mt-1">
           <Link href={`/products/${product.slug}`}>{product.title}</Link>
         </h3>
-        
+        <div className="mt-auto pt-2">
+           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+        </div>
       </div>
-      <div className="absolute bottom-16 right-4 z-10">
-          <Button onClick={handleAddToCart} size="icon" className="rounded-full h-12 w-12 shadow-lg">
-            <ShoppingBag className="h-6 w-6" />
-            <span className="sr-only">Ajouter au panier</span>
+      <div className="p-4 pt-0">
+          <Button onClick={handleAddToCart} variant="outline" className="w-full">
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Ajouter au panier
           </Button>
         </div>
     </Card>

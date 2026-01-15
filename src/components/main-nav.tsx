@@ -16,38 +16,79 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Icons } from './icons';
-import { Button } from './ui/button';
 
 interface MainNavProps {
   items: Category[];
 }
-
-const navLinks = [
-    { name: 'Super Deals', href: '/products?onSale=true' },
-    { name: 'Nouveautés', href: '/products?sortBy=newest' },
-    { name: 'Marques', href: '/brands' },
-]
 
 export function MainNav({ items }: MainNavProps) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-            <Button className='h-14 rounded-none'>
-                <Icons.menu className='mr-2' />
-                Toutes les catégories
-            </Button>
+          <NavigationMenuTrigger>Toutes les catégories</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+              {items.map((item) => (
+                <ListItem
+                  key={item.name}
+                  title={item.name}
+                  href={`/products?category=${item.slug}`}
+                >
+                  {/* You can add a description for each category here if needed */}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
-        {navLinks.map((item) => (
-            <NavigationMenuItem key={item.name}>
-                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base font-semibold hover:text-primary focus:text-primary data-[active]:text-primary text-nav-foreground")}>
-                  <Link href={item.href}>
-                    {item.name}
-                  </Link>
-                </NavigationMenuLink>
-            </NavigationMenuItem>
-          ))}
+        <NavigationMenuItem>
+          <Link href="/products?onSale=true" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Promotions
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+         <NavigationMenuItem>
+          <Link href="/products?sortBy=newest" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Nouveautés
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/brands" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Marques
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutRef<'a'>
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = 'ListItem';

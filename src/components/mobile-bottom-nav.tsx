@@ -6,86 +6,51 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
-import { Home, LayoutGrid, Search, ShoppingBag, User } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { CartDrawer } from './cart-drawer';
-import { useCart } from '@/hooks/use-cart';
+import { Home, LayoutGrid, Search, ShoppingCart, User } from 'lucide-react';
 
 interface MobileBottomNavProps {
     onMenuClick: () => void;
     onSearchClick: () => void;
 }
 
-const NavItem = ({ href, label, icon: Icon, isActive, onClick }: { href?: string, label: string, icon: React.ElementType, isActive?: boolean, onClick?: () => void }) => {
-    const content = (
-        <div className={cn(
-            "flex items-center justify-center h-12 transition-all duration-300 ease-in-out",
-            isActive ? "bg-primary text-primary-foreground rounded-full px-4 gap-2" : "w-12"
-        )}>
-            <Icon className="h-6 w-6" />
-            {isActive && <span className="text-sm font-medium">{label}</span>}
-        </div>
-    );
-
-    if (href) {
-        return (
-            <Link href={href} className="flex-1 flex justify-center items-center">
-                {content}
-            </Link>
-        );
-    }
-
-    return (
-        <button type="button" onClick={onClick} className="flex-1 flex justify-center items-center">
-            {content}
-        </button>
-    );
-};
-
-
 export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavProps) {
   const pathname = usePathname();
-  const { totalItems } = useCart();
 
   const navItems = [
     { href: '/', label: 'Accueil', icon: Home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
-    { isCart: true, label: 'Panier', icon: ShoppingBag },
+    { href: '/login', label: 'Compte', icon: User, isActive: pathname === '/login' },
   ]
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:hidden">
-      <div className="bg-background/80 backdrop-blur-lg border rounded-full shadow-lg flex items-center justify-around h-16 px-2">
-        {navItems.map((item, index) => {
-            if (item.isCart) {
-                return (
-                    <Sheet key={index}>
-                        <SheetTrigger asChild>
-                            <button className="flex-1 flex justify-center items-center h-12 w-12 relative">
-                                <ShoppingBag className="w-6 h-6 text-foreground" />
-                                {totalItems > 0 && (
-                                    <span className="absolute top-0 right-0 text-xs w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground">
-                                        {totalItems}
-                                    </span>
-                                )}
-                            </button>
-                        </SheetTrigger>
-                        <SheetContent className="flex flex-col">
-                            <CartDrawer />
-                        </SheetContent>
-                    </Sheet>
-                )
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t bg-background shadow-lg">
+      <div className="flex h-16 items-center justify-around">
+        {navItems.map((item) => {
+            const content = (
+                 <div
+                    className={cn(
+                    'flex flex-col items-center gap-1 text-xs text-muted-foreground',
+                    item.isActive && 'text-primary'
+                    )}
+                >
+                    <item.icon className="h-6 w-6" />
+                    <span>{item.label}</span>
+                </div>
+            );
+
+            if (item.href) {
+                 return (
+                    <Link key={item.label} href={item.href} className="flex-1 flex justify-center">
+                        {content}
+                    </Link>
+                 )
             }
+
             return (
-                 <NavItem 
-                    key={index}
-                    href={item.href} 
-                    label={item.label} 
-                    icon={item.icon}
-                    isActive={item.isActive}
-                    onClick={item.onClick}
-                />
+                <button key={item.label} onClick={item.onClick} className="flex-1 flex justify-center">
+                    {content}
+                </button>
             )
         })}
       </div>

@@ -29,12 +29,12 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
         <ShoppingCart className="h-8 w-8 text-primary" />
       )}
       <span className={cn(
-        "text-3xl font-bold tracking-tight text-foreground",
+        "text-xl font-bold tracking-tight text-foreground",
         hideTextOnMobile && "hidden md:inline"
       )}>
-        electro.
+        DakarBoutik
       </span>
-      <span className="sr-only">electro.</span>
+      <span className="sr-only">DakarBoutik</span>
     </>
   );
 

@@ -86,9 +86,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8 md:gap-12">
+      <HeroSection />
       
       <main className="container space-y-8 md:space-y-16">
-        <HeroSection />
         <FeaturedCategories />
         
         {loading ? (

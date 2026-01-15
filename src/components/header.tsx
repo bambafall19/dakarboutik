@@ -13,9 +13,8 @@ import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { Price } from './price';
 import { ThemeToggle } from './theme-toggle';
-import { Headset, User } from 'lucide-react';
 import { AnnouncementBar } from './announcement-bar';
-import { Separator } from './ui/separator';
+import { usePathname } from 'next/navigation';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -28,24 +27,13 @@ interface HeaderProps {
 
 export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
-  
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-lg">
-       <div className='border-b'>
-        <div className="container flex h-10 items-center justify-between text-sm text-muted-foreground">
-            <div className='flex items-center gap-4'>
-                <span>Vente flash : Jusqu'à -50%</span>
-            </div>
-            <div className='flex items-center gap-4'>
-                <Link href="#" className='hover:text-foreground'>Localiser un magasin</Link>
-                <Separator orientation="vertical" className='h-4' />
-                <Link href="#" className='hover:text-foreground'>Suivre ma commande</Link>
-            </div>
-        </div>
-       </div>
-      {/* Main Header */}
+      <AnnouncementBar />
       <div className="border-b">
-        <div className="container flex h-24 items-center">
+        <div className="container flex h-20 items-center">
             {/* Mobile Header: Menu, Logo, Cart */}
              <div className="grid md:hidden grid-cols-3 items-center w-full">
                 <div className="flex justify-start">
@@ -64,43 +52,28 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             {/* Desktop Header: Logo, Nav, Search, Account, Cart */}
             <div className="hidden md:flex items-center justify-between w-full gap-8">
                <Logo loading={loading} imageUrl={settings?.logoUrl} />
-            
-              <div className="flex-1 max-w-2xl relative">
-                  <input 
-                      placeholder="Rechercher des produits..." 
-                      className="pl-4 pr-32 h-12 w-full rounded-md border-2 border-primary bg-white text-black" 
-                      onClick={onSearchClick}
-                      readOnly
-                  />
-                  <Button size="lg" className='absolute right-0 top-0 h-full rounded-l-none rounded-r-md px-8'>
-                    <Icons.search className="h-6 w-6 text-black" />
-                  </Button>
+              
+              <div className="flex-1 max-w-sm relative" onClick={onSearchClick}>
+                  <input placeholder="Rechercher un produit..." className="pl-4 pr-12 h-10 w-full rounded-md border bg-muted" readOnly />
+                  <Icons.search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               </div>
 
               <div className="flex items-center gap-2">
                   <ThemeToggle />
-                   <Button variant="ghost" className="h-12 rounded-lg px-3 flex items-center gap-2">
-                    <Icons.heart className="h-7 w-7 text-muted-foreground" />
-                    <div>
-                        <span className='text-xs font-medium text-muted-foreground'>Favoris</span>
-                        <p className='font-bold text-sm text-foreground'>Ma Liste</p>
-                    </div>
-                  </Button>
-                  
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="ghost" className="h-12 rounded-lg px-3 flex items-center gap-2">
+                      <Button variant="outline" className="h-12 rounded-lg px-3 flex items-center gap-2">
                             <div className='relative'>
-                                <Icons.shoppingBag className="h-7 w-7 text-muted-foreground" />
+                                <Icons.shoppingBag className="h-6 w-6 text-muted-foreground" />
                                 {totalItems > 0 && (
-                                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-black">
+                                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                                     {totalItems}
                                 </span>
                                 )}
                             </div>
-                           <div>
+                           <div className='text-left'>
                                 <span className='text-xs font-medium text-muted-foreground'>Panier</span>
-                                <Price price={totalPrice} currency="XOF" className="text-sm text-foreground" />
+                                <Price price={totalPrice} currency="XOF" className="text-sm font-bold text-foreground" />
                            </div>
                       </Button>
                     </SheetTrigger>
@@ -116,11 +89,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
        <div className="bg-nav border-b hidden md:block">
         <div className="container flex h-14 items-center justify-between text-sm">
             <MainNav items={categories} />
-            <div className="flex items-center gap-6 text-nav-foreground font-medium">
-                <Link href="#" className='hover:text-primary transition-colors'>À propos</Link>
-                <Link href="#" className='hover:text-primary transition-colors'>Contact</Link>
-                <Link href="/sav" className='hover:text-primary transition-colors'>Garantie & SAV</Link>
-            </div>
         </div>
       </div>
     </header>

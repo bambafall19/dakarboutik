@@ -5,7 +5,6 @@ import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
-import { Card, CardContent } from './ui/card';
 
 interface ProductListingProps {
     products: Product[];
@@ -40,43 +39,39 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
         </div>
       </div>
       
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
-            <SortDropdown 
-              sortBy={sortBy}
-              basePath={basePath}
-              currentQuery={currentQuery}
-            />
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} variant="horizontal" />
-            ))}
-          </div>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
+        <SortDropdown 
+          sortBy={sortBy}
+          basePath={basePath}
+          currentQuery={currentQuery}
+        />
+      </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        {products.map(product => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
 
-          {products.length === 0 && (
-            <div className="text-center py-16 col-span-full space-y-8">
-              <div>
-                <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
-                <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres ou votre recherche.</p>
+      {products.length === 0 && (
+        <div className="text-center py-16 col-span-full space-y-8">
+          <div>
+            <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
+            <p className="mt-2 text-muted-foreground">Essayez d'ajuster vos filtres ou votre recherche.</p>
+          </div>
+          {suggestedProducts && suggestedProducts.length > 0 && (
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Nos meilleures ventes</h3>
+               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                {suggestedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
-              {suggestedProducts && suggestedProducts.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-4">Nos meilleures ventes</h3>
-                   <div className="grid grid-cols-1 gap-4 max-w-lg mx-auto">
-                    {suggestedProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} variant="horizontal" />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </>
   );
 }

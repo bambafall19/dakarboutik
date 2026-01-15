@@ -30,7 +30,7 @@ export function FeaturedCategories() {
                 <Skeleton className="h-8 w-48 mx-auto" />
                 <Skeleton className="h-4 w-64 mx-auto mt-2" />
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
                 {[...Array(4)].map((_, i) => (
                     <Skeleton key={i} className="aspect-square w-full rounded-lg" />
                 ))}
@@ -49,7 +49,7 @@ export function FeaturedCategories() {
             <h2 className="text-xl md:text-3xl font-bold tracking-tight">Catégories</h2>
             <p className="mt-2 text-muted-foreground">Parcourez nos univers de produits.</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
           {featured.map((category) => {
             const imageId = categoryImages[category.slug] || 'product-phone-1a';
             const image = findImage(imageId);
@@ -77,3 +77,4 @@ export function FeaturedCategories() {
     </div>
   );
 }
+

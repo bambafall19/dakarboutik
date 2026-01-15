@@ -62,38 +62,28 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
   return (
     <Card className="relative group flex flex-col rounded-lg overflow-hidden transition-all duration-300 h-full shadow-sm">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="absolute top-2 right-2 z-10">
-            <Button size="icon" variant="ghost" className="rounded-full bg-black/20 hover:bg-black/40 border-none text-white h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-            </Button>
-        </div>
         {showNewBadge && (
             <Badge className="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs px-1.5 py-0.5">NOUVEAU</Badge>
         )}
         {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative h-48 w-full bg-muted/30 rounded-lg">
-            <div className="relative h-full w-full">
-                <Image
-                    src={product.images[0].imageUrl}
-                    alt={product.title}
-                    data-ai-hint={product.images[0].imageHint}
-                    fill
-                    className="object-contain group-hover:scale-105 transition-transform duration-300"
-                />
-            </div>
-             <Button size="icon" onClick={handleAddToCart} className="absolute -bottom-5 right-4 z-20 rounded-full h-12 w-12 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <ShoppingBag className="h-6 w-6" />
-            </Button>
+        <div className="relative w-full bg-muted/30 rounded-t-lg overflow-hidden aspect-[4/5]">
+            <Image
+                src={product.images[0].imageUrl}
+                alt={product.title}
+                data-ai-hint={product.images[0].imageHint}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
         </div>
       </Link>
-      <div className="p-4 flex-1 flex flex-col mt-2">
-        <div className="flex-grow">
-            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-            <h3 className="font-medium text-muted-foreground text-base leading-tight line-clamp-2 mt-1">
-              <Link href={`/products/${product.slug}`}>{product.title}</Link>
-            </h3>
+      <div className="p-4 text-center">
+        <h3 className="font-medium text-foreground text-sm leading-tight h-10 line-clamp-2">
+          <Link href={`/products/${product.slug}`}>{product.title}</Link>
+        </h3>
+        <div className="mt-2">
+           <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
         </div>
       </div>
     </Card>

@@ -13,8 +13,10 @@ export function HeroSection() {
   
   if (loading) {
     return (
-      <section className="w-full container py-2 md:py-8">
+      <section className="w-full py-2 md:py-8">
+        <div className="container">
           <Skeleton className="h-[300px] md:h-[480px] w-full" />
+        </div>
       </section>
     );
   }
@@ -25,11 +27,11 @@ export function HeroSection() {
   const bottomSubBanner = banners.find(b => b.id === 'banner-accessories');
 
   return (
-    <section className="w-full container py-2 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[480px]">
+    <section className="w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-auto md:h-[480px]">
             {/* Main Banner */}
             {mainBanner && (
-                <div className="lg:col-span-2 h-[300px] md:h-full relative rounded-lg overflow-hidden group">
+                <div className="lg:col-span-2 h-[300px] md:h-full relative group">
                     <Link href={mainBanner.linkUrl} className="block h-full">
                         <Image
                             src={mainBanner.image.imageUrl}
@@ -45,9 +47,9 @@ export function HeroSection() {
             )}
 
             {/* Sub Banners */}
-            <div className="flex flex-col gap-4 md:gap-6 h-full">
+            <div className="flex flex-col gap-0 h-full">
                 {topSubBanner && (
-                    <div className="h-[150px] md:h-full flex-1 relative rounded-lg overflow-hidden group">
+                    <div className="h-[150px] md:h-full flex-1 relative group">
                         <Link href={topSubBanner.linkUrl} className="block h-full">
                             <Image
                                 src={topSubBanner.image.imageUrl}
@@ -65,7 +67,7 @@ export function HeroSection() {
                     </div>
                 )}
                 {bottomSubBanner && (
-                    <div className="h-[150px] md:h-full flex-1 relative rounded-lg overflow-hidden group">
+                    <div className="h-[150px] md:h-full flex-1 relative group">
                         <Link href={bottomSubBanner.linkUrl} className="block h-full">
                             <Image
                                 src={bottomSubBanner.image.imageUrl}

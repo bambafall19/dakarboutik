@@ -443,5 +443,3 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     </Card>
   );
 }
-
-    

@@ -449,5 +449,3 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     </Card>
   );
 }
-
-    

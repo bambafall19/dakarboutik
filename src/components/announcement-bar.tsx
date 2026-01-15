@@ -4,7 +4,6 @@
 import type { SiteSettings } from '@/lib/types';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
 import Link from "next/link";
-import { ThemeToggle } from './theme-toggle';
 import { Skeleton } from './ui/skeleton';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
@@ -67,7 +66,6 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
             </ClientOnly>
         </div>
         <div className='flex items-center gap-4 pl-4'>
-            <ThemeToggle />
         </div>
       </div>
     </div>

@@ -16,7 +16,6 @@ import { User, Heart, Headset, Sun, Moon } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { Input } from './ui/input';
 import { Price } from './price';
-import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -57,7 +56,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                         <p className='text-xs text-muted-foreground'>Email: {settings?.supportEmail}</p>
                     </div>
                   </div>
-                  <ThemeToggle />
                    <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
                     <Link href="#">
                       <Heart className="h-5 w-5" />
@@ -132,4 +130,3 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
     </header>
   );
 }
-

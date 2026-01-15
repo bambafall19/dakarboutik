@@ -10,7 +10,6 @@ import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
 import { X } from 'lucide-react';
-import { ThemeToggle } from './theme-toggle';
 import { Separator } from './ui/separator';
 
 interface MobileNavProps {
@@ -80,7 +79,6 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             <Link href="/login" className="text-sm font-medium" onClick={onLinkClick}>
                 Mon compte / Connexion
             </Link>
-            <ThemeToggle />
         </div>
       </div>
       

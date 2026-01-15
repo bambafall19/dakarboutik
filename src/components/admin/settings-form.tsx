@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import type { SiteSettings } from '@/lib/types';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { Textarea } from '../ui/textarea';
 
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
@@ -31,6 +32,9 @@ const formSchema = z.object({
   whatsappNumber: z.string().min(9, 'Veuillez entrer un numéro valide.').optional().or(z.literal('')),
   supportPhone: z.string().optional(),
   supportEmail: z.string().email("Veuillez entrer un email valide.").optional().or(z.literal('')),
+  deliveryInfo: z.string().optional(),
+  returnPolicy: z.string().optional(),
+  afterSalesService: z.string().optional(),
 });
 
 interface SettingsFormProps {
@@ -52,6 +56,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
       whatsappNumber: settings.whatsappNumber || '',
       supportPhone: settings.supportPhone || '',
       supportEmail: settings.supportEmail || '',
+      deliveryInfo: settings.deliveryInfo || "Livraison gratuite partout à Dakar, sauf les accessoires. Les frais de livraison varient selon le lieu. Détails à la commande.",
+      returnPolicy: settings.returnPolicy || "Retours gratuits sous 7 jours si le produit présente un défaut matériel.",
+      afterSalesService: settings.afterSalesService || "Vous pouvez nous appeler au +221 77 485 52 56 pour toute assistance.",
     },
   });
 
@@ -192,6 +199,57 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             />
           </CardContent>
         </Card>
+        
+        <Card>
+           <CardHeader>
+            <CardTitle>Informations Produits</CardTitle>
+            <CardDescription>
+              Gérez les informations affichées sur les pages produits (livraison, retours, etc.).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+             <FormField
+              control={form.control}
+              name="deliveryInfo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Information de Livraison</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Informations sur la livraison..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="returnPolicy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Politique de Retour</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Politique de retour..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="afterSalesService"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Service Après-Vente</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Informations sur le SAV..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
         </Button>

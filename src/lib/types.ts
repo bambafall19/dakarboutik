@@ -84,6 +84,9 @@ export type SiteSettings = {
   whatsappNumber?: string;
   supportPhone?: string;
   supportEmail?: string;
+  deliveryInfo?: string;
+  returnPolicy?: string;
+  afterSalesService?: string;
 };
 
 export type CustomerInfo = {

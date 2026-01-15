@@ -74,14 +74,6 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           {renderCategoryLinks(items)}
         </Accordion>
       </ScrollArea>
-
-      <div className="mt-auto p-4 border-t">
-        <div className="flex items-center justify-between">
-            <Link href="/login" className="text-sm font-medium" onClick={onLinkClick}>
-                Mon compte / Connexion
-            </Link>
-        </div>
-      </div>
       
     </div>
   );

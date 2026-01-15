@@ -2,7 +2,7 @@
 'use client';
 
 import Script from 'next/script';
-import { Inter } from 'next/font/google';
+import { Work_Sans } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -11,7 +11,7 @@ import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const workSans = Work_Sans({ subsets: ['latin'], variable: '--font-work-sans' });
 
 export default function RootLayout({
   children,
@@ -57,7 +57,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <body
         className={cn(
           'relative h-full bg-background font-body antialiased',
-          inter.className
+          workSans.className
         )}
       >
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NGD258WC"

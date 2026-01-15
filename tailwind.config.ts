@@ -17,8 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Work Sans', 'Arial', 'Helvetica', 'sans-serif'],
+        headline: ['Work Sans', 'Arial', 'Helvetica', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

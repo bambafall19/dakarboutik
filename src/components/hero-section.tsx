@@ -5,11 +5,22 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from './ui/skeleton';
 import type { Banner } from '@/lib/types';
-import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
+import React from 'react';
 
 
 const BannerDisplay = ({ banner }: { banner: Banner }) => {
+    const [api, setApi] = React.useState<CarouselApi>()
+ 
+    React.useEffect(() => {
+        if (!api) return;
+        // This is a workaround to force the carousel to re-render after hydration
+        // to fix a bug where it doesn't have the correct size.
+        setTimeout(() => api.reInit(), 0);
+    }, [api])
+
+
     if (!banner.images || banner.images.length === 0) return null;
 
     if (banner.images.length > 1) {
@@ -18,6 +29,7 @@ const BannerDisplay = ({ banner }: { banner: Banner }) => {
                 opts={{ loop: true }}
                 plugins={[Autoplay({delay: 4000 })]}
                 className="w-full h-full"
+                setApi={setApi}
             >
                 <CarouselContent>
                     {banner.images.map((image, index) => (

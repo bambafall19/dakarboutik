@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -8,8 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 import { cn } from '@/lib/utils';
 import type { Category, SiteSettings } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
-import { Home, User, Menu } from 'lucide-react';
-import { Logo } from './logo';
+import { User, Menu } from 'lucide-react';
 import { Separator } from './ui/separator';
 
 interface MainSidebarProps {
@@ -30,11 +30,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
     
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
-             <div className="flex h-14 items-center justify-center px-4 w-full">
-                
-            </div>
-
-            <nav className="flex flex-col items-center gap-2 mt-4 flex-1">
+            <nav className="flex flex-col items-center gap-2">
                  <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -55,7 +51,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
 
 
                     {loading ? (
-                        <div className='w-full space-y-2 px-2 mt-2'>
+                        <div className='w-full space-y-2 px-2'>
                             <Skeleton className="h-10 w-10 mx-auto" />
                             <Skeleton className="h-10 w-10 mx-auto" />
                             <Skeleton className="h-10 w-10 mx-auto" />

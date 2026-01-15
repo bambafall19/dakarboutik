@@ -30,7 +30,7 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
           </span>
         </>
       ) : (
-        <span className="font-bold text-lg">
+        <span className="font-bold text-lg text-destructive">
           {formatPrice(price)} {currency}
         </span>
       )}

@@ -178,6 +178,7 @@ export default async function ProductsPage({
           <ProductListing
             products={filteredProducts}
             suggestedProducts={bestsellers}
+            categorySlug={categoryFilter}
           />
         </main>
       </div>

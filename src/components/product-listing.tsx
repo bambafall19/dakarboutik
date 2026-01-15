@@ -12,18 +12,18 @@ import { findImage } from '@/lib/placeholder-images';
 interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
+    categorySlug: string | null;
 }
 
-export function ProductListing({ products, suggestedProducts }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, categorySlug }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const sortBy = searchParams.get('sortBy') || 'newest';
-  const category = searchParams.get('category');
   
-  const pageTitle = category ? (category.charAt(0).toUpperCase() + category.slice(1)).replace(/-/g, ' ') : 'Tous les produits';
+  const pageTitle = categorySlug ? (categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)).replace(/-/g, ' ') : 'Tous les produits';
   
-  const categoryImageId = category ? `product-${category}-1a` : 'banner1';
+  const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner1';
   let categoryImage;
   try {
     categoryImage = findImage(categoryImageId);

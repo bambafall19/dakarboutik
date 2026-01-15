@@ -17,22 +17,22 @@ interface LogoProps {
 export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
 
   if (loading) {
-    return <Skeleton className="h-12 w-12 rounded-full" />
+    return <Skeleton className="h-10 w-32" />
   }
 
   const content = (
     <>
       {imageUrl ? (
-        <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/20 shadow-sm">
-            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-cover" />
+        <div className="relative h-10 w-10 shrink-0">
+            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-contain" />
         </div>
-      ) : (
-        <span className={cn(
-          "text-2xl font-bold tracking-wider text-foreground",
+      ) : null}
+      <span className={cn(
+          "text-xl font-bold tracking-wider text-foreground",
+          hideTextOnMobile && "hidden sm:inline-block"
         )}>
           DakarBoutik
         </span>
-      )}
       <span className="sr-only">DakarBoutik</span>
     </>
   );

@@ -15,6 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { CategoryIcons } from './icons';
 
 interface MainNavProps {
   items: Category[];
@@ -26,30 +27,45 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link href="/products" passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
               BOUTIQUE
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem className="hidden lg:flex">
-          <NavigationMenuTrigger>CATÉGORIES</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {items.map((item) => (
-                <ListItem
-                  key={item.name}
-                  title={item.name}
-                  href={`/products?category=${item.slug}`}
-                >
-                  {/* You can add a description for each category here if needed */}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
+        {items.map((item) => (
+          <NavigationMenuItem key={item.id}>
+            {item.subCategories && item.subCategories.length > 0 ? (
+              <>
+                 <NavigationMenuTrigger className="bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10">{item.name.toUpperCase()}</NavigationMenuTrigger>
+                 <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                    {item.subCategories.map((subItem) => {
+                      const Icon = CategoryIcons[subItem.slug] || React.Fragment;
+                      return (
+                        <ListItem
+                          key={subItem.name}
+                          title={subItem.name}
+                          href={`/products?category=${subItem.slug}`}
+                        >
+                          <Icon />
+                        </ListItem>
+                      );
+                    })}
+                  </ul>
+                 </NavigationMenuContent>
+              </>
+            ) : (
+              <Link href={`/products?category=${item.slug}`} passHref>
+                <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
+                  {item.name.toUpperCase()}
+                </NavigationMenuLink>
+              </Link>
+            )}
+          </NavigationMenuItem>
+        ))}
+         <NavigationMenuItem>
           <Link href="/sav" passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10")}>
               GARANTIE & SAV
             </NavigationMenuLink>
           </Link>
@@ -70,15 +86,13 @@ const ListItem = React.forwardRef<
           href={props.href!}
           ref={ref}
           className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            'flex select-none items-center gap-3 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
             className
           )}
           {...props}
         >
+          {children}
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
         </Link>
       </NavigationMenuLink>
     </li>

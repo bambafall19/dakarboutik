@@ -31,57 +31,62 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
   const { user } = useUser();
 
   return (
-    <header className="sticky top-0 z-40 w-full">
+    <header className="sticky top-0 z-40 w-full bg-background">
       <AnnouncementBar settings={settings} loading={loading} />
       
       {/* Main Header */}
-      <div className="border-b bg-background">
+      <div className="border-b">
         <div className="container flex h-20 items-center justify-between gap-8">
-            <div className="flex items-center gap-2">
-                <Button variant="outline" className="hidden lg:flex" onClick={onMobileMenuClick}>
-                  <LayoutGrid className="h-5 w-5 mr-2" />
-                  Catégories
-                </Button>
-                <div className='hidden lg:block'>
-                  <Logo loading={loading} imageUrl={settings?.logoUrl} />
-                </div>
+            <div className="flex items-center gap-4">
                 <div className='lg:hidden'>
-                  <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
+                  <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
+                      <Icons.menu className="h-6 w-6" />
+                  </Button>
                 </div>
+                <Logo loading={loading} imageUrl={settings?.logoUrl} />
             </div>
             
-            <div className='hidden lg:flex'>
-               <MainNav items={categories} />
+            <div className="hidden lg:flex flex-1 max-w-lg">
+                <form className="w-full relative">
+                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Rechercher un produit..."
+                        className="w-full bg-muted pl-10 h-11 text-base rounded-full"
+                        onFocus={onSearchClick}
+                    />
+                </form>
             </div>
             
-             <div className="hidden lg:flex items-center justify-end gap-4">
-                  <div className='flex items-center gap-3'>
-                    <Headset className='h-8 w-8 text-primary' />
-                    <div>
-                        <p className='text-sm font-semibold'>Support {settings?.supportPhone}</p>
-                        <p className='text-xs text-muted-foreground'>Email: {settings?.supportEmail}</p>
-                    </div>
-                  </div>
-                   <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
-                    <Link href="#">
-                      <Heart className="h-5 w-5" />
-                      <span>Favoris</span>
-                    </Link>
-                  </Button>
-                   <Button variant="ghost" size="icon" onClick={onSearchClick}>
-                    <Icons.search className="h-5 w-5" />
-                  </Button>
-                  <Sheet>
-                    <SheetTrigger asChild>
-                       <Button variant="default" className="relative rounded-full h-11 px-5 bg-foreground text-background hover:bg-foreground/90">
-                        <Icons.shoppingBag className="h-5 w-5 mr-2" />
-                        <Price price={totalPrice} currency='XOF' />
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent className="flex flex-col">
-                        <CartDrawer />
-                    </SheetContent>
-                  </Sheet>
+             <div className="flex items-center justify-end gap-2">
+                <Button variant="ghost" asChild className="hidden lg:flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
+                  <Link href={user ? "/admin" : "/login"}>
+                    <User className="h-5 w-5" />
+                    <span>Compte</span>
+                  </Link>
+                </Button>
+                <Button variant="ghost" asChild className="hidden lg:flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
+                  <Link href="#">
+                    <Heart className="h-5 w-5" />
+                    <span>Favoris</span>
+                  </Link>
+                </Button>
+                <Sheet>
+                  <SheetTrigger asChild>
+                      <Button variant="ghost" className="relative rounded-full h-auto p-2 flex flex-col gap-1 text-xs font-normal">
+                      <Icons.shoppingBag className="h-6 w-6" />
+                      {totalItems > 0 && (
+                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                              {totalItems}
+                          </span>
+                      )}
+                      <Price price={totalPrice} currency='XOF' />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent className="flex flex-col">
+                      <CartDrawer />
+                  </SheetContent>
+                </Sheet>
               </div>
 
               {/* Mobile Icons */}
@@ -89,53 +94,16 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                   <Button variant="ghost" size="icon" onClick={onSearchClick}>
                     <Icons.search className="h-5 w-5" />
                   </Button>
-                   <Button variant="ghost" size="icon" asChild>
-                    <Link href={user ? "/admin" : "/login"}>
-                      <User className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="relative">
-                        <Icons.shoppingBag className="h-6 w-6" />
-                        {totalItems > 0 && (
-                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                                {totalItems}
-                            </span>
-                        )}
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent className="flex flex-col">
-                        <CartDrawer />
-                    </SheetContent>
-                  </Sheet>
               </div>
         </div>
       </div>
       
-       {/* Mobile Header */}
-      <div className="lg:hidden p-4 bg-background border-b flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
-              <Icons.menu className="h-6 w-6" />
-          </Button>
-          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Icons.shoppingBag className="h-6 w-6" />
-                {totalItems > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {totalItems}
-                </span>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="flex flex-col">
-                <CartDrawer />
-            </SheetContent>
-          </Sheet>
+       {/* Category Nav */}
+      <div className="hidden lg:flex bg-nav text-nav-foreground">
+          <div className="container">
+            <MainNav items={categories} />
+          </div>
       </div>
-
     </header>
   );
 }

@@ -25,28 +25,21 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
   ]
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
-      <div className="relative grid grid-cols-4 h-16 items-center justify-around rounded-full bg-card shadow-lg border">
+    <div className="fixed bottom-0 left-0 right-0 z-50">
+      <div className="relative grid grid-cols-4 h-16 items-center justify-around bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t">
         {navItems.map((item) => {
             const content = (
                  <div
                     className={cn(
-                      'relative flex h-full w-full items-center justify-center transition-colors duration-300',
+                      'relative flex h-full w-full flex-col items-center justify-center transition-colors duration-300 gap-1',
                       item.isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                 >
-                    <div
-                        className={cn(
-                            'flex items-center gap-2 rounded-full p-2 transition-all duration-300',
-                            item.isActive && 'bg-muted px-4'
-                        )}
-                    >
-                        <item.icon className="h-6 w-6 flex-shrink-0" />
-                        {item.isActive && <span className="text-sm font-medium">{item.label}</span>}
-                    </div>
+                    <item.icon className="h-6 w-6 flex-shrink-0" />
+                    <span className="text-xs font-medium">{item.label}</span>
 
                     {item.isCart && totalItems > 0 && (
-                      <span className="absolute top-1 right-1/2 translate-x-3 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                      <span className="absolute top-1 right-1/2 translate-x-4 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                         {totalItems}
                       </span>
                     )}
@@ -62,7 +55,7 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
             }
 
             return (
-                <button key={item.label} onClick={item.onClick} className="flex h-full items-center justify-center">
+                <button key={item.label} onClick={item.onClick} className="flex h-full w-full items-center justify-center">
                     {content}
                 </button>
             )

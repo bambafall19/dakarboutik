@@ -95,8 +95,18 @@ export function useBanners() {
 
   const defaultBanners = useMemo(() => getStaticBanners(), []);
 
+  const displayedBanners = useMemo(() => {
+    if (loading) {
+      return defaultBanners; // Show static data while loading to prevent layout shifts
+    }
+    if (banners && banners.length > 0) {
+      return banners;
+    }
+    return defaultBanners;
+  }, [banners, defaultBanners, loading]);
+
   return {
-    banners: banners && banners.length > 0 ? banners : defaultBanners,
+    banners: displayedBanners,
     loading,
     error,
   };

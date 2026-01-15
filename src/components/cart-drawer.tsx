@@ -76,7 +76,7 @@ export function CartDrawer() {
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Sous-total</span>
-                <Price price={totalPrice} currency="XOF" className="text-lg" />
+                <Price price={totalPrice} currency="XOF" className="text-lg text-nav-foreground" />
               </div>
               <Button asChild size="lg" className="w-full">
                 <Link href="/checkout">Passer la commande</Link>

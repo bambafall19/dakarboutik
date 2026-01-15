@@ -7,7 +7,7 @@ import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { HeroSection } from '@/components/hero-section';
 import { PromoBanners } from '@/components/promo-banners';
-import { Engagements } from '@/components/engagements';
+import { Testimonials } from '@/components/testimonials';
 import { useMemo } from 'react';
 
 export default function HomePage() {
@@ -73,9 +73,9 @@ export default function HomePage() {
                 )}
               </>
             )}
+            <Testimonials />
           </main>
       </div>
-      <Engagements />
     </div>
   );
 }

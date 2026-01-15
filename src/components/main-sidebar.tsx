@@ -15,12 +15,10 @@ import { Separator } from './ui/separator';
 interface MainSidebarProps {
     categories: Category[];
     loading: boolean;
-    settings?: SiteSettings | null;
-    settingsLoading: boolean;
     onMenuClick: () => void;
 }
 
-export function MainSidebar({ categories, loading, settings, settingsLoading, onMenuClick }: MainSidebarProps) {
+export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarProps) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const currentCategorySlug = searchParams.get('category');
@@ -29,7 +27,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
     const featuredCategories = categories.filter(c => featuredSlugs.includes(c.slug));
     
     return (
-        <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
+        <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background w-[80px]">
             <nav className="flex flex-col items-center gap-2">
                  <TooltipProvider>
                     <Tooltip>

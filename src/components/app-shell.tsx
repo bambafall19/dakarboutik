@@ -47,30 +47,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Suspense>
-      <div className="grid min-h-screen w-full md:grid-cols-[80px_1fr]">
-        <MainSidebar 
-          categories={categories} 
-          loading={categoriesLoading}
-          settings={settings}
-          settingsLoading={settingsLoading}
-          onMenuClick={() => setIsMobileMenuOpen(true)}
+      <div className="min-h-screen w-full">
+        <HeaderWrapper
+            settings={settings}
+            settingsLoading={settingsLoading}
+            categories={categories}
+            categoriesLoading={categoriesLoading}
+            onMobileMenuClick={() => setIsMobileMenuOpen(true)}
+            onSearchClick={handleSearchClick}
         />
-        <div className="flex flex-col">
-          <HeaderWrapper
-              settings={settings}
-              settingsLoading={settingsLoading}
-              categories={categories}
-              categoriesLoading={categoriesLoading}
-              onMobileMenuClick={() => setIsMobileMenuOpen(true)}
-              onSearchClick={handleSearchClick}
-          />
-          <main className="flex-1 bg-background">
-              <div className="pb-24 md:pb-0">
-                {children}
-              </div>
-          </main>
-          <Footer settings={settings} />
+        <div className="flex">
+            <MainSidebar 
+            categories={categories} 
+            loading={categoriesLoading}
+            onMenuClick={() => setIsMobileMenuOpen(true)}
+            />
+            <main className="flex-1 bg-background">
+                <div className="pb-24 md:pb-0">
+                    {children}
+                </div>
+            </main>
         </div>
+        <Footer settings={settings} />
         <ClientOnly>
           <MobileBottomNav 
             onMenuClick={() => setIsMobileMenuOpen(true)} 

@@ -17,13 +17,15 @@ interface LogoProps {
 export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
 
   if (loading) {
-    return <Skeleton className="h-8 w-32" />
+    return <Skeleton className="h-12 w-12 rounded-full" />
   }
 
   const content = (
     <>
       {imageUrl ? (
-        <Image src={imageUrl} alt="DakarBoutik Logo" width={140} height={32} className="h-8 w-auto object-contain dark:invert" />
+        <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/20 shadow-sm">
+            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-cover" />
+        </div>
       ) : (
         <span className={cn(
           "text-2xl font-bold tracking-wider text-foreground",

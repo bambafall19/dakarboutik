@@ -23,8 +23,8 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
   const content = (
     <>
       {imageUrl ? (
-        <div className="relative h-10 w-10 shrink-0">
-            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-contain" />
+        <div className="relative h-10 w-10 shrink-0 rounded-full overflow-hidden">
+            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-cover" />
         </div>
       ) : null}
       <span className={cn(

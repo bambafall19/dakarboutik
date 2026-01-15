@@ -42,7 +42,7 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
   const firestore = useFirestore();
 
   const [imageFields, setImageFields] = useState<{ url: string; description: string }[]>(
-    banner?.images.map(img => ({ url: img.imageUrl, description: img.description })) || [{ url: '', description: '' }]
+    banner?.images?.map(img => ({ url: img.imageUrl, description: img.description })) || [{ url: '', description: '' }]
   );
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,10 +90,10 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
     
     try {
       const images = imageFields.map((img, index) => ({
-        id: banner.images[index]?.id || `banner-${banner.id}-img-${index + 1}`,
+        id: banner.images?.[index]?.id || `banner-${banner.id}-img-${index + 1}`,
         description: img.description || values.title,
         imageUrl: img.url,
-        imageHint: banner.images[index]?.imageHint || 'banner',
+        imageHint: banner.images?.[index]?.imageHint || 'banner',
       }));
 
       const bannerToUpdate: Banner = {
@@ -165,7 +165,7 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
             
             <FormItem>
               <FormLabel>Images</FormLabel>
-              <FormDescription>Gérez les images de cette bannière.</FormDescription>
+              <CardDescription>Gérez les images de cette bannière.</CardDescription>
                <div className="space-y-4 pt-2">
                   {imageFields.map((image, index) => (
                     <div key={index} className="flex items-center gap-2 p-3 border rounded-md">

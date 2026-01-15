@@ -113,10 +113,10 @@ export const Icons = {
 
 export const CategoryIcons: { [key: string]: React.ComponentType<{ className?: string }> } = {
   // Main categories for DakarBoutik
-  'informatique': DeskIcon,
-  'telephonie': SofaIcon,
-  'accessoires': LampIcon,
-  'audio': BedIcon,
+  'informatique': Laptop,
+  'telephonie': Smartphone,
+  'accessoires': Cable,
+  'audio': Headphones,
   
   // Aliases and sub-categories
   'pc-portables': Laptop,

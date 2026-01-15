@@ -89,115 +89,127 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
   return (
     <div className="container py-8">
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Accueil</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-           {categoryPath.map((cat) => (
-            <React.Fragment key={cat.id}>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/products?category=${cat.slug}`}>{cat.name}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-            </React.Fragment>
-          ))}
-          <BreadcrumbItem>
-            <BreadcrumbPage>{product.title}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            <div>
-            <Carousel>
-                <CarouselContent>
-                {product.images?.map((img) => (
-                    <CarouselItem key={img.id}>
-                    <div className="aspect-square relative rounded-lg border overflow-hidden bg-secondary/30">
-                        <Image
-                        src={img.imageUrl}
-                        alt={product.title}
-                        data-ai-hint={img.imageHint}
-                        fill
-                        className="object-contain"
-                        />
-                    </div>
-                    </CarouselItem>
-                ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
-            </Carousel>
-            </div>
-            <div className="flex flex-col">
-            {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
-            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
-            
-            <div className="mt-4">
-                <Badge variant={stockBadgeVariant}>{stockStatus}</Badge>
-            </div>
-
-            <div className="mt-4">
-                <Price price={product.price} salePrice={product.salePrice} currency={product.currency} className="text-2xl" />
-            </div>
-
-            <Separator className="my-6" />
-
-            <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none whitespace-pre-wrap">
-              {product.description}
-            </div>
-
-
-            {product.variants?.map(variant => (
-                <div key={variant.name} className="mt-6">
-                <h3 className="font-semibold text-sm mb-2">{variant.name}</h3>
-                <div className="flex flex-wrap gap-2">
-                    {variant.options.map(option => (
-                    <Button
-                        key={option.value}
-                        variant={selectedVariants[variant.name] === option.value ? "default" : "outline"}
-                        onClick={() => setSelectedVariants(prev => ({...prev, [variant.name]: option.value}))}
-                    >
-                        {option.value}
-                    </Button>
-                    ))}
-                </div>
-                </div>
-            ))}
-            
-            <div className="mt-6 flex flex-col gap-4">
-                <div className='flex items-center gap-4'>
-                    <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}>
-                        <Icons.minus className="h-4 w-4" />
-                    </Button>
-                    <span className="font-bold text-lg w-12 text-center">{quantity}</span>
-                    <Button variant="outline" size="icon" onClick={() => setQuantity(q => q+1)}>
-                        <Icons.plus className="h-4 w-4" />
-                    </Button>
-                    </div>
-                </div>
-                <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="w-full">
-                    <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
-                </Button>
-                <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="w-full">
-                    <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
-                </Button>
-            </div>
+       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        
+        {/* Left Sidebar */}
+        <div className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-28">
+              <ProductInfoSidebar />
             </div>
         </div>
-        <div className="hidden md:block">
-            <ProductInfoSidebar />
+        
+        {/* Main Content */}
+        <div className="lg:col-span-9">
+            <Breadcrumb className="mb-6">
+                <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                    <Link href="/">Accueil</Link>
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                {categoryPath.map((cat) => (
+                    <React.Fragment key={cat.id}>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                        <Link href={`/products?category=${cat.slug}`}>{cat.name}</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    </React.Fragment>
+                ))}
+                <BreadcrumbItem>
+                    <BreadcrumbPage>{product.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                {/* Image Carousel */}
+                <div>
+                    <Carousel>
+                        <CarouselContent>
+                        {product.images?.map((img) => (
+                            <CarouselItem key={img.id}>
+                            <div className="aspect-square relative rounded-lg border overflow-hidden bg-secondary/30">
+                                <Image
+                                src={img.imageUrl}
+                                alt={product.title}
+                                data-ai-hint={img.imageHint}
+                                fill
+                                className="object-contain"
+                                />
+                            </div>
+                            </CarouselItem>
+                        ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2" />
+                        <CarouselNext className="right-2" />
+                    </Carousel>
+                </div>
+                
+                {/* Product Info */}
+                <div className="flex flex-col">
+                    {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
+                    <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
+                    
+                    <div className="mt-4">
+                        <Badge variant={stockBadgeVariant}>{stockStatus}</Badge>
+                    </div>
+
+                    <div className="mt-4">
+                        <Price price={product.price} salePrice={product.salePrice} currency={product.currency} className="text-2xl" />
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none whitespace-pre-wrap">
+                    {product.description}
+                    </div>
+
+
+                    {product.variants?.map(variant => (
+                        <div key={variant.name} className="mt-6">
+                        <h3 className="font-semibold text-sm mb-2">{variant.name}</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {variant.options.map(option => (
+                            <Button
+                                key={option.value}
+                                variant={selectedVariants[variant.name] === option.value ? "default" : "outline"}
+                                onClick={() => setSelectedVariants(prev => ({...prev, [variant.name]: option.value}))}
+                            >
+                                {option.value}
+                            </Button>
+                            ))}
+                        </div>
+                        </div>
+                    ))}
+                    
+                    <div className="mt-6 flex flex-col gap-4">
+                        <div className='flex items-center gap-4'>
+                            <div className="flex items-center gap-2">
+                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}>
+                                <Icons.minus className="h-4 w-4" />
+                            </Button>
+                            <span className="font-bold text-lg w-12 text-center">{quantity}</span>
+                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => q+1)}>
+                                <Icons.plus className="h-4 w-4" />
+                            </Button>
+                            </div>
+                        </div>
+                        <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="w-full">
+                            <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
+                        </Button>
+                        <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="w-full">
+                            <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-12 lg:col-span-9 lg:col-start-4">
         {product.specs && Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
               <h3 className="font-semibold text-xl mb-4">Fiche Technique</h3>
@@ -226,7 +238,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
           />
         </div>
       )}
-      <div className="md:hidden mt-8">
+      <div className="lg:hidden mt-8">
         <ProductInfoSidebar />
       </div>
     </div>

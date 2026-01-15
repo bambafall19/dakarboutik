@@ -30,32 +30,35 @@ export function ProductCard({ product }: ProductCardProps) {
   const hasSale = product.salePrice && product.salePrice < product.price;
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg group border-border/80 hover:border-primary/50">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative group">
-          <div className="aspect-square relative w-full bg-secondary">
+        <div className="relative">
+          <div className="aspect-square relative w-full bg-secondary/30">
             <Image
               src={product.images[0].imageUrl}
               alt={product.title}
               data-ai-hint={product.images[0].imageHint}
               fill
-              className="object-contain p-4 group-hover:scale-105 transition-transform"
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
             />
           </div>
           {showNewBadge && (
-            <Badge className="absolute top-2 left-2 bg-red-600 text-white border-red-600">NOUVEAU</Badge>
+            <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground border-primary hover:bg-primary">NOUVEAU</Badge>
+          )}
+           {hasSale && (
+            <Badge variant="destructive" className="absolute top-2 right-2">PROMO</Badge>
           )}
         </div>
       </Link>
-      <CardContent className="p-4 flex-1 flex flex-col">
+      <CardContent className="p-3 md:p-4 flex-1 flex flex-col">
         <Link href={`/products/${product.slug}`} className="block">
-          <h3 className="font-semibold text-sm leading-snug truncate h-10 flex items-center">
+          <h3 className="font-semibold text-sm md:text-base leading-snug truncate h-10 flex items-center">
             {product.title}
           </h3>
         </Link>
-        <div className="mt-auto pt-4 flex justify-between items-center">
+        <div className="mt-auto pt-2 flex justify-between items-end">
            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-           <Button size="icon" className="h-8 w-8 rounded-full" onClick={handleAddToCart}>
+           <Button size="icon" variant="outline" className="h-9 w-9 rounded-full" onClick={handleAddToCart}>
             <ShoppingCart className="h-4 w-4" />
           </Button>
         </div>

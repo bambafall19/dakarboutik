@@ -11,7 +11,6 @@ import { CartDrawer } from '@/components/cart-drawer';
 import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
-import { ThemeToggle } from './theme-toggle';
 import { AnnouncementBar } from './announcement-bar';
 import { User, Heart } from 'lucide-react';
 import { useUser } from '@/firebase';
@@ -32,34 +31,24 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
 
   return (
     <header className="sticky top-0 z-40 w-full">
-      {/* Top Bar */}
-      <div className="bg-background text-sm text-muted-foreground">
-        <div className="container flex h-10 items-center justify-between">
-            <div>
-              {settings?.supportPhone && <span>Support {settings.supportPhone}</span>}
-              {settings?.supportEmail && <span className="ml-4">Email: {settings.supportEmail}</span>}
-            </div>
-            <div>
-                <ThemeToggle />
-            </div>
-        </div>
-      </div>
+      <AnnouncementBar settings={settings} loading={loading} />
       
       {/* Main Header */}
       <div className="border-b bg-background">
         <div className="container flex h-20 items-center justify-between gap-8">
             <div className="flex items-center gap-8">
                 <Logo loading={loading} imageUrl={settings?.logoUrl} />
-                <form className="hidden lg:block w-96">
-                    <div className="relative">
-                        <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Recherche de produits..." className="pl-10" onFocus={onSearchClick} />
-                    </div>
-                </form>
             </div>
             
+            <form className="hidden lg:block flex-1 max-w-xl">
+                <div className="relative">
+                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Rechercher un produit..." className="pl-10 h-11" onFocus={onSearchClick} />
+                </div>
+            </form>
+            
              <div className="flex items-center justify-end gap-2">
-                  <Button variant="ghost" size="icon" className="hidden lg:inline-flex" onClick={onSearchClick}>
+                  <Button variant="ghost" size="icon" className="lg:hidden" onClick={onSearchClick}>
                     <Icons.search className="h-5 w-5" />
                   </Button>
                    <Button variant="ghost" size="icon" asChild>
@@ -67,15 +56,18 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                       <User className="h-5 w-5" />
                     </Link>
                   </Button>
-                   <Button variant="ghost" size="icon">
+                   <Button variant="ghost" size="icon" className="hidden md:inline-flex">
                     <Heart className="h-5 w-5" />
                   </Button>
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="outline" className="relative">
-                        <Icons.shoppingBag className="mr-2 h-4 w-4" />
-                        <span>{totalItems}</span>
-                        <span className="ml-2">{totalItems > 1 ? 'articles' : 'article'}</span>
+                      <Button variant="ghost" size="icon" className="relative">
+                        <Icons.shoppingBag className="h-6 w-6" />
+                        {totalItems > 0 && (
+                            <span className="absolute -right-2 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                                {totalItems}
+                            </span>
+                        )}
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="flex flex-col">

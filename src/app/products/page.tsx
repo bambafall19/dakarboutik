@@ -134,12 +134,14 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  // Convert searchParams object to a query string on the server, filtering out undefined values.
-  const currentQueryString = new URLSearchParams(
-    Object.entries(searchParams).flatMap(([key, value]) =>
-      value === undefined ? [] : [[key, Array.isArray(value) ? value.join(',') : value]]
-    )
-  ).toString();
+  // Rebuild the query string manually to avoid enumerating searchParams
+  const params = new URLSearchParams();
+  if (categoryFilter) params.set('category', categoryFilter);
+  if (brandFilter.length > 0) params.set('brands', brandFilter.join(','));
+  if (priceRangeFilter) params.set('priceRange', priceRangeFilter);
+  if (searchQuery) params.set('q', searchQuery);
+  if (sortBy) params.set('sortBy', sortBy);
+  const currentQueryString = params.toString();
   
   const filterNode = (
     <div className="space-y-8">

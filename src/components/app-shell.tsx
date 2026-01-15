@@ -9,7 +9,6 @@ import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetTitle } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
-import { MainSidebar } from './main-sidebar';
 import { SearchSheet } from './search-sheet';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -56,18 +55,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onMobileMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={handleSearchClick}
         />
-        <div className="flex">
-            <MainSidebar 
-            categories={categories} 
-            loading={categoriesLoading}
-            onMenuClick={() => setIsMobileMenuOpen(true)}
-            />
-            <main className="flex-1 bg-background">
-                <div className="pb-24 md:pb-0">
-                    {children}
-                </div>
-            </main>
-        </div>
+        <main className="flex-1 bg-background">
+            <div className="pb-24 md:pb-0">
+                {children}
+            </div>
+        </main>
         <Footer settings={settings} />
         <ClientOnly>
           <MobileBottomNav 

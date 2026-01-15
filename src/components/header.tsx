@@ -58,7 +58,12 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             
             {/* Desktop Header: Logo, Nav, Search, Account, Cart */}
             <div className="hidden md:flex items-center justify-between w-full gap-4">
-              <Logo loading={loading} imageUrl={settings?.logoUrl} />
+               <div className='flex items-center gap-4'>
+                 <Button variant="ghost" size="icon" onClick={onMobileMenuClick} className="h-10 w-10">
+                    <Icons.menu className="h-6 w-6" />
+                </Button>
+                <Logo loading={loading} imageUrl={settings?.logoUrl} />
+               </div>
             
               <div className="flex-1 max-w-lg relative">
                   <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

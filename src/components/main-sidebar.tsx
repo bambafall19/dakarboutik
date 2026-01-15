@@ -30,24 +30,6 @@ export function MainSidebar({ categories, loading, onMenuClick }: MainSidebarPro
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background w-[80px]">
             <nav className="flex flex-col items-center gap-2">
                  <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant={"ghost"}
-                                className="w-12 h-12 rounded-full bg-red-700 hover:bg-red-800 text-white"
-                                onClick={onMenuClick}
-                            >
-                                <Menu className="h-6 w-6" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p>Toutes les catégories</p>
-                        </TooltipContent>
-                    </Tooltip>
-                    
-                    <Separator className='my-4 w-8' />
-
-
                     {loading ? (
                         <div className='w-full space-y-2 px-2'>
                             <Skeleton className="h-10 w-10 mx-auto" />

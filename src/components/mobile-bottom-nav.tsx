@@ -22,12 +22,11 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true },
-    { href: '/login', label: 'Compte', icon: User, isActive: pathname === '/login' },
   ]
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="relative grid grid-cols-5 h-16 items-center justify-around bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t">
+      <div className="relative grid grid-cols-4 h-16 items-center justify-around bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t">
         {navItems.map((item) => {
             const content = (
                  <div

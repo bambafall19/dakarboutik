@@ -32,11 +32,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
     return (
         <aside className="hidden md:flex flex-col items-center gap-4 py-4 border-r bg-background">
              <div className="flex h-14 items-center justify-center px-4 w-full">
-                <Logo 
-                    imageUrl={settings?.logoUrl} 
-                    loading={settingsLoading} 
-                    hideTextOnMobile={true} 
-                />
+                
             </div>
 
             <nav className="flex flex-col items-center gap-2 mt-4 flex-1">

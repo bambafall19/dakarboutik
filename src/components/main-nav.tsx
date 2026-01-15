@@ -25,7 +25,7 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" legacyBehavior passHref>
+          <Link href="/products" passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               BOUTIQUE
             </NavigationMenuLink>
@@ -48,7 +48,7 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/sav" legacyBehavior passHref>
+          <Link href="/sav" passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               GARANTIE & SAV
             </NavigationMenuLink>

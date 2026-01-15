@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 250 40% 98%;
+    --background: 36 15% 94%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 224 71.4% 4.1%;
@@ -78,5 +78,6 @@
 .text-nav-foreground {
     color: hsl(var(--nav-foreground));
 }
+
 
 

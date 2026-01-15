@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Suspense } from 'react';
+import { useSearchParams } from "next/navigation";
 
-function OrderConfirmationContent({ orderId }: { orderId: string | null }) {
+function OrderConfirmationContent() {
+    const searchParams = useSearchParams();
+    const orderId = searchParams.get('orderId');
+
     return (
         <div className="flex min-h-[calc(100vh-20rem)] items-center justify-center">
             <Card className="w-full max-w-lg text-center">
@@ -50,16 +54,10 @@ function OrderConfirmationSkeleton() {
 }
 
 // This is the Server Component that reads searchParams and passes them to the client component.
-export default function OrderConfirmationPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-    const orderId = typeof searchParams.orderId === 'string' ? searchParams.orderId : null;
-
+export default function OrderConfirmationPage() {
     return (
         <Suspense fallback={<OrderConfirmationSkeleton />}>
-            <OrderConfirmationContent orderId={orderId} />
+            <OrderConfirmationContent />
         </Suspense>
     );
 }

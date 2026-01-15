@@ -29,7 +29,7 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
         <ShoppingCart className="h-8 w-8 text-primary" />
       )}
       <span className={cn(
-        "text-2xl font-bold tracking-tight text-foreground",
+        "text-xl md:text-2xl font-bold tracking-tight text-foreground",
         hideTextOnMobile && "hidden md:inline"
       )}>
         DakarBoutik

@@ -37,8 +37,9 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       {/* Main Header */}
       <div className="border-b bg-background">
         <div className="container flex h-20 items-center justify-between gap-8">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
                 <Logo loading={loading} imageUrl={settings?.logoUrl} />
+                <span className="hidden sm:inline font-bold text-lg">DakarBoutik</span>
             </div>
             
             <form className="hidden lg:block flex-1 max-w-xl">
@@ -109,7 +110,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
           <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
               <Icons.menu className="h-6 w-6" />
           </Button>
-          <Logo loading={loading} imageUrl={settings?.logoUrl} />
+          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">

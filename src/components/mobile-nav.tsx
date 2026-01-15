@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -61,7 +62,7 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
       <div className="p-4 border-b bg-background sticky top-0 z-10">
         <SheetTitle className="sr-only">Menu Principal</SheetTitle>
         <div className='flex justify-between items-center'>
-          <Logo onClick={onLinkClick} />
+          <Logo onClick={onLinkClick} hideTextOnMobile={true} />
            <Button variant="ghost" size="icon" onClick={onLinkClick}>
             <X className="h-6 w-6" />
           </Button>

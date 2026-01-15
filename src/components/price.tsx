@@ -25,7 +25,7 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
           <span className="font-bold text-lg text-red-600">
             {formatPrice(salePrice)} {currency}
           </span>
-          <span className="text-sm text-muted-foreground line-through">
+          <span className="text-sm text-gray-400 line-through">
             {formatPrice(price)} {currency}
           </span>
         </>

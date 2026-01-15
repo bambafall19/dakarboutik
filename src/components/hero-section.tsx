@@ -16,7 +16,7 @@ const BannerDisplay = ({ banner }: { banner: Banner }) => {
         return (
             <Carousel 
                 opts={{ loop: true }}
-                plugins={[Autoplay({delay: 4000, stopOnInteraction: false })]}
+                plugins={[Autoplay({delay: 4000 })]}
                 className="w-full h-full"
             >
                 <CarouselContent>

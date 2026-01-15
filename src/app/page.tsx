@@ -7,7 +7,6 @@ import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { HeroSection } from '@/components/hero-section';
 import { PromoBanners } from '@/components/promo-banners';
-import { Testimonials } from '@/components/testimonials';
 import { useMemo } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ProductCard } from '@/components/product-card';

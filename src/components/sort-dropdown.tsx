@@ -7,24 +7,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 interface SortDropdownProps {
   sortBy: string;
   basePath: string;
-  searchParams: { [key: string]: string | string[] | undefined };
+  currentQuery: string;
 }
 
-export function SortDropdown({ sortBy, basePath, searchParams }: SortDropdownProps) {
+export function SortDropdown({ sortBy, basePath, currentQuery }: SortDropdownProps) {
   const router = useRouter();
 
   const handleSortChange = (value: string) => {
-    const current = new URLSearchParams();
-    // Copy all existing search params except for the sortBy param
-    for (const key in searchParams) {
-        if (key !== 'sortBy' && searchParams[key]) {
-            current.set(key, searchParams[key] as string);
-        }
-    }
-    // Set the new sort value
-    current.set('sortBy', value);
+    const params = new URLSearchParams(currentQuery);
+    params.set('sortBy', value);
     
-    router.push(`${basePath}?${current.toString()}`, { scroll: false });
+    router.push(`${basePath}?${params.toString()}`, { scroll: false });
   };
 
   return (

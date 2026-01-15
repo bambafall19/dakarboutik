@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Slider } from './ui/slider';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -14,7 +14,7 @@ interface ProductFiltersProps {
   currentBrands: string[];
   currentPriceRange: [number, number];
   basePath: string;
-  searchParams: { [key: string]: string | string[] | undefined };
+  currentQuery: string;
 }
 
 export function ProductFilters({ 
@@ -22,23 +22,15 @@ export function ProductFilters({
   currentBrands,
   currentPriceRange,
   basePath,
-  searchParams,
+  currentQuery,
 }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   const [priceRange, setPriceRange] = useState<[number, number]>(currentPriceRange);
 
-  const handlePriceChange = (value: [number, number]) => {
-    setPriceRange(value);
-  };
-  
   const handlePriceCommit = (value: [number, number]) => {
-      const params = new URLSearchParams();
-      Object.entries(searchParams).forEach(([key, val]) => {
-        if (val) params.set(key, Array.isArray(val) ? val.join(',') : val);
-      });
-
+      const params = new URLSearchParams(currentQuery);
       if (value[0] > 0 || value[1] < 1000000) {
         params.set('priceRange', `${value[0]}-${value[1]}`);
       } else {
@@ -48,10 +40,7 @@ export function ProductFilters({
   };
   
   const handleBrandChange = (brand: string) => {
-    const params = new URLSearchParams();
-    Object.entries(searchParams).forEach(([key, val]) => {
-      if (val) params.set(key, Array.isArray(val) ? val.join(',') : val);
-    });
+    const params = new URLSearchParams(currentQuery);
     
     const newBrands = currentBrands.includes(brand)
       ? currentBrands.filter(b => b !== brand)
@@ -81,7 +70,7 @@ export function ProductFilters({
                             max={1000000}
                             step={10000}
                             value={priceRange}
-                            onValueChange={handlePriceChange}
+                            onValueChange={setPriceRange}
                             onValueCommit={handlePriceCommit}
                         />
                         <div className="flex justify-between mt-2 text-sm text-muted-foreground">

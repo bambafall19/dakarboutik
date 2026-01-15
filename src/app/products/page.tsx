@@ -132,6 +132,9 @@ export default async function ProductsPage({
 
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
+
+  // Convert searchParams object to a query string on the server
+  const currentQueryString = new URLSearchParams(searchParams as Record<string, string>).toString();
   
   const filterNode = (
     <div className="space-y-8">
@@ -140,14 +143,14 @@ export default async function ProductsPage({
         totalProducts={totalProducts}
         currentCategorySlug={categoryFilter}
         basePath="/products"
-        searchParams={searchParams}
+        currentQuery={currentQueryString}
       />
       <ProductFilters 
         availableBrands={availableBrands}
         currentBrands={brandFilter}
         currentPriceRange={selectedPriceRange}
         basePath="/products"
-        searchParams={searchParams}
+        currentQuery={currentQueryString}
       />
     </div>
   );
@@ -189,7 +192,7 @@ export default async function ProductsPage({
                 categorySlug={categoryFilter}
                 sortBy={sortBy}
                 basePath="/products"
-                searchParams={searchParams}
+                currentQuery={currentQueryString}
             />
         </main>
       </div>

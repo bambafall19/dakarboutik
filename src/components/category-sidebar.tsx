@@ -14,22 +14,18 @@ interface CategorySidebarProps {
   totalProducts: number;
   currentCategorySlug: string | null;
   basePath: string;
-  searchParams: { [key: string]: string | string[] | undefined };
+  currentQuery: string;
 }
 
-export function CategorySidebar({ categories, totalProducts, currentCategorySlug, basePath, searchParams }: CategorySidebarProps) {
+export function CategorySidebar({ categories, totalProducts, currentCategorySlug, basePath, currentQuery }: CategorySidebarProps) {
   
   const createCategoryUrl = (slug: string | null) => {
-    const params = new URLSearchParams();
-    // Copy all search params except 'category'
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (key !== 'category' && value) {
-        params.set(key, Array.isArray(value) ? value.join(',') : value);
-      }
-    });
+    const params = new URLSearchParams(currentQuery);
 
     if (slug) {
       params.set('category', slug);
+    } else {
+      params.delete('category');
     }
     
     const queryString = params.toString();

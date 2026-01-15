@@ -13,10 +13,10 @@ interface ProductListingProps {
     categorySlug: string | null;
     sortBy: string;
     basePath: string;
-    searchParams: { [key: string]: string | string[] | undefined };
+    currentQuery: string;
 }
 
-export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, searchParams }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, currentQuery }: ProductListingProps) {
   
   const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner1';
   let categoryImage;
@@ -45,7 +45,7 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
             <SortDropdown 
               sortBy={sortBy}
               basePath={basePath}
-              searchParams={searchParams}
+              currentQuery={currentQuery}
             />
           </div>
           

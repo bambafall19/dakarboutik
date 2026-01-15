@@ -24,14 +24,14 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" passHref asChild>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+          <Link href="/products" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Shop
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent">Catégories</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Catégories</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {items.map((item) => (
@@ -47,15 +47,15 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-           <Link href="/sav" passHref asChild>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+           <Link href="/sav" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Garantie & SAV
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/admin" passHref asChild>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+          <Link href="/admin" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Admin
             </NavigationMenuLink>
           </Link>

@@ -67,11 +67,6 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
             </ClientOnly>
         </div>
         <div className='flex items-center gap-4 pl-4'>
-            <div className="hidden md:flex items-center gap-3">
-                <Link href="#" className="hover:opacity-80 transition-opacity"><Facebook className="h-4 w-4" /></Link>
-                <Link href="#" className="hover:opacity-80 transition-opacity"><Instagram className="h-4 w-4" /></Link>
-                <Link href="#" className="hover:opacity-80 transition-opacity"><Youtube className="h-4 w-4" /></Link>
-            </div>
             <ThemeToggle />
         </div>
       </div>

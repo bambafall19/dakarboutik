@@ -5,22 +5,23 @@
 import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 
 interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
-    sortBy: string;
-    category: string | null;
 }
 
-export function ProductListing({ products, suggestedProducts, sortBy, category }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts }: ProductListingProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const sortBy = searchParams.get('sortBy') || 'newest';
+  const category = searchParams.get('category');
   
-  const pageTitle = category ? (category.charAt(0).toUpperCase() + category.slice(1)).replace('-', ' ') : 'Tous les produits';
+  const pageTitle = category ? (category.charAt(0).toUpperCase() + category.slice(1)).replace(/-/g, ' ') : 'Tous les produits';
   
   const categoryImageId = category ? `product-${category}-1a` : 'banner1';
   let categoryImage;
@@ -35,7 +36,7 @@ export function ProductListing({ products, suggestedProducts, sortBy, category }
 
 
   const handleSortChange = (value: string) => {
-    const current = new URLSearchParams(window.location.search);
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set('sortBy', value);
     const search = current.toString();
     const query = search ? `?${search}` : '';

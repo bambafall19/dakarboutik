@@ -138,14 +138,9 @@ export default async function ProductsPage({
   
   const filterNode = (
     <div className="space-y-8">
-      <CategorySidebar categories={categories} totalProducts={totalProducts} selectedCategorySlug={categoryFilter} />
+      <CategorySidebar categories={categories} totalProducts={totalProducts} />
       <ProductFilters 
-        availableBrands={availableBrands} 
-        currentBrands={brandFilter}
-        currentPriceRange={selectedPriceRange}
-        currentSortBy={sortBy}
-        currentQuery={searchQuery}
-        currentCategory={categoryFilter}
+        availableBrands={availableBrands}
       />
     </div>
   );
@@ -183,8 +178,6 @@ export default async function ProductsPage({
           <ProductListing
             products={filteredProducts}
             suggestedProducts={bestsellers}
-            sortBy={sortBy}
-            category={categoryFilter}
           />
         </main>
       </div>

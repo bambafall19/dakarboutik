@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Category } from '@/lib/types';
@@ -13,13 +14,13 @@ import { ChevronDown } from 'lucide-react';
 interface CategorySidebarProps {
   categories: Category[];
   totalProducts: number;
-  selectedCategorySlug: string | null;
 }
 
-export function CategorySidebar({ categories, totalProducts, selectedCategorySlug }: CategorySidebarProps) {
+export function CategorySidebar({ categories, totalProducts }: CategorySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const selectedCategorySlug = searchParams.get('category');
   
   const defaultOpen = useMemo(() => {
     if (!selectedCategorySlug) return [];
@@ -41,9 +42,13 @@ export function CategorySidebar({ categories, totalProducts, selectedCategorySlu
 
   }, [categories, selectedCategorySlug]);
 
-  const createCategoryUrl = (slug: string) => {
+  const createCategoryUrl = (slug: string | null) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('category', slug);
+    if (slug) {
+        current.set('category', slug);
+    } else {
+        current.delete('category');
+    }
     return `${pathname}?${current.toString()}`;
   }
 
@@ -104,7 +109,7 @@ export function CategorySidebar({ categories, totalProducts, selectedCategorySlu
     <div className='flex flex-col gap-2'>
         <h3 className="font-semibold text-base md:text-lg">Catégories</h3>
         <Link 
-          href="/products" 
+          href={createCategoryUrl(null)}
           scroll={false}
           className={cn('flex items-center justify-between w-full p-1.5 rounded-md hover:bg-accent', !selectedCategorySlug && 'bg-accent text-primary font-semibold')}>
           <span className={cn(!selectedCategorySlug && "font-bold", "text-xs md:text-sm")}>Tous les produits</span>

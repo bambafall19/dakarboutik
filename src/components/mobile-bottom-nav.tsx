@@ -22,45 +22,53 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true },
-  ]
+  ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="relative grid grid-cols-4 h-16 items-center justify-around bg-card shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t">
-        {navItems.map((item) => {
-            const content = (
-                 <div
-                    className={cn(
-                      'relative flex h-full w-full flex-col items-center justify-center transition-colors duration-300 gap-1',
-                      item.isActive ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                >
-                    <item.icon className="h-6 w-6 flex-shrink-0" />
-                    <span className="text-xs font-medium">{item.label}</span>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 h-20 bg-background/80 backdrop-blur-lg border-t">
+        <div className="container h-full">
+            <div className="grid grid-cols-4 h-full items-center">
+            {navItems.map((item) => {
+                const isActive = item.isActive;
+                const content = (
+                    <div
+                        className={cn(
+                        'relative flex flex-col items-center justify-center transition-all duration-300 gap-1 h-full w-full',
+                        !isActive && 'text-muted-foreground hover:text-primary'
+                        )}
+                    >
+                        <div className={cn(
+                            "flex items-center justify-center gap-2 h-10 px-4 rounded-full transition-all duration-300",
+                            isActive ? "bg-primary text-primary-foreground" : "bg-transparent"
+                        )}>
+                            <item.icon className="h-6 w-6 flex-shrink-0" />
+                            {isActive && <span className="text-sm font-medium">{item.label}</span>}
+                        </div>
 
-                    {item.isCart && totalItems > 0 && (
-                      <span className="absolute top-1 right-1/2 translate-x-4 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                        {totalItems}
-                      </span>
-                    )}
-                </div>
-            );
+                        {item.isCart && totalItems > 0 && (
+                        <span className="absolute top-2 right-1/2 translate-x-5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                            {totalItems}
+                        </span>
+                        )}
+                    </div>
+                );
 
-            if (item.href) {
-                 return (
-                    <Link key={item.label} href={item.href} className="flex h-full items-center justify-center">
+                if (item.href) {
+                    return (
+                        <Link key={item.label} href={item.href} className="flex h-full items-center justify-center">
+                            {content}
+                        </Link>
+                    )
+                }
+
+                return (
+                    <button key={item.label} onClick={item.onClick} className="flex h-full w-full items-center justify-center">
                         {content}
-                    </Link>
-                 )
-            }
-
-            return (
-                <button key={item.label} onClick={item.onClick} className="flex h-full w-full items-center justify-center">
-                    {content}
-                </button>
-            )
-        })}
+                    </button>
+                )
+            })}
+            </div>
       </div>
-    </div>
+    </nav>
   );
 }

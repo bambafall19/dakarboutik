@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Suspense>
-      <div className="min-h-screen w-full bg-background">
+      <div className="min-h-screen w-full">
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}

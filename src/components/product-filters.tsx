@@ -1,8 +1,7 @@
 
-
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Slider } from './ui/slider';
 import React, { useState, useEffect } from 'react';
@@ -12,44 +11,36 @@ import { Label } from './ui/label';
 
 interface ProductFiltersProps {
   availableBrands: string[];
+  currentBrands: string[];
+  currentPriceRange: [number, number];
+  basePath: string;
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export function ProductFilters({ 
-  availableBrands
+  availableBrands,
+  currentBrands,
+  currentPriceRange,
+  basePath,
+  searchParams,
 }: ProductFiltersProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
-  const currentBrands = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-  const currentPriceRangeParam = searchParams.get('priceRange');
-
-  const initialPriceRange = (() => {
-    let range: [number, number] = [0, 1000000];
-    if (currentPriceRangeParam) {
-      const [min, max] = currentPriceRangeParam.split('-').map(Number);
-      if (!isNaN(min) && !isNaN(max)) {
-        range = [min, max];
-      }
-    }
-    return range;
-  })();
-  
-  const [priceRange, setPriceRange] = useState<[number, number]>(initialPriceRange);
+  const [priceRange, setPriceRange] = useState<[number, number]>(currentPriceRange);
   const [selectedBrands, setSelectedBrands] = useState<string[]>(currentBrands);
   const [debouncedPriceRange, setDebouncedPriceRange] = useState<[number, number]>(priceRange);
 
-  // Update state if URL params change
+  // Update internal state if props change
   useEffect(() => {
-    setPriceRange(initialPriceRange);
+    setPriceRange(currentPriceRange);
     setSelectedBrands(currentBrands);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPriceRangeParam, searchParams.get('brands')])
+  }, [currentPriceRange, currentBrands]);
 
+  // Debounce price range slider to avoid too many re-renders
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedPriceRange(priceRange);
-    }, 500); // 500ms debounce delay
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -63,30 +54,39 @@ export function ProductFilters({
     setSelectedBrands(newSelectedBrands);
   };
 
-
+  // Effect to push changes to URL
   useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams();
+    for (const key in searchParams) {
+        if (!['brands', 'priceRange'].includes(key) && searchParams[key]) {
+            current.set(key, searchParams[key] as string);
+        }
+    }
 
     if (debouncedPriceRange[0] > 0 || debouncedPriceRange[1] < 1000000) {
-        current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);
-    } else {
-        current.delete('priceRange');
+      current.set('priceRange', `${debouncedPriceRange[0]}-${debouncedPriceRange[1]}`);
     }
 
     if (selectedBrands.length > 0) {
-        current.set('brands', selectedBrands.join(','));
-    } else {
-        current.delete('brands');
+      current.set('brands', selectedBrands.join(','));
     }
 
     const search = current.toString();
     const query = search ? `?${search}` : '';
 
     // Only push router if the query params have actually changed
-    if (`${pathname}${query}` !== `${pathname}?${searchParams.toString()}`) {
-      router.push(`${pathname}${query}`, { scroll: false });
+    // This deep comparison is necessary because searchParams object identity changes
+    const oldQuery = new URLSearchParams();
+    for (const key in searchParams) {
+        if(searchParams[key]) {
+            oldQuery.set(key, searchParams[key] as string);
+        }
     }
-  }, [debouncedPriceRange, selectedBrands, pathname, router, searchParams]);
+
+    if (current.toString() !== oldQuery.toString()) {
+      router.push(`${basePath}${query}`, { scroll: false });
+    }
+  }, [debouncedPriceRange, selectedBrands, basePath, router, searchParams]);
 
   return (
     <div className="flex flex-col gap-4">

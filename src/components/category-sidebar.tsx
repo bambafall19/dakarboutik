@@ -1,29 +1,26 @@
 
-
 'use client';
 
 import type { Category } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { Badge } from './ui/badge';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface CategorySidebarProps {
   categories: Category[];
   totalProducts: number;
+  currentCategorySlug: string | null;
+  basePath: string;
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function CategorySidebar({ categories, totalProducts }: CategorySidebarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const selectedCategorySlug = searchParams.get('category');
+export function CategorySidebar({ categories, totalProducts, currentCategorySlug, basePath, searchParams }: CategorySidebarProps) {
   
   const defaultOpen = useMemo(() => {
-    if (!selectedCategorySlug) return [];
+    if (!currentCategorySlug) return [];
     
     const findPath = (cats: Category[], slug: string, path: string[] = []): string[] | null => {
       for (const cat of cats) {
@@ -36,26 +33,29 @@ export function CategorySidebar({ categories, totalProducts }: CategorySidebarPr
       return null;
     }
     
-    const path = findPath(categories, selectedCategorySlug);
+    const path = findPath(categories, currentCategorySlug);
     // Only open the direct parent, not the full tree
     return path ? path.slice(0, path.length -1) : [];
 
-  }, [categories, selectedCategorySlug]);
+  }, [categories, currentCategorySlug]);
 
   const createCategoryUrl = (slug: string | null) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams();
+    for (const key in searchParams) {
+        if (key !== 'category' && searchParams[key]) {
+            current.set(key, searchParams[key] as string);
+        }
+    }
     if (slug) {
         current.set('category', slug);
-    } else {
-        current.delete('category');
     }
-    return `${pathname}?${current.toString()}`;
+    return `${basePath}?${current.toString()}`;
   }
 
   const renderCategoryTree = (categories: Category[], level = 0) => {
     return categories.map(category => {
       const hasSubCategories = category.subCategories && category.subCategories.length > 0;
-      const isSelected = selectedCategorySlug === category.slug;
+      const isSelected = currentCategorySlug === category.slug;
 
       const linkContent = (
         <div className="flex items-center justify-between w-full">
@@ -111,9 +111,9 @@ export function CategorySidebar({ categories, totalProducts }: CategorySidebarPr
         <Link 
           href={createCategoryUrl(null)}
           scroll={false}
-          className={cn('flex items-center justify-between w-full p-1.5 rounded-md hover:bg-accent', !selectedCategorySlug && 'bg-accent text-primary font-semibold')}>
-          <span className={cn(!selectedCategorySlug && "font-bold", "text-xs md:text-sm")}>Tous les produits</span>
-          <Badge variant={!selectedCategorySlug ? "default" : "secondary"} className={cn("rounded-full h-5 w-auto px-1.5 min-w-[20px] flex items-center justify-center text-xs", !selectedCategorySlug && "bg-primary")}>
+          className={cn('flex items-center justify-between w-full p-1.5 rounded-md hover:bg-accent', !currentCategorySlug && 'bg-accent text-primary font-semibold')}>
+          <span className={cn(!currentCategorySlug && "font-bold", "text-xs md:text-sm")}>Tous les produits</span>
+          <Badge variant={!currentCategorySlug ? "default" : "secondary"} className={cn("rounded-full h-5 w-auto px-1.5 min-w-[20px] flex items-center justify-center text-xs", !currentCategorySlug && "bg-primary")}>
               {totalProducts}
           </Badge>
         </Link>

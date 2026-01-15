@@ -3,7 +3,6 @@
 
 import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
-import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
 
@@ -12,9 +11,12 @@ interface ProductListingProps {
     suggestedProducts?: Product[];
     pageTitle: string;
     categorySlug: string | null;
+    sortBy: string;
+    basePath: string;
+    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, searchParams }: ProductListingProps) {
   
   const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner1';
   let categoryImage;
@@ -30,7 +32,7 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
   return (
     <>
       <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8 bg-muted">
-        <Image src={categoryImage.imageUrl} alt={pageTitle} fill className="object-cover" />
+        <img src={categoryImage.imageUrl} alt={pageTitle} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex items-center justify-center">
             <h1 className="text-3xl md:text-5xl font-bold text-white text-center drop-shadow-lg px-4">{pageTitle}</h1>
@@ -40,7 +42,11 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
       <div>
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
-            <SortDropdown />
+            <SortDropdown 
+              sortBy={sortBy}
+              basePath={basePath}
+              searchParams={searchParams}
+            />
           </div>
           
           <div className="grid grid-cols-1 gap-4">

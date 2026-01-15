@@ -91,9 +91,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
 
               {/* Mobile Icons */}
                <div className="flex items-center justify-end gap-1 lg:hidden">
-                  <Button variant="ghost" size="icon" onClick={onSearchClick}>
-                    <Icons.search className="h-5 w-5" />
-                  </Button>
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button variant="ghost" size="icon" className="relative">

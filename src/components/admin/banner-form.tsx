@@ -21,11 +21,12 @@ import type { Banner } from '@/lib/types';
 import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { Trash } from 'lucide-react';
+import { useState } from 'react';
 
 const formSchema = z.object({
   title: z.string().min(2, 'Le titre est requis.'),
   subtitle: z.string().optional(),
-  imageUrl: z.string().url('Veuillez entrer une URL valide.'),
   linkUrl: z.string().min(1, "Le lien est requis (ex: /products)"),
 });
 
@@ -40,17 +41,33 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
 
+  const [imageFields, setImageFields] = useState<{ url: string; description: string }[]>(
+    banner?.images.map(img => ({ url: img.imageUrl, description: img.description })) || [{ url: '', description: '' }]
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: banner?.title || '',
       subtitle: banner?.subtitle || '',
-      imageUrl: banner?.image.imageUrl || '',
       linkUrl: banner?.linkUrl || '/products',
     },
   });
 
-  const imageUrl = form.watch('imageUrl');
+  const addImageField = () => {
+    setImageFields([...imageFields, { url: '', description: '' }]);
+  };
+
+  const handleImageChange = (index: number, field: 'url' | 'description', value: string) => {
+    const newImages = [...imageFields];
+    newImages[index][field] = value;
+    setImageFields(newImages);
+  };
+  
+  const removeImageField = (index: number) => {
+    const newImages = imageFields.filter((_, i) => i !== index);
+    setImageFields(newImages);
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!banner || !firestore) {
@@ -61,19 +78,30 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
       });
       return;
     }
+
+    if (imageFields.some(img => !img.url)) {
+        toast({
+            variant: 'destructive',
+            title: "Images manquantes",
+            description: "Veuillez fournir une URL pour chaque image.",
+        });
+        return;
+    }
     
     try {
+      const images = imageFields.map((img, index) => ({
+        id: banner.images[index]?.id || `banner-${banner.id}-img-${index + 1}`,
+        description: img.description || values.title,
+        imageUrl: img.url,
+        imageHint: banner.images[index]?.imageHint || 'banner',
+      }));
+
       const bannerToUpdate: Banner = {
         id: banner.id,
         title: values.title,
         subtitle: values.subtitle,
         linkUrl: values.linkUrl,
-        image: {
-            id: banner.image.id,
-            description: banner.image.description,
-            imageHint: banner.image.imageHint,
-            imageUrl: values.imageUrl,
-        }
+        images: images,
       };
 
       const bannerRef = doc(firestore, 'banners', banner.id);
@@ -134,24 +162,36 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>URL de l'image</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com/image.png" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {imageUrl && (
-                <div className="relative aspect-video w-full rounded-md border bg-muted overflow-hidden">
-                    <Image src={imageUrl} alt="Aperçu de la bannière" fill className="object-cover" />
+            
+            <FormItem>
+              <FormLabel>Images</FormLabel>
+              <FormDescription>Gérez les images de cette bannière.</FormDescription>
+               <div className="space-y-4 pt-2">
+                  {imageFields.map((image, index) => (
+                    <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
+                      <div className='flex-1 space-y-2'>
+                          <Input
+                          placeholder="URL de l'image (ex: https://...)"
+                          value={image.url}
+                          onChange={(e) => handleImageChange(index, 'url', e.target.value)}
+                          />
+                          <Input
+                          placeholder="Description de l'image (optionnel)"
+                          value={image.description}
+                          onChange={(e) => handleImageChange(index, 'description', e.target.value)}
+                          />
+                      </div>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
+                        <Trash className="text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={addImageField}>
+                    Ajouter une autre image
+                  </Button>
                 </div>
-            )}
+            </FormItem>
+
             <FormField
               control={form.control}
               name="linkUrl"

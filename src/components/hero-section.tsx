@@ -9,6 +9,53 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from "embla-carousel-autoplay";
 
 
+const BannerDisplay = ({ banner }: { banner: Banner }) => {
+    if (!banner.images || banner.images.length === 0) return null;
+
+    if (banner.images.length > 1) {
+        return (
+            <Carousel 
+                opts={{ loop: true }}
+                plugins={[Autoplay({delay: 4000, stopOnInteraction: false })]}
+                className="w-full h-full"
+            >
+                <CarouselContent>
+                    {banner.images.map((image, index) => (
+                        <CarouselItem key={index}>
+                            <Link href={banner.linkUrl} className="block w-full h-full">
+                                <Image 
+                                    src={image.imageUrl} 
+                                    alt={banner.title}
+                                    data-ai-hint={image.imageHint}
+                                    fill 
+                                    className="object-cover"
+                                    priority={index === 0}
+                                />
+                            </Link>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+            </Carousel>
+        );
+    }
+    
+    // Single image
+    const image = banner.images[0];
+    return (
+        <Link href={banner.linkUrl} className="block w-full h-full">
+            <Image 
+                src={image.imageUrl} 
+                alt={banner.title}
+                data-ai-hint={image.imageHint}
+                fill 
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                priority
+            />
+        </Link>
+    );
+};
+
+
 interface HeroSectionProps {
     banners: Banner[];
     loading: boolean;
@@ -42,56 +89,31 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-auto lg:h-[500px]">
                     {mainBanner && (
                          <div className="relative rounded-lg overflow-hidden w-full h-[300px] lg:h-full lg:col-span-2 group">
-                            <Link href={mainBanner.linkUrl}>
-                                <Image 
-                                    src={mainBanner.image.imageUrl} 
-                                    alt={mainBanner.title}
-                                    data-ai-hint={mainBanner.image.imageHint}
-                                    fill 
-                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                    priority
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-8 flex flex-col justify-end">
-                                    <h2 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg">{mainBanner.title}</h2>
-                                    {mainBanner.subtitle && <p className="text-lg text-white/90 mt-2 max-w-lg drop-shadow-md">{mainBanner.subtitle}</p>}
-                                </div>
-                            </Link>
+                            <BannerDisplay banner={mainBanner} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-8 flex flex-col justify-end pointer-events-none">
+                                <h2 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg">{mainBanner.title}</h2>
+                                {mainBanner.subtitle && <p className="text-lg text-white/90 mt-2 max-w-lg drop-shadow-md">{mainBanner.subtitle}</p>}
+                            </div>
                         </div>
                     )}
                    
                     <div className="hidden lg:flex flex-col gap-4">
                         {topSubBanner && (
                             <div className="relative rounded-lg overflow-hidden w-full h-1/2 group">
-                                <Link href={topSubBanner.linkUrl}>
-                                    <Image 
-                                        src={topSubBanner.image.imageUrl} 
-                                        alt={topSubBanner.title}
-                                        data-ai-hint={topSubBanner.image.imageHint}
-                                        fill 
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-center">
-                                        <h3 className="text-2xl font-bold text-white drop-shadow-md">{topSubBanner.title}</h3>
-                                        {topSubBanner.subtitle && <p className="text-md text-white/90 mt-1 drop-shadow-md">{topSubBanner.subtitle}</p>}
-                                    </div>
-                                </Link>
+                                <BannerDisplay banner={topSubBanner} />
+                                <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-center pointer-events-none">
+                                    <h3 className="text-2xl font-bold text-white drop-shadow-md">{topSubBanner.title}</h3>
+                                    {topSubBanner.subtitle && <p className="text-md text-white/90 mt-1 drop-shadow-md">{topSubBanner.subtitle}</p>}
+                                </div>
                             </div>
                         )}
                          {bottomSubBanner && (
                             <div className="relative rounded-lg overflow-hidden w-full h-1/2 group">
-                                <Link href={bottomSubBanner.linkUrl}>
-                                    <Image 
-                                        src={bottomSubBanner.image.imageUrl} 
-                                        alt={bottomSubBanner.title}
-                                        data-ai-hint={bottomSubBanner.image.imageHint}
-                                        fill 
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-center">
-                                        <h3 className="text-2xl font-bold text-white drop-shadow-md">{bottomSubBanner.title}</h3>
-                                        {bottomSubBanner.subtitle && <p className="text-md text-white/90 mt-1 drop-shadow-md">{bottomSubBanner.subtitle}</p>}
-                                    </div>
-                                </Link>
+                                <BannerDisplay banner={bottomSubBanner} />
+                                <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-center pointer-events-none">
+                                    <h3 className="text-2xl font-bold text-white drop-shadow-md">{bottomSubBanner.title}</h3>
+                                    {bottomSubBanner.subtitle && <p className="text-md text-white/90 mt-1 drop-shadow-md">{bottomSubBanner.subtitle}</p>}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -108,7 +130,7 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                                     <Link href={banner.linkUrl}>
                                         <div className="relative aspect-[16/2] md:aspect-[16/1] w-full">
                                             <Image 
-                                                src={banner.image.imageUrl}
+                                                src={banner.images[0].imageUrl}
                                                 alt={banner.title}
                                                 fill
                                                 className="object-cover"

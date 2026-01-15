@@ -7,32 +7,60 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import type { Banner } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
+import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+
+const PromoBanner = ({ banner }: { banner: Banner }) => {
+    if (!banner.images || banner.images.length === 0) return null;
+    
+    return (
+        <div className="relative group rounded-lg overflow-hidden aspect-video">
+             {banner.images.length > 1 ? (
+                <Carousel 
+                    opts={{ loop: true }} 
+                    plugins={[Autoplay({delay: 5000, stopOnInteraction: false})]}
+                    className="w-full h-full"
+                >
+                    <CarouselContent>
+                        {banner.images.map((image, index) => (
+                             <CarouselItem key={index}>
+                                <Link href={banner.linkUrl} className="block w-full h-full">
+                                    <Image
+                                        src={image.imageUrl}
+                                        alt={banner.title}
+                                        data-ai-hint={image.imageHint}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </Link>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
+            ) : (
+                 <Link href={banner.linkUrl} className="block w-full h-full">
+                    <Image
+                        src={banner.images[0].imageUrl}
+                        alt={banner.title}
+                        data-ai-hint={banner.images[0].imageHint}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                </Link>
+            )}
+            <div className="absolute inset-0 bg-black/30 p-8 flex flex-col justify-end pointer-events-none">
+                {banner.subtitle && <p className="text-white font-semibold">{banner.subtitle}</p>}
+                <h3 className="text-3xl font-bold text-white mt-2">{banner.title}</h3>
+            </div>
+        </div>
+    )
+};
+
 
 interface PromoBannersProps {
     banners: Banner[];
     loading?: boolean;
 }
-
-const PromoBanner = ({ banner }: { banner: Banner }) => (
-    <div className="relative group rounded-lg overflow-hidden">
-        <Link href={banner.linkUrl}>
-            <div className='aspect-video relative'>
-                <Image
-                    src={banner.image.imageUrl}
-                    alt={banner.title}
-                    data-ai-hint={banner.image.imageHint}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-            </div>
-            <div className="absolute inset-0 bg-black/30 p-8 flex flex-col justify-end">
-                {banner.subtitle && <p className="text-white font-semibold">{banner.subtitle}</p>}
-                <h3 className="text-3xl font-bold text-white mt-2">{banner.title}</h3>
-            </div>
-       </Link>
-    </div>
-);
-
 
 export function PromoBanners({ banners, loading }: PromoBannersProps) {
 

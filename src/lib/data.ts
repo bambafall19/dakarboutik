@@ -9,55 +9,57 @@ const banners: Banner[] = [
     id: 'banner1',
     title: 'La technologie qui vous ressemble',
     subtitle: 'Smartphones, ordinateurs, accessoires... Tout ce qu\'il vous faut est ici.',
-    image: findImage('banner1'),
+    images: [findImage('banner1')],
     linkUrl: '/products',
   },
   {
     id: 'banner-laptops',
     title: 'PC Portables Puissants',
     subtitle: 'Pour le travail ou le jeu',
-    image: findImage('banner-laptops'),
+    images: [findImage('banner-laptops')],
     linkUrl: '/products?category=informatique',
   },
   {
     id: 'banner-accessories',
     title: 'Accessoires Indispensables',
     subtitle: 'Chargeurs, câbles, coques et plus',
-    image: findImage('banner-accessories'),
+    images: [findImage('banner-accessories')],
     linkUrl: '/products?category=accessoires',
   },
   {
     id: 'promo-banner-1',
     title: 'Le Son Immersif',
     subtitle: 'Casques et écouteurs haute-fidélité',
-    image: findImage('banner-headphones'),
+    images: [findImage('banner-headphones')],
     linkUrl: '/products?category=audio',
   },
   {
     id: 'promo-banner-2',
     title: 'Restez Connecté',
     subtitle: 'Toute notre gamme de smartphones',
-    image: findImage('product-phone-1a'),
+    images: [findImage('product-phone-1a')],
     linkUrl: '/products?category=telephonie',
   },
   {
     id: 'announcement-1',
     title: 'Annonce 1',
-    image: findImage('announcement-1'),
+    images: [findImage('announcement-1')],
     linkUrl: '/products?sortBy=newest',
   },
   {
     id: 'announcement-2',
     title: 'Annonce 2',
-    image: findImage('announcement-2'),
+    images: [findImage('announcement-2')],
     linkUrl: '/products',
   },
   {
     id: 'announcement-3',
     title: 'Annonce 3',
-    image: findImage('announcement-3'),
+    images: [findImage('announcement-3')],
     linkUrl: '/sav',
   },
 ];
   
 export const getBanners = () => banners;
+
+    

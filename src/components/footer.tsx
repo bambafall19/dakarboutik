@@ -34,7 +34,7 @@ interface FooterProps {
 
 export function Footer({ settings }: FooterProps) {
   return (
-    <footer className="bg-muted/50 text-card-foreground border-t mt-16">
+    <footer className="bg-card text-card-foreground border-t mt-16">
       <div className="container pt-12 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
           

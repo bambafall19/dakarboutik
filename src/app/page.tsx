@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { FeaturedCategories } from '@/components/featured-categories';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
+import { Icons } from '@/components/icons';
 
 export default function HomePage() {
   const { products, loading: productsLoading } = useProducts();
@@ -56,6 +57,7 @@ export default function HomePage() {
               products={newProducts}
               link={{href: "/products?sortBy=newest", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+              icon={<Icons.flash className="text-primary" />}
             />
           </div>
         )}

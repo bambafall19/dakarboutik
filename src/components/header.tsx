@@ -43,11 +43,11 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             <form className="hidden lg:block flex-1 max-w-xl">
                 <div className="relative">
                     <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Rechercher un produit..." className="pl-10 h-11" onFocus={onSearchClick} />
+                    <Input placeholder="Rechercher un produit..." className="pl-10 h-11 rounded-full bg-muted border-transparent focus:border-primary focus:bg-background" onFocus={onSearchClick} />
                 </div>
             </form>
             
-             <div className="flex items-center justify-end gap-2">
+             <div className="flex items-center justify-end gap-1">
                   <Button variant="ghost" size="icon" className="lg:hidden" onClick={onSearchClick}>
                     <Icons.search className="h-5 w-5" />
                   </Button>
@@ -64,7 +64,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                       <Button variant="ghost" size="icon" className="relative">
                         <Icons.shoppingBag className="h-6 w-6" />
                         {totalItems > 0 && (
-                            <span className="absolute -right-2 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                                 {totalItems}
                             </span>
                         )}
@@ -79,8 +79,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       </div>
       
       {/* Navigation Bar */}
-      <nav className="bg-nav text-nav-foreground hidden md:block">
-        <div className="container">
+      <nav className="bg-background border-b hidden md:block">
+        <div className="container flex justify-center">
           <MainNav items={categories} />
         </div>
       </nav>

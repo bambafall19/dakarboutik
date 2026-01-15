@@ -30,10 +30,10 @@ export function ProductCard({ product }: ProductCardProps) {
   const hasSale = product.salePrice && product.salePrice < product.price;
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg group border-border/80 hover:border-primary/50">
+    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 group rounded-xl">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative">
-          <div className="aspect-square relative w-full bg-secondary/30">
+          <div className="aspect-square relative w-full bg-secondary/30 rounded-t-xl overflow-hidden">
             <Image
               src={product.images[0].imageUrl}
               alt={product.title}
@@ -58,7 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </Link>
         <div className="mt-auto pt-2 flex justify-between items-end">
            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-           <Button size="icon" variant="outline" className="h-9 w-9 rounded-full" onClick={handleAddToCart}>
+           <Button size="icon" className="h-9 w-9 rounded-full" onClick={handleAddToCart}>
             <ShoppingCart className="h-4 w-4" />
           </Button>
         </div>

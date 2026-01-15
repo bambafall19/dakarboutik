@@ -100,7 +100,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       
        {/* Category Nav */}
       <div className="hidden lg:flex bg-nav text-nav-foreground">
-          <div className="container">
+          <div className="container flex justify-center">
             <MainNav items={categories} />
           </div>
       </div>

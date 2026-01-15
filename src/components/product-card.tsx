@@ -68,24 +68,31 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
         {!showNewBadge && product.isBestseller && (
             <Badge className="absolute top-2 left-2 z-10 text-xs px-1.5 py-0.5" variant="secondary">TOP VENTE</Badge>
         )}
-        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5]">
+        <div className="relative w-full rounded-t-lg overflow-hidden aspect-[4/5] bg-card">
             <Image
                 src={product.images[0].imageUrl}
                 alt={product.title}
                 data-ai-hint={product.images[0].imageHint}
                 fill
-                className="object-contain group-hover:scale-105 transition-transform duration-300"
+                className="object-contain group-hover:scale-105 transition-transform duration-300 p-2"
             />
         </div>
       </Link>
-      <div className="p-4 text-center">
-        <h3 className="font-medium text-foreground text-sm leading-tight h-10 line-clamp-2">
-          <Link href={`/products/${product.slug}`}>{product.title}</Link>
-        </h3>
+      <div className="p-4 text-center flex-1 flex flex-col">
         <div className="mt-2">
            <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
         </div>
+        <h3 className="font-medium text-foreground text-sm leading-tight h-10 line-clamp-2 mt-1">
+          <Link href={`/products/${product.slug}`}>{product.title}</Link>
+        </h3>
+        
       </div>
+      <div className="absolute bottom-4 right-4 z-10">
+          <Button onClick={handleAddToCart} size="icon" className="rounded-full h-12 w-12 shadow-lg">
+            <ShoppingBag className="h-6 w-6" />
+            <span className="sr-only">Ajouter au panier</span>
+          </Button>
+        </div>
     </Card>
   );
 }

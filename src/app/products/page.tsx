@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
-import { getAllChildCategorySlugs, buildCategoryHierarchy } from '@/lib/data-helpers';
+import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
@@ -10,6 +10,7 @@ import { getProducts, getCategories } from '@/lib/data-firebase';
 import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { SortDropdown } from '@/components/sort-dropdown';
 
 
 // This is a server-side only function
@@ -64,6 +65,11 @@ export default async function ProductsPage({
   const [allProducts, rawCategories] = await Promise.all([getProducts(), getCategories()]);
   
   const categories = getCategoriesWithCounts(rawCategories, allProducts);
+  
+  const pageTitle = categoryFilter 
+    ? getCategoryBySlug(categoryFilter, rawCategories)?.name || (categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)).replace(/-/g, ' ')
+    : 'Tous les produits';
+
 
   const availableBrands = [...new Set(allProducts.map(p => p.brand).filter(Boolean) as string[])].sort();
 
@@ -167,11 +173,25 @@ export default async function ProductsPage({
         </aside>
         
         <main className="md:col-span-3">
-          <ProductListing
-            products={filteredProducts}
-            suggestedProducts={bestsellers}
-            categorySlug={categoryFilter}
-          />
+            <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-8 bg-muted">
+                <Image src={findImage(categoryFilter ? `product-${categoryFilter}-1a` : 'banner1').imageUrl} alt={pageTitle} fill className="object-cover" />
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <h1 className="text-3xl md:text-5xl font-bold text-white text-center drop-shadow-lg px-4">{pageTitle}</h1>
+                </div>
+            </div>
+            
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+              <p className="text-sm text-muted-foreground">{filteredProducts.length} résultat(s)</p>
+              <SortDropdown />
+            </div>
+
+            <ProductListing
+                products={filteredProducts}
+                suggestedProducts={bestsellers}
+                pageTitle={pageTitle}
+                categorySlug={categoryFilter}
+            />
         </main>
       </div>
     </div>

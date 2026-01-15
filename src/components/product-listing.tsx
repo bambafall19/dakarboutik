@@ -1,27 +1,19 @@
 
-
 "use client";
 
 import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 
 interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
+    pageTitle: string;
     categorySlug: string | null;
 }
 
-export function ProductListing({ products, suggestedProducts, categorySlug }: ProductListingProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const sortBy = searchParams.get('sortBy') || 'newest';
-  
-  const pageTitle = categorySlug ? (categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)).replace(/-/g, ' ') : 'Tous les produits';
+export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug }: ProductListingProps) {
   
   const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner1';
   let categoryImage;
@@ -33,14 +25,6 @@ export function ProductListing({ products, suggestedProducts, categorySlug }: Pr
   } catch(e) {
     categoryImage = findImage('banner1');
   }
-
-  const handleSortChange = (value: string) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('sortBy', value);
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
-    router.push(`${pathname}${query}`, { scroll: false });
-  };
   
   return (
     <>
@@ -55,19 +39,6 @@ export function ProductListing({ products, suggestedProducts, categorySlug }: Pr
       <div>
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
-            
-            <div className='flex items-center gap-2'>
-                <Select value={sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className='w-auto md:w-[200px] text-sm'>
-                    <SelectValue placeholder="Trier par..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">Nouveautés</SelectItem>
-                    <SelectItem value="price_asc">Prix: Croissant</SelectItem>
-                    <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
-                  </SelectContent>
-                </Select>
-            </div>
           </div>
           
           <div className="grid grid-cols-1 gap-4">

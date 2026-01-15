@@ -1,15 +1,14 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { CategoryIcons } from './icons';
+import { CategoryIcons, Icons } from './icons';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { cn } from '@/lib/utils';
 import type { Category, SiteSettings } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
-import { Home, LayoutGrid, User } from 'lucide-react';
+import { Home, User, Menu } from 'lucide-react';
 import { Logo } from './logo';
 import { Separator } from './ui/separator';
 
@@ -39,6 +38,23 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
                  <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
+                            <Button
+                                variant={"ghost"}
+                                className="w-12 h-12 rounded-full bg-red-700 hover:bg-red-800 text-white"
+                                onClick={onMenuClick}
+                            >
+                                <Menu className="h-6 w-6" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Toutes les catégories</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    
+                    <Separator className='my-4 w-8' />
+                    
+                    <Tooltip>
+                        <TooltipTrigger asChild>
                              <Link href="/" className="w-full flex justify-center">
                                 <Button
                                     variant={pathname === '/' ? "secondary" : "ghost"}
@@ -53,23 +69,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
                             <p>Accueil</p>
                         </TooltipContent>
                     </Tooltip>
-                    
-                    <Separator className='my-2 w-8' />
-                    
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                             <Button
-                                variant={"ghost"}
-                                className="w-10 h-10"
-                                onClick={onMenuClick}
-                            >
-                                <LayoutGrid className="h-5 w-5" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p>Toutes les catégories</p>
-                        </TooltipContent>
-                    </Tooltip>
+
 
                     {loading ? (
                         <div className='w-full space-y-2 px-2 mt-2'>
@@ -82,7 +82,7 @@ export function MainSidebar({ categories, loading, settings, settingsLoading, on
                         <>
                             {featuredCategories.map((category) => {
                                 const isActive = currentCategorySlug === category.slug;
-                                const Icon = CategoryIcons[category.slug] || LayoutGrid;
+                                const Icon = CategoryIcons[category.slug] || Icons.layoutGrid;
 
                                 return (
                                     <Tooltip key={category.id}>

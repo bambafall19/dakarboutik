@@ -149,7 +149,9 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
 
             <Separator className="my-6" />
 
-            <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
+            <div className="text-muted-foreground leading-relaxed prose prose-sm max-w-none whitespace-pre-wrap">
+              {product.description}
+            </div>
 
 
             {product.variants?.map(variant => (

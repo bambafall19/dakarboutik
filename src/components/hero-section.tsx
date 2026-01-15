@@ -40,19 +40,6 @@ export function HeroSection() {
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10" />
-                        <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
-                            <h1 className="text-2xl md:text-4xl font-bold tracking-tight leading-tight max-w-md">
-                                {mainBanner.title}
-                            </h1>
-                            {mainBanner.subtitle && (
-                                <p className="mt-2 text-white/90 max-w-md">
-                                    {mainBanner.subtitle}
-                                </p>
-                            )}
-                            <Button className="mt-6 w-fit" size="lg">
-                                Découvrir <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </div>
                     </Link>
                 </div>
             )}

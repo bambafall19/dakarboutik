@@ -13,18 +13,22 @@ const banners: Banner[] = [
     linkUrl: '/products',
   },
   {
-    id: 'banner-laptops',
+    id: 'ad-banner-1',
     title: 'PC Portables Puissants',
-    subtitle: 'Pour le travail ou le jeu',
     images: [findImage('banner-laptops')],
     linkUrl: '/products?category=informatique',
   },
   {
-    id: 'banner-accessories',
+    id: 'ad-banner-2',
     title: 'Accessoires Indispensables',
-    subtitle: 'Chargeurs, câbles, coques et plus',
     images: [findImage('banner-accessories')],
     linkUrl: '/products?category=accessoires',
+  },
+   {
+    id: 'ad-banner-3',
+    title: 'Le Son Immersif',
+    images: [findImage('banner-headphones')],
+    linkUrl: '/products?category=audio',
   },
   {
     id: 'promo-banner-1',

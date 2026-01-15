@@ -63,6 +63,12 @@ interface HeroSectionProps {
 
 export function HeroSection({ banners, loading }: HeroSectionProps) {
     const mainBanner = banners.find(b => b.id === 'banner1');
+    const adBanners = [
+        banners.find(b => b.id === 'ad-banner-1'),
+        banners.find(b => b.id === 'ad-banner-2'),
+        banners.find(b => b.id === 'ad-banner-3'),
+    ].filter(Boolean) as Banner[];
+
     const announcementBanners = [
         banners.find(b => b.id === 'announcement-1'),
         banners.find(b => b.id === 'announcement-2'),
@@ -71,8 +77,13 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
 
     if (loading) {
         return (
-             <div className="container py-6">
+             <div className="container py-6 space-y-4">
                 <Skeleton className="w-full aspect-[16/6] lg:aspect-[16/5] rounded-lg" />
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Skeleton className="w-full aspect-video rounded-lg" />
+                    <Skeleton className="w-full aspect-video rounded-lg" />
+                    <Skeleton className="w-full aspect-video rounded-lg" />
+                </div>
             </div>
         )
     }
@@ -89,6 +100,15 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                         </div>
                     </div>
                 )}
+                 {adBanners.length > 0 && (
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                         {adBanners.map(banner => (
+                            <div key={banner.id} className="relative rounded-lg overflow-hidden w-full aspect-video group">
+                                 <BannerDisplay banner={banner} />
+                            </div>
+                         ))}
+                     </div>
+                 )}
                  {announcementBanners.length > 0 && (
                     <div className="rounded-lg overflow-hidden">
                         <Carousel 

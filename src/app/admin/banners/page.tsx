@@ -16,13 +16,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function BannersPage() {
   const { banners, loading } = useBanners();
   const mainBanner = banners.find(b => b.id === 'banner1');
-  const topSubBanner = banners.find(b => b.id === 'banner-laptops');
-  const bottomSubBanner = banners.find(b => b.id === 'banner-accessories');
   const promoBanner1 = banners.find(b => b.id === 'promo-banner-1');
   const promoBanner2 = banners.find(b => b.id === 'promo-banner-2');
   const announcement1 = banners.find(b => b.id === 'announcement-1');
   const announcement2 = banners.find(b => b.id === 'announcement-2');
   const announcement3 = banners.find(b => b.id === 'announcement-3');
+  const adBanner1 = banners.find(b => b.id === 'ad-banner-1');
+  const adBanner2 = banners.find(b => b.id === 'ad-banner-2');
+  const adBanner3 = banners.find(b => b.id === 'ad-banner-3');
 
 
   return (
@@ -53,8 +54,9 @@ export default function BannersPage() {
             {announcement2 && <BannerForm banner={announcement2} title="Barre d'annonce - Image 2" description="Deuxième image de la barre d'annonces défilante." />}
             {announcement3 && <BannerForm banner={announcement3} title="Barre d'annonce - Image 3" description="Troisième image de la barre d'annonces défilante." />}
             {mainBanner && <BannerForm banner={mainBanner} title="Bannière Principale (Hero)" description="Modifiez le contenu de la grande bannière sur la page d'accueil." />}
-            {topSubBanner && <BannerForm banner={topSubBanner} title="Sous-bannière Supérieure (Hero)" description="Bannière secondaire dans la section hero." />}
-            {bottomSubBanner && <BannerForm banner={bottomSubBanner} title="Sous-bannière Inférieure (Hero)" description="Bannière secondaire dans la section hero." />}
+            {adBanner1 && <BannerForm banner={adBanner1} title="Bannière Publicitaire 1" description="Première bannière du carrousel publicitaire." />}
+            {adBanner2 && <BannerForm banner={adBanner2} title="Bannière Publicitaire 2" description="Deuxième bannière du carrousel publicitaire." />}
+            {adBanner3 && <BannerForm banner={adBanner3} title="Bannière Publicitaire 3" description="Troisième bannière du carrousel publicitaire." />}
             {promoBanner1 && <BannerForm banner={promoBanner1} title="Bannière Promotionnelle 1" description="Bannière affichée sous les catégories." />}
             {promoBanner2 && <BannerForm banner={promoBanner2} title="Bannière Promotionnelle 2" description="Bannière affichée sous les catégories." />}
           </>

@@ -93,4 +93,3 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     </Card>
   );
 }
-

@@ -31,7 +31,7 @@ export function CartDrawer() {
                       alt={item.product.title}
                       data-ai-hint={item.product.images[0].imageHint}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1"
                     />
                   </div>
                   <div className="flex-1">

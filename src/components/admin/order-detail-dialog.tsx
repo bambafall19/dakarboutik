@@ -110,7 +110,7 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
                             <TableRow key={item.id}>
                                 <TableCell>
                                     <div className='relative h-12 w-12 bg-muted rounded-md overflow-hidden'>
-                                        <Image src={item.product.images[0].imageUrl} alt={item.product.title} fill className='object-contain' />
+                                        <Image src={item.product.images[0].imageUrl} alt={item.product.title} fill className='object-contain p-1' />
                                     </div>
                                 </TableCell>
                                 <TableCell>

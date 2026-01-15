@@ -220,7 +220,7 @@ export function ProductList({ products }: { products: Product[] }) {
                               src={product.images[0]?.imageUrl}
                               alt={product.title}
                               fill
-                              className="object-contain"
+                              className="object-contain p-1"
                           />
                       </div>
                   </TableCell>

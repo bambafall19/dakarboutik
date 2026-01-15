@@ -32,7 +32,7 @@ export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
             {state.items.map(item => (
                 <div key={item.id} className="flex items-start gap-4">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
-                        <Image src={item.product.images[0].imageUrl} alt={item.product.title} data-ai-hint={item.product.images[0].imageHint} fill className="object-cover" />
+                        <Image src={item.product.images[0].imageUrl} alt={item.product.title} data-ai-hint={item.product.images[0].imageHint} fill className="object-contain p-1" />
                         <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                             {item.quantity}
                         </span>

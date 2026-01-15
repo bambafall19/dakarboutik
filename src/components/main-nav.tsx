@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -30,7 +31,7 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList>
         {navLinks.map((item) => (
             <NavigationMenuItem key={item.name}>
-                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base font-semibold hover:text-white focus:text-white data-[active]:text-white text-nav-foreground/80")}>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "h-14 bg-transparent text-base font-semibold hover:text-white focus:text-white data-[active]:text-white text-nav-foreground")}>
                   <Link href={item.href}>
                     {item.name}
                   </Link>

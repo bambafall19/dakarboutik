@@ -2,19 +2,11 @@
 
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product-listing';
-import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 import { getAllChildCategorySlugs, buildCategoryHierarchy } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
-import { Card, CardContent } from '@/components/ui/card';
 import { getProducts, getCategories } from '@/lib/data-firebase';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';

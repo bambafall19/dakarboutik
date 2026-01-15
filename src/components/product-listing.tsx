@@ -34,7 +34,6 @@ export function ProductListing({ products, suggestedProducts, categorySlug }: Pr
     categoryImage = findImage('banner1');
   }
 
-
   const handleSortChange = (value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set('sortBy', value);

@@ -6,7 +6,7 @@ import { ProductGrid } from '@/components/product-grid';
 import { useProducts } from '@/hooks/use-site-data';
 import { ProductCardSkeleton } from '@/components/product-card-skeleton';
 import { HeroSection } from '@/components/hero-section';
-import { PromoBanners } from '@/components/promo-banners';
+import { Engagements } from '@/components/engagements';
 import { useMemo } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ProductCard } from '@/components/product-card';
@@ -41,7 +41,6 @@ export default function HomePage() {
       
       <main className="container space-y-8 md:space-y-16">
         <FeaturedCategories />
-        <PromoBanners />
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {Array.from({ length: 12 }).map((_, i) => <ProductCardSkeleton key={i} />)}
@@ -101,6 +100,7 @@ export default function HomePage() {
           </>
         )}
       </main>
+      <Engagements />
     </div>
   );
 }

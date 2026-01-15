@@ -34,7 +34,7 @@ const engagements = [
 
 export function Engagements() {
   return (
-    <section className="hidden md:block bg-muted/50 py-16">
+    <section className="bg-muted/50 py-16">
       <div className="container">
         <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight">Pourquoi nous choisir ?</h2>

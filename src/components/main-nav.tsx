@@ -25,7 +25,7 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href="/products" passHref>
+          <Link href="/products" passHref legacyBehavior>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Shop
             </NavigationMenuLink>
@@ -48,14 +48,14 @@ export function MainNav({ items }: MainNavProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/products?sortBy=newest" passHref>
+          <Link href="/products?sortBy=newest" passHref legacyBehavior>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Pages
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/brands" passHref>
+          <Link href="/brands" passHref legacyBehavior>
             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
               Elements
             </NavigationMenuLink>

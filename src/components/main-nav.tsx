@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -26,10 +27,8 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList>
         <NavigationMenuItem>
            <Link href="/products" legacyBehavior passHref>
-             <NavigationMenuLink asChild>
-                <a className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
-                    BOUTIQUE
-                </a>
+             <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+                BOUTIQUE
              </NavigationMenuLink>
            </Link>
         </NavigationMenuItem>
@@ -59,10 +58,8 @@ export function MainNav({ items }: MainNavProps) {
 
          <NavigationMenuItem>
            <Link href="/sav" passHref legacyBehavior>
-            <NavigationMenuLink asChild>
-                <a className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
-                    GARANTIE & SAV
-                </a>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+                GARANTIE & SAV
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

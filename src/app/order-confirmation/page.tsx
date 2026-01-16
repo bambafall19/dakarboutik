@@ -1,10 +1,9 @@
-
 'use client';
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Truck } from "lucide-react";
 import { Suspense } from 'react';
 import { useSearchParams } from "next/navigation";
 
@@ -22,20 +21,30 @@ function OrderConfirmationContent() {
                     <CardTitle className="mt-4 text-2xl">Merci pour votre commande !</CardTitle>
                     <CardDescription>Votre commande a été passée avec succès.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6 pt-6">
                     {orderId ? (
                          <p className="text-muted-foreground">
                             Votre numéro de commande est le <span className="font-bold text-foreground">{orderId}</span>.
-                            Vous recevrez bientôt un email de confirmation avec les détails de votre commande.
+                            Vous pouvez suivre son état d'avancement à tout moment.
                         </p>
                     ) : (
                         <p className="text-muted-foreground">
-                            Vous recevrez bientôt un email de confirmation avec les détails de votre commande.
+                            Votre commande a été enregistrée. Nous vous contacterons bientôt avec les détails.
                         </p>
                     )}
-                    <Button asChild>
-                        <Link href="/">Retour à l'accueil</Link>
-                    </Button>
+                    <div className="flex w-full flex-col sm:flex-row gap-4 justify-center pt-2">
+                        {orderId && (
+                            <Button asChild size="lg" className="w-full sm:w-auto">
+                                <Link href={`/suivi/${orderId}`}>
+                                    <Truck className="mr-2 h-4 w-4" />
+                                    Suivre ma commande
+                                </Link>
+                            </Button>
+                        )}
+                        <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+                            <Link href="/products">Continuer mes achats</Link>
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         </div>

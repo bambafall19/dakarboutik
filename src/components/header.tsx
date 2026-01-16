@@ -12,8 +12,7 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { AnnouncementBar } from './announcement-bar';
-import { User, Heart, Headset, Sun, Moon, LayoutGrid } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { Heart } from 'lucide-react';
 import { Input } from './ui/input';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
@@ -30,13 +29,41 @@ interface HeaderProps {
 export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
   const { totalItems: wishlistTotal } = useWishlist();
-  const { user } = useUser();
 
   return (
     <header className="sticky top-0 z-40 w-full bg-background">
       <AnnouncementBar settings={settings} loading={loading} />
       
-      {/* Main Header */}
+      {/* Mobile Header */}
+      <div className="md:hidden border-b">
+        <div className="container flex h-16 items-center justify-between gap-4">
+            <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={onSearchClick}>
+                    <Icons.search className="h-6 w-6" />
+                    <span className="sr-only">Rechercher</span>
+                </Button>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <Icons.shoppingBag className="h-6 w-6" />
+                       <span className="sr-only">Panier</span>
+                      {totalItems > 0 && (
+                          <span className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                              {totalItems}
+                          </span>
+                      )}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent className="flex flex-col">
+                      <CartDrawer />
+                  </SheetContent>
+                </Sheet>
+            </div>
+        </div>
+      </div>
+
+      {/* Desktop & Tablet Header */}
       <div className="hidden md:block border-b">
         <div className="container flex h-20 items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -49,13 +76,14 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             </div>
             
             <div className="hidden lg:flex flex-1 max-w-lg">
-                <form className="w-full relative">
+                <form className="w-full relative" onSubmit={(e) => { e.preventDefault(); onSearchClick(); }}>
                     <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
                         type="search"
                         placeholder="Rechercher un produit..."
-                        className="w-full bg-muted pl-10 h-11 text-base rounded-full"
-                        onFocus={onSearchClick}
+                        className="w-full bg-muted pl-10 h-11 text-base rounded-full cursor-pointer"
+                        onClick={onSearchClick}
+                        readOnly
                     />
                 </form>
             </div>
@@ -88,10 +116,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                       <CartDrawer />
                   </SheetContent>
                 </Sheet>
-              </div>
-
-              {/* Mobile Icons */}
-               <div className="flex items-center justify-end gap-1 lg:hidden">
               </div>
         </div>
       </div>

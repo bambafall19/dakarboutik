@@ -1,14 +1,8 @@
+
 'use client';
 
 import * as React from 'react';
-import { MoreHorizontal, File } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { MoreHorizontal } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -32,28 +26,19 @@ import { StatusSelector } from './status-selector';
 
 export function OrderList({ orders }: { orders: Order[] }) {
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+
+  if (orders.length === 0) {
+    return (
+        <div className="text-center py-16">
+            <h3 className="text-lg font-semibold">Aucune commande trouvée</h3>
+            <p className="text-muted-foreground text-sm">Essayez de changer vos filtres ou votre recherche.</p>
+        </div>
+    )
+  }
   
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Commandes</CardTitle>
-              <CardDescription>
-                Suivez et gérez les commandes de vos clients.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline">
-                <File className="h-3.5 w-3.5 mr-2" />
-                Exporter
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
+        <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Commande</TableHead>
@@ -103,8 +88,6 @@ export function OrderList({ orders }: { orders: Order[] }) {
               ))}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
       {selectedOrder && (
         <OrderDetailDialog 
           order={selectedOrder} 

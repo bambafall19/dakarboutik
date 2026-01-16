@@ -16,6 +16,7 @@ import { User, Heart, Headset, Sun, Moon, LayoutGrid } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { Input } from './ui/input';
 import { Price } from './price';
+import { useWishlist } from '@/hooks/use-wishlist';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -28,6 +29,7 @@ interface HeaderProps {
 
 export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
+  const { totalItems: wishlistTotal } = useWishlist();
   const { user } = useUser();
 
   return (
@@ -59,10 +61,15 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             </div>
             
              <div className="hidden lg:flex items-center justify-end gap-2">
-                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
-                  <Link href="#">
+                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal relative">
+                  <Link href="/favoris">
                     <Heart className="h-5 w-5" />
                     <span>Favoris</span>
+                     {wishlistTotal > 0 && (
+                      <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]">
+                        {wishlistTotal}
+                      </span>
+                    )}
                   </Link>
                 </Button>
                 <Sheet>

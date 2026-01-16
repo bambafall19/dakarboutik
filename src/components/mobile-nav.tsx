@@ -8,7 +8,7 @@ import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Headset, Truck, X } from 'lucide-react';
+import { Headset, Truck, X, Heart } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { ThemeToggle } from './theme-toggle';
 
@@ -76,6 +76,14 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
           <Separator />
         </div>
         <nav className="flex flex-col gap-1 p-4">
+            <Link
+                href="/favoris"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Heart className="h-5 w-5" />
+                Mes favoris
+            </Link>
             <Link
                 href="/suivi"
                 className="flex items-center gap-4 py-3 text-base font-medium"

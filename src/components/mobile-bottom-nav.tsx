@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutGrid, Search, Truck } from 'lucide-react';
+import { LayoutGrid, Search, Heart } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
+import { useWishlist } from '@/hooks/use-wishlist';
 import { Icons } from './icons';
 
 interface MobileBottomNavProps {
@@ -15,12 +16,13 @@ interface MobileBottomNavProps {
 export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavProps) {
   const pathname = usePathname();
   const { totalItems } = useCart();
+  const { totalItems: wishlistTotal } = useWishlist();
 
   const navItems = [
     { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
-    { href: '/suivi', label: 'Suivi', icon: Truck, isActive: pathname.startsWith('/suivi') },
+    { href: '/favoris', label: 'Favoris', icon: Heart, isActive: pathname.startsWith('/favoris'), isWishlist: true },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true },
   ];
 
@@ -49,6 +51,11 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
                         <span className="absolute top-2 right-1/2 translate-x-5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                             {totalItems}
                         </span>
+                        )}
+                        {item.isWishlist && wishlistTotal > 0 && (
+                          <span className="absolute top-2 right-1/2 translate-x-5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                            {wishlistTotal}
+                          </span>
                         )}
                     </div>
                 );

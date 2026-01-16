@@ -7,10 +7,11 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Price } from "./price";
-import { ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
+import { useWishlist } from "@/hooks/use-wishlist";
 
 interface ProductCardProps {
   product: Product;
@@ -19,6 +20,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, variant = 'default' }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { isProductInWishlist, toggleWishlist } = useWishlist();
+  const isInWishlist = isProductInWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -26,9 +29,14 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     addToCart(product, 1);
   };
   
+  const handleToggleWishlist = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+  
   const isRecent = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const showNewBadge = product.isNew || isRecent;
-  const hasSale = product.salePrice && product.salePrice < product.price;
 
   if (variant === 'horizontal') {
     return (
@@ -74,9 +82,9 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
           {showNewBadge && (
             <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground border-primary hover:bg-primary">NOUVEAU</Badge>
           )}
-           {hasSale && (
-            <Badge variant="destructive" className="absolute top-2 right-2">PROMO</Badge>
-          )}
+           <Button size="icon" className="absolute top-2 right-2 h-8 w-8 bg-white/80 backdrop-blur-sm hover:bg-white text-black/70 hover:text-black rounded-full opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300" onClick={handleToggleWishlist}>
+             <Heart className={cn("h-4 w-4", isInWishlist && "fill-red-500 text-red-500")} />
+           </Button>
            <Button size="icon" className="absolute bottom-2 right-2 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300" onClick={handleAddToCart}>
             <ShoppingCart className="h-4 w-4" />
           </Button>

@@ -21,6 +21,9 @@ import { useReviews } from '@/hooks/use-reviews';
 import { StarRating } from './star-rating';
 import { ReviewsSection } from './reviews-section';
 import { Skeleton } from './ui/skeleton';
+import { useWishlist } from '@/hooks/use-wishlist';
+import { Heart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 
 interface ProductDetailsProps {
@@ -36,6 +39,8 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const { settings } = useSiteSettings();
   const { toast } = useToast();
   const { reviews: realReviews, loading: reviewsLoading } = useReviews(product.id);
+  const { isProductInWishlist, toggleWishlist } = useWishlist();
+  const isInWishlist = isProductInWishlist(product.id);
 
   // Create fake reviews for demonstration if no real reviews exist.
   const reviews = useMemo(() => {
@@ -111,6 +116,10 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       : undefined;
       
     addToCart(product, quantity, variantInfo);
+  };
+
+  const handleToggleWishlist = () => {
+    toggleWishlist(product);
   };
 
   const handleWhatsAppOrder = () => {
@@ -241,20 +250,23 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                     ))}
                     
                     <div className="mt-6 flex flex-col gap-4">
-                        <div className='flex items-center gap-4'>
-                            <div className="flex items-center gap-2">
-                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q-1))}>
+                        <div className="flex items-center gap-4">
+                           <div className="flex items-center gap-2">
+                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
                                 <Icons.minus className="h-4 w-4" />
                             </Button>
                             <span className="font-bold text-lg w-12 text-center">{quantity}</span>
-                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => q+1)}>
+                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => q + 1)}>
                                 <Icons.plus className="h-4 w-4" />
                             </Button>
                             </div>
+                            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
+                                <Icons.shoppingBag className="mr-2 h-5 w-5" /> Ajouter au panier
+                            </Button>
+                            <Button variant="outline" size="icon" onClick={handleToggleWishlist} className="h-12 w-12 flex-shrink-0">
+                                <Heart className={cn("h-6 w-6", isInWishlist && "fill-red-500 text-red-500")} />
+                            </Button>
                         </div>
-                        <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="w-full">
-                            <Icons.shoppingBag className="mr-2 h-5 w-5"/> Ajouter au panier
-                        </Button>
                         <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="w-full">
                             <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
                         </Button>

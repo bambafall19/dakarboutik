@@ -13,11 +13,21 @@ import { ScrollArea } from './ui/scroll-area';
 import { useCategories, useProducts } from '@/hooks/use-site-data';
 import Link from 'next/link';
 import { useDebounce } from '@/hooks/use-debounce';
+import Image from 'next/image';
+import { findImage } from '@/lib/placeholder-images';
+import { Card } from './ui/card';
 
 interface SearchSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
+
+const categoryImages: { [key: string]: string } = {
+    'telephonie': 'product-phone-1a',
+    'informatique': 'product-laptop-1a',
+    'audio': 'product-headphones-1a',
+    'accessoires': 'product-cable-1a',
+};
 
 function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
     const router = useRouter();
@@ -89,15 +99,29 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                 )}
                                 {suggestedCategories.length > 0 && (
                                     <div>
-                                        <h3 className="font-semibold mb-4">Suggestions</h3>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {suggestedCategories.map(category => (
-                                                <Button key={category.id} variant="outline" asChild className="justify-start">
-                                                    <Link href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)}>
-                                                        {category.name}
+                                        <h3 className="font-semibold mb-4">Suggestions de catégories</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {suggestedCategories.map(category => {
+                                                const imageId = categoryImages[category.slug] || 'product-phone-1a';
+                                                const image = findImage(imageId);
+                                                return (
+                                                    <Link key={category.id} href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)} className="group">
+                                                        <Card className="overflow-hidden">
+                                                            <div className="relative aspect-video w-full">
+                                                                <Image
+                                                                    src={image.imageUrl}
+                                                                    alt={category.name}
+                                                                    fill
+                                                                    className="object-cover group-hover:scale-105 transition-transform"
+                                                                />
+                                                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">
+                                                                    <h4 className="font-semibold text-sm text-white text-center">{category.name}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </Card>
                                                     </Link>
-                                                </Button>
-                                            ))}
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 )}

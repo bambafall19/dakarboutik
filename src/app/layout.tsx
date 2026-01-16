@@ -9,6 +9,7 @@ import { CartProvider } from '@/context/cart-provider';
 import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
+import { WishlistProvider } from '@/context/wishlist-provider';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -69,10 +70,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <CartProvider>
-              <AppShell>{children}</AppShell>
-              <Toaster />
-            </CartProvider>
+            <WishlistProvider>
+              <CartProvider>
+                <AppShell>{children}</AppShell>
+                <Toaster />
+              </CartProvider>
+            </WishlistProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
       </body>

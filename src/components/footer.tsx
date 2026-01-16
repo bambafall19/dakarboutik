@@ -31,7 +31,7 @@ const footerLinks = {
   'Mon Compte': [
      { name: 'Connexion', href: '/login' },
      { name: 'Panier', href: '/checkout' },
-     { name: 'Liste de souhaits', href: '#' },
+     { name: 'Favoris', href: '/favoris' },
   ]
 };
 

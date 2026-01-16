@@ -63,6 +63,7 @@ export function FeaturedCategories() {
                               alt={category.name}
                               data-ai-hint={image.imageHint}
                               fill
+                              sizes="(max-width: 768px) 100vw, 25vw"
                               className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

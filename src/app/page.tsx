@@ -1,53 +1,28 @@
-
-'use client';
-
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
-import { useBanners, useProducts } from '@/hooks/use-site-data';
-import { ProductCardSkeleton } from '@/components/product-card-skeleton';
-import { useMemo } from 'react';
-import { Separator } from '@/components/ui/separator';
 import { FeaturedCategories } from '@/components/featured-categories';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
 import { Icons } from '@/components/icons';
-import { useRecentProducts } from '@/hooks/use-recent-products';
+import { getProducts, getBanners } from '@/lib/data-firebase';
+import { RecentProductsGrid } from '@/components/recent-products-grid';
 
-export default function HomePage() {
-  const { products, loading: productsLoading } = useProducts();
-  const { banners, loading: bannersLoading } = useBanners();
-  const { recentProducts, isLoaded: recentProductsLoaded } = useRecentProducts();
+export default async function HomePage() {
+  const [allProducts, allBanners] = await Promise.all([
+    getProducts(),
+    getBanners()
+  ]);
 
-  const newProducts = useMemo(() => {
-    return products
-      .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 8);
-  }, [products]);
-
-  const bestsellers = useMemo(() => {
-    return products.filter(p => p.isBestseller).slice(0, 8);
-  }, [products]);
+  const newProducts = allProducts
+    .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
   
-  const loading = productsLoading || bannersLoading || !recentProductsLoaded;
-
-  if (loading) {
-    return (
-      <div className="container space-y-12 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)}
-        </div>
-        <Separator />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)}
-        </div>
-      </div>
-    )
-  }
+  const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
 
   return (
     <div className="flex flex-col">
-      <HeroSection banners={banners} loading={loading} />
+      <HeroSection banners={allBanners} loading={false} />
       
       <main className="flex flex-col gap-12 md:gap-16 lg:gap-20 py-8">
         <FeaturedCategories />
@@ -64,7 +39,7 @@ export default function HomePage() {
           </div>
         )}
         
-        <PromoBanners banners={banners} loading={bannersLoading} />
+        <PromoBanners banners={allBanners} loading={false} />
 
         {bestsellers.length > 0 && (
            <div className="container">
@@ -77,16 +52,7 @@ export default function HomePage() {
            </div>
         )}
 
-        {recentProducts.length > 0 && (
-          <div className="container">
-            <ProductGrid 
-              title="Suggestions pour vous"
-              products={recentProducts}
-              gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              icon={<Icons.sparkles className="text-primary" />}
-            />
-          </div>
-        )}
+        <RecentProductsGrid />
         
         <Engagements />
 

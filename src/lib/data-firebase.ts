@@ -46,3 +46,25 @@ export async function getCategories() {
 
   return categories;
 }
+
+export async function getBanners() {
+  try {
+    const { firestore } = initializeFirebase();
+    const bannersRef = collection(firestore, 'banners');
+    const querySnapshot = await getDocs(bannersRef);
+
+    if (querySnapshot.empty) {
+      return getStaticBanners(); // Fallback to static data if firestore is empty
+    }
+
+    const banners = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Banner[];
+
+    return banners;
+  } catch (error) {
+    console.error("Failed to fetch banners from Firestore, falling back to static data:", error);
+    return getStaticBanners(); // Fallback on any error
+  }
+}

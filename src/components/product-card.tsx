@@ -40,6 +40,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
                     alt={product.title}
                     data-ai-hint={product.images[0].imageHint}
                     fill
+                    sizes="100px"
                     className="object-contain p-2"
                 />
             </div>
@@ -67,6 +68,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
               data-ai-hint={product.images[0].imageHint}
               fill
               className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
           </div>
           {showNewBadge && (

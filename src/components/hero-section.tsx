@@ -24,7 +24,7 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
 }
 
 
-const BannerDisplay = ({ banner }: { banner: Banner }) => {
+const BannerDisplay = ({ banner, isMain }: { banner: Banner, isMain?: boolean }) => {
     if (!banner.images || banner.images.length === 0) return null;
 
     if (banner.images.length > 1) {
@@ -44,8 +44,9 @@ const BannerDisplay = ({ banner }: { banner: Banner }) => {
                                         alt={banner.title}
                                         data-ai-hint={image.imageHint}
                                         fill 
+                                        sizes="100vw"
                                         className="object-cover"
-                                        priority={index === 0}
+                                        priority={isMain && index === 0}
                                     />
                                 </div>
                             </CarouselItem>
@@ -65,8 +66,9 @@ const BannerDisplay = ({ banner }: { banner: Banner }) => {
                 alt={banner.title}
                 data-ai-hint={image.imageHint}
                 fill 
+                sizes="100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
-                priority
+                priority={isMain}
             />
         </div>
     );
@@ -111,7 +113,7 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                 {mainBanner && (
                      <Link href={mainBanner.linkUrl}>
                         <div className="relative rounded-lg overflow-hidden w-full aspect-[16/8] md:aspect-[16/6] lg:aspect-[16/5] group">
-                            <BannerDisplay banner={mainBanner} />
+                            <BannerDisplay banner={mainBanner} isMain={true} />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-6 md:p-12 flex flex-col justify-end pointer-events-none">
                                 <h2 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg">{mainBanner.title}</h2>
                                 {mainBanner.subtitle && <p className="text-lg text-white/90 mt-2 max-w-lg drop-shadow-md">{mainBanner.subtitle}</p>}
@@ -136,6 +138,7 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                                                 alt={banner.title}
                                                 fill
                                                 className="object-cover"
+                                                sizes="100vw"
                                             />
                                         </div>
                                     </Link>

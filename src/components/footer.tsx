@@ -3,10 +3,15 @@ import Link from 'next/link';
 import { Logo } from './logo';
 import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
-import { Icons } from './icons';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 
 const footerLinks = {
@@ -54,17 +59,38 @@ export function Footer({ settings }: FooterProps) {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 lg:col-span-5 text-left md:pl-8">
-            {Object.entries(footerLinks).map(([title, links]) => (
-              <div key={title}>
-                <h4 className="font-semibold text-foreground mb-4">{title}</h4>
-                <nav className="flex flex-col gap-2.5 text-sm">
-                  {links.map(link => (
-                    <Link key={link.name} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">{link.name}</Link>
-                  ))}
-                </nav>
-              </div>
-            ))}
+          <div className="lg:col-span-5 md:pl-8">
+            {/* Desktop Links */}
+            <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 gap-8 text-left">
+              {Object.entries(footerLinks).map(([title, links]) => (
+                <div key={title}>
+                  <h4 className="font-semibold text-foreground mb-4">{title}</h4>
+                  <nav className="flex flex-col gap-2.5 text-sm">
+                    {links.map(link => (
+                      <Link key={link.name} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">{link.name}</Link>
+                    ))}
+                  </nav>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile Accordion Links */}
+            <div className='md:hidden'>
+              <Accordion type="multiple" className="w-full">
+                {Object.entries(footerLinks).map(([title, links]) => (
+                  <AccordionItem value={title} key={title}>
+                    <AccordionTrigger className='py-3 text-base font-semibold'>{title}</AccordionTrigger>
+                    <AccordionContent>
+                      <nav className="flex flex-col gap-3 pl-4">
+                        {links.map(link => (
+                          <Link key={link.name} href={link.href} className="text-muted-foreground hover:text-primary transition-colors py-1">{link.name}</Link>
+                        ))}
+                      </nav>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
           </div>
           
           <div className="lg:col-span-3">

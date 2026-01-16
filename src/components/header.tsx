@@ -60,12 +60,6 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
             
              <div className="hidden lg:flex items-center justify-end gap-2">
                 <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
-                  <Link href={user ? "/admin" : "/login"}>
-                    <User className="h-5 w-5" />
-                    <span>Compte</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal">
                   <Link href="#">
                     <Heart className="h-5 w-5" />
                     <span>Favoris</span>

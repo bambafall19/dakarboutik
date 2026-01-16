@@ -39,8 +39,6 @@ const menuItems = [
     basePath: '/admin/products',
   },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
-  { href: '#', label: 'Clients', icon: Users },
-  { href: '#', label: 'Rapports', icon: LineChart },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 
@@ -54,13 +52,13 @@ export function AdminSidebar() {
     if (item.href) {
       return pathname.startsWith(item.href);
     }
-    if (item.subItems) {
+    if ('subItems' in item && item.subItems) {
       return item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product');
     }
     return false;
   };
   
-  const defaultActiveAccordion = menuItems.find(item => item.subItems && (item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product')))?.label;
+  const defaultActiveAccordion = menuItems.find(item => 'subItems' in item && item.subItems && (item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product')))?.label;
 
 
   return (
@@ -76,7 +74,7 @@ export function AdminSidebar() {
           <nav className="grid items-start px-4 text-sm font-medium">
             <Accordion type="multiple" defaultValue={defaultActiveAccordion ? [defaultActiveAccordion] : []}>
               {menuItems.map((item) =>
-                item.subItems ? (
+                'subItems' in item && item.subItems ? (
                   <AccordionItem key={item.label} value={item.label} className="border-b-0">
                      <AccordionTrigger className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:no-underline", isLinkActive(item) && 'text-primary bg-muted')}>
                         <item.icon className="h-4 w-4" />

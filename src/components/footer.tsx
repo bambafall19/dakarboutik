@@ -106,8 +106,8 @@ export function Footer({ settings }: FooterProps) {
         <div className="flex flex-col md:flex-row justify-between items-center text-center text-sm text-muted-foreground gap-4">
           <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
           <div className='flex items-center gap-4'>
-             <Link href="#" className="hover:text-primary">Conditions générales</Link>
-             <Link href="#" className="hover:text-primary">Politique de confidentialité</Link>
+             <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
+             <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>
           </div>
         </div>
       </div>

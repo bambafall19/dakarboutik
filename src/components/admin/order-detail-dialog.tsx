@@ -24,11 +24,12 @@ import { Price } from '../price';
 import type { Order } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
-import { StatusSelector } from './status-selector';
+import { StatusSelector, statusLabels } from './status-selector';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
 import { doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
+import { Icons } from '../icons';
 
 interface OrderDetailDialogProps {
   order: Order;
@@ -89,6 +90,52 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
       setIsSavingPublicNote(false);
     }
 };
+
+ const handleShareViaWhatsApp = () => {
+    const {
+      orderId,
+      customerInfo,
+      items,
+      totalPrice,
+      shippingCost,
+      grandTotal,
+      status,
+    } = order;
+
+    let phoneNumber = customerInfo.phone.replace(/\s/g, ''); // Remove spaces
+    if (phoneNumber.length === 9 && !phoneNumber.startsWith('+')) {
+        // Most likely a Senegalese number without country code, add '221'
+        phoneNumber = `221${phoneNumber}`;
+    }
+
+    const siteUrl = window.location.origin;
+    const trackingUrl = `${siteUrl}/suivi/${orderId}`;
+
+    let message = `*Récapitulatif de votre commande - DakarBoutik*\n\n`;
+    message += `Bonjour ${customerInfo.name},\n\n`;
+    message += `Voici les détails de votre commande *${orderId}*:\n\n`;
+    
+    message += "*Articles commandés :*\n";
+    items.forEach(item => {
+      const itemPrice = item.quantity * (item.product.salePrice ?? item.product.price);
+      const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
+      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''} : ${itemPrice.toLocaleString('fr-SN')} FCA\n`;
+    });
+    message += "\n";
+
+    message += `*Résumé du paiement :*\n`;
+    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCA\n`;
+    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCA\n`;
+    message += `*Total à payer : ${grandTotal.toLocaleString('fr-SN')} FCA*\n\n`;
+
+    message += `Statut actuel : *${statusLabels[status]}*\n\n`;
+
+    message += `Vous pouvez suivre votre commande à tout moment ici :\n${trackingUrl}\n\n`;
+    message += `Merci de votre confiance,\nL'équipe DakarBoutik`;
+
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
 
   return (
@@ -202,6 +249,9 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
         </ScrollArea>
         
         <DialogFooter className='pt-4 border-t'>
+          <Button onClick={handleShareViaWhatsApp} variant="outline">
+            <Icons.whatsapp className="mr-2 h-5 w-5"/> Envoyer via WhatsApp
+          </Button>
           <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
             Fermer
           </Button>

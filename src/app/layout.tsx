@@ -45,7 +45,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <link rel="icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" sizes="any" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#112D55" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" />
         <meta name="apple-mobile-web-app-status-bar" content="#112D55" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>

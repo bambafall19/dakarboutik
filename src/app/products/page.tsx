@@ -1,6 +1,6 @@
 
 
-import { Suspense } from 'react';
+import { Suspense, use } from 'react';
 import { ProductListing } from '@/components/product-listing';
 import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
@@ -55,6 +55,8 @@ export default async function ProductsPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  use(searchParams);
+
   // Safely extract search parameters on the server
   const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
   const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
@@ -134,14 +136,7 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  // Rebuild the query string manually to avoid enumerating searchParams
-  const params = new URLSearchParams();
-  if (categoryFilter) params.set('category', categoryFilter);
-  if (brandFilter.length > 0) params.set('brands', brandFilter.join(','));
-  if (priceRangeFilter) params.set('priceRange', priceRangeFilter);
-  if (searchQuery) params.set('q', searchQuery);
-  if (sortBy) params.set('sortBy', sortBy);
-  const currentQueryString = params.toString();
+  const currentQueryString = new URLSearchParams(searchParams as any).toString();
   
   const filterNode = (
     <div className="space-y-8">

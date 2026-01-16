@@ -4,7 +4,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { useCart } from '@/hooks/use-cart';
-import type { Product, SimpleCategory } from '@/lib/types';
+import type { Product, SimpleCategory, Review } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -18,6 +18,11 @@ import { useSiteSettings } from '@/hooks/use-site-data';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { ProductInfoSidebar } from './product-info-sidebar';
+import { useReviews } from '@/hooks/use-reviews';
+import { StarRating } from './star-rating';
+import { ReviewsSection } from './reviews-section';
+import { Skeleton } from './ui/skeleton';
+
 
 interface ProductDetailsProps {
   product: Product;
@@ -31,6 +36,17 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const { addToCart } = useCart();
   const { settings } = useSiteSettings();
   const { toast } = useToast();
+  const { reviews, loading: reviewsLoading } = useReviews(product.id);
+
+  const { averageRating, reviewCount } = useMemo(() => {
+    if (reviews.length === 0) {
+      return { averageRating: 0, reviewCount: 0 };
+    }
+    const reviewCount = reviews.length;
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = totalRating / reviewCount;
+    return { averageRating, reviewCount };
+  }, [reviews]);
   
   useEffect(() => {
     const initialVariants: Record<string, string> = {};
@@ -153,8 +169,18 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                     {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
                     <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
                     
-                    <div className="mt-4">
+                    <div className="mt-4 flex items-center gap-4">
                         <Badge variant={stockBadgeVariant}>{stockStatus}</Badge>
+                        {reviewsLoading ? (
+                            <Skeleton className="h-5 w-32" />
+                        ) : reviewCount > 0 ? (
+                            <a href="#reviews" className="flex items-center gap-2 text-sm text-muted-foreground hover:underline">
+                                <StarRating rating={averageRating} size={16} />
+                                <span>({reviewCount} avis)</span>
+                            </a>
+                        ) : (
+                            <a href="#reviews" className="text-sm text-muted-foreground hover:underline">Soyez le premier à laisser un avis</a>
+                        )}
                     </div>
 
                     <div className="mt-4">
@@ -227,6 +253,14 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
               </div>
             </div>
           )}
+           <div className='mt-12'>
+            <ReviewsSection 
+              product={product} 
+              reviews={reviews} 
+              averageRating={averageRating} 
+              reviewCount={reviewCount}
+            />
+          </div>
       </div>
       
       {relatedProducts && relatedProducts.length > 0 && (

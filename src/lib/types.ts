@@ -129,5 +129,14 @@ export type PublicOrder = {
   createdAt: string;
   statusHistory: OrderStatusHistoryItem[];
   publicNotes?: PublicNote[];
-}
+};
+
+export type Review = {
+  id: string;
+  rating: number; // 1 to 5
+  title: string;
+  text: string;
+  author: string;
+  createdAt: string; // ISO date string
+};
     

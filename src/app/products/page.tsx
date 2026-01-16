@@ -136,7 +136,11 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  const currentQueryString = new URLSearchParams(searchParams as any).toString();
+  const currentQueryString = new URLSearchParams(
+    Object.fromEntries(
+      Object.entries(searchParams).filter(([, value]) => value !== undefined)
+    ) as Record<string, string>
+  ).toString();
   
   const filterNode = (
     <div className="space-y-8">

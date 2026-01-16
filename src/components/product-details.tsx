@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -36,7 +35,37 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const { addToCart } = useCart();
   const { settings } = useSiteSettings();
   const { toast } = useToast();
-  const { reviews, loading: reviewsLoading } = useReviews(product.id);
+  const { reviews: realReviews, loading: reviewsLoading } = useReviews(product.id);
+
+  // Create fake reviews for demonstration if no real reviews exist.
+  const reviews = useMemo(() => {
+    if (realReviews.length > 0) {
+      return realReviews;
+    }
+    // Only show fake reviews if loading is complete and there are no real reviews.
+    if (!reviewsLoading && realReviews.length === 0) {
+      return [
+        {
+          id: 'fake-1',
+          author: 'Moussa Diop',
+          rating: 5,
+          title: 'Incroyable !',
+          text: 'Cette friteuse a changé ma vie. Plus besoin d\'huile et les frites sont parfaitement croustillantes. Je recommande à 100% !',
+          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        },
+        {
+          id: 'fake-2',
+          author: 'Aïssatou Ndiaye',
+          rating: 4,
+          title: 'Très bon produit',
+          text: 'Fonctionne très bien, facile à nettoyer. J\'aurais juste aimé qu\'elle soit un peu plus grande pour ma famille nombreuse, mais sinon, c\'est parfait.',
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+        },
+      ];
+    }
+    return []; // Return empty while loading
+  }, [realReviews, reviewsLoading]);
+
 
   const { averageRating, reviewCount } = useMemo(() => {
     if (reviews.length === 0) {
@@ -176,7 +205,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                         ) : reviewCount > 0 ? (
                             <a href="#reviews" className="flex items-center gap-2 text-sm text-muted-foreground hover:underline">
                                 <StarRating rating={averageRating} size={16} />
-                                <span>({reviewCount} avis)</span>
+                                <span>({`${reviewCount} avis`})</span>
                             </a>
                         ) : (
                             <a href="#reviews" className="text-sm text-muted-foreground hover:underline">Soyez le premier à laisser un avis</a>

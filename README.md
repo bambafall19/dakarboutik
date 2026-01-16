@@ -1,4 +1,4 @@
-# DakarBoutik
+ pus# DakarBoutik
 
 This is a Next.js e-commerce application for DakarBoutik, built with Firebase Studio.
 

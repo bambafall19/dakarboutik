@@ -17,30 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Price } from '../price';
-import { cn } from '@/lib/utils';
-import type { Order, OrderStatus } from '@/lib/types';
+import type { Order } from '@/lib/types';
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
-
-const statusColors: Record<OrderStatus, string> = {
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  paid: 'bg-blue-100 text-blue-800 border-blue-200',
-  shipped: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  delivered: 'bg-green-100 text-green-800 border-green-200',
-  cancelled: 'bg-red-100 text-red-800 border-red-200',
-};
-
-const statusLabels: Record<OrderStatus, string> = {
-    pending: 'En attente',
-    paid: 'Payée',
-    shipped: 'Expédiée',
-    delivered: 'Livrée',
-    cancelled: 'Annulée',
-}
+import { StatusSelector } from './status-selector';
 
 interface OrderDetailDialogProps {
   order: Order;
@@ -55,9 +38,7 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
         <DialogHeader>
           <DialogTitle className='flex items-center gap-4'>
             Commande {order.orderId}
-            <Badge className={cn(statusColors[order.status])}>
-              {statusLabels[order.status]}
-            </Badge>
+            <StatusSelector order={order} />
           </DialogTitle>
           <DialogDescription>
             Détails de la commande passée le {new Date(order.createdAt).toLocaleString('fr-SN')}.

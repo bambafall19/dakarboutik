@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Home, LayoutGrid, Search, Truck } from 'lucide-react';
+import { LayoutGrid, Search, Truck } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { Icons } from './icons';
 
@@ -17,7 +17,7 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
   const { totalItems } = useCart();
 
   const navItems = [
-    { href: '/', label: 'Accueil', icon: Home, isActive: pathname === '/' },
+    { href: '/', label: 'Suggestions', icon: Icons.sparkles, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
     { href: '/suivi', label: 'Suivi', icon: Truck, isActive: pathname.startsWith('/suivi') },

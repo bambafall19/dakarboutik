@@ -1,10 +1,9 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Home, LayoutGrid, User, Search } from 'lucide-react';
+import { Home, LayoutGrid, Search, Truck } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { Icons } from './icons';
 
@@ -21,13 +20,14 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
     { href: '/', label: 'Accueil', icon: Home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
+    { href: '/suivi', label: 'Suivi', icon: Truck, isActive: pathname.startsWith('/suivi') },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-20 bg-background/80 backdrop-blur-lg border-t">
         <div className="container h-full">
-            <div className="grid grid-cols-4 h-full items-center">
+            <div className="grid grid-cols-5 h-full items-center">
             {navItems.map((item) => {
                 const isActive = item.isActive;
                 const content = (

@@ -10,7 +10,7 @@ import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { X } from 'lucide-react';
+import { Headset, Truck, X } from 'lucide-react';
 import { Separator } from './ui/separator';
 
 interface MobileNavProps {
@@ -73,6 +73,27 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
         <Accordion type="multiple" className="flex flex-col py-4">
           {renderCategoryLinks(items)}
         </Accordion>
+        <div className="px-4">
+          <Separator />
+        </div>
+        <nav className="flex flex-col gap-1 p-4">
+            <Link
+                href="/suivi"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Truck className="h-5 w-5" />
+                Suivi de Commande
+            </Link>
+            <Link
+                href="/sav"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Headset className="h-5 w-5" />
+                Garantie & SAV
+            </Link>
+        </nav>
       </ScrollArea>
       
     </div>

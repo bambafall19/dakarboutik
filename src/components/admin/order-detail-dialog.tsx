@@ -28,7 +28,7 @@ import { StatusSelector } from './status-selector';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 
 interface OrderDetailDialogProps {
   order: Order;
@@ -71,7 +71,15 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
 
     try {
       await updateDoc(orderRef, { publicNotes: arrayUnion(noteToAdd) });
-      await updateDoc(publicOrderRef, { publicNotes: arrayUnion(noteToAdd) });
+      
+      await setDoc(publicOrderRef, { 
+        id: order.id,
+        orderId: order.orderId,
+        status: order.status,
+        createdAt: order.createdAt,
+        publicNotes: arrayUnion(noteToAdd) 
+      }, { merge: true });
+
       toast({ title: 'Note publique ajoutée' });
       setNewPublicNote('');
     } catch (error) {

@@ -9,7 +9,7 @@ import {
     SelectValue,
   } from '@/components/ui/select';
 import { useFirestore } from '@/firebase';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Order, OrderStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -43,11 +43,14 @@ export function StatusSelector({ order, className }: { order: Order; className?:
         // Update main order
         await updateDoc(orderRef, { status: newStatus });
         
-        // Update public tracking order
-        await updateDoc(publicOrderRef, { 
+        // Update or create public tracking order
+        await setDoc(publicOrderRef, {
+            id: order.id,
+            orderId: order.orderId,
             status: newStatus,
+            createdAt: order.createdAt,
             statusHistory: arrayUnion({ status: newStatus, date: new Date().toISOString() })
-        });
+        }, { merge: true });
 
         toast({
           title: 'Statut mis à jour',

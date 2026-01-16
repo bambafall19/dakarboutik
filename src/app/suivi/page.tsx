@@ -34,7 +34,7 @@ export default function SuiviPage() {
               <Label htmlFor="orderId">Numéro de commande</Label>
               <Input
                 id="orderId"
-                placeholder="DKB-1705425257412"
+                placeholder="DKB-1705425257412-abcde"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
                 required

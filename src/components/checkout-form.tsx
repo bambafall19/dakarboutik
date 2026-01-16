@@ -118,7 +118,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
 
     const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
     const grandTotal = totalPrice + shippingCost;
-    const orderId = `DKB-${Date.now()}`;
+    const randomPart = Math.random().toString(36).substring(2, 7);
+    const orderId = `DKB-${Date.now()}-${randomPart}`;
     const createdAt = new Date().toISOString();
 
     try {

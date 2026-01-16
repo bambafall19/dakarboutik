@@ -74,8 +74,8 @@ export function ProductFilters({
                             onValueCommit={handlePriceCommit}
                         />
                         <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-                            <Price price={priceRange[0]} currency="XOF" />
-                            <Price price={priceRange[1]} currency="XOF" />
+                            <Price price={priceRange[0]} currency="FCA" />
+                            <Price price={priceRange[1]} currency="FCA" />
                         </div>
                     </div>
                 </AccordionContent>

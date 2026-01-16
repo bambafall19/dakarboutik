@@ -17,7 +17,7 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
   const { totalItems } = useCart();
 
   const navItems = [
-    { href: '/', label: 'Suggestions', icon: Icons.sparkles, isActive: pathname === '/' },
+    { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { onClick: onSearchClick, label: 'Recherche', icon: Search },
     { href: '/suivi', label: 'Suivi', icon: Truck, isActive: pathname.startsWith('/suivi') },

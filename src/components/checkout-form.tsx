@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore } from "@/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { SHIPPING_COSTS } from "@/components/order-summary";
 import { useSiteSettings } from "@/hooks/use-site-data";
 import { Icons } from "./icons";
@@ -119,16 +119,18 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
     const grandTotal = totalPrice + shippingCost;
     const orderId = `DKB-${Date.now()}`;
+    const createdAt = new Date().toISOString();
 
     try {
-      const ordersCollection = collection(firestore, 'orders');
-      
       const itemsToSave = state.items.map(item => ({
         ...item,
         selectedVariants: item.selectedVariants || [],
       }));
 
-      await addDoc(ordersCollection, {
+      // Create main order document
+      const orderRef = doc(firestore, 'orders', orderId);
+      await setDoc(orderRef, {
+        id: orderId,
         orderId,
         customerInfo: {
           name: values.name,
@@ -143,7 +145,17 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         grandTotal: grandTotal,
         status: 'pending',
         deliveryMethod: values.deliveryMethod,
-        createdAt: new Date().toISOString(),
+        createdAt: createdAt,
+      });
+
+      // Create public order document for tracking
+      const publicOrderRef = doc(firestore, 'publicOrders', orderId);
+      await setDoc(publicOrderRef, {
+        id: orderId,
+        orderId: orderId,
+        status: 'pending',
+        createdAt: createdAt,
+        statusHistory: [{ status: 'pending', date: createdAt }]
       });
       
       toast({

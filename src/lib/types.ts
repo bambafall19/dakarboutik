@@ -97,6 +97,11 @@ export type CustomerInfo = {
 
 export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
 
+export type OrderStatusHistoryItem = {
+  status: OrderStatus;
+  date: string; // ISO date string
+};
+
 export type Order = {
     id: string;
     orderId: string; // User-friendly ID like DKB-12345
@@ -108,6 +113,14 @@ export type Order = {
     status: OrderStatus;
     createdAt: string; // ISO date string
     deliveryMethod: 'dakar' | 'hors-dakar';
+    adminNotes?: string;
 };
 
+export type PublicOrder = {
+  id: string;
+  orderId: string;
+  status: OrderStatus;
+  createdAt: string;
+  statusHistory: OrderStatusHistoryItem[];
+}
     

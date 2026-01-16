@@ -20,6 +20,7 @@ const footerLinks = {
     { name: 'À propos', href: '#' },
     { name: 'Contact', href: '#' },
     { name: 'Garantie & SAV', href: '/sav' },
+    { name: 'Suivi de Commande', href: '/suivi' },
   ],
   'Mon Compte': [
      { name: 'Connexion', href: '/login' },

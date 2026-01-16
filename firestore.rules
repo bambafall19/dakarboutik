@@ -28,6 +28,12 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null;
     }
 
+    // Public read for order status tracking, admin write.
+    match /publicOrders/{orderId} {
+      allow get: if true;
+      allow write: if request.auth != null;
+    }
+
     // Public read, admin write for categories
     match /categories/{categoryId} {
       allow read: if true;

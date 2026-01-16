@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -8,7 +9,7 @@ import {
     SelectValue,
   } from '@/components/ui/select';
 import { useFirestore } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Order, OrderStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -36,13 +37,24 @@ export function StatusSelector({ order, className }: { order: Order; className?:
     const handleStatusChange = async (newStatus: OrderStatus) => {
       if (!firestore) return;
       const orderRef = doc(firestore, 'orders', order.id);
+      const publicOrderRef = doc(firestore, 'publicOrders', order.id);
+      
       try {
+        // Update main order
         await updateDoc(orderRef, { status: newStatus });
+        
+        // Update public tracking order
+        await updateDoc(publicOrderRef, { 
+            status: newStatus,
+            statusHistory: arrayUnion({ status: newStatus, date: new Date().toISOString() })
+        });
+
         toast({
           title: 'Statut mis à jour',
           description: `La commande ${order.orderId} est maintenant "${statusLabels[newStatus]}".`,
         });
       } catch (error) {
+        console.error(error);
         toast({
           variant: 'destructive',
           title: 'Erreur',

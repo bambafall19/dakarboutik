@@ -36,30 +36,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
       
       {/* Mobile Header */}
       <div className="md:hidden border-b">
-        <div className="container flex h-16 items-center justify-between gap-4">
-            <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
-            <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" onClick={onSearchClick}>
-                    <Icons.search className="h-6 w-6" />
-                    <span className="sr-only">Rechercher</span>
-                </Button>
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative">
-                      <Icons.shoppingBag className="h-6 w-6" />
-                       <span className="sr-only">Panier</span>
-                      {totalItems > 0 && (
-                          <span className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                              {totalItems}
-                          </span>
-                      )}
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent className="flex flex-col">
-                      <CartDrawer />
-                  </SheetContent>
-                </Sheet>
-            </div>
+        <div className="container flex h-16 items-center justify-center gap-4">
+            <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={false} />
         </div>
       </div>
 

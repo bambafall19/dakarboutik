@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -40,7 +41,6 @@ const menuItems = [
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '#', label: 'Clients', icon: Users },
   { href: '#', label: 'Rapports', icon: LineChart },
-  { href: '/admin/media', label: 'Médiathèque', icon: Library },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 

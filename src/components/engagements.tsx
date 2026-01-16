@@ -1,8 +1,8 @@
 
 'use client';
 
-import { ShieldCheck, MessageSquareHeart, Truck, CreditCard } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card"
+import { ShieldCheck, MessageSquareHeart, Truck, BadgeCheck } from 'lucide-react';
+import { Card } from "@/components/ui/card"
 import {
   Carousel,
   CarouselContent,
@@ -23,9 +23,9 @@ const engagements = [
     description: 'Notre équipe est à votre écoute pour vous assister.',
   },
   {
-    icon: CreditCard,
-    title: 'Paiement Sécurisé',
-    description: 'Achetez en toute confiance grâce à nos systèmes de paiement.',
+    icon: BadgeCheck,
+    title: 'Produits Authentiques',
+    description: 'Nous ne vendons que des articles neufs et certifiés.',
   },
   {
     icon: Truck,
@@ -44,44 +44,45 @@ export function Engagements() {
         </div>
         
         {/* Mobile Carousel View */}
-        <div className="md:hidden">
+        <div className="md:hidden px-4">
           <Carousel
             opts={{
               align: "start",
-              loop: true,
             }}
-            className="w-full"
+            className="w-full max-w-xs mx-auto"
           >
             <CarouselContent>
               {engagements.map((engagement, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
-                  <div className="p-1">
-                     <div className="flex flex-col items-center text-center p-6 rounded-lg h-full">
+                <CarouselItem key={index}>
+                  <div className="p-1 h-full">
+                     <Card className="flex flex-col items-center text-center p-6 rounded-lg h-full">
                         <div className="bg-primary/10 p-4 rounded-full mb-4">
                             <engagement.icon className="h-8 w-8 text-primary" />
                         </div>
                         <h3 className="font-bold text-lg">{engagement.title}</h3>
                         <p className="text-muted-foreground mt-1 text-sm">{engagement.description}</p>
-                    </div>
+                    </Card>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="absolute left-[-10px]" />
-            <CarouselNext className="absolute right-[-10px]" />
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
           </Carousel>
         </div>
 
         {/* Desktop Grid View */}
         <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8">
           {engagements.map((engagement) => (
-            <div key={engagement.title} className="flex flex-col items-center text-center p-6 rounded-lg transition-all duration-300">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <engagement.icon className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="font-bold text-lg">{engagement.title}</h3>
-              <p className="text-muted-foreground mt-1 text-sm">{engagement.description}</p>
-            </div>
+            <Card key={engagement.title} className="text-center p-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div className="flex justify-center mb-4">
+                    <div className="bg-primary/10 p-4 rounded-full">
+                        <engagement.icon className="h-8 w-8 text-primary" />
+                    </div>
+                </div>
+                <h3 className="font-bold text-lg">{engagement.title}</h3>
+                <p className="text-muted-foreground mt-1 text-sm">{engagement.description}</p>
+            </Card>
           ))}
         </div>
         

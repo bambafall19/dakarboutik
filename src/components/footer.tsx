@@ -17,8 +17,8 @@ const footerLinks = {
     { name: 'PC & Portables', href: '/products?category=informatique' },
   ],
   Support: [
-    { name: 'À propos', href: '#' },
-    { name: 'Contact', href: '#' },
+    { name: 'À propos', href: '/a-propos' },
+    { name: 'Contact', href: '/contact' },
     { name: 'Garantie & SAV', href: '/sav' },
     { name: 'Suivi de Commande', href: '/suivi' },
     { name: 'FAQ', href: '/faq' },

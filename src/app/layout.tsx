@@ -28,6 +28,7 @@ export default function RootLayout({
           name="description"
           content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."
         />
+        <meta name="google-site-verification" content="KFsMq_Wa2CFdELHtlc2fH1m9MiyOpvThvdC1kc9BqTk" />
         
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link rel="icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" sizes="any" type="image/png" />

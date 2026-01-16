@@ -56,6 +56,14 @@ export function MainNav({ items }: MainNavProps) {
             </NavigationMenuContent>
         </NavigationMenuItem>
 
+        <NavigationMenuItem>
+           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+            <Link href="/suivi">
+                SUIVI DE COMMANDE
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
          <NavigationMenuItem>
            <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
             <Link href="/sav">

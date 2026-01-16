@@ -21,6 +21,7 @@ export default {
         body: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
         headline: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
         code: ['monospace'],
+        dynapuff: ['var(--font-dynapuff)', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',

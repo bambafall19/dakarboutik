@@ -1,6 +1,6 @@
 'use client';
 
-import { Ubuntu } from 'next/font/google';
+import { Ubuntu, DynaPuff } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,13 @@ const ubuntu = Ubuntu({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-ubuntu',
+});
+
+const dynaPuff = DynaPuff({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-dynapuff',
+  display: 'swap',
 });
 
 export default function RootLayout({
@@ -52,7 +59,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <body
         className={cn(
           'relative h-full font-body antialiased',
-          ubuntu.variable
+          ubuntu.variable,
+          dynaPuff.variable
         )}
       >
         <noscript>

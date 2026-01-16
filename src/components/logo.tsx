@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -28,7 +27,7 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
         </div>
       ) : null}
       <span className={cn(
-          "text-xl font-bold tracking-wider text-foreground",
+          "text-xl tracking-wider text-foreground font-dynapuff md:font-body md:font-bold",
           hideTextOnMobile && "hidden sm:inline-block"
         )}>
           DakarBoutik

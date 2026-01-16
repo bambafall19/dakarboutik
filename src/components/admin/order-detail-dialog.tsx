@@ -28,7 +28,7 @@ import { StatusSelector } from './status-selector';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 interface OrderDetailDialogProps {
   order: Order;
@@ -39,6 +39,9 @@ interface OrderDetailDialogProps {
 export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDialogProps) {
   const [adminNotes, setAdminNotes] = useState(order.adminNotes || '');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [newPublicNote, setNewPublicNote] = useState('');
+  const [isSavingPublicNote, setIsSavingPublicNote] = useState(false);
+
   const { toast } = useToast();
   const firestore = useFirestore();
 
@@ -55,6 +58,29 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
       setIsSavingNotes(false);
     }
   };
+
+  const handleSavePublicNote = async () => {
+    if (!firestore || !newPublicNote.trim()) return;
+    setIsSavingPublicNote(true);
+    const orderRef = doc(firestore, 'orders', order.id);
+    const publicOrderRef = doc(firestore, 'publicOrders', order.id);
+    const noteToAdd = {
+        note: newPublicNote,
+        date: new Date().toISOString(),
+    };
+
+    try {
+      await updateDoc(orderRef, { publicNotes: arrayUnion(noteToAdd) });
+      await updateDoc(publicOrderRef, { publicNotes: arrayUnion(noteToAdd) });
+      toast({ title: 'Note publique ajoutée' });
+      setNewPublicNote('');
+    } catch (error) {
+      console.error(error);
+      toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible d\'ajouter la note publique.' });
+    } finally {
+      setIsSavingPublicNote(false);
+    }
+};
 
 
   return (
@@ -138,6 +164,19 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
                         </TableBody>
                     </Table>
                 </div>
+            </div>
+
+             <div className="space-y-4 my-6">
+                <h3 className="font-semibold">Ajouter une note publique (visible par le client)</h3>
+                <Textarea 
+                    placeholder="Ex: Nous préparons votre commande. Elle sera expédiée demain."
+                    value={newPublicNote}
+                    onChange={(e) => setNewPublicNote(e.target.value)}
+                    rows={3}
+                />
+                <Button onClick={handleSavePublicNote} disabled={isSavingPublicNote || !newPublicNote.trim()} size="sm">
+                    {isSavingPublicNote ? 'Envoi...' : 'Envoyer la note au client'}
+                </Button>
             </div>
 
              <div className="space-y-4 my-6">

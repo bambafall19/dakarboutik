@@ -102,6 +102,11 @@ export type OrderStatusHistoryItem = {
   date: string; // ISO date string
 };
 
+export type PublicNote = {
+    date: string; // ISO date string
+    note: string;
+}
+
 export type Order = {
     id: string;
     orderId: string; // User-friendly ID like DKB-12345
@@ -114,6 +119,7 @@ export type Order = {
     createdAt: string; // ISO date string
     deliveryMethod: 'dakar' | 'hors-dakar';
     adminNotes?: string;
+    publicNotes?: PublicNote[];
 };
 
 export type PublicOrder = {
@@ -122,5 +128,6 @@ export type PublicOrder = {
   status: OrderStatus;
   createdAt: string;
   statusHistory: OrderStatusHistoryItem[];
+  publicNotes?: PublicNote[];
 }
     

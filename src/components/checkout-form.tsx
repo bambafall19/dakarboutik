@@ -146,6 +146,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         status: 'pending',
         deliveryMethod: values.deliveryMethod,
         createdAt: createdAt,
+        publicNotes: [],
       });
 
       // Create public order document for tracking
@@ -155,7 +156,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         orderId: orderId,
         status: 'pending',
         createdAt: createdAt,
-        statusHistory: [{ status: 'pending', date: createdAt }]
+        statusHistory: [{ status: 'pending', date: createdAt }],
+        publicNotes: [],
       });
       
       toast({

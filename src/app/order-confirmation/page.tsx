@@ -1,15 +1,28 @@
+
 'use client';
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2, Truck } from "lucide-react";
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from "next/navigation";
 
 function OrderConfirmationContent() {
     const searchParams = useSearchParams();
-    const orderId = searchParams.get('orderId');
+    const queryOrderId = searchParams.get('orderId');
+    const [orderId, setOrderId] = useState<string | null>(queryOrderId);
+
+    useEffect(() => {
+        if (!queryOrderId) {
+            const storedOrderId = sessionStorage.getItem('lastOrderId');
+            if (storedOrderId) {
+                setOrderId(storedOrderId);
+                sessionStorage.removeItem('lastOrderId');
+            }
+        }
+    }, [queryOrderId]);
+
 
     return (
         <div className="flex min-h-[calc(100vh-20rem)] items-center justify-center">

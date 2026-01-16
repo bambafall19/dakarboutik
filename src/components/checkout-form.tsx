@@ -164,6 +164,11 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         title: "Commande passée !",
         description: "Vous serez redirigé vers la page de confirmation.",
       });
+      
+      // Store in sessionStorage as a fallback for the confirmation page
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('lastOrderId', orderId);
+      }
 
       clearCart();
       router.push(`/order-confirmation?orderId=${orderId}`);

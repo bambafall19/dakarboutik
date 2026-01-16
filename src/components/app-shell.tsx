@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
@@ -10,6 +9,7 @@ import { Sheet, SheetContent } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SearchSheet } from './search-sheet';
+import { WhatsAppButton } from './whatsapp-button';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -61,6 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
         </main>
         <Footer settings={settings} />
+        <WhatsAppButton />
         <ClientOnly>
           <div className="md:hidden">
             <MobileBottomNav 

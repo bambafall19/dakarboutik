@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore } from "@/firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, writeBatch } from "firebase/firestore";
 import { SHIPPING_COSTS } from "@/components/order-summary";
 import { useSiteSettings } from "@/hooks/use-site-data";
 import { Icons } from "./icons";
@@ -127,10 +127,12 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         ...item,
         selectedVariants: item.selectedVariants || [],
       }));
+      
+      const batch = writeBatch(firestore);
 
       // Create main order document
       const orderRef = doc(firestore, 'orders', orderId);
-      await setDoc(orderRef, {
+      batch.set(orderRef, {
         id: orderId,
         orderId,
         customerInfo: {
@@ -152,7 +154,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
 
       // Create public order document for tracking
       const publicOrderRef = doc(firestore, 'publicOrders', orderId);
-      await setDoc(publicOrderRef, {
+      batch.set(publicOrderRef, {
         id: orderId,
         orderId: orderId,
         status: 'pending',
@@ -160,6 +162,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         statusHistory: [{ status: 'pending', date: createdAt }],
         publicNotes: [],
       });
+      
+      await batch.commit();
       
       toast({
         title: "Commande passée !",

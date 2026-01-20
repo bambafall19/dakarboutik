@@ -136,13 +136,13 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  const params = new URLSearchParams();
-  if (categoryFilter) params.set('category', categoryFilter);
-  if (brandFilter.length > 0) params.set('brands', brandFilter.join(','));
-  if (priceRangeFilter) params.set('priceRange', priceRangeFilter);
-  if (searchQuery) params.set('q', searchQuery);
-  if (sortBy) params.set('sortBy', sortBy);
-  const currentQueryString = params.toString();
+  const queryParts: string[] = [];
+  if (categoryFilter) queryParts.push(`category=${encodeURIComponent(categoryFilter)}`);
+  if (brandFilter.length > 0) queryParts.push(`brands=${encodeURIComponent(brandFilter.join(','))}`);
+  if (priceRangeFilter) queryParts.push(`priceRange=${encodeURIComponent(priceRangeFilter)}`);
+  if (searchQuery) queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
+  if (sortBy) queryParts.push(`sortBy=${encodeURIComponent(sortBy)}`);
+  const currentQueryString = queryParts.join('&');
   
   const filterNode = (
     <div className="space-y-8">

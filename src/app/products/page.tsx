@@ -136,11 +136,14 @@ export default async function ProductsPage({
   const bestsellers = allProducts?.filter(p => p.isBestseller).slice(0, 4) || [];
   const totalProducts = allProducts?.length || 0;
 
-  const currentQueryString = new URLSearchParams(
-    Object.fromEntries(
-      Object.entries(searchParams).filter(([, value]) => value !== undefined)
-    ) as Record<string, string>
-  ).toString();
+  const currentParams: { [key: string]: string } = {};
+  if (categoryFilter) currentParams.category = categoryFilter;
+  if (brandFilter.length > 0) currentParams.brands = brandFilter.join(',');
+  if (priceRangeFilter) currentParams.priceRange = priceRangeFilter;
+  if (searchQuery) currentParams.q = searchQuery;
+  if (sortBy) currentParams.sortBy = sortBy;
+
+  const currentQueryString = new URLSearchParams(currentParams).toString();
   
   const filterNode = (
     <div className="space-y-8">

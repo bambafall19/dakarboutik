@@ -48,6 +48,7 @@ export type Category = {
   parentId?: string | null;
   subCategories?: Category[];
   productCount?: number;
+  order?: number;
 };
 
 export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'productCount'>;

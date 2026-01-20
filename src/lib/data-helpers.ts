@@ -32,7 +32,7 @@ export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] =>
             const { children, ...rest } = cat;
             const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;
             return { ...rest, subCategories };
-        }).sort((a, b) => a.name.localeCompare(b.name)); // Sort categories alphabetically
+        }).sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.name.localeCompare(b.name));
     }
     
     return buildHierarchy(topLevelCategories);

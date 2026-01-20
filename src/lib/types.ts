@@ -141,3 +141,9 @@ export type Review = {
   createdAt: string; // ISO date string
 };
     
+export type FaqItem = {
+  id: string;
+  question: string;
+  answer: string;
+  order: number;
+};

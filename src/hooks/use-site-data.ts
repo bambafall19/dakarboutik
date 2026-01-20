@@ -5,7 +5,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { collection, query, where, doc, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection, useDoc } from '@/firebase';
-import type { Product, SiteSettings, Category, Banner, SimpleCategory } from '@/lib/types';
+import type { Product, SiteSettings, Category, Banner, SimpleCategory, FaqItem } from '@/lib/types';
 import { getBanners as getStaticBanners } from '@/lib/data';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
 
@@ -116,14 +116,13 @@ export function useBanners() {
 // --- Categories ---
 export function useCategories() {
   const firestore = useFirestore();
-  const [key, setKey] = useState(0);
   const { products, loading: productsLoading } = useProducts();
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'categories'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, key]);
+  }, [firestore]);
   
   const { data: unsortedRawCategories, loading: categoriesLoading, error } = useCollection<Category>(categoriesQuery);
 
@@ -132,9 +131,6 @@ export function useCategories() {
     return [...unsortedRawCategories].sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.name.localeCompare(b.name));
   }, [unsortedRawCategories]);
 
-  const refetch = useCallback(() => {
-    setKey(prev => prev + 1);
-  }, []);
   
   const categoriesWithCounts = useMemo(() => {
     if (!rawCategories || !products) return [];
@@ -186,6 +182,18 @@ export function useCategories() {
     simpleCategories, 
     loading: categoriesLoading || productsLoading, 
     error, 
-    refetch 
   };
+}
+
+// --- FAQs ---
+export function useFaqs() {
+  const firestore = useFirestore();
+  const faqsQuery = useMemo(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'faq'), orderBy('order'));
+  }, [firestore]);
+
+  const { data: faqs, loading, error } = useCollection<FaqItem>(faqsQuery);
+
+  return { faqs: faqs || [], loading, error };
 }

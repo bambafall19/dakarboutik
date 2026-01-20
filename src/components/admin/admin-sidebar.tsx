@@ -15,6 +15,7 @@ import {
   Boxes,
   Tags,
   Library,
+  HelpCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
@@ -39,6 +40,7 @@ const menuItems = [
     basePath: '/admin/products',
   },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
+  { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 

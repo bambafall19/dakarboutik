@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Product } from '@/lib/types';
@@ -16,16 +15,29 @@ interface ProductListingProps {
     currentQuery: string;
 }
 
+const categoryBannerImages: { [key: string]: string } = {
+    'telephonie': 'product-phone-1a',
+    'informatique': 'banner-laptops',
+    'audio': 'banner-headphones',
+    'accessoires': 'banner-accessories',
+    'electricite-energie-and-securite': 'product-electricite-energie-and-securite-1a',
+    'electronique-and-technologies': 'product-electronique-and-technologies-1a',
+};
+
+
 export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, currentQuery }: ProductListingProps) {
   
-  const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner-all-products';
+  const imageId = categorySlug ? categoryBannerImages[categorySlug] : 'banner-all-products';
+
   let categoryImage;
   try {
-    categoryImage = findImage(categoryImageId);
+    categoryImage = findImage(imageId || 'banner1');
     if (categoryImage.id === 'not-found') {
-        categoryImage = findImage('banner1'); // Default fallback
+      // Fallback for slugs not in the map
+      categoryImage = findImage('banner1');
     }
-  } catch(e) {
+  } catch (e) {
+    // General fallback
     categoryImage = findImage('banner1');
   }
   

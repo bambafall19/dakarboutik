@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import { ProductListingPage } from '@/components/product-listing-page';
 import { ProductListingSkeleton } from '@/components/product-listing-skeleton';
 
+export const dynamic = 'force-dynamic';
+
 // This is a Server Component that safely reads searchParams and passes primitives to the client.
 export default function ProductsPage({
   searchParams,

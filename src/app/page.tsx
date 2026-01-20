@@ -14,7 +14,7 @@ export default async function HomePage() {
   ]);
 
   const newProducts = allProducts
-    .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
+    .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 8);
   

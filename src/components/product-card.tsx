@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -35,7 +34,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
     toggleWishlist(product);
   };
   
-  const isRecent = new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const isRecent = new Date(product.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
   const showNewBadge = product.isNew || isRecent;
 
   if (variant === 'horizontal') {

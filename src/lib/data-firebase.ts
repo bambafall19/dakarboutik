@@ -36,13 +36,15 @@ export async function getProductBySlug(slug: string) {
 export async function getCategories() {
   const { firestore } = initializeFirebase();
   const categoriesRef = collection(firestore, 'categories');
-  const q = query(categoriesRef, orderBy('order'), orderBy('name'));
+  const q = query(categoriesRef);
   const querySnapshot = await getDocs(q);
 
   const categories = querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Category[];
+  
+  categories.sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.name.localeCompare(b.name));
 
   return categories;
 }

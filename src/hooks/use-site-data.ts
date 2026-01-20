@@ -121,11 +121,16 @@ export function useCategories() {
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'categories'), orderBy('order'), orderBy('name'));
+    return query(collection(firestore, 'categories'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firestore, key]);
   
-  const { data: rawCategories, loading: categoriesLoading, error } = useCollection<Category>(categoriesQuery);
+  const { data: unsortedRawCategories, loading: categoriesLoading, error } = useCollection<Category>(categoriesQuery);
+
+  const rawCategories = useMemo(() => {
+    if (!unsortedRawCategories) return null;
+    return [...unsortedRawCategories].sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.name.localeCompare(b.name));
+  }, [unsortedRawCategories]);
 
   const refetch = useCallback(() => {
     setKey(prev => prev + 1);

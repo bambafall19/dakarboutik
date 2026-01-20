@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { ProductListing } from '@/components/product-listing';
 import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
@@ -12,9 +11,7 @@ import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ProductListingSkeleton } from './product-listing-skeleton';
-import { useMemo } from 'react';
-import { useState } from 'react';
-
+import { useMemo, useState } from 'react';
 
 function getCategoriesWithCounts(rawCategories: Category[], allProducts: Product[]): Category[] {
   if (!rawCategories || !allProducts) return [];
@@ -50,31 +47,37 @@ function getCategoriesWithCounts(rawCategories: Category[], allProducts: Product
   return buildCategoryHierarchy(categoriesWithCounts);
 }
 
+// New props interface
+interface ProductListingPageProps {
+  categoryFilter: string | null;
+  brandFilter: string[];
+  priceRangeFilter: string | null;
+  searchQuery: string | null;
+  sortBy: string;
+}
 
-export function ProductListingPage() {
-  const searchParams = useSearchParams();
+export function ProductListingPage({
+  categoryFilter,
+  brandFilter,
+  priceRangeFilter,
+  searchQuery,
+  sortBy,
+}: ProductListingPageProps) {
 
   const { products: allProducts, loading: productsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
   
   const loading = productsLoading || categoriesLoading;
 
-  const {
-    categoryFilter,
-    brandFilter,
-    priceRangeFilter,
-    searchQuery,
-    sortBy,
-    currentQueryString
-  } = useMemo(() => {
-    const categoryFilter = searchParams.get('category');
-    const brandFilter = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-    const priceRangeFilter = searchParams.get('priceRange');
-    const searchQuery = searchParams.get('q');
-    const sortBy = searchParams.get('sortBy') || 'newest';
-    const currentQueryString = searchParams.toString();
-    return { categoryFilter, brandFilter, priceRangeFilter, searchQuery, sortBy, currentQueryString };
-  }, [searchParams]);
+  const currentQueryString = useMemo(() => {
+    const params = new URLSearchParams();
+    if (categoryFilter) params.set('category', categoryFilter);
+    if (brandFilter.length > 0) params.set('brands', brandFilter.join(','));
+    if (priceRangeFilter) params.set('priceRange', priceRangeFilter);
+    if (searchQuery) params.set('q', searchQuery);
+    if (sortBy) params.set('sortBy', sortBy);
+    return params.toString();
+  }, [categoryFilter, brandFilter, priceRangeFilter, searchQuery, sortBy]);
 
   const categories = useMemo(() => {
     if (loading || !rawCategories || !allProducts) return [];

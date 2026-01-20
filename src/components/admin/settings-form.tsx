@@ -80,7 +80,6 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         title: 'Réglages mis à jour !',
         description: 'Vos modifications ont été enregistrées avec succès.',
       });
-      router.refresh();
     } catch (error) {
       toast({
         variant: 'destructive',

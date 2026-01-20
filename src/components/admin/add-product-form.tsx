@@ -201,7 +201,6 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       });
       
       router.push('/admin/products');
-      router.refresh();
 
     } catch (error) {
       console.error("Error adding product: ", error);

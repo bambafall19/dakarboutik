@@ -111,7 +111,6 @@ export function BannerForm({ banner, title, description }: BannerFormProps) {
         title: 'Bannière mise à jour !',
         description: 'La bannière a été modifiée avec succès.',
       });
-       router.refresh();
     } catch (error) {
       toast({
         variant: 'destructive',

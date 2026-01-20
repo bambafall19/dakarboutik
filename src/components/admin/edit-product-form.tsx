@@ -205,7 +205,6 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
       });
       
       router.push('/admin/products');
-      router.refresh();
 
     } catch (error) {
       console.error("Error updating product: ", error);

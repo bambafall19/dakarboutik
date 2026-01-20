@@ -55,14 +55,13 @@ export default async function ProductsPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const sp = use(searchParams);
 
   // Safely extract search parameters on the server
-  const categoryFilter = typeof sp.category === 'string' ? sp.category : null;
-  const brandFilter = typeof sp.brands === 'string' ? sp.brands.split(',').filter(Boolean) : [];
-  const priceRangeFilter = typeof sp.priceRange === 'string' ? sp.priceRange : null;
-  const searchQuery = typeof sp.q === 'string' ? sp.q : null;
-  const sortBy = typeof sp.sortBy === 'string' ? sp.sortBy : 'newest';
+  const categoryFilter = typeof searchParams.category === 'string' ? searchParams.category : null;
+  const brandFilter = typeof searchParams.brands === 'string' ? searchParams.brands.split(',').filter(Boolean) : [];
+  const priceRangeFilter = typeof searchParams.priceRange === 'string' ? searchParams.priceRange : null;
+  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : null;
+  const sortBy = typeof searchParams.sortBy === 'string' ? searchParams.sortBy : 'newest';
 
   const [allProducts, rawCategories] = await Promise.all([getProducts(), getCategories()]);
   
@@ -141,7 +140,6 @@ export default async function ProductsPage({
   if (brandFilter.length > 0) queryParts.push(`brands=${encodeURIComponent(brandFilter.join(','))}`);
   if (priceRangeFilter) queryParts.push(`priceRange=${encodeURIComponent(priceRangeFilter)}`);
   if (searchQuery) queryParts.push(`q=${encodeURIComponent(searchQuery)}`);
-  if (sortBy) queryParts.push(`sortBy=${encodeURIComponent(sortBy)}`);
   const currentQueryString = queryParts.join('&');
   
   const filterNode = (

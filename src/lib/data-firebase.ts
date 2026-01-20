@@ -36,7 +36,7 @@ export async function getProductBySlug(slug: string) {
 export async function getCategories() {
   const { firestore } = initializeFirebase();
   const categoriesRef = collection(firestore, 'categories');
-  const q = query(categoriesRef, orderBy('name'));
+  const q = query(categoriesRef, orderBy('order'), orderBy('name'));
   const querySnapshot = await getDocs(q);
 
   const categories = querySnapshot.docs.map(doc => ({

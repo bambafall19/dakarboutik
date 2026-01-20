@@ -121,7 +121,7 @@ export function useCategories() {
 
   const categoriesQuery = useMemo(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'categories'), orderBy('name'));
+    return query(collection(firestore, 'categories'), orderBy('order'), orderBy('name'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firestore, key]);
   

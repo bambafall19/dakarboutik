@@ -75,7 +75,7 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
 }
 
 export default function CategoriesPage() {
-    const { categories, rawCategories, loading, refetch } = useCategories();
+    const { categories, rawCategories, loading } = useCategories();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -93,9 +93,9 @@ export default function CategoriesPage() {
         setIsFormOpen(true);
     }, []);
 
-    const handleDeleteClick = (category: Category) => {
+    const handleDeleteClick = useCallback((category: Category) => {
         setCategoryToDelete(category);
-    }
+    }, []);
 
     const confirmDelete = async () => {
         if (!categoryToDelete || !firestore) return;
@@ -111,15 +111,10 @@ export default function CategoriesPage() {
             await deleteDoc(doc(firestore, 'categories', categoryToDelete.id));
             toast({ title: 'Catégorie supprimée' });
             setCategoryToDelete(null);
-            refetch(); // Refetch categories after deletion
         } catch (e) {
             toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de supprimer la catégorie.' });
         }
     }
-    
-    const handleCategoryUpdate = useCallback(() => {
-      refetch();
-    }, [refetch]);
 
     const categoryRows = useMemo(() => {
         const rows: React.ReactNode[] = [];
@@ -133,7 +128,7 @@ export default function CategoriesPage() {
         };
         generateRows(categories);
         return rows;
-    }, [categories, handleEditClick]);
+    }, [categories, handleEditClick, handleDeleteClick]);
 
 
   return (
@@ -193,7 +188,6 @@ export default function CategoriesPage() {
       <CategoryForm 
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
-        onCategoryUpdate={handleCategoryUpdate}
         category={selectedCategory}
         allCategories={rawCategories}
       />

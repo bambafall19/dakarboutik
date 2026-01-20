@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -45,12 +46,11 @@ const formSchema = z.object({
 interface CategoryFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCategoryUpdate: () => void;
   category?: Category | null;
   allCategories: Category[];
 }
 
-export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, allCategories }: CategoryFormProps) {
+export function CategoryForm({ open, onOpenChange, category, allCategories }: CategoryFormProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
 
@@ -97,7 +97,6 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
             await addDoc(categoriesCollection, data);
             toast({ title: 'Catégorie ajoutée !' });
         }
-      onCategoryUpdate();
       onOpenChange(false);
     } catch (error) {
         console.error(error)

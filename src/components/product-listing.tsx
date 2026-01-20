@@ -18,7 +18,7 @@ interface ProductListingProps {
 
 export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, currentQuery }: ProductListingProps) {
   
-  const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner1';
+  const categoryImageId = categorySlug ? `product-${categorySlug}-1a` : 'banner-all-products';
   let categoryImage;
   try {
     categoryImage = findImage(categoryImageId);

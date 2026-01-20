@@ -38,8 +38,8 @@ import {
 
 const formSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères.'),
-  parentId: z.string().optional(),
   order: z.coerce.number().default(99),
+  parentId: z.string().optional(),
 });
 
 interface CategoryFormProps {
@@ -58,8 +58,8 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      parentId: undefined,
       order: 99,
+      parentId: undefined,
     },
   });
   
@@ -67,8 +67,8 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
     if (open) {
         form.reset({
             name: category?.name || '',
-            parentId: category?.parentId || undefined,
             order: category?.order ?? 99,
+            parentId: category?.parentId || undefined,
         })
     }
   }, [category, form, open])

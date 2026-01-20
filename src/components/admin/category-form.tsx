@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,6 +39,7 @@ import {
 const formSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères.'),
   parentId: z.string().optional(),
+  order: z.coerce.number().default(99),
 });
 
 interface CategoryFormProps {
@@ -58,6 +59,7 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
     defaultValues: {
       name: '',
       parentId: undefined,
+      order: 99,
     },
   });
   
@@ -66,6 +68,7 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
         form.reset({
             name: category?.name || '',
             parentId: category?.parentId || undefined,
+            order: category?.order ?? 99,
         })
     }
   }, [category, form, open])
@@ -79,7 +82,8 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
         const data = {
             name: values.name,
             slug: slug,
-            parentId: values.parentId || null
+            parentId: values.parentId || null,
+            order: values.order,
         }
 
         if (category) {
@@ -122,6 +126,22 @@ export function CategoryForm({ open, onOpenChange, onCategoryUpdate, category, a
                   <FormControl>
                     <Input placeholder="Ex: Smartphones" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="order"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ordre d'affichage</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Un petit nombre (ex: 1) apparaît en premier.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

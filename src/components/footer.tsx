@@ -13,6 +13,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Image from 'next/image';
+import { findImage } from '@/lib/placeholder-images';
 
 
 const footerLinks = {
@@ -41,6 +43,7 @@ interface FooterProps {
 }
 
 export function Footer({ settings }: FooterProps) {
+  const paymentImage = findImage('payment-methods');
   return (
     <footer className="bg-card text-card-foreground border-t mt-16">
       <div className="container pt-12 pb-8">
@@ -117,12 +120,15 @@ export function Footer({ settings }: FooterProps) {
                 <Button type="submit">S'inscrire</Button>
               </form>
                <div className="mt-6">
-                <h4 className="font-semibold text-foreground mb-4">Paiement à la livraison</h4>
-                <div className="flex flex-wrap gap-x-4 gap-y-2 items-center text-sm text-muted-foreground">
-                    <span>Wave</span>
-                    <span>Orange Money</span>
-                    <span>Free Money</span>
-                    <span>Espèces</span>
+                <h4 className="font-semibold text-foreground mb-4">Moyens de paiement</h4>
+                <div className="relative h-10">
+                  <Image 
+                    src={paymentImage.imageUrl}
+                    alt={paymentImage.description}
+                    data-ai-hint={paymentImage.imageHint}
+                    fill
+                    className="object-contain object-left"
+                  />
                 </div>
               </div>
           </div>

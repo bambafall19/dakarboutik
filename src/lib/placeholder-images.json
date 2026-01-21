@@ -159,14 +159,20 @@
     {
       "id": "product-electricite-energie-and-securite-1a",
       "description": "Solar panels for renewable energy",
-      "imageUrl": "https://images.unsplash.com/photo-1509390636459-4921a8335434?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/solar-panels.png",
       "imageHint": "solar panels"
     },
     {
       "id": "banner-all-products",
       "description": "Banner for all products page",
-      "imageUrl": "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageUrl": "https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/all-products-banner.png",
       "imageHint": "various electronics"
+    },
+    {
+      "id": "payment-methods",
+      "description": "Logos des moyens de paiement acceptés",
+      "imageUrl": "https://i.postimg.cc/mD8c502z/payment-methods.png",
+      "imageHint": "payment logos"
     }
   ]
 }

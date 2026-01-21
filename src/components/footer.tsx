@@ -33,11 +33,6 @@ const footerLinks = {
     { name: 'Suivi de Commande', href: '/suivi' },
     { name: 'FAQ', href: '/faq' },
   ],
-  'Mon Compte': [
-     { name: 'Connexion', href: '/login' },
-     { name: 'Panier', href: '/checkout' },
-     { name: 'Favoris', href: '/favoris' },
-  ]
 };
 
 interface FooterProps {
@@ -98,7 +93,7 @@ export function Footer({ settings }: FooterProps) {
           
           <div className="lg:col-span-5 md:pl-8">
             {/* Desktop Links */}
-            <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 gap-8 text-left">
+            <div className="hidden md:grid grid-cols-2 gap-8 text-left">
               {Object.entries(footerLinks).map(([title, links]) => (
                 <div key={title}>
                   <h4 className="font-semibold text-foreground mb-4">{title}</h4>

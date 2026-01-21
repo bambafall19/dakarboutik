@@ -110,7 +110,25 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
     }
 
     const variantText = Object.values(selectedVariants).join(', ');
-    const message = `Bonjour, je suis intéressé(e) par le produit : ${product.title} ${variantText ? `(${variantText})` : ''}.`;
+    const price = product.salePrice ?? product.price;
+    const total = price * quantity;
+
+    let message = `*NOUVELLE COMMANDE DAKARBOUTIK* 📦\n\n`;
+    message += `*Produit :* ${product.title}\n`;
+    if (variantText) {
+      message += `*Options :* ${variantText}\n`;
+    }
+    message += `💰 *Prix unitaire :* ${price.toLocaleString('fr-SN')} FCFA\n`;
+    message += `🔢 *Quantité :* ${quantity}\n`;
+    message += `💵 *Total :* ${total.toLocaleString('fr-SN')} FCFA\n\n`;
+    
+    message += `👤 *Mes informations (à compléter) :*\n`;
+    message += `Nom : \n`;
+    message += `Téléphone : \n`;
+    message += `Adresse : \n\n`;
+
+    message += `💳 Paiement à la livraison`;
+    
     const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };

@@ -86,21 +86,27 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
     const grandTotal = totalPrice + shippingCost;
     
-    let message = "*Nouvelle Commande via le site*\n\n";
-    message += "*Client :*\n";
-    message += `- Nom : ${values.name}\n`;
-    message += `- Tél : ${values.phone}\n`;
-    message += `- Adresse : ${values.address}, ${values.city}\n\n`;
-
-    message += "*Panier :*\n";
+    let message = `*NOUVELLE COMMANDE DAKARBOUTIK* 📦\n\n`;
+    
+    message += `*Produits Commandés :*\n`;
     state.items.forEach(item => {
       const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
-      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''}\n`;
+      const itemPrice = item.product.salePrice ?? item.product.price;
+      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''} | ${itemPrice.toLocaleString('fr-SN')} FCFA\n`;
     });
     message += "\n";
-    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCA\n`;
-    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCA\n`;
-    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} FCA*`;
+
+    message += `*Récapitulatif :*\n`;
+    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCFA\n`;
+    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCFA\n`;
+    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} FCFA* 💵\n\n`;
+
+    message += `*Client :* 👤\n`;
+    message += `Nom : ${values.name}\n`;
+    message += `Téléphone : ${values.phone}\n`;
+    message += `Adresse : ${values.address}, ${values.city}\n\n`;
+
+    message += `💳 Paiement à la livraison`;
     
     const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');

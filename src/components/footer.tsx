@@ -103,8 +103,11 @@ export function Footer({ settings }: FooterProps) {
           </div>
         </div>
         <Separator className="my-8 bg-border/50" />
-        <div className="flex flex-col md:flex-row justify-between items-center text-center text-sm text-muted-foreground gap-4">
-          <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground gap-4">
+          <div className="text-center md:text-left">
+            <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
+            <p>Developed & Deployed by Mouhamadou BAMBA</p>
+          </div>
           <div className='flex items-center gap-4'>
              <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
              <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>

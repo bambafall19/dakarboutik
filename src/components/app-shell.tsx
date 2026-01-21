@@ -10,6 +10,7 @@ import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SearchSheet } from './search-sheet';
 import { WhatsAppButton } from './whatsapp-button';
+import { CookieConsentBanner } from './cookie-consent-banner';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -62,6 +63,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
         <Footer settings={settings} />
         <WhatsAppButton />
+        <CookieConsentBanner />
         <ClientOnly>
           <div className="md:hidden">
             <MobileBottomNav 

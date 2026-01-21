@@ -132,16 +132,6 @@ export function Footer({ settings }: FooterProps) {
                 <Input type="email" placeholder="Votre email" className="bg-background"/>
                 <Button type="submit">S'inscrire</Button>
               </form>
-               <div className="mt-6">
-                <h4 className="font-semibold text-foreground mb-4">Moyens de paiement</h4>
-                <div>
-                  <img 
-                    src={paymentImage.imageUrl}
-                    alt={paymentImage.description}
-                    className="h-10 object-contain object-left"
-                  />
-                </div>
-              </div>
           </div>
         </div>
         <Separator className="my-8 bg-border/50" />

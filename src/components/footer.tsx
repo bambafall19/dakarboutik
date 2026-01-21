@@ -5,7 +5,8 @@ import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MessageCircle } from 'lucide-react';
+import { Icons } from './icons';
 import {
   Accordion,
   AccordionContent,
@@ -52,6 +53,26 @@ export function Footer({ settings }: FooterProps) {
             <p className="text-sm text-muted-foreground">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
+             <div className="mt-6 space-y-3">
+                {settings?.supportPhone && (
+                    <a href={`tel:${settings.supportPhone}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                        <Phone className="h-4 w-4" />
+                        <span>{settings.supportPhone}</span>
+                    </a>
+                )}
+                 {settings?.supportEmail && (
+                    <a href={`mailto:${settings.supportEmail}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                        <Mail className="h-4 w-4" />
+                        <span>{settings.supportEmail}</span>
+                    </a>
+                )}
+                 {settings?.whatsappNumber && (
+                    <a href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                        <MessageCircle className="h-4 w-4" />
+                        <span>Discuter sur WhatsApp</span>
+                    </a>
+                )}
+            </div>
           </div>
           
           <div className="lg:col-span-5 md:pl-8">
@@ -95,6 +116,15 @@ export function Footer({ settings }: FooterProps) {
                 <Input type="email" placeholder="Votre email" className="bg-background"/>
                 <Button type="submit">S'inscrire</Button>
               </form>
+               <div className="mt-6">
+                <h4 className="font-semibold text-foreground mb-4">Paiement à la livraison</h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 items-center text-sm text-muted-foreground">
+                    <span>Wave</span>
+                    <span>Orange Money</span>
+                    <span>Free Money</span>
+                    <span>Espèces</span>
+                </div>
+              </div>
           </div>
         </div>
         <Separator className="my-8 bg-border/50" />
@@ -106,6 +136,12 @@ export function Footer({ settings }: FooterProps) {
           <div className='flex items-center gap-4'>
              <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
              <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>
+             <Separator orientation="vertical" className="h-4 hidden md:block" />
+             <div className="hidden md:flex items-center gap-4">
+                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></a>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Icons.tiktok className="h-5 w-5" /></a>
+             </div>
           </div>
         </div>
       </div>

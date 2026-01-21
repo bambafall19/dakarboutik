@@ -48,6 +48,14 @@ const WhatsApp = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const TikTok = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props} fill="currentColor">
+        <title>TikTok</title>
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.84-.95-6.6-2.8-1.75-1.85-2.64-4.2-2.58-6.6.04-1.49.36-2.95 1.02-4.28.91-1.87 2.45-3.35 4.29-4.32 1.84-.97 3.9-1.33 5.9-1.02.02 1.48.01 2.96.01 4.44-.69-.02-1.37-.02-2.06-.01-1.3 0-2.59.38-3.69 1.15-1.14.79-1.99 1.93-2.43 3.25-.18.52-.29 1.07-.31 1.64-.03 1.04.14 2.11.53 3.09.39.98 1.01 1.85 1.81 2.53.8.68 1.77 1.15 2.8 1.37.97.2 1.97.22 2.96.04 1.45-.27 2.82-.89 3.9-1.73.99-.76 1.78-1.76 2.34-2.88.24-.47.42-.97.54-1.49.03-.18.03-.36.03-.54-.01-2.91-.01-5.83-.01-8.74a.13.13 0 0 0-.01-.06c-.23.11-.47.21-.7.31-.2.08-.4.17-.59.25-.56.24-1.13.44-1.71.6-.28.08-.56.14-.84.21-1.4.34-2.82.59-4.27.7-.01-1.48-.01-2.96 0-4.44z" />
+    </svg>
+);
+
+
 const SofaIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <path d="M20 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2"/>
@@ -106,6 +114,7 @@ export const Icons = {
   user: User,
   flash: Zap,
   whatsapp: WhatsApp,
+  tiktok: TikTok,
   home: Home,
   layoutGrid: LayoutGrid,
   sparkles: Sparkles,

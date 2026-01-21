@@ -65,24 +65,34 @@ export function Footer({ settings }: FooterProps) {
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
              <div className="mt-6 space-y-3">
-                {isClient && settings?.supportPhone ? (
-                    <a href={`tel:${settings.supportPhone}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
-                        <Phone className="h-4 w-4" />
-                        <span>{settings.supportPhone}</span>
-                    </a>
-                ) : !isClient && <Skeleton className="h-5 w-32" /> }
-                 {isClient && settings?.supportEmail ? (
-                    <a href={`mailto:${settings.supportEmail}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
-                        <Mail className="h-4 w-4" />
-                        <span>{settings.supportEmail}</span>
-                    </a>
-                 ) : !isClient && <Skeleton className="h-5 w-48" /> }
-                 {isClient && settings?.whatsappNumber ? (
-                    <a href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
-                        <MessageCircle className="h-4 w-4" />
-                        <span>Discuter sur WhatsApp</span>
-                    </a>
-                 ) : !isClient && <Skeleton className="h-5 w-40" /> }
+                {isClient ? (
+                    <>
+                        {settings?.supportPhone && (
+                            <a href={`tel:${settings.supportPhone}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                                <Phone className="h-4 w-4" />
+                                <span>{settings.supportPhone}</span>
+                            </a>
+                        )}
+                        {settings?.supportEmail && (
+                            <a href={`mailto:${settings.supportEmail}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                                <Mail className="h-4 w-4" />
+                                <span>{settings.supportEmail}</span>
+                            </a>
+                        )}
+                        {settings?.whatsappNumber && (
+                            <a href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
+                                <MessageCircle className="h-4 w-4" />
+                                <span>Discuter sur WhatsApp</span>
+                            </a>
+                        )}
+                    </>
+                ) : (
+                    <div className="space-y-3">
+                        <Skeleton className="h-5 w-32" />
+                        <Skeleton className="h-5 w-48" />
+                        <Skeleton className="h-5 w-40" />
+                    </div>
+                )}
             </div>
           </div>
           

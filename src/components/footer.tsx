@@ -1,3 +1,4 @@
+'use client';
 
 import Link from 'next/link';
 import { Logo } from './logo';
@@ -14,6 +15,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { findImage } from '@/lib/placeholder-images';
+import { useState, useEffect } from 'react';
+import { Skeleton } from './ui/skeleton';
 
 
 const footerLinks = {
@@ -43,6 +46,12 @@ interface FooterProps {
 
 export function Footer({ settings }: FooterProps) {
   const paymentImage = findImage('payment-methods');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <footer className="bg-card text-card-foreground border-t mt-16">
       <div className="container pt-12 pb-8">
@@ -56,24 +65,24 @@ export function Footer({ settings }: FooterProps) {
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
              <div className="mt-6 space-y-3">
-                {settings?.supportPhone && (
+                {isClient && settings?.supportPhone ? (
                     <a href={`tel:${settings.supportPhone}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
                         <Phone className="h-4 w-4" />
                         <span>{settings.supportPhone}</span>
                     </a>
-                )}
-                 {settings?.supportEmail && (
+                ) : !isClient && <Skeleton className="h-5 w-32" /> }
+                 {isClient && settings?.supportEmail ? (
                     <a href={`mailto:${settings.supportEmail}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
                         <Mail className="h-4 w-4" />
                         <span>{settings.supportEmail}</span>
                     </a>
-                )}
-                 {settings?.whatsappNumber && (
+                 ) : !isClient && <Skeleton className="h-5 w-48" /> }
+                 {isClient && settings?.whatsappNumber ? (
                     <a href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary">
                         <MessageCircle className="h-4 w-4" />
                         <span>Discuter sur WhatsApp</span>
                     </a>
-                )}
+                 ) : !isClient && <Skeleton className="h-5 w-40" /> }
             </div>
           </div>
           
@@ -133,7 +142,10 @@ export function Footer({ settings }: FooterProps) {
         <Separator className="my-8 bg-border/50" />
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground gap-4">
           <div className="text-center md:text-left">
-            <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
+            {isClient ? 
+              <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
+              : <Skeleton className="h-5 w-80 mb-1" /> 
+            }
             <p>Developed & Deployed by Mouhamadou BAMBA</p>
           </div>
           <div className='flex items-center gap-4'>

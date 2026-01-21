@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Category, Product } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';

@@ -156,12 +156,6 @@ export function Footer({ settings }: FooterProps) {
           <div className='flex items-center gap-4'>
              <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
              <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>
-             <Separator orientation="vertical" className="h-4 hidden md:block" />
-             <div className="flex items-center gap-4">
-                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></a>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></a>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Icons.tiktok className="h-5 w-5" /></a>
-             </div>
           </div>
         </div>
       </div>

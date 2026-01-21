@@ -161,7 +161,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 <FormItem>
                   <FormLabel>Numéro de téléphone WhatsApp</FormLabel>
                   <FormControl>
-                    <Input placeholder="221771234567" {...field} />
+                    <Input placeholder="221776384676" {...field} />
                   </FormControl>
                    <FormDescription>
                     Entrez le numéro (avec l'indicatif pays) pour les commandes WhatsApp.

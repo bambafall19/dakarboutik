@@ -75,7 +75,7 @@ export function useSiteSettings() {
     id: 'siteConfig',
     logoUrl: null,
     announcementMessage1: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
-    whatsappNumber: '221771234567', // Default placeholder number
+    whatsappNumber: '221776384676', // Default placeholder number
     supportPhone: '33 123 45 67',
     supportEmail: 'contact@exemple.com'
   };

@@ -13,7 +13,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 
 
@@ -121,13 +120,11 @@ export function Footer({ settings }: FooterProps) {
               </form>
                <div className="mt-6">
                 <h4 className="font-semibold text-foreground mb-4">Moyens de paiement</h4>
-                <div className="relative h-10">
-                  <Image 
+                <div>
+                  <img 
                     src={paymentImage.imageUrl}
                     alt={paymentImage.description}
-                    data-ai-hint={paymentImage.imageHint}
-                    fill
-                    className="object-contain object-left"
+                    className="h-10 object-contain object-left"
                   />
                 </div>
               </div>
@@ -143,7 +140,7 @@ export function Footer({ settings }: FooterProps) {
              <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
              <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>
              <Separator orientation="vertical" className="h-4 hidden md:block" />
-             <div className="hidden md:flex items-center gap-4">
+             <div className="flex items-center gap-4">
                 <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></a>
                 <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></a>
                 <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Icons.tiktok className="h-5 w-5" /></a>

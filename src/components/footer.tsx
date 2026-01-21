@@ -52,11 +52,6 @@ export function Footer({ settings }: FooterProps) {
             <p className="text-sm text-muted-foreground">
               Votre destination 100% sénégalaise pour l'électronique de qualité à Dakar.
             </p>
-             <div className="mt-4 flex gap-4">
-                <Link href="#" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary"><Youtube className="h-5 w-5" /></Link>
-            </div>
           </div>
           
           <div className="lg:col-span-5 md:pl-8">

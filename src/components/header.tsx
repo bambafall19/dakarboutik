@@ -16,6 +16,7 @@ import { Heart } from 'lucide-react';
 import { Input } from './ui/input';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
+import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -94,6 +95,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                       <CartDrawer />
                   </SheetContent>
                 </Sheet>
+                <ThemeToggle />
               </div>
         </div>
       </div>

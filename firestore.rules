@@ -17,9 +17,10 @@ service cloud.firestore {
       allow create: if request.auth != null && 
                       (isAdmin() || list(/databases/$(database)/documents/admins).size == 0);
       
-      // Allow any authenticated user to read their OWN admin document.
-      // Allow existing admins to read any admin document.
-      allow read: if isAdmin() || request.auth.uid == userId;
+      // Allow any authenticated user to get their OWN admin document.
+      allow get: if request.auth.uid == userId;
+      // Allow existing admins to list all admin documents.
+      allow list: if isAdmin();
 
       // Only admins can delete admin documents.
       allow delete: if isAdmin();

@@ -15,7 +15,7 @@ service cloud.firestore {
       // Subsequent admin docs can only be created by other admins.
       // This ensures a secure bootstrap of the first admin.
       allow create: if request.auth != null && 
-                      (isAdmin() || list(/databases/$(database)/documents/admins, limit=1).size == 0);
+                      (isAdmin() || list(/databases/$(database)/documents/admins).size == 0);
       allow read, delete: if isAdmin();
     }
 

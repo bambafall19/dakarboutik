@@ -84,10 +84,7 @@ interface PromoBannersProps {
 
 export function PromoBanners({ banners, loading }: PromoBannersProps) {
 
-    const promoBanner1 = banners.find(b => b.id === 'promo-banner-1');
-    const promoBanner2 = banners.find(b => b.id === 'promo-banner-2');
-    
-    const promoBanners = [promoBanner1, promoBanner2].filter(Boolean) as Banner[];
+    const promoBanners = banners.filter(b => b.position === 'promo' && b.isActive).sort((a,b) => a.order - b.order);
 
     if (loading) {
         return (

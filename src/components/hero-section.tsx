@@ -81,18 +81,12 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ banners, loading }: HeroSectionProps) {
-    const mainBanner = banners.find(b => b.id === 'banner1');
-    const adBanners = [
-        banners.find(b => b.id === 'ad-banner-1'),
-        banners.find(b => b.id === 'ad-banner-2'),
-        banners.find(b => b.id === 'ad-banner-3'),
-    ].filter(Boolean) as Banner[];
+    const heroBanners = banners.filter(b => b.position === 'hero' && b.isActive).sort((a,b) => a.order - b.order);
+    const adBanners = banners.filter(b => b.position === 'ad' && b.isActive).sort((a,b) => a.order - b.order);
+    const announcementBanners = banners.filter(b => b.position === 'announcement' && b.isActive).sort((a,b) => a.order - b.order);
 
-    const announcementBanners = [
-        banners.find(b => b.id === 'announcement-1'),
-        banners.find(b => b.id === 'announcement-2'),
-        banners.find(b => b.id === 'announcement-3'),
-    ].filter(Boolean) as Banner[];
+    const mainBanner = heroBanners.length > 0 ? heroBanners[0] : null;
+
 
     if (loading) {
         return (
@@ -125,20 +119,20 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                     <div className="rounded-lg overflow-hidden">
                        <ClientOnly>
                          <Carousel 
-                            opts={{ loop: true }}
+                            opts={{ loop: true, align: 'start' }}
                             plugins={[Autoplay({delay: 5000})]}
                         >
                         <CarouselContent>
                             {announcementBanners.map((banner) => (
-                                <CarouselItem key={banner.id}>
-                                    <Link href={banner.linkUrl}>
-                                        <div className="relative aspect-[16/2] md:aspect-[16/1] w-full">
+                                <CarouselItem key={banner.id} className="md:basis-1/2 lg:basis-1/3">
+                                    <Link href={banner.linkUrl} className="block p-1">
+                                        <div className="relative aspect-video w-full rounded-lg overflow-hidden">
                                             <Image 
                                                 src={banner.images[0].imageUrl}
                                                 alt={banner.title}
                                                 fill
                                                 className="object-cover"
-                                                sizes="100vw"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                             />
                                         </div>
                                     </Link>

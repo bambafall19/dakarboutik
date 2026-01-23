@@ -59,6 +59,9 @@ export type Banner = {
   subtitle?: string;
   images: ImagePlaceholder[];
   linkUrl: string;
+  position: 'hero' | 'announcement' | 'ad' | 'promo';
+  isActive: boolean;
+  order: number;
 };
 
 export type SelectedVariant = {

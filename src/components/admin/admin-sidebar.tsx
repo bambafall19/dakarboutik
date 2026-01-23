@@ -26,7 +26,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-const menuItems = [
+const menuItems: any[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   {
@@ -41,6 +41,7 @@ const menuItems = [
   },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },
+  { hrefExternal: 'https://analytics.google.com/', label: 'Statistiques', icon: LineChart },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 
@@ -54,13 +55,13 @@ export function AdminSidebar() {
     if (item.href) {
       return pathname.startsWith(item.href);
     }
-    if ('subItems' in item && item.subItems) {
-      return item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product');
+    if (item.subItems) {
+      return item.subItems.some((sub: any) => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product');
     }
     return false;
   };
   
-  const defaultActiveAccordion = menuItems.find(item => 'subItems' in item && item.subItems && (item.subItems.some(sub => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product')))?.label;
+  const defaultActiveAccordion = menuItems.find(item => item.subItems && (item.subItems.some((sub: any) => pathname.startsWith(sub.href)) || pathname.startsWith('/admin/edit-product')))?.label;
 
 
   return (
@@ -76,7 +77,7 @@ export function AdminSidebar() {
           <nav className="grid items-start px-4 text-sm font-medium">
             <Accordion type="multiple" defaultValue={defaultActiveAccordion ? [defaultActiveAccordion] : []}>
               {menuItems.map((item) =>
-                'subItems' in item && item.subItems ? (
+                item.subItems ? (
                   <AccordionItem key={item.label} value={item.label} className="border-b-0">
                      <AccordionTrigger className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:no-underline", isLinkActive(item) && 'text-primary bg-muted')}>
                         <item.icon className="h-4 w-4" />
@@ -84,7 +85,7 @@ export function AdminSidebar() {
                      </AccordionTrigger>
                      <AccordionContent className="pl-8">
                        <nav className="grid gap-1">
-                          {item.subItems.map(subItem => (
+                          {item.subItems.map((subItem: any) => (
                             <Link
                               key={subItem.label}
                               href={subItem.href}
@@ -100,6 +101,19 @@ export function AdminSidebar() {
                        </nav>
                      </AccordionContent>
                   </AccordionItem>
+                ) : item.hrefExternal ? (
+                  <a
+                    key={item.label}
+                    href={item.hrefExternal}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary'
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </a>
                 ) : (
                   <Link
                     key={item.label}

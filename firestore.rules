@@ -3,55 +3,59 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    function isAdmin() {
+      return request.auth.token.admin === true;
+    }
 
-    // Public read access for products, write access for authenticated users.
+    // Public read access for products, write access for admins.
     match /products/{productId} {
       allow read: if true;
-      allow write: if request.auth != null; 
+      allow write: if isAdmin(); 
 
       // Reviews subcollection
       match /reviews/{reviewId} {
         allow read: if true;
-        allow create: if true; // Allow anyone to post a review for simplicity
-        allow update, delete: if request.auth != null; // Only admin can moderate
+        allow create: if request.auth != null; // Allow any authenticated user to post a review
+        allow update, delete: if isAdmin(); // Only admin can moderate
       }
     }
 
-    // Public read access for site settings, write access for authenticated users.
+    // Public read access for site settings, write access for admins.
     match /settings/siteConfig {
       allow read: if true;
-      allow write: if request.auth != null; 
+      allow write: if isAdmin(); 
     }
 
-    // Public read access for banners, write access for authenticated users.
+    // Public read access for banners, write access for admins.
     match /banners/{bannerId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
-    // Allow anyone to create an order (guest checkout), but only authenticated users to read/update/delete.
+    // Admin-only access for orders
     match /orders/{orderId} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow create: if true; // Guest checkout still allowed
+      allow read, update, delete: if isAdmin();
     }
 
     // Public read for order status tracking, guest create, admin write.
     match /publicOrders/{orderId} {
       allow get: if true;
       allow create: if true;
-      allow update, delete: if request.auth != null;
+      allow update, delete: if isAdmin(); // Only admins should update public tracking info
     }
 
     // Public read, admin write for categories
     match /categories/{categoryId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // Public read, admin write for FAQs
     match /faq/{faqId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
   }
 }

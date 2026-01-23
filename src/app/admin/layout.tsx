@@ -24,16 +24,25 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useUser();
+  const { user, isAdmin, loading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return; // Wait until loading is false
+
+    if (!user) {
       router.replace('/login');
+    } else if (!isAdmin) {
+      toast({
+        variant: 'destructive',
+        title: 'Accès non autorisé',
+        description: "Vous n'avez pas les permissions pour accéder à cette page.",
+      });
+      router.replace('/');
     }
-  }, [user, loading, router]);
+  }, [user, isAdmin, loading, router, toast]);
   
   const handleLogout = async () => {
     try {
@@ -52,7 +61,7 @@ export default function AdminLayout({
     }
   };
 
-  if (loading || !user) {
+  if (loading || !user || !isAdmin) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin" />

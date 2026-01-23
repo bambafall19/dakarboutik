@@ -15,6 +15,13 @@ const categoryImages: { [key: string]: string } = {
     'accessoires': 'product-cable-1a',
 };
 
+const categoryDescriptions: { [key: string]: string } = {
+    'telephonie': 'Les derniers smartphones et accessoires.',
+    'informatique': 'Ordinateurs portables pour le travail et le jeu.',
+    'audio': 'Qualité sonore immersive pour votre musique.',
+    'accessoires': 'Indispensables pour tous vos appareils.',
+};
+
 
 export function FeaturedCategories() {
   const { categories, loading } = useCategories();
@@ -53,6 +60,7 @@ export function FeaturedCategories() {
           {featured.map((category) => {
             const imageId = categoryImages[category.slug] || 'product-phone-1a';
             const image = findImage(imageId);
+            const description = categoryDescriptions[category.slug];
 
             return (
               <Link key={category.id} href={`/products?category=${category.slug}`} className="group block">
@@ -66,8 +74,9 @@ export function FeaturedCategories() {
                               sizes="(max-width: 768px) 100vw, 25vw"
                               className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                              <h3 className="font-bold text-xl text-white text-center drop-shadow-md">{category.name}</h3>
+                          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center p-4 text-center">
+                              <h3 className="font-bold text-xl text-white drop-shadow-md">{category.name}</h3>
+                              {description && <p className="text-sm text-white/90 mt-1">{description}</p>}
                           </div>
                       </CardContent>
                   </Card>
@@ -78,4 +87,3 @@ export function FeaturedCategories() {
     </div>
   );
 }
-

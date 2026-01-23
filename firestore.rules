@@ -6,6 +6,7 @@ service cloud.firestore {
     
     function isAdmin() {
       // An admin is a user whose UID exists in the 'admins' collection.
+      // This check requires that the user can read their own document in the 'admins' collection.
       return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
@@ -13,10 +14,15 @@ service cloud.firestore {
     match /admins/{userId} {
       // Allow the very first admin doc to be created by any authenticated user.
       // Subsequent admin docs can only be created by other admins.
-      // This ensures a secure bootstrap of the first admin.
       allow create: if request.auth != null && 
                       (isAdmin() || list(/databases/$(database)/documents/admins).size == 0);
-      allow read, delete: if isAdmin();
+      
+      // Allow any authenticated user to read their OWN admin document.
+      // Allow existing admins to read any admin document.
+      allow read: if isAdmin() || request.auth.uid == userId;
+
+      // Only admins can delete admin documents.
+      allow delete: if isAdmin();
     }
 
     // Public read access for products, write access for admins.

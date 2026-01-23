@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -101,6 +100,11 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
         )
     }
 
+    const adBannerGridClass = 
+        adBanners.length === 1 ? "md:grid-cols-1" :
+        adBanners.length === 2 ? "md:grid-cols-2" :
+        "md:grid-cols-3";
+
     return (
         <section className="bg-muted/30">
             <div className="container py-6 space-y-4">
@@ -144,7 +148,7 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                     </div>
                  )}
                   {adBanners.length > 0 && (
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div className={`grid grid-cols-1 gap-4 ${adBannerGridClass}`}>
                          {adBanners.map(banner => (
                              <Link href={banner.linkUrl} key={banner.id}>
                                 <div className="relative rounded-lg overflow-hidden w-full aspect-video group">

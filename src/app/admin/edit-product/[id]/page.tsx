@@ -13,10 +13,13 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useProductsById } from '@/hooks/use-site-data';
 import { Loader2 } from 'lucide-react';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-function EditProductPageContent({ id }: { id: string }) {
+function EditProductPageContent() {
+  const params = useParams();
+  const id = params.id as string;
+  
   const { categories, loading: categoriesLoading } = useCategories();
   const { product, loading: productLoading } = useProductsById(id);
 
@@ -49,10 +52,10 @@ function EditProductPageContent({ id }: { id: string }) {
 
 
 // This is the Server Component that reads searchParams and passes them to the client component.
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage() {
   return (
     <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-        <EditProductPageContent id={params.id} />
+        <EditProductPageContent />
     </Suspense>
   )
 }

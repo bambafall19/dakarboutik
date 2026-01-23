@@ -8,6 +8,8 @@ import { getProducts, getBanners, getCategories as getRawCategories } from '@/li
 import { RecentProductsGrid } from '@/components/recent-products-grid';
 import { getCategoriesWithCounts } from '@/lib/data-helpers';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const [allProducts, allBanners, rawCategories] = await Promise.all([
     getProducts(),

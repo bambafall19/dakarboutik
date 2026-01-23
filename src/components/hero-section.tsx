@@ -129,15 +129,19 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                         <CarouselContent>
                             {announcementBanners.map((banner) => (
                                 <CarouselItem key={banner.id} className="md:basis-1/2 lg:basis-1/3">
-                                    <Link href={banner.linkUrl} className="block p-1">
+                                    <Link href={banner.linkUrl} className="block p-1 group">
                                         <div className="relative aspect-video w-full rounded-lg overflow-hidden">
                                             <Image 
                                                 src={banner.images[0].imageUrl}
                                                 alt={banner.title}
                                                 fill
-                                                className="object-cover"
+                                                className="object-cover transition-transform duration-300 group-hover:scale-105"
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                             />
+                                            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-2 text-center">
+                                                <h3 className="font-semibold text-white drop-shadow-md">{banner.title}</h3>
+                                                {banner.subtitle && <p className="text-xs text-white/80 mt-1">{banner.subtitle}</p>}
+                                            </div>
                                         </div>
                                     </Link>
                                 </CarouselItem>
@@ -153,6 +157,10 @@ export function HeroSection({ banners, loading }: HeroSectionProps) {
                              <Link href={banner.linkUrl} key={banner.id}>
                                 <div className="relative rounded-lg overflow-hidden w-full aspect-video group">
                                     <BannerDisplay banner={banner} />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent p-4 flex flex-col justify-end">
+                                        <h3 className="text-xl font-bold text-white drop-shadow-md">{banner.title}</h3>
+                                        {banner.subtitle && <p className="text-sm text-white/90 mt-1 drop-shadow-md">{banner.subtitle}</p>}
+                                    </div>
                                 </div>
                             </Link>
                          ))}

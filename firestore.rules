@@ -5,7 +5,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     function isAdmin() {
-      return request.auth.token.admin === true;
+      return request.auth.token.admin == true;
     }
 
     // Public read access for products, write access for admins.

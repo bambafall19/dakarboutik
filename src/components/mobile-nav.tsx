@@ -8,7 +8,7 @@ import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Headset, Truck, X, Heart } from 'lucide-react';
+import { Headset, Truck, X, Heart, Info, Mail } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { ThemeToggle } from './theme-toggle';
 
@@ -69,6 +69,27 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
       </div>
       
       <ScrollArea className="flex-1">
+        <nav className="flex flex-col p-4">
+            <Link
+                href="/"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Icons.home className="h-5 w-5" />
+                Accueil
+            </Link>
+            <Link
+                href="/products"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Icons.layoutGrid className="h-5 w-5" />
+                Toute la boutique
+            </Link>
+        </nav>
+        <div className="px-4">
+          <Separator />
+        </div>
         <Accordion type="multiple" className="flex flex-col py-4">
           {renderCategoryLinks(items)}
         </Accordion>
@@ -99,6 +120,22 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             >
                 <Headset className="h-5 w-5" />
                 Garantie & SAV
+            </Link>
+            <Link
+                href="/a-propos"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Info className="h-5 w-5" />
+                À Propos
+            </Link>
+            <Link
+                href="/contact"
+                className="flex items-center gap-4 py-3 text-base font-medium"
+                onClick={onLinkClick}
+            >
+                <Mail className="h-5 w-5" />
+                Contact
             </Link>
         </nav>
       </ScrollArea>

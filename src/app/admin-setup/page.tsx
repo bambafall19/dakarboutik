@@ -68,16 +68,18 @@ export default function AdminSetupPage() {
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit mb-4">
                         <ShieldCheck className="h-10 w-10 text-primary" />
                     </div>
-                    <CardTitle>Devenir Administrateur</CardTitle>
+                    <CardTitle>Finaliser la configuration Administrateur</CardTitle>
                     <CardDescription>
-                       Cette étape est unique et ne peut être réalisée qu'une seule fois.
+                       Cette page est réservée au premier administrateur pour la configuration initiale.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                     {user ? (
                         <>
                             <p className="text-muted-foreground mb-6">
-                                Vous êtes connecté en tant que <span className="font-bold text-foreground">{user.email}</span>. Cliquez sur le bouton ci-dessous pour vous attribuer les droits d'administrateur.
+                                Vous êtes connecté avec l&apos;email <span className="font-bold text-foreground">{user.email}</span>.
+                                <br/>
+                                Cliquez ci-dessous pour désigner ce compte comme l&apos;unique administrateur du site.
                             </p>
                             <Button
                                 size="lg"
@@ -90,7 +92,7 @@ export default function AdminSetupPage() {
                                         Veuillez patienter
                                     </>
                                 ) : (
-                                    'Devenir le premier administrateur'
+                                    'Confirmer et devenir Administrateur'
                                 )}
                             </Button>
                         </>

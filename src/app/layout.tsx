@@ -10,6 +10,7 @@ import { FirebaseClientProvider } from '@/firebase';
 import { AppShell } from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
 import { WishlistProvider } from '@/context/wishlist-provider';
+import { useEffect } from 'react';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -29,6 +30,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  useEffect(() => {
+    const handleContextmenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContextmenu);
+    return () => {
+      document.removeEventListener('contextmenu', handleContextmenu);
+    };
+  }, []);
+  
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>

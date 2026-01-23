@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCategories } from '@/hooks/use-site-data';
 import type { Category } from '@/lib/types';
-import { MoreHorizontal, PlusCircle, Loader2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Loader2, Info } from 'lucide-react';
 import {
     Table,
     TableBody,
@@ -32,7 +32,7 @@ import {
   } from '@/components/ui/dropdown-menu';
 import { CategoryForm } from '@/components/admin/category-form';
 import { useFirestore } from '@/firebase';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc, writeBatch, collection } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -44,6 +44,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
+import { initialCategories } from '@/lib/category-data';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Category, level?: number, onEdit: (cat: Category) => void, onDelete: (cat: Category) => void }) {
     const hasSubCategories = category.subCategories && category.subCategories.length > 0;
@@ -79,6 +81,7 @@ export default function CategoriesPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+    const [isSeeding, setIsSeeding] = useState(false);
     
     const firestore = useFirestore();
     const { toast } = useToast();
@@ -115,6 +118,33 @@ export default function CategoriesPage() {
             toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de supprimer la catégorie.' });
         }
     }
+    
+    const handleSeedData = async () => {
+        if (!firestore) {
+            toast({ variant: 'destructive', title: 'Erreur', description: 'Base de données non connectée.' });
+            return;
+        }
+        setIsSeeding(true);
+        try {
+            const batch = writeBatch(firestore);
+            const categoriesCollection = collection(firestore, 'categories');
+            
+            initialCategories.forEach(item => {
+                const { id, ...data } = item;
+                const newDocRef = doc(categoriesCollection, id);
+                batch.set(newDocRef, data);
+            });
+            
+            await batch.commit();
+            toast({ title: 'Données initiales ajoutées', description: `${initialCategories.length} catégories ont été ajoutées.` });
+        } catch (error) {
+            console.error("Error seeding category data:", error);
+            toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible d\'ajouter les données initiales.' });
+        } finally {
+            setIsSeeding(false);
+        }
+    };
+
 
     const categoryRows = useMemo(() => {
         const rows: React.ReactNode[] = [];
@@ -165,6 +195,18 @@ export default function CategoriesPage() {
                 <div className="flex justify-center items-center h-48">
                     <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
+            ) : categories.length === 0 ? (
+                 <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Aucune catégorie trouvée !</AlertTitle>
+                    <AlertDescription>
+                        Vous pouvez ajouter des catégories manuellement ou importer les catégories par défaut pour commencer.
+                        <Button onClick={handleSeedData} disabled={isSeeding} className="mt-4" size="sm">
+                            {isSeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Importer les catégories par défaut
+                        </Button>
+                    </AlertDescription>
+                </Alert>
             ) : (
                 <Table>
                     <TableHeader>

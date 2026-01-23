@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -10,7 +9,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -118,14 +116,6 @@ export default function LoginPage() {
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="justify-center text-sm">
-            <p className="text-muted-foreground">
-                Pas encore de compte ?{' '}
-                <Link href="/register" className="font-semibold text-primary hover:underline">
-                    Créer un compte
-                </Link>
-            </p>
-        </CardFooter>
       </Card>
     </div>
   );

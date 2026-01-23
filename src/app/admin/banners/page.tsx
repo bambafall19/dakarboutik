@@ -32,7 +32,7 @@ import {
   } from '@/components/ui/dropdown-menu';
 import { BannerForm, positionLabels } from '@/components/admin/banner-form';
 import { useFirestore } from '@/firebase';
-import { doc, deleteDoc, writeBatch, collection } from 'firebase/firestore';
+import { doc, deleteDoc, writeBatch, collection, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -83,7 +83,7 @@ export default function BannersPage() {
         if (!firestore) return;
         const bannerRef = doc(firestore, 'banners', banner.id);
         try {
-          await doc(bannerRef).update({ isActive: checked });
+          await updateDoc(bannerRef, { isActive: checked });
           toast({
             title: 'Statut mis à jour',
             description: `La bannière "${banner.title}" est maintenant ${checked ? 'active' : 'inactive'}.`,

@@ -15,7 +15,7 @@ service cloud.firestore {
       // Allow the very first admin doc to be created by any authenticated user.
       // Subsequent admin docs can only be created by other admins.
       allow create: if request.auth != null && 
-                      (isAdmin() || list(/databases/$(database)/documents/admins).size == 0);
+                      (isAdmin() || list(/databases/$(database)/documents/admins).size() == 0);
       
       // Allow any authenticated user to get their OWN admin document.
       allow get: if request.auth.uid == userId;

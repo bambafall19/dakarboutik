@@ -35,14 +35,11 @@ export default function AdminLayout({
     if (!user) {
       router.replace('/login');
     } else if (!isAdmin) {
-      toast({
-        variant: 'destructive',
-        title: 'Accès non autorisé',
-        description: "Vous n'avez pas les permissions pour accéder à cette page.",
-      });
-      router.replace('/');
+      // If user is logged in but not an admin, redirect them to the admin setup page.
+      // The setup page has its own logic to prevent creating a second admin.
+      router.replace('/admin-setup');
     }
-  }, [user, isAdmin, loading, router, toast]);
+  }, [user, isAdmin, loading, router]);
   
   const handleLogout = async () => {
     try {

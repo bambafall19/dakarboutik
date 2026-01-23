@@ -19,8 +19,10 @@ service cloud.firestore {
       
       // Allow any authenticated user to get their OWN admin document.
       allow get: if request.auth.uid == userId;
-      // Allow existing admins to list all admin documents.
-      allow list: if isAdmin();
+      
+      // Allow any authenticated user to list admins to enable the initial setup check.
+      // This is a necessary tradeoff for a client-side only setup.
+      allow list: if request.auth != null;
 
       // Only admins can delete admin documents.
       allow delete: if isAdmin();

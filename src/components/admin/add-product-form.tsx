@@ -31,7 +31,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
-import { Trash } from 'lucide-react';
+import { Loader2, Sparkles, Trash } from 'lucide-react';
+import { generateProductSeoData } from '@/ai/flows/generate-product-seo-data';
 
 // Slugify function
 function slugify(text: string) {
@@ -56,6 +57,8 @@ const formSchema = z.object({
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
   specs: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
 });
 
 interface AddProductFormProps {
@@ -66,6 +69,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const firestore = useFirestore();
+  const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
 
   const [specFields, setSpecFields] = useState<{ key: string; value: string }[]>([
     { key: '', value: '' },
@@ -86,6 +90,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
       subCategory: '',
       isNew: true,
       isBestseller: false,
+      metaTitle: '',
+      metaDescription: '',
     },
   });
 
@@ -128,6 +134,46 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     const newImages = imageFields.filter((_, i) => i !== index);
     setImageFields(newImages);
   };
+
+  const handleGenerateSeo = async () => {
+    const { title, description, category: categoryId } = form.getValues();
+    if (!title || !description) {
+        toast({
+            variant: 'destructive',
+            title: 'Champs requis manquants',
+            description: "Veuillez renseigner le titre et la description du produit avant de générer le SEO.",
+        });
+        return;
+    }
+    
+    const categoryName = categories.find(c => c.id === categoryId)?.name || '';
+
+    setIsGeneratingSeo(true);
+    try {
+        const seoData = await generateProductSeoData({
+            title,
+            description,
+            category: categoryName,
+            brand: '', // Brand is not in this form, so pass empty
+            relatedProducts: [],
+        });
+        form.setValue('metaTitle', seoData.metaTitle, { shouldValidate: true });
+        form.setValue('metaDescription', seoData.metaDescription, { shouldValidate: true });
+        toast({
+            title: "Contenu SEO généré !",
+            description: "Le titre et la description SEO ont été remplis.",
+        });
+    } catch (error) {
+        console.error("Error generating SEO data:", error);
+        toast({
+            variant: 'destructive',
+            title: "Erreur de l'IA",
+            description: "Impossible de générer les données SEO. Veuillez réessayer.",
+        });
+    } finally {
+        setIsGeneratingSeo(false);
+    }
+};
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -190,6 +236,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
         specs: specsObject,
         variants: [],
         currency: 'FCA',
+        metaTitle: values.metaTitle,
+        metaDescription: values.metaDescription,
       };
 
       const productsCollection = collection(firestore, 'products');
@@ -403,6 +451,49 @@ export function AddProductForm({ categories }: AddProductFormProps) {
               </div>
             </div>
 
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle>SEO (Référencement)</CardTitle>
+                        <CardDescription>Optimisez le référencement de votre produit sur Google.</CardDescription>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
+                        {isGeneratingSeo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                        Générer avec l'IA
+                    </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Titre</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Titre pour les moteurs de recherche (max 60 caractères)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Description pour les moteurs de recherche (max 160 caractères)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -458,5 +549,3 @@ export function AddProductForm({ categories }: AddProductFormProps) {
     </Card>
   );
 }
-
-    

@@ -4,15 +4,15 @@
 import { getCategoryPath } from '@/lib/data-helpers';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/product-details';
-import { useProducts, useProductsBySlug, useCategories } from '@/hooks/use-site-data';
+import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { useEffect } from 'react';
 import { ProductDetailsSkeleton } from '@/components/product-details-skeleton';
 import React, { useMemo } from 'react';
 import { useRecentProducts } from '@/hooks/use-recent-products';
+import type { Product } from '@/lib/types';
 
 
-export function ProductDetailsPageContent({ slug }: { slug: string }) {
-  const { product, loading: productLoading } = useProductsBySlug(slug);
+export function ProductDetailsPageContent({ product }: { product: Product }) {
   const { products: allProducts, loading: allProductsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
   const { addRecentProduct } = useRecentProducts();
@@ -35,7 +35,7 @@ export function ProductDetailsPageContent({ slug }: { slug: string }) {
     return getCategoryPath(product.category, rawCategories) || [];
   }, [product, rawCategories]);
 
-  if (productLoading || allProductsLoading || categoriesLoading) {
+  if (allProductsLoading || categoriesLoading) {
     return <ProductDetailsSkeleton />;
   }
 
@@ -51,4 +51,3 @@ export function ProductDetailsPageContent({ slug }: { slug: string }) {
       />
   );
 }
-

@@ -5,7 +5,18 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     function isAdmin() {
-      return request.auth.token.admin == true;
+      // An admin is a user whose UID exists in the 'admins' collection.
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Admins collection
+    match /admins/{userId} {
+      // Allow the very first admin doc to be created by any authenticated user.
+      // Subsequent admin docs can only be created by other admins.
+      // This ensures a secure bootstrap of the first admin.
+      allow create: if request.auth != null && 
+                      (isAdmin() || list(/databases/$(database)/documents/admins, limit=1).size == 0);
+      allow read, delete: if isAdmin();
     }
 
     // Public read access for products, write access for admins.

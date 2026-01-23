@@ -40,7 +40,6 @@ interface FooterProps {
 }
 
 export function Footer({ settings }: FooterProps) {
-  const paymentImage = findImage('payment-methods');
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -52,10 +51,10 @@ export default function RegisterPage() {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: 'Compte créé avec succès !',
-        description: 'Vous pouvez maintenant vous connecter ou configurer votre accès admin.',
+        description: 'Vous pouvez maintenant accéder à l\'espace administrateur.',
       });
-      // Redirect to the one-time admin setup page
-      router.push('/admin-setup');
+      // Redirect to the admin page to trigger the admin setup
+      router.push('/admin');
     } catch (error: any) {
       let description = 'Une erreur est survenue. Veuillez réessayer.';
       if (error.code === 'auth/email-already-in-use') {

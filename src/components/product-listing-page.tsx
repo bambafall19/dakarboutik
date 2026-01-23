@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { ProductListing } from '@/components/product-listing';
-import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug } from '@/lib/data-helpers';
+import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug, getCategoriesWithCounts } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
@@ -13,40 +14,6 @@ import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/co
 import { ProductListingSkeleton } from './product-listing-skeleton';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-
-function getCategoriesWithCounts(rawCategories: Category[], allProducts: Product[]): Category[] {
-  if (!rawCategories || !allProducts) return [];
-
-  const productCounts: { [categorySlug: string]: number } = {};
-  allProducts.forEach(product => {
-    productCounts[product.category] = (productCounts[product.category] || 0) + 1;
-  });
-
-  const categoryMap: { [id: string]: Category & { children: Category[] } } = {};
-  rawCategories.forEach(cat => {
-    categoryMap[cat.id] = { ...cat, productCount: 0, children: [] };
-  });
-
-  const getChildrenCount = (catId: string): number => {
-    const cat = categoryMap[catId];
-    if (!cat) return 0;
-
-    let total = productCounts[cat.slug] || 0;
-    
-    const children = rawCategories.filter(c => c.parentId === catId);
-    for (const child of children) {
-        total += getChildrenCount(child.id);
-    }
-    return total;
-  };
-
-  const categoriesWithCounts = rawCategories.map(cat => ({
-    ...cat,
-    productCount: getChildrenCount(cat.id),
-  }));
-
-  return buildCategoryHierarchy(categoriesWithCounts);
-}
 
 export function ProductListingPage() {
   const searchParams = useSearchParams();

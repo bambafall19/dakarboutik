@@ -1,12 +1,10 @@
 
-'use client';
 
 import Link from 'next/link';
 import { Card, CardContent } from './ui/card';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
-import { useCategories } from '@/hooks/use-site-data';
-import { Skeleton } from './ui/skeleton';
+import type { Category } from '@/lib/types';
 
 const categoryImages: { [key: string]: string } = {
     'telephonie': 'product-phone-1a',
@@ -23,28 +21,10 @@ const categoryDescriptions: { [key: string]: string } = {
 };
 
 
-export function FeaturedCategories() {
-  const { categories, loading } = useCategories();
-
+export function FeaturedCategories({ categories }: { categories: Category[] }) {
   // Suggestion: Manually select the top 4 categories to feature.
   const featuredSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
   const featured = categories.filter(c => featuredSlugs.includes(c.slug));
-  
-  if (loading) {
-    return (
-        <div className="container px-4 md:px-8 py-8 md:py-16">
-             <div className="text-center mb-8 md:mb-12">
-                <Skeleton className="h-8 w-48 mx-auto" />
-                <Skeleton className="h-4 w-64 mx-auto mt-2" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
-                {[...Array(4)].map((_, i) => (
-                    <Skeleton key={i} className="aspect-square w-full rounded-lg" />
-                ))}
-            </div>
-        </div>
-    )
-  }
   
   if (featured.length === 0) {
     return null;

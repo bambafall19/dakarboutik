@@ -4,14 +4,18 @@ import { FeaturedCategories } from '@/components/featured-categories';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
 import { Icons } from '@/components/icons';
-import { getProducts, getBanners } from '@/lib/data-firebase';
+import { getProducts, getBanners, getCategories as getRawCategories } from '@/lib/data-firebase';
 import { RecentProductsGrid } from '@/components/recent-products-grid';
+import { getCategoriesWithCounts } from '@/lib/data-helpers';
 
 export default async function HomePage() {
-  const [allProducts, allBanners] = await Promise.all([
+  const [allProducts, allBanners, rawCategories] = await Promise.all([
     getProducts(),
-    getBanners()
+    getBanners(),
+    getRawCategories(),
   ]);
+
+  const categories = getCategoriesWithCounts(rawCategories, allProducts);
 
   const newProducts = allProducts
     .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000))
@@ -25,7 +29,7 @@ export default async function HomePage() {
       <HeroSection banners={allBanners} loading={false} />
       
       <main className="flex flex-col gap-12 md:gap-16 lg:gap-20 py-8">
-        <FeaturedCategories />
+        <FeaturedCategories categories={categories} />
         
         {newProducts.length > 0 && (
           <div className="container">

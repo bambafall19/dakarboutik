@@ -11,6 +11,7 @@ import { AppShell } from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
 import { WishlistProvider } from '@/context/wishlist-provider';
 import { useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -30,16 +31,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleContextmenu = (e: MouseEvent) => {
       e.preventDefault();
+      toast({
+        title: 'Action non autorisée',
+        description: 'Le contenu de ce site est protégé.',
+      });
     };
     document.addEventListener('contextmenu', handleContextmenu);
     return () => {
       document.removeEventListener('contextmenu', handleContextmenu);
     };
-  }, []);
+  }, [toast]);
   
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>

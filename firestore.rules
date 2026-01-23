@@ -13,7 +13,6 @@ service cloud.firestore {
     // Admins collection
     match /admins/{userId} {
       // Allow any authenticated user to create an admin doc IF the collection is empty.
-      // This is less secure as any auth'd user can read admin UIDs, but necessary for client-side setup.
       allow create: if request.auth != null && list(/databases/$(database)/documents/admins, 1).size() == 0;
       
       // Allow admins to create other admins
@@ -23,8 +22,8 @@ service cloud.firestore {
       // An admin can read any admin doc.
       allow get: if request.auth.uid == userId || isAdmin();
       
-      // An admin can list other admins.
-      allow list: if isAdmin();
+      // Allow any auth'd user to list admin UIDs. This is a trade-off for the setup process.
+      allow list: if request.auth != null;
 
       // Only admins can delete admin documents.
       allow delete: if isAdmin();

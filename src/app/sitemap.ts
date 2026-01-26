@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getProducts, getCategories } from '@/lib/data-firebase';
  
-const BASE_URL = 'https://dakarboutik.vercel.app';
+const BASE_URL = 'https://dakarboutik.net';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const products = await getProducts();

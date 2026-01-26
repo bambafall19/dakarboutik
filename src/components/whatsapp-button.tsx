@@ -18,7 +18,7 @@ export function WhatsAppButton() {
         return null;
     }
     
-    const message = "Bonjour/Bonsoir Dakarboutik, j'ai besoin de plus d'informations. @https://dakarboutik.vercel.app/";
+    const message = "Bonjour/Bonsoir Dakarboutik, j'ai besoin de plus d'informations. @https://dakarboutik.net/";
     
     const whatsappUrl = `https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}?text=${encodeURIComponent(message)}`;
 

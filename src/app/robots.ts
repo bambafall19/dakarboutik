@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
             disallow: '/admin/',
         }
     ],
-    sitemap: 'https://dakarboutik.vercel.app/sitemap.xml',
+    sitemap: 'https://dakarboutik.net/sitemap.xml',
   };
 }

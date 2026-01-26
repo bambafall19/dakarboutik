@@ -49,7 +49,6 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
-        {/* Cache-busting comment: 2024-07-31T15:05:00Z */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -64,8 +63,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           name="description"
           content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."
         />
-        <meta name="google-site-verification" content="IXi0BaJBiXeC_w0B-8dn5Z_KSZPOctcFyxtIM9z8HEM" />
-        
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" sizes="any" type="image/png" />
         <link rel="manifest" href="/manifest.json" />

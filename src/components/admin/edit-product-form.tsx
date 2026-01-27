@@ -28,7 +28,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Category, Product, ProductFormData } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { Loader2, Sparkles, Trash } from 'lucide-react';
@@ -78,7 +78,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
     product.images.map(img => ({ url: img.imageUrl, description: img.description }))
   );
 
-  const allCategoriesFlat = categories.flatMap(c => [c, ...(c.subCategories || [])]);
+  const allCategoriesFlat = useMemo(() => categories.flatMap(c => [c, ...(c.subCategories || [])]), [categories]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -113,7 +113,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
       form.setValue('subCategory', '');
     }
 
-  }, [product.category, allCategoriesFlat, categories, form]);
+  }, [product.category, allCategoriesFlat, form]);
 
   const addSpecField = () => {
     setSpecFields([...specFields, { key: '', value: '' }]);

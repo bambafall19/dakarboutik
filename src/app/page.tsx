@@ -8,7 +8,7 @@ import { Icons } from '@/components/icons';
 import { getProducts, getBanners, getCategories as getRawCategories } from '@/lib/data-firebase';
 import { RecentProductsGrid } from '@/components/recent-products-grid';
 import { getCategoriesWithCounts } from '@/lib/data-helpers';
-import { Star } from 'lucide-react';
+import { Star, Tag } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +27,8 @@ export default async function HomePage() {
     .slice(0, 8);
   
   const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
+  
+  const saleProducts = allProducts.filter(p => p.salePrice && p.salePrice > 0).slice(0, 8);
 
   return (
     <div className="flex flex-col">
@@ -57,6 +59,18 @@ export default async function HomePage() {
               link={{href: "/products", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
               icon={<Star className="text-primary" />}
+            />
+           </div>
+        )}
+
+        {saleProducts.length > 0 && (
+           <div className="container">
+             <ProductGrid 
+              title="Promotions"
+              products={saleProducts}
+              link={{href: "/products", text: "Voir tout"}}
+              gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+              icon={<Tag className="text-primary" />}
             />
            </div>
         )}

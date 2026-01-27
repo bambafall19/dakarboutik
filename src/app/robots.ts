@@ -7,6 +7,14 @@ export default function robots(): MetadataRoute.Robots {
             userAgent: '*',
             allow: '/',
             disallow: '/admin/',
+        },
+        {
+            userAgent: 'GPTBot',
+            disallow: '/',
+        },
+        {
+            userAgent: 'Google-Extended',
+            disallow: '/',
         }
     ],
     sitemap: 'https://dakarboutik.net/sitemap.xml',

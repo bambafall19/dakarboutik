@@ -12,6 +12,8 @@ import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/co
 import { ProductListingSkeleton } from './product-listing-skeleton';
 import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { QuickFilters } from './quick-filters';
+import { Card, CardContent } from './ui/card';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -24,6 +26,7 @@ export function ProductListingPage() {
   const searchQuery = searchParams.get('q');
   const sortBy = searchParams.get('sortBy') || 'newest';
   const onSaleFilter = searchParams.get('on_sale') === 'true';
+  const bestsellerFilter = searchParams.get('bestseller') === 'true';
   
   const { products: allProducts, loading: productsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
@@ -49,8 +52,9 @@ export function ProductListingPage() {
 
   const pageTitle = useMemo(() => {
     if (onSaleFilter) return 'Promotions';
+    if (bestsellerFilter) return 'Meilleures ventes';
     return currentCategory?.name || 'Tous les produits';
-  }, [currentCategory, onSaleFilter]);
+  }, [currentCategory, onSaleFilter, bestsellerFilter]);
 
   const availableBrands = useMemo(() => {
     if (loading || !allProducts) return [];
@@ -58,7 +62,7 @@ export function ProductListingPage() {
   }, [loading, allProducts]);
 
   const selectedPriceRange: [number, number] = useMemo(() => {
-    let range: [number, number] = [0, 1000000];
+    let range: [number, number] = [0, 10000000];
     if (priceRangeFilter) {
       const [min, max] = priceRangeFilter.split('-').map(Number);
       if (!isNaN(min) && !isNaN(max)) {
@@ -83,6 +87,10 @@ export function ProductListingPage() {
     
     if (onSaleFilter) {
       filtered = filtered.filter(p => p.salePrice && p.salePrice > 0);
+    }
+    
+    if (bestsellerFilter) {
+        filtered = filtered.filter(p => p.isBestseller);
     }
 
     if (categoryFilter) {
@@ -114,7 +122,7 @@ export function ProductListingPage() {
     }
 
     return filtered;
-  }, [loading, allProducts, rawCategories, searchQuery, categoryFilter, brandFilter, selectedPriceRange, sortBy, onSaleFilter]);
+  }, [loading, allProducts, rawCategories, searchQuery, categoryFilter, brandFilter, selectedPriceRange, sortBy, onSaleFilter, bestsellerFilter]);
   
   const productsToShow = useMemo(() => {
     return filteredProducts.slice(0, visibleCount);
@@ -131,21 +139,33 @@ export function ProductListingPage() {
   }
 
   const filterNode = (
-    <div className="space-y-8">
-      <CategorySidebar 
-        categories={categories} 
-        totalProducts={totalProducts}
-        currentCategorySlug={categoryFilter}
-        basePath="/products"
-        currentQuery={currentQueryString}
-      />
-      <ProductFilters 
-        availableBrands={availableBrands}
-        currentBrands={brandFilter}
-        currentPriceRange={selectedPriceRange}
-        basePath="/products"
-        currentQuery={currentQueryString}
-      />
+    <div className="space-y-4">
+        <Card>
+            <CardContent className='p-2'>
+                <QuickFilters />
+            </CardContent>
+        </Card>
+        <Card>
+            <CardContent className='p-2'>
+                <CategorySidebar 
+                    categories={categories} 
+                    currentCategorySlug={categoryFilter}
+                    basePath="/products"
+                    currentQuery={currentQueryString}
+                />
+            </CardContent>
+        </Card>
+        <Card>
+            <CardContent className='p-2'>
+                <ProductFilters 
+                    availableBrands={availableBrands}
+                    currentBrands={brandFilter}
+                    currentPriceRange={selectedPriceRange}
+                    basePath="/products"
+                    currentQuery={currentQueryString}
+                />
+            </CardContent>
+        </Card>
     </div>
   );
 

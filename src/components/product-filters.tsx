@@ -2,11 +2,10 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { Slider } from './ui/slider';
-import React, { useState, useEffect, useCallback } from 'react';
-import { Price } from './price';
+import React from 'react';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
+import { cn } from '@/lib/utils';
 
 interface ProductFiltersProps {
   availableBrands: string[];
@@ -15,6 +14,14 @@ interface ProductFiltersProps {
   basePath: string;
   currentQuery: string;
 }
+
+const priceRanges = [
+    { label: "Tous", min: 0, max: 10000000 },
+    { label: "0 - 600.000 CFA", min: 0, max: 600000 },
+    { label: "600.000 - 1.200.000 CFA", min: 600000, max: 1200000 },
+    { label: "1.200.000 - 3.000.000 CFA", min: 1200000, max: 3000000 },
+    { label: "Plus de 3.000.000 CFA", min: 3000000, max: 10000000 },
+];
 
 export function ProductFilters({ 
   availableBrands,
@@ -26,21 +33,18 @@ export function ProductFilters({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [priceRange, setPriceRange] = useState<[number, number]>(currentPriceRange);
-
-  const handlePriceCommit = (value: [number, number]) => {
-      const params = new URLSearchParams(currentQuery);
-      if (value[0] > 0 || value[1] < 1000000) {
-        params.set('priceRange', `${value[0]}-${value[1]}`);
-      } else {
-        params.delete('priceRange');
-      }
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  const handlePriceChange = (min: number, max: number) => {
+    const params = new URLSearchParams(currentQuery);
+    if (min > 0 || max < 10000000) {
+      params.set('priceRange', `${min}-${max}`);
+    } else {
+      params.delete('priceRange');
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
   
   const handleBrandChange = (brand: string) => {
     const params = new URLSearchParams(currentQuery);
-    
     const newBrands = currentBrands.includes(brand)
       ? currentBrands.filter(b => b !== brand)
       : [...currentBrands, brand];
@@ -53,55 +57,52 @@ export function ProductFilters({
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
   
-  useEffect(() => {
-    setPriceRange(currentPriceRange);
-  }, [currentPriceRange]);
+  const isDefaultPrice = currentPriceRange[0] === 0 && (currentPriceRange[1] === 10000000);
 
   return (
-    <div className="flex flex-col gap-2">
-        <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground px-1.5 mb-2">Filtres</h3>
-        <Accordion type="multiple" defaultValue={['price', 'brand']} className="w-full">
-            <AccordionItem value="price">
-                <AccordionTrigger className="font-semibold text-sm uppercase hover:no-underline">Prix</AccordionTrigger>
+    <Accordion type="multiple" defaultValue={['price', 'brand']} className="w-full">
+        <AccordionItem value="price" className="border-b-0">
+            <AccordionTrigger className="font-semibold text-base hover:no-underline py-0">Filtrer par prix</AccordionTrigger>
+            <AccordionContent>
+                <div className="pt-2 space-y-1">
+                    {priceRanges.map(range => {
+                        const isActive = (range.label === 'Tous' && isDefaultPrice) || (currentPriceRange[0] === range.min && currentPriceRange[1] === range.max);
+                        return (
+                            <button
+                                key={range.label}
+                                onClick={() => handlePriceChange(range.min, range.max)}
+                                className={cn("w-full text-left px-2 py-1.5 rounded-md hover:bg-accent text-sm text-muted-foreground", {
+                                    'text-primary font-semibold': isActive
+                                })}
+                            >
+                                {range.label === 'Tous' ? <span className="text-blue-600">Tous</span> : range.label}
+                            </button>
+                        )
+                    })}
+                </div>
+            </AccordionContent>
+        </AccordionItem>
+        {availableBrands.length > 0 && (
+             <AccordionItem value="brand" className="border-b-0">
+                <AccordionTrigger className="font-semibold text-base hover:no-underline py-2">Marques</AccordionTrigger>
                 <AccordionContent>
-                    <div className="p-2">
-                        <Slider 
-                            min={0}
-                            max={1000000}
-                            step={10000}
-                            value={priceRange}
-                            onValueChange={setPriceRange}
-                            onValueCommit={handlePriceCommit}
-                        />
-                        <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-                            <Price price={priceRange[0]} currency="FCA" />
-                            <Price price={priceRange[1]} currency="FCA" />
-                        </div>
+                    <div className="pt-2 space-y-2 max-h-48 overflow-y-auto">
+                        {availableBrands.map(brand => (
+                            <div key={brand} className="flex items-center space-x-2 p-1.5">
+                                <Checkbox 
+                                    id={`brand-${brand}`} 
+                                    checked={currentBrands.includes(brand)}
+                                    onCheckedChange={() => handleBrandChange(brand)}
+                                />
+                                <Label htmlFor={`brand-${brand}`} className="font-normal text-sm text-muted-foreground">
+                                    {brand}
+                                </Label>
+                            </div>
+                        ))}
                     </div>
                 </AccordionContent>
             </AccordionItem>
-            {availableBrands.length > 0 && (
-                 <AccordionItem value="brand">
-                    <AccordionTrigger className="font-semibold text-sm uppercase hover:no-underline">Marques</AccordionTrigger>
-                    <AccordionContent>
-                        <div className="p-2 space-y-2 max-h-48 overflow-y-auto">
-                            {availableBrands.map(brand => (
-                                <div key={brand} className="flex items-center space-x-2">
-                                    <Checkbox 
-                                        id={`brand-${brand}`} 
-                                        checked={currentBrands.includes(brand)}
-                                        onCheckedChange={() => handleBrandChange(brand)}
-                                    />
-                                    <Label htmlFor={`brand-${brand}`} className="font-normal text-sm">
-                                        {brand}
-                                    </Label>
-                                </div>
-                            ))}
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            )}
-        </Accordion>
-    </div>
+        )}
+    </Accordion>
   );
 }

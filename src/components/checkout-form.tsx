@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import React from "react";
+import Image from 'next/image';
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,8 +18,10 @@ import { useFirestore } from "@/firebase";
 import { collection, doc, writeBatch } from "firebase/firestore";
 import { SHIPPING_COSTS } from "@/components/order-summary";
 import { useSiteSettings } from "@/hooks/use-site-data";
-import { Icons } from "./icons";
-import type { CartItem } from "@/lib/types";
+import { findImage } from '@/lib/placeholder-images';
+import { Card } from "./ui/card";
+import { Label } from "./ui/label";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
@@ -28,6 +31,9 @@ const formSchema = z.object({
   city: z.string().min(2, { message: "La ville est requise." }),
   deliveryMethod: z.enum(["dakar", "hors-dakar"], {
     required_error: "Veuillez choisir un mode de livraison.",
+  }),
+  paymentMethod: z.enum(["cod", "mobile_money"], {
+    required_error: "Veuillez choisir une méthode de paiement.",
   }),
 });
 
@@ -41,6 +47,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
   const { settings } = useSiteSettings();
+  const paymentMethodsImage = findImage('payment-methods');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,66 +58,16 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       address: "",
       city: "Dakar",
       deliveryMethod: "dakar",
+      paymentMethod: "cod",
     },
   });
 
   const deliveryMethod = form.watch('deliveryMethod');
+  const paymentMethod = form.watch('paymentMethod');
 
   React.useEffect(() => {
     onDeliveryMethodChange(deliveryMethod);
   }, [deliveryMethod, onDeliveryMethodChange]);
-
-
-  const handleWhatsAppOrder = async () => {
-     // Trigger validation for all fields
-    const isValid = await form.trigger();
-    if (!isValid) {
-      toast({
-        variant: "destructive",
-        title: "Formulaire incomplet",
-        description: "Veuillez remplir tous les champs avant de commander via WhatsApp.",
-      });
-      return;
-    }
-
-    if (!settings.whatsappNumber) {
-      toast({
-        variant: "destructive",
-        title: "Configuration requise",
-        description: "Le numéro WhatsApp n'a pas été configuré par l'administrateur.",
-      });
-      return;
-    }
-    
-    const values = form.getValues();
-    const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
-    const grandTotal = totalPrice + shippingCost;
-    
-    let message = `*NOUVELLE COMMANDE DAKARBOUTIK* 📦\n\n`;
-    
-    message += `*Produits Commandés :*\n`;
-    state.items.forEach(item => {
-      const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
-      const itemPrice = item.product.salePrice ?? item.product.price;
-      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''} | ${itemPrice.toLocaleString('fr-SN')} FCFA\n`;
-    });
-    message += "\n";
-
-    message += `*Récapitulatif :*\n`;
-    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCFA\n`;
-    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCFA\n`;
-    message += `*Total : ${grandTotal.toLocaleString('fr-SN')} FCFA* 💵\n\n`;
-
-    message += `*Client :* 👤\n`;
-    message += `Nom : ${values.name}\n`;
-    message += `Téléphone : ${values.phone}\n`;
-    message += `Adresse : ${values.address}, ${values.city}\n\n`;
-
-    message += `💳 Paiement à la livraison`;
-    
-    const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!firestore) {
@@ -154,6 +111,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         grandTotal: grandTotal,
         status: 'pending',
         deliveryMethod: values.deliveryMethod,
+        paymentMethod: values.paymentMethod,
         createdAt: createdAt,
         publicNotes: [],
       });
@@ -176,13 +134,12 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         description: "Vous serez redirigé vers la page de confirmation.",
       });
       
-      // Store in sessionStorage as a fallback for the confirmation page
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('lastOrderId', orderId);
       }
 
       clearCart();
-      router.push(`/order-confirmation?orderId=${orderId}`);
+      router.push(`/order-confirmation?orderId=${orderId}&paymentMethod=${values.paymentMethod}`);
 
     } catch (error) {
       console.error("Error creating order:", error);
@@ -311,34 +268,67 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               )}
             />
         </div>
+
+        <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Méthode de paiement</h2>
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-1 gap-4"
+                    >
+                      <FormItem>
+                        <FormControl>
+                          <RadioGroupItem value="cod" className="sr-only" id="cod" />
+                        </FormControl>
+                        <Label htmlFor="cod">
+                          <Card className={cn("cursor-pointer", field.value === 'cod' && "border-primary ring-1 ring-primary")}>
+                            <div className="p-4">
+                              <h3 className="font-semibold">Paiement à la livraison</h3>
+                              <p className="text-sm text-muted-foreground mt-1">Payez en espèces directement au livreur.</p>
+                            </div>
+                          </Card>
+                        </Label>
+                      </FormItem>
+                      <FormItem>
+                        <FormControl>
+                          <RadioGroupItem value="mobile_money" className="sr-only" id="mobile_money" />
+                        </FormControl>
+                        <Label htmlFor="mobile_money">
+                          <Card className={cn("cursor-pointer", field.value === 'mobile_money' && "border-primary ring-1 ring-primary")}>
+                            <div className="p-4">
+                              <h3 className="font-semibold">Mobile Money</h3>
+                              <p className="text-sm text-muted-foreground mt-1">Nous vous contacterons pour le paiement via Wave, Orange Money, etc.</p>
+                              <div className="relative h-8 w-48 mt-2">
+                                <Image src={paymentMethodsImage.imageUrl} alt="Moyens de paiement" layout="fill" objectFit="contain" />
+                              </div>
+                            </div>
+                          </Card>
+                        </Label>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+        </div>
         
         <div className="space-y-4">
             <h2 className="text-xl font-semibold">Finalisation</h2>
-             <FormDescription>
-                Choisissez une option pour finaliser votre commande. Le paiement se fait à la livraison.
-              </FormDescription>
-
             <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Traitement...' : 'Finaliser la commande (Paiement à la livraison)'}
-            </Button>
-            
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Ou
-                </span>
-              </div>
-            </div>
-
-             <Button type="button" variant="outline" size="lg" className="w-full" onClick={handleWhatsAppOrder}>
-                <Icons.whatsapp className="mr-2 h-5 w-5"/>
-                Commander via WhatsApp
+              {form.formState.isSubmitting 
+                ? 'Traitement...' 
+                : paymentMethod === 'cod' 
+                  ? 'Confirmer la commande' 
+                  : 'Passer la commande et Payer'}
             </Button>
         </div>
-
       </form>
     </Form>
   );

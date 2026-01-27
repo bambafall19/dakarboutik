@@ -31,16 +31,16 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
   
   let categoryImage;
   
-  if (category) {
+  if (category?.bannerImageUrl) {
+    categoryImage = { imageUrl: category.bannerImageUrl, description: pageTitle, id: category.id, imageHint: 'banner' };
+  } else if (category) {
     const imageId = category.slug ? categoryBannerImages[category.slug] : 'banner-all-products';
     try {
         categoryImage = findImage(imageId || 'banner1');
         if (categoryImage.id === 'not-found') {
-        // Fallback for slugs not in the map
         categoryImage = findImage('banner1');
         }
     } catch (e) {
-        // General fallback
         categoryImage = findImage('banner1');
     }
   } else {
@@ -48,7 +48,6 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
     if (settings.allProductsBannerUrl) {
       categoryImage = { imageUrl: settings.allProductsBannerUrl, description: pageTitle, id: 'all-products-banner-custom', imageHint: 'banner' };
     } else {
-      // Fallback to placeholder if not set in settings
       categoryImage = findImage('banner-all-products');
     }
   }

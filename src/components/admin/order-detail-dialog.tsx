@@ -37,6 +37,12 @@ interface OrderDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+export const paymentMethodLabels: Record<Order['paymentMethod'], string> = {
+    cod: 'Paiement à la livraison',
+    mobile_money: 'Mobile Money'
+};
+
+
 export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDialogProps) {
   const [adminNotes, setAdminNotes] = useState(order.adminNotes || '');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
@@ -165,6 +171,10 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
             <div className="space-y-4">
                 <h3 className="font-semibold">Récapitulatif financier</h3>
                 <div className="text-sm space-y-1">
+                <div className="flex justify-between">
+                    <span>Méthode de paiement :</span>
+                    <span className="font-medium">{paymentMethodLabels[order.paymentMethod] || 'N/A'}</span>
+                </div>
                 <div className="flex justify-between">
                     <span>Sous-total :</span>
                     <Price price={order.totalPrice} currency="FCA" />

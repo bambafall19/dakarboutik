@@ -49,6 +49,7 @@ export type Category = {
   subCategories?: Category[];
   productCount?: number;
   order?: number;
+  bannerImageUrl?: string;
 };
 
 export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'productCount'>;
@@ -123,6 +124,7 @@ export type Order = {
     status: OrderStatus;
     createdAt: string; // ISO date string
     deliveryMethod: 'dakar' | 'hors-dakar';
+    paymentMethod: 'cod' | 'mobile_money';
     adminNotes?: string;
     publicNotes?: PublicNote[];
 };

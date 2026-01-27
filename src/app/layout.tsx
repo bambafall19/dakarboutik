@@ -12,6 +12,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { WishlistProvider } from '@/context/wishlist-provider';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { SnowProvider } from '@/context/snow-provider';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -90,12 +91,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            <WishlistProvider>
-              <CartProvider>
-                <AppShell>{children}</AppShell>
-                <Toaster />
-              </CartProvider>
-            </WishlistProvider>
+            <SnowProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <AppShell>{children}</AppShell>
+                  <Toaster />
+                </CartProvider>
+              </WishlistProvider>
+            </SnowProvider>
           </FirebaseClientProvider>
         </ThemeProvider>
       </body>

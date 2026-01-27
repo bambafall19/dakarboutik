@@ -11,6 +11,8 @@ import { MobileBottomNav } from './mobile-bottom-nav';
 import { SearchSheet } from './search-sheet';
 import { WhatsAppButton } from './whatsapp-button';
 import { CookieConsentBanner } from './cookie-consent-banner';
+import { useSnow } from '@/hooks/use-snow';
+import Snowfall from './snowfall';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -33,6 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  const { isSnowing } = useSnow();
 
   const isAdmin = pathname.startsWith('/admin');
   const isLogin = pathname === '/login';
@@ -48,6 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <Suspense>
       <div className="min-h-screen w-full">
+        {isSnowing && <Snowfall />}
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}

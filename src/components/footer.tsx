@@ -6,7 +6,7 @@ import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Facebook, Instagram, Phone, Mail, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MessageCircle, Snowflake } from 'lucide-react';
 import { Icons } from './icons';
 import {
   Accordion,
@@ -17,6 +17,7 @@ import {
 import { findImage } from '@/lib/placeholder-images';
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
+import { useSnow } from '@/hooks/use-snow';
 
 
 const footerLinks = {
@@ -37,6 +38,16 @@ const footerLinks = {
 
 interface FooterProps {
   settings?: SiteSettings | null;
+}
+
+function SnowToggleButton() {
+  const { isSnowing, toggleSnow } = useSnow();
+  return (
+    <Button variant="ghost" onClick={toggleSnow} className="text-muted-foreground hover:text-primary h-auto p-1">
+      <Snowflake className="h-4 w-4 mr-2" />
+      <span className="text-xs">{isSnowing ? "Arrêter la neige" : "Qu'il neige"}</span>
+    </Button>
+  )
 }
 
 export function Footer({ settings }: FooterProps) {
@@ -145,6 +156,7 @@ export function Footer({ settings }: FooterProps) {
           <div className='flex items-center gap-4'>
              <Link href="/conditions-generales" className="hover:text-primary">Conditions générales</Link>
              <Link href="/politique-de-confidentialite" className="hover:text-primary">Politique de confidentialité</Link>
+             <SnowToggleButton />
           </div>
         </div>
       </div>

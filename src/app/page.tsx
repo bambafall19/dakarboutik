@@ -1,3 +1,4 @@
+
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
 import { FeaturedCategories } from '@/components/featured-categories';
@@ -7,6 +8,7 @@ import { Icons } from '@/components/icons';
 import { getProducts, getBanners, getCategories as getRawCategories } from '@/lib/data-firebase';
 import { RecentProductsGrid } from '@/components/recent-products-grid';
 import { getCategoriesWithCounts } from '@/lib/data-helpers';
+import { Star } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,6 +56,7 @@ export default async function HomePage() {
               products={bestsellers}
               link={{href: "/products", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+              icon={<Star className="text-primary" />}
             />
            </div>
         )}

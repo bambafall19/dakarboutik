@@ -43,11 +43,17 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
-        <title>DakarBoutik</title>
+        <title>DakarBoutik - Électronique & Smartphones au Sénégal</title>
         <meta
           name="description"
-          content="Votre boutique en ligne pour les smartphones, accessoires, audio, et PC à Dakar. Qualité et service client garantis."
+          content="Votre boutique en ligne de référence pour les smartphones, accessoires, audio, et PC à Dakar. Qualité, service client et livraison rapide garantis."
         />
+        <meta property="og:title" content="DakarBoutik - Électronique & Smartphones au Sénégal" />
+        <meta property="og:description" content="Votre boutique en ligne de référence pour les smartphones, accessoires, audio, et PC à Dakar. Qualité, service client et livraison rapide garantis." />
+        <meta property="og:image" content="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" />
+        <meta property="og:url" content="https://dakarboutik.net" />
+        <meta property="og:type" content="website" />
+
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" sizes="any" type="image/png" />
         <link rel="manifest" href="/manifest.json" />

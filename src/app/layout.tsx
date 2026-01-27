@@ -1,6 +1,6 @@
 'use client';
 
-import { Ubuntu } from 'next/font/google';
+import { Lexend } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -14,10 +14,10 @@ import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SnowProvider } from '@/context/snow-provider';
 
-const ubuntu = Ubuntu({
+const lexend = Lexend({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
-  variable: '--font-ubuntu',
+  variable: '--font-lexend',
 });
 
 export default function RootLayout({
@@ -66,7 +66,7 @@ export default function RootLayout({
       <body
         className={cn(
           'relative h-full font-body antialiased',
-          ubuntu.variable
+          lexend.variable
         )}
       >
         <Script id="google-tag-manager" strategy="afterInteractive">

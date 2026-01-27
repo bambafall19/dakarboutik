@@ -18,8 +18,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
-        headline: ['var(--font-ubuntu)', 'Arial', 'Helvetica', 'sans-serif'],
+        body: ['var(--font-lexend)', 'Arial', 'Helvetica', 'sans-serif'],
+        headline: ['var(--font-lexend)', 'Arial', 'Helvetica', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

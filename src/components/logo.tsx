@@ -27,7 +27,7 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
         </div>
       ) : null}
       <span className={cn(
-          "text-xl tracking-wider text-foreground font-dynapuff md:font-body md:font-bold",
+          "text-xl tracking-wider text-foreground font-bold",
           hideTextOnMobile && "hidden sm:inline-block"
         )}>
           DakarBoutik

@@ -1,6 +1,7 @@
 'use client';
 
-import { Ubuntu, DynaPuff } from 'next/font/google';
+import { Ubuntu } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -16,13 +17,6 @@ const ubuntu = Ubuntu({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-ubuntu',
-});
-
-const dynaPuff = DynaPuff({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-dynapuff',
-  display: 'swap',
 });
 
 export default function RootLayout({
@@ -49,15 +43,6 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-N2FPSJ7P');`,
-          }}
-        />
         <title>DakarBoutik</title>
         <meta
           name="description"
@@ -74,10 +59,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <body
         className={cn(
           'relative h-full font-body antialiased',
-          ubuntu.variable,
-          dynaPuff.variable
+          ubuntu.variable
         )}
       >
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N2FPSJ7P');`}
+        </Script>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-N2FPSJ7P"

@@ -227,6 +227,54 @@ export function ProductList({ products }: { products: Product[] }) {
     }
     setBulkDeleteConfirmation(false);
   };
+  
+  const exportToCsv = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Aucun produit à exporter',
+      });
+      return;
+    }
+
+    const headers = [
+      'ID', 'Titre', 'Statut', 'Catégorie', 'Stock', 'Prix', 'Prix Barré', 'Date de création'
+    ];
+
+    const escapeCsvCell = (cellData: any): string => {
+        const cellString = String(cellData ?? '');
+        if (/[",\n]/.test(cellString)) {
+            return `"${cellString.replace(/"/g, '""')}"`;
+        }
+        return cellString;
+    };
+
+    const rows = filteredProducts.map(p => [
+      p.id,
+      p.title,
+      p.status,
+      categoryMap.get(p.category) || p.category,
+      p.stock,
+      p.price,
+      p.salePrice || '',
+      new Date(p.createdAt).toLocaleDateString('fr-SN'),
+    ].map(escapeCsvCell).join(','));
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    const date = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `produits-dakarboutik-${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -240,7 +288,7 @@ export function ProductList({ products }: { products: Product[] }) {
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={exportToCsv}>
                 <File className="h-3.5 w-3.5 mr-2" />
                 Exporter
               </Button>

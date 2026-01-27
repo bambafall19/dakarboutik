@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { Category } from '@/lib/types';
@@ -50,7 +49,7 @@ export function CategorySidebar({ categories, totalProducts, currentCategorySlug
 
       const linkContent = (
         <div className="flex items-center justify-between w-full">
-            <span className={cn(isSelected && "font-bold", "text-xs md:text-sm")}>{category.name}</span>
+            <span className={cn(isSelected && "font-bold", "text-sm uppercase")}>{category.name}</span>
             <Badge variant={isSelected ? "default" : "secondary"} className={cn("rounded-full h-5 w-auto px-1.5 min-w-[20px] flex items-center justify-center text-xs", isSelected && "bg-primary")}>
                 {category.productCount || 0}
             </Badge>
@@ -62,7 +61,7 @@ export function CategorySidebar({ categories, totalProducts, currentCategorySlug
           <AccordionItem value={category.slug} key={category.id} className="border-b-0">
             <AccordionTrigger className={cn("hover:no-underline py-1.5", isSelected && "text-primary hover:text-primary")}>
                 <Link href={createCategoryUrl(category.slug)} scroll={false} className="flex items-center justify-between w-full pr-1">
-                    <span className={cn(isSelected && "font-bold", "text-xs md:text-sm")}>{category.name}</span>
+                    <span className={cn(isSelected && "font-bold", "text-sm uppercase")}>{category.name}</span>
                 </Link>
             </AccordionTrigger>
             <AccordionContent className="pl-2 md:pl-4">
@@ -92,12 +91,12 @@ export function CategorySidebar({ categories, totalProducts, currentCategorySlug
 
   return (
     <div className='flex flex-col gap-2'>
-        <h3 className="font-semibold text-base md:text-lg">Catégories</h3>
+        <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground px-1.5 mb-2">Catégories</h3>
         <Link 
           href={createCategoryUrl(null)}
           scroll={false}
           className={cn('flex items-center justify-between w-full p-1.5 rounded-md hover:bg-accent', !currentCategorySlug && 'bg-accent text-primary font-semibold')}>
-          <span className={cn(!currentCategorySlug && "font-bold", "text-xs md:text-sm")}>Tous les produits</span>
+          <span className={cn(!currentCategorySlug && "font-bold", "text-sm uppercase")}>Tous les produits</span>
           <Badge variant={!currentCategorySlug ? "default" : "secondary"} className={cn("rounded-full h-5 w-auto px-1.5 min-w-[20px] flex items-center justify-center text-xs", !currentCategorySlug && "bg-primary")}>
               {totalProducts}
           </Badge>

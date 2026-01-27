@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
@@ -59,10 +58,11 @@ export function ProductFilters({
   }, [currentPriceRange]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
+        <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground px-1.5 mb-2">Filtres</h3>
         <Accordion type="multiple" defaultValue={['price', 'brand']} className="w-full">
             <AccordionItem value="price">
-                <AccordionTrigger className="font-semibold text-base md:text-lg">Prix</AccordionTrigger>
+                <AccordionTrigger className="font-semibold text-sm uppercase hover:no-underline">Prix</AccordionTrigger>
                 <AccordionContent>
                     <div className="p-2">
                         <Slider 
@@ -82,7 +82,7 @@ export function ProductFilters({
             </AccordionItem>
             {availableBrands.length > 0 && (
                  <AccordionItem value="brand">
-                    <AccordionTrigger className="font-semibold text-base md:text-lg">Marques</AccordionTrigger>
+                    <AccordionTrigger className="font-semibold text-sm uppercase hover:no-underline">Marques</AccordionTrigger>
                     <AccordionContent>
                         <div className="p-2 space-y-2 max-h-48 overflow-y-auto">
                             {availableBrands.map(brand => (
@@ -92,7 +92,7 @@ export function ProductFilters({
                                         checked={currentBrands.includes(brand)}
                                         onCheckedChange={() => handleBrandChange(brand)}
                                     />
-                                    <Label htmlFor={`brand-${brand}`} className="font-normal text-xs md:text-sm">
+                                    <Label htmlFor={`brand-${brand}`} className="font-normal text-sm">
                                         {brand}
                                     </Label>
                                 </div>

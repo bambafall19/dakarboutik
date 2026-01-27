@@ -1,6 +1,6 @@
 "use client";
 
-import type { Product } from '@/lib/types';
+import type { Product, Category } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
@@ -9,7 +9,7 @@ interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
     pageTitle: string;
-    categorySlug: string | null;
+    category: Category | null;
     sortBy: string;
     basePath: string;
     currentQuery: string;
@@ -25,20 +25,24 @@ const categoryBannerImages: { [key: string]: string } = {
 };
 
 
-export function ProductListing({ products, suggestedProducts, pageTitle, categorySlug, sortBy, basePath, currentQuery }: ProductListingProps) {
+export function ProductListing({ products, suggestedProducts, pageTitle, category, sortBy, basePath, currentQuery }: ProductListingProps) {
   
-  const imageId = categorySlug ? categoryBannerImages[categorySlug] : 'banner-all-products';
-
   let categoryImage;
-  try {
-    categoryImage = findImage(imageId || 'banner1');
-    if (categoryImage.id === 'not-found') {
-      // Fallback for slugs not in the map
-      categoryImage = findImage('banner1');
+  
+  if (category?.imageUrl) {
+    categoryImage = { imageUrl: category.imageUrl, description: category.name };
+  } else {
+    const imageId = category?.slug ? categoryBannerImages[category.slug] : 'banner-all-products';
+    try {
+        categoryImage = findImage(imageId || 'banner1');
+        if (categoryImage.id === 'not-found') {
+        // Fallback for slugs not in the map
+        categoryImage = findImage('banner1');
+        }
+    } catch (e) {
+        // General fallback
+        categoryImage = findImage('banner1');
     }
-  } catch (e) {
-    // General fallback
-    categoryImage = findImage('banner1');
   }
   
   return (

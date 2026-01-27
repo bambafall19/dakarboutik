@@ -49,6 +49,7 @@ export type Category = {
   subCategories?: Category[];
   productCount?: number;
   order?: number;
+  imageUrl?: string;
 };
 
 export type SimpleCategory = Omit<Category, 'icon' | 'subCategories' | 'productCount'>;

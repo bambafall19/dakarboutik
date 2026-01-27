@@ -36,9 +36,11 @@ export function ProductListingPage() {
     return getCategoriesWithCounts(rawCategories, allProducts);
   }, [loading, rawCategories, allProducts]);
 
-  const pageTitle = useMemo(() => categoryFilter && rawCategories
-    ? getCategoryBySlug(categoryFilter, rawCategories)?.name || (categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)).replace(/-/g, ' ')
-    : 'Tous les produits', [categoryFilter, rawCategories]);
+  const currentCategory = useMemo(() => {
+    return categoryFilter && rawCategories ? getCategoryBySlug(categoryFilter, rawCategories) : null;
+  }, [categoryFilter, rawCategories]);
+
+  const pageTitle = useMemo(() => currentCategory?.name || 'Tous les produits', [currentCategory]);
 
   const availableBrands = useMemo(() => {
     if (loading || !allProducts) return [];
@@ -160,7 +162,7 @@ export function ProductListingPage() {
                 products={filteredProducts}
                 suggestedProducts={bestsellers}
                 pageTitle={pageTitle}
-                categorySlug={categoryFilter}
+                category={currentCategory}
                 sortBy={sortBy}
                 basePath="/products"
                 currentQuery={currentQueryString}

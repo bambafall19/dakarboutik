@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useCollection, useFirestore } from '@/firebase';
 import type { Order, Product } from '@/lib/types';
 import { collection, query, orderBy } from 'firebase/firestore';
 import { useMemo, useState } from 'react';
-import { DollarSign, ShoppingCart, Loader2, Receipt, PackageWarning } from 'lucide-react';
+import { DollarSign, ShoppingCart, Loader2, Receipt, TriangleAlert } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -243,7 +244,7 @@ export default function AdminDashboardPage() {
                  <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
-                             <PackageWarning className="h-5 w-5 text-destructive" />
+                             <TriangleAlert className="h-5 w-5 text-destructive" />
                              <CardTitle>Alerte Stock Faible</CardTitle>
                         </div>
                         <CardDescription>
@@ -335,3 +336,5 @@ export default function AdminDashboardPage() {
       </>
     );
   }
+
+    

@@ -1,7 +1,7 @@
 'use client';
 
 import { ProductListing } from '@/components/product-listing';
-import { getAllChildCategorySlugs, buildCategoryHierarchy, getCategoryBySlug, getCategoriesWithCounts } from '@/lib/data-helpers';
+import { getAllChildCategorySlugs, getCategoryBySlug, getCategoriesWithCounts } from '@/lib/data-helpers';
 import type { Product, Category } from '@/lib/types';
 import { CategorySidebar } from '@/components/category-sidebar';
 import { ProductFilters } from '@/components/product-filters';
@@ -10,8 +10,10 @@ import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ProductListingSkeleton } from './product-listing-skeleton';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+
+const ITEMS_PER_PAGE = 12;
 
 export function ProductListingPage() {
   const searchParams = useSearchParams();
@@ -28,7 +30,13 @@ export function ProductListingPage() {
   
   const loading = productsLoading || categoriesLoading;
 
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
   const currentQueryString = searchParams.toString();
+  
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [currentQueryString]);
 
   const categories = useMemo(() => {
     if (loading || !rawCategories || !allProducts) return [];
@@ -108,6 +116,12 @@ export function ProductListingPage() {
     return filtered;
   }, [loading, allProducts, rawCategories, searchQuery, categoryFilter, brandFilter, selectedPriceRange, sortBy, onSaleFilter]);
   
+  const productsToShow = useMemo(() => {
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+
+  const canShowMore = visibleCount < filteredProducts.length;
+  
   const bestsellers = useMemo(() => allProducts?.filter(p => p.isBestseller).slice(0, 4) || [], [allProducts]);
   const totalProducts = useMemo(() => allProducts?.length || 0, [allProducts]);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -165,13 +179,20 @@ export function ProductListingPage() {
         
         <main className="md:col-span-3">
             <ProductListing
-                products={filteredProducts}
+                products={productsToShow}
                 suggestedProducts={bestsellers}
                 pageTitle={pageTitle}
                 category={currentCategory}
                 sortBy={sortBy}
                 basePath="/products"
                 currentQuery={currentQueryString}
+                totalProductsCount={filteredProducts.length}
+                onShowMore={() => setVisibleCount(v => v + ITEMS_PER_PAGE)}
+                canShowMore={canShowMore}
+                currentBrands={brandFilter}
+                currentPriceRange={selectedPriceRange}
+                searchQuery={searchQuery}
+                onSale={onSaleFilter}
             />
         </main>
       </div>

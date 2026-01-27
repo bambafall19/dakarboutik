@@ -5,6 +5,8 @@ import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
 import { useSiteSettings } from '@/hooks/use-site-data';
+import { ActiveFilters } from './active-filters';
+import { Button } from './ui/button';
 
 interface ProductListingProps {
     products: Product[];
@@ -14,6 +16,13 @@ interface ProductListingProps {
     sortBy: string;
     basePath: string;
     currentQuery: string;
+    totalProductsCount: number;
+    canShowMore: boolean;
+    onShowMore: () => void;
+    currentBrands: string[];
+    currentPriceRange: [number, number];
+    searchQuery: string | null;
+    onSale: boolean;
 }
 
 const categoryBannerImages: { [key: string]: string } = {
@@ -26,7 +35,22 @@ const categoryBannerImages: { [key: string]: string } = {
 };
 
 
-export function ProductListing({ products, suggestedProducts, pageTitle, category, sortBy, basePath, currentQuery }: ProductListingProps) {
+export function ProductListing({ 
+    products, 
+    suggestedProducts, 
+    pageTitle, 
+    category, 
+    sortBy, 
+    basePath, 
+    currentQuery,
+    totalProductsCount,
+    canShowMore,
+    onShowMore,
+    currentBrands,
+    currentPriceRange,
+    searchQuery,
+    onSale
+}: ProductListingProps) {
   const { settings } = useSiteSettings();
   
   let categoryImage;
@@ -62,22 +86,31 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
         </div>
       </div>
       
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <p className="text-sm text-muted-foreground">{products.length} résultat(s)</p>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+        <p className="text-sm text-muted-foreground">{totalProductsCount} résultat(s)</p>
         <SortDropdown 
           sortBy={sortBy}
           basePath={basePath}
           currentQuery={currentQuery}
         />
       </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
 
-      {products.length === 0 && (
+       <ActiveFilters
+        currentCategory={category}
+        currentBrands={currentBrands}
+        currentPriceRange={currentPriceRange}
+        searchQuery={searchQuery}
+        onSale={onSale}
+        basePath={basePath}
+      />
+      
+      {products.length > 0 ? (
+         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {products.map(product => (
+            <ProductCard key={product.id} product={product} />
+            ))}
+        </div>
+      ) : (
         <div className="text-center py-16 col-span-full space-y-8">
           <div>
             <h2 className="text-2xl font-semibold">Aucun produit trouvé</h2>
@@ -93,6 +126,12 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {canShowMore && (
+        <div className="text-center mt-12">
+            <Button onClick={onShowMore} variant="outline" size="lg">Afficher plus</Button>
         </div>
       )}
     </>

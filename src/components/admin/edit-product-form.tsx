@@ -31,8 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui
 import { useEffect, useMemo, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import { Loader2, Sparkles, Trash } from 'lucide-react';
-import { generateProductSeoData } from '@/ai/flows/generate-product-seo-data';
+import { Trash } from 'lucide-react';
 
 function slugify(text: string) {
   return text
@@ -68,7 +67,6 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const firestore = useFirestore();
-  const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
   
   const [specFields, setSpecFields] = useState<{ key: string; value: string }[]>(
     product.specs ? Object.entries(product.specs).map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]
@@ -143,46 +141,6 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   const removeImageField = (index: number) => {
     const newImages = imageFields.filter((_, i) => i !== index);
     setImageFields(newImages);
-  };
-
-  const handleGenerateSeo = async () => {
-    const { title, description, category: categoryId } = form.getValues();
-    if (!title || !description) {
-        toast({
-            variant: 'destructive',
-            title: 'Champs requis manquants',
-            description: "Veuillez renseigner le titre et la description du produit avant de générer le SEO.",
-        });
-        return;
-    }
-    
-    const categoryName = allCategoriesFlat.find(c => c.id === categoryId)?.name || '';
-
-    setIsGeneratingSeo(true);
-    try {
-        const seoData = await generateProductSeoData({
-            title,
-            description,
-            category: categoryName,
-            brand: product.brand || '',
-            relatedProducts: [],
-        });
-        form.setValue('metaTitle', seoData.metaTitle, { shouldValidate: true });
-        form.setValue('metaDescription', seoData.metaDescription, { shouldValidate: true });
-        toast({
-            title: "Contenu SEO généré !",
-            description: "Le titre et la description SEO ont été remplis.",
-        });
-    } catch (error) {
-        console.error("Error generating SEO data:", error);
-        toast({
-            variant: 'destructive',
-            title: "Erreur de l'IA",
-            description: "Impossible de générer les données SEO. Veuillez réessayer.",
-        });
-    } finally {
-        setIsGeneratingSeo(false);
-    }
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -456,16 +414,8 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle>SEO (Référencement)</CardTitle>
-                        <CardDescription>Optimisez le référencement de votre produit sur Google.</CardDescription>
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
-                        {isGeneratingSeo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                        Générer avec l'IA
-                    </Button>
-                </div>
+                <CardTitle>SEO (Référencement)</CardTitle>
+                <CardDescription>Optimisez le référencement de votre produit sur Google.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField

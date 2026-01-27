@@ -7,6 +7,8 @@ import {
   File,
   PlusCircle,
   MoreHorizontal,
+  Search,
+  Trash2,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -42,18 +44,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 import Link from 'next/link';
 import { Price } from '../price';
 import { Switch } from '../ui/switch';
 import { useFirestore } from '@/firebase';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
+import { useCategories } from '@/hooks/use-site-data';
+import { Checkbox } from '../ui/checkbox';
 
 function EditableStock({ product }: { product: Product }) {
   const [stock, setStock] = useState(product.stock);
@@ -122,8 +133,32 @@ function EditableStock({ product }: { product: Product }) {
 export function ProductList({ products }: { products: Product[] }) {
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const router = useRouter();
+  
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [bulkDeleteConfirmation, setBulkDeleteConfirmation] = useState(false);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+
+  const { rawCategories, loading: categoriesLoading } = useCategories();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+
+  const categoryMap = useMemo(() => {
+    if (categoriesLoading || !rawCategories) return new Map();
+    return new Map(rawCategories.map(cat => [cat.slug, cat.name]));
+  }, [categoriesLoading, rawCategories]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+        const searchMatch = searchTerm.trim() === '' || product.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const statusMatch = statusFilter === 'all' || product.status === statusFilter;
+        const categoryMatch = categoryFilter === 'all' || product.category === categoryFilter;
+        return searchMatch && statusMatch && categoryMatch;
+    });
+  }, [products, searchTerm, statusFilter, categoryFilter]);
+
 
   const handleStatusChange = async (product: Product, checked: boolean) => {
     if (!firestore) return;
@@ -166,6 +201,32 @@ export function ProductList({ products }: { products: Product[] }) {
       });
     }
   };
+  
+  const handleBulkDelete = async () => {
+    if (!firestore || selectedProductIds.length === 0) return;
+
+    const batch = writeBatch(firestore);
+    selectedProductIds.forEach(id => {
+      const productRef = doc(firestore, 'products', id);
+      batch.delete(productRef);
+    });
+
+    try {
+      await batch.commit();
+      toast({
+        title: 'Produits supprimés',
+        description: `${selectedProductIds.length} produits ont été supprimés.`,
+      });
+      setSelectedProductIds([]);
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'Erreur',
+        description: 'Impossible de supprimer les produits sélectionnés.',
+      });
+    }
+    setBulkDeleteConfirmation(false);
+  };
 
   return (
     <>
@@ -191,16 +252,71 @@ export function ProductList({ products }: { products: Product[] }) {
               </Button>
             </div>
           </div>
+          <div className="flex items-center gap-4 pt-4">
+            <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                    type="search"
+                    placeholder="Rechercher par nom..."
+                    className="pl-8 w-full md:w-1/2 lg:w-1/3"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filtrer par catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    {rawCategories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filtrer par statut" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="active">Actif</SelectItem>
+                    <SelectItem value="draft">Brouillon</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
+          {selectedProductIds.length > 0 && (
+            <div className="bg-muted p-2 rounded-md mb-4 flex items-center justify-between">
+                <span className='text-sm font-medium'>{selectedProductIds.length} produit(s) sélectionné(s)</span>
+                 <Button variant="destructive" size="sm" onClick={() => setBulkDeleteConfirmation(true)}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Supprimer la sélection
+                </Button>
+            </div>
+          )}
           <Table>
             <TableHeader>
               <TableRow>
+                 <TableHead className="w-12">
+                    <Checkbox
+                        checked={selectedProductIds.length > 0 && selectedProductIds.length === filteredProducts.length}
+                        onCheckedChange={(checked) => {
+                            if (checked) {
+                                setSelectedProductIds(filteredProducts.map(p => p.id));
+                            } else {
+                                setSelectedProductIds([]);
+                            }
+                        }}
+                    />
+                 </TableHead>
                 <TableHead className="hidden w-[100px] sm:table-cell">
                   Image
                 </TableHead>
                 <TableHead>Nom</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead>Catégorie</TableHead>
                 <TableHead className="hidden md:table-cell">Stock</TableHead>
                 <TableHead>Prix</TableHead>
                 <TableHead className="hidden md:table-cell">
@@ -212,8 +328,20 @@ export function ProductList({ products }: { products: Product[] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
+              {filteredProducts.map((product) => (
+                <TableRow key={product.id} data-state={selectedProductIds.includes(product.id) ? "selected" : undefined}>
+                  <TableCell>
+                      <Checkbox
+                          checked={selectedProductIds.includes(product.id)}
+                          onCheckedChange={(checked) => {
+                              if (checked) {
+                                  setSelectedProductIds(prev => [...prev, product.id]);
+                              } else {
+                                  setSelectedProductIds(prev => prev.filter(id => id !== product.id));
+                              }
+                          }}
+                      />
+                  </TableCell>
                   <TableCell className="hidden sm:table-cell">
                       <div className="relative h-12 w-12 rounded-md border bg-secondary overflow-hidden">
                           <Image
@@ -232,13 +360,16 @@ export function ProductList({ products }: { products: Product[] }) {
                       aria-label="product status"
                     />
                   </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{categoryMap.get(product.category) || product.category}</Badge>
+                  </TableCell>
                    <TableCell className="hidden md:table-cell">
                       <EditableStock product={product} />
                   </TableCell>
                   <TableCell>
                     <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                   <TableCell className="hidden md:table-cell">
                     {new Date(product.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -268,6 +399,8 @@ export function ProductList({ products }: { products: Product[] }) {
           </Table>
         </CardContent>
       </Card>
+      
+      {/* Single Delete Confirmation */}
       <AlertDialog
         open={!!productToDelete}
         onOpenChange={(open) => !open && setProductToDelete(null)}
@@ -283,6 +416,27 @@ export function ProductList({ products }: { products: Product[] }) {
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteProduct}>
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation */}
+       <AlertDialog
+        open={bulkDeleteConfirmation}
+        onOpenChange={setBulkDeleteConfirmation}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression en masse ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. {selectedProductIds.length} produits seront définitivement supprimés.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBulkDelete}>
               Supprimer
             </AlertDialogAction>
           </AlertDialogFooter>

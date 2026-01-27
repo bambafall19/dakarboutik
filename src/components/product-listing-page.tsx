@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { ProductListing } from '@/components/product-listing';
@@ -23,6 +21,7 @@ export function ProductListingPage() {
   const priceRangeFilter = searchParams.get('priceRange');
   const searchQuery = searchParams.get('q');
   const sortBy = searchParams.get('sortBy') || 'newest';
+  const onSaleFilter = searchParams.get('on_sale') === 'true';
   
   const { products: allProducts, loading: productsLoading } = useProducts();
   const { rawCategories, loading: categoriesLoading } = useCategories();
@@ -40,7 +39,10 @@ export function ProductListingPage() {
     return categoryFilter && rawCategories ? getCategoryBySlug(categoryFilter, rawCategories) : null;
   }, [categoryFilter, rawCategories]);
 
-  const pageTitle = useMemo(() => currentCategory?.name || 'Tous les produits', [currentCategory]);
+  const pageTitle = useMemo(() => {
+    if (onSaleFilter) return 'Promotions';
+    return currentCategory?.name || 'Tous les produits';
+  }, [currentCategory, onSaleFilter]);
 
   const availableBrands = useMemo(() => {
     if (loading || !allProducts) return [];
@@ -69,6 +71,10 @@ export function ProductListingPage() {
             p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
         );
+    }
+    
+    if (onSaleFilter) {
+      filtered = filtered.filter(p => p.salePrice && p.salePrice > 0);
     }
 
     if (categoryFilter) {
@@ -100,7 +106,7 @@ export function ProductListingPage() {
     }
 
     return filtered;
-  }, [loading, allProducts, rawCategories, searchQuery, categoryFilter, brandFilter, selectedPriceRange, sortBy]);
+  }, [loading, allProducts, rawCategories, searchQuery, categoryFilter, brandFilter, selectedPriceRange, sortBy, onSaleFilter]);
   
   const bestsellers = useMemo(() => allProducts?.filter(p => p.isBestseller).slice(0, 4) || [], [allProducts]);
   const totalProducts = useMemo(() => allProducts?.length || 0, [allProducts]);

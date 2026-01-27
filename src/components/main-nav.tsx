@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -15,7 +14,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { CategoryIcons } from './icons';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Tag } from 'lucide-react';
 
 interface MainNavProps {
   items: Category[];
@@ -55,6 +54,15 @@ export function MainNav({ items }: MainNavProps) {
             </ul>
             </NavigationMenuContent>
         </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+            <Link href="/products?on_sale=true">
+                <Tag className="h-4 w-4 mr-2" />
+                PROMOTIONS
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
 
         <NavigationMenuItem>
            <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
@@ -68,6 +76,14 @@ export function MainNav({ items }: MainNavProps) {
            <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
             <Link href="/sav">
                 GARANTIE & SAV
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent text-nav-foreground hover:bg-white/10 focus:bg-white/10 text-xs")}>
+            <Link href="/contact">
+                CONTACT
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>

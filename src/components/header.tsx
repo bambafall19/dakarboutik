@@ -15,6 +15,7 @@ import { Input } from './ui/input';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ThemeToggle } from './theme-toggle';
+import { SnowToggleButton } from './snow-toggle-button';
 
 interface HeaderProps {
   settings?: SiteSettings | null;
@@ -99,6 +100,7 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                     </SheetContent>
                 </Sheet>
                 <ThemeToggle />
+                <SnowToggleButton />
             </div>
         </div>
       </div>

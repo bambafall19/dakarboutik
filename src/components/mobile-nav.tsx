@@ -11,6 +11,7 @@ import { SheetTitle } from './ui/sheet';
 import { Headset, Truck, X, Heart, Info, Mail } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { ThemeToggle } from './theme-toggle';
+import { SnowToggleButton } from './snow-toggle-button';
 
 interface MobileNavProps {
   items: Category[];
@@ -142,8 +143,11 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
       
       <div className="p-4 border-t mt-auto bg-background">
         <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Changer de thème</span>
-            <ThemeToggle />
+            <span className="text-sm font-medium">Contrôles</span>
+            <div className="flex items-center">
+              <SnowToggleButton />
+              <ThemeToggle />
+            </div>
         </div>
       </div>
     </div>

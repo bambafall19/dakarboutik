@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import Link from 'next/link';
@@ -44,7 +42,8 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
 
       {/* Desktop & Tablet Header */}
       <div className="hidden md:block border-b">
-        <div className="container flex h-20 items-center justify-between gap-4">
+        <div className="container flex h-20 items-center gap-4">
+            {/* Left: Logo and Menu toggle */}
             <div className="flex items-center gap-2">
                 <div className='lg:hidden'>
                   <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
@@ -53,50 +52,54 @@ export function Header({ settings, loading, categories, onMobileMenuClick, onSea
                 </div>
                 <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
             </div>
-            
-            <div className="hidden lg:flex flex-1 max-w-lg">
-                <form className="w-full relative" onSubmit={(e) => { e.preventDefault(); onSearchClick(); }}>
-                    <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Rechercher un produit..."
-                        className="w-full bg-muted pl-10 h-11 text-base rounded-full cursor-pointer"
-                        onClick={onSearchClick}
-                        readOnly
-                    />
-                </form>
+
+            {/* Center: Search Bar */}
+            <div className="flex flex-1 items-center justify-center">
+                <div className="w-full max-w-lg">
+                    <form className="w-full relative" onSubmit={(e) => { e.preventDefault(); onSearchClick(); }}>
+                        <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Rechercher un produit..."
+                            className="w-full bg-muted pl-10 h-11 text-base rounded-full cursor-pointer"
+                            onClick={onSearchClick}
+                            readOnly
+                        />
+                    </form>
+                </div>
             </div>
             
-             <div className="hidden lg:flex items-center justify-end gap-2">
-                <Button variant="ghost" asChild className="flex flex-col h-auto px-2 py-1 gap-1 text-xs font-normal relative">
-                  <Link href="/favoris">
-                    <Heart className="h-5 w-5" />
-                    <span>Favoris</span>
-                     {wishlistTotal > 0 && (
-                      <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]">
-                        {wishlistTotal}
-                      </span>
-                    )}
-                  </Link>
+            {/* Right: Icons */}
+            <div className="flex items-center justify-end gap-2">
+                <Button variant="ghost" asChild size="icon" className="relative h-10 w-10">
+                    <Link href="/favoris">
+                    <Heart className="h-6 w-6" />
+                    <span className="sr-only">Favoris</span>
+                        {wishlistTotal > 0 && (
+                        <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]">
+                            {wishlistTotal}
+                        </span>
+                        )}
+                    </Link>
                 </Button>
                 <Sheet>
-                  <SheetTrigger asChild>
-                      <Button variant="ghost" className="relative rounded-full h-auto p-2 flex flex-col gap-1 text-xs font-normal">
-                      <Icons.shoppingBag className="h-6 w-6" />
-                      {totalItems > 0 && (
-                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                              {totalItems}
-                          </span>
-                      )}
-                      <Price price={totalPrice} currency='FCA' />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent className="flex flex-col">
-                      <CartDrawer />
-                  </SheetContent>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" className="relative rounded-full h-auto p-2 flex flex-col gap-1 text-xs font-normal">
+                        <Icons.shoppingBag className="h-6 w-6" />
+                        {totalItems > 0 && (
+                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                                {totalItems}
+                            </span>
+                        )}
+                        <Price price={totalPrice} currency='FCA' />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent className="flex flex-col">
+                        <CartDrawer />
+                    </SheetContent>
                 </Sheet>
                 <ThemeToggle />
-              </div>
+            </div>
         </div>
       </div>
       

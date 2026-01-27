@@ -296,107 +296,114 @@ export function ProductList({ products }: { products: Product[] }) {
                 </Button>
             </div>
           )}
-          <Table>
-            <TableHeader>
-              <TableRow>
-                 <TableHead className="w-12">
-                    <Checkbox
-                        checked={selectedProductIds.length > 0 && selectedProductIds.length === filteredProducts.length}
-                        onCheckedChange={(checked) => {
-                            if (checked) {
-                                setSelectedProductIds(filteredProducts.map(p => p.id));
-                            } else {
-                                setSelectedProductIds([]);
-                            }
-                        }}
-                    />
-                 </TableHead>
-                <TableHead className="hidden w-[100px] sm:table-cell">
-                  Image
-                </TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead className="hidden md:table-cell">Stock</TableHead>
-                <TableHead>Prix</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Créé le
-                </TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.map((product) => (
-                <TableRow key={product.id} data-state={selectedProductIds.includes(product.id) ? "selected" : undefined}>
-                  <TableCell>
+          {filteredProducts.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                   <TableHead className="w-12">
                       <Checkbox
-                          checked={selectedProductIds.includes(product.id)}
+                          checked={selectedProductIds.length > 0 && selectedProductIds.length === filteredProducts.length}
                           onCheckedChange={(checked) => {
                               if (checked) {
-                                  setSelectedProductIds(prev => [...prev, product.id]);
+                                  setSelectedProductIds(filteredProducts.map(p => p.id));
                               } else {
-                                  setSelectedProductIds(prev => prev.filter(id => id !== product.id));
+                                  setSelectedProductIds([]);
                               }
                           }}
                       />
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                      <div className="relative h-12 w-12 rounded-md border bg-secondary overflow-hidden">
-                          <Image
-                              src={product.images[0]?.imageUrl}
-                              alt={product.title}
-                              fill
-                              className="object-contain p-1"
-                          />
-                      </div>
-                  </TableCell>
-                  <TableCell className="font-medium">{product.title}</TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={product.status === 'active'}
-                      onCheckedChange={(checked) => handleStatusChange(product, checked)}
-                      aria-label="product status"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{categoryMap.get(product.category) || product.category}</Badge>
-                  </TableCell>
-                   <TableCell className="hidden md:table-cell">
-                      <EditableStock product={product} />
-                  </TableCell>
-                  <TableCell>
-                    <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
-                  </TableCell>
-                   <TableCell className="hidden md:table-cell">
-                    {new Date(product.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                        className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                        onClick={() => setProductToDelete(product)}
-                      >
-                        Supprimer
-                      </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                   </TableHead>
+                  <TableHead className="hidden w-[100px] sm:table-cell">
+                    Image
+                  </TableHead>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Catégorie</TableHead>
+                  <TableHead className="hidden md:table-cell">Stock</TableHead>
+                  <TableHead>Prix</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Créé le
+                  </TableHead>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.map((product) => (
+                  <TableRow key={product.id} data-state={selectedProductIds.includes(product.id) ? "selected" : undefined}>
+                    <TableCell>
+                        <Checkbox
+                            checked={selectedProductIds.includes(product.id)}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    setSelectedProductIds(prev => [...prev, product.id]);
+                                } else {
+                                    setSelectedProductIds(prev => prev.filter(id => id !== product.id));
+                                }
+                            }}
+                        />
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                        <div className="relative h-12 w-12 rounded-md border bg-secondary overflow-hidden">
+                            <Image
+                                src={product.images[0]?.imageUrl}
+                                alt={product.title}
+                                fill
+                                className="object-contain p-1"
+                            />
+                        </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{product.title}</TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={product.status === 'active'}
+                        onCheckedChange={(checked) => handleStatusChange(product, checked)}
+                        aria-label="product status"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{categoryMap.get(product.category) || product.category}</Badge>
+                    </TableCell>
+                     <TableCell className="hidden md:table-cell">
+                        <EditableStock product={product} />
+                    </TableCell>
+                    <TableCell>
+                      <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
+                    </TableCell>
+                     <TableCell className="hidden md:table-cell">
+                      {new Date(product.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                          onClick={() => setProductToDelete(product)}
+                        >
+                          Supprimer
+                        </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+             <div className="text-center py-16">
+                <h3 className="text-lg font-semibold">Aucun produit trouvé</h3>
+                <p className="text-muted-foreground text-sm">Essayez de changer vos filtres ou votre recherche.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
       

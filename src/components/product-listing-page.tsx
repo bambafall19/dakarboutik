@@ -38,7 +38,7 @@ export function ProductListingPage() {
 
   const pageTitle = useMemo(() => categoryFilter && rawCategories
     ? getCategoryBySlug(categoryFilter, rawCategories)?.name || (categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)).replace(/-/g, ' ')
-    : 'suggestion ici??', [categoryFilter, rawCategories]);
+    : 'Tous les produits', [categoryFilter, rawCategories]);
 
   const availableBrands = useMemo(() => {
     if (loading || !allProducts) return [];

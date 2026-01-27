@@ -26,6 +26,7 @@ import { Textarea } from '../ui/textarea';
 
 const formSchema = z.object({
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
+  allProductsBannerUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
   announcementMessage1: z.string().optional(),
   announcementMessage2: z.string().optional(),
   announcementMessage3: z.string().optional(),
@@ -50,6 +51,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       logoUrl: settings.logoUrl || '',
+      allProductsBannerUrl: settings.allProductsBannerUrl || '',
       announcementMessage1: settings.announcementMessage1 || '',
       announcementMessage2: settings.announcementMessage2 || '',
       announcementMessage3: settings.announcementMessage3 || '',
@@ -111,6 +113,22 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                   <FormControl>
                     <Input placeholder="https://example.com/logo.png" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="allProductsBannerUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL de la bannière pour "Tous les produits"</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/banner.png" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormDescription>
+                    Cette image sera affichée sur la page listant tous les produits.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -4,6 +4,7 @@ import type { Product, Category } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
 import { SortDropdown } from './sort-dropdown';
+import { useSiteSettings } from '@/hooks/use-site-data';
 
 interface ProductListingProps {
     products: Product[];
@@ -26,13 +27,12 @@ const categoryBannerImages: { [key: string]: string } = {
 
 
 export function ProductListing({ products, suggestedProducts, pageTitle, category, sortBy, basePath, currentQuery }: ProductListingProps) {
+  const { settings } = useSiteSettings();
   
   let categoryImage;
   
-  if (category?.imageUrl) {
-    categoryImage = { imageUrl: category.imageUrl, description: category.name };
-  } else {
-    const imageId = category?.slug ? categoryBannerImages[category.slug] : 'banner-all-products';
+  if (category) {
+    const imageId = category.slug ? categoryBannerImages[category.slug] : 'banner-all-products';
     try {
         categoryImage = findImage(imageId || 'banner1');
         if (categoryImage.id === 'not-found') {
@@ -42,6 +42,14 @@ export function ProductListing({ products, suggestedProducts, pageTitle, categor
     } catch (e) {
         // General fallback
         categoryImage = findImage('banner1');
+    }
+  } else {
+    // "All products" page
+    if (settings.allProductsBannerUrl) {
+      categoryImage = { imageUrl: settings.allProductsBannerUrl, description: pageTitle, id: 'all-products-banner-custom', imageHint: 'banner' };
+    } else {
+      // Fallback to placeholder if not set in settings
+      categoryImage = findImage('banner-all-products');
     }
   }
   

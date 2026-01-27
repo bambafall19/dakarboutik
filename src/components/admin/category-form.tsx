@@ -41,7 +41,6 @@ const formSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères.'),
   order: z.coerce.number().default(99),
   parentId: z.string().optional(),
-  imageUrl: z.string().url("Veuillez entrer une URL valide.").optional().or(z.literal('')),
 });
 
 interface CategoryFormProps {
@@ -61,7 +60,6 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
       name: '',
       order: 99,
       parentId: undefined,
-      imageUrl: '',
     },
   });
   
@@ -71,7 +69,6 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
             name: category?.name || '',
             order: category?.order ?? 99,
             parentId: category?.parentId || undefined,
-            imageUrl: category?.imageUrl || '',
         })
     }
   }, [category, form, open])
@@ -87,7 +84,6 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
             slug: slug,
             parentId: values.parentId || null,
             order: values.order,
-            imageUrl: values.imageUrl || null,
         }
 
         if (category) {
@@ -169,22 +165,6 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>URL de l'image de la bannière (optionnel)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://exemple.com/image.png" {...field} value={field.value ?? ''} />
-                  </FormControl>
-                  <FormDescription>
-                    Cette image sera affichée en bannière sur la page de la catégorie.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 15 78% 30%; /* #852311 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 224 71.4% 4.1%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 15 78% 96%; /* Lighter shade of primary */
+    --accent-foreground: 15 78% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 15 78% 30%; /* #852311 */
+    --nav: 221 44% 23%;
+    --nav-foreground: 0 0% 98%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 204 10% 10%;
+    --foreground: 210 20% 98%;
+    --card: 204 10% 12%;
+    --card-foreground: 210 20% 98%;
+    --popover: 204 10% 10%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 15 78% 40%; /* Lighter shade for dark mode */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 218 11% 65%;
+    --accent: 215 28% 17%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 15 78% 40%;
+    --nav: 221 44% 23%;
+    --nav-foreground: 0 0% 98%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.bg-nav {
+    background-color: hsl(var(--nav));
+}
+.text-nav-foreground {
+    color: hsl(var(--nav-foreground));
+}
+
+/* Snowfall animation */
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0);
+  }
+  100% {
+    transform: translateY(110vh) translateX(15vw);
+  }
+}
+
+.snowflake {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation-name: snowfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}

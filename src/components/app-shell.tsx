@@ -1,0 +1,88 @@
+'use client';
+
+import { Suspense, useState, useEffect } from 'react';
+import { Footer } from '@/components/footer';
+import { useSiteSettings, useCategories } from '@/hooks/use-site-data';
+import { HeaderWrapper } from './header-wrapper';
+import { usePathname } from 'next/navigation';
+import { Sheet, SheetContent } from './ui/sheet';
+import { MobileNav } from './mobile-nav';
+import { MobileBottomNav } from './mobile-bottom-nav';
+import { SearchSheet } from './search-sheet';
+import { WhatsAppButton } from './whatsapp-button';
+import { CookieConsentBanner } from './cookie-consent-banner';
+import { useSnow } from '@/hooks/use-snow';
+import Snowfall from './snowfall';
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const { settings, loading: settingsLoading } = useSiteSettings();
+  const { categories, loading: categoriesLoading } = useCategories();
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  const { isSnowing } = useSnow();
+
+  const isAdmin = pathname.startsWith('/admin');
+  const isLogin = pathname === '/login';
+
+  if (isAdmin || isLogin) {
+    return <>{children}</>;
+  }
+  
+  const handleSearchClick = () => {
+    setIsSearchSheetOpen(true);
+  }
+
+  return (
+    <Suspense>
+      <div className="min-h-screen w-full">
+        {isSnowing && <Snowfall />}
+        <HeaderWrapper
+            settings={settings}
+            settingsLoading={settingsLoading}
+            categories={categories}
+            categoriesLoading={categoriesLoading}
+            onMobileMenuClick={() => setIsMobileMenuOpen(true)}
+            onSearchClick={handleSearchClick}
+        />
+        <main>
+            <div className="pb-24 md:pb-0">
+                {children}
+            </div>
+        </main>
+        <Footer settings={settings} />
+        <WhatsAppButton />
+        <CookieConsentBanner />
+        <ClientOnly>
+          <div className="md:hidden">
+            <MobileBottomNav 
+              onMenuClick={() => setIsMobileMenuOpen(true)} 
+              onSearchClick={handleSearchClick}
+            />
+          </div>
+        </ClientOnly>
+      </div>
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="left" className="w-full max-w-sm flex flex-col p-0">
+            <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
+        </SheetContent>
+      </Sheet>
+      <SearchSheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen} />
+    </Suspense>
+  );
+}

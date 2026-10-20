@@ -1,0 +1,69 @@
+
+
+import Link from 'next/link';
+import { Card, CardContent } from './ui/card';
+import Image from 'next/image';
+import { findImage } from '@/lib/placeholder-images';
+import type { Category } from '@/lib/types';
+
+const categoryImages: { [key: string]: string } = {
+    'telephonie': 'product-phone-1a',
+    'informatique': 'product-laptop-1a',
+    'audio': 'product-headphones-1a',
+    'accessoires': 'product-cable-1a',
+};
+
+const categoryDescriptions: { [key: string]: string } = {
+    'telephonie': 'Les derniers smartphones et accessoires.',
+    'informatique': 'Ordinateurs portables pour le travail et le jeu.',
+    'audio': 'Qualité sonore immersive pour votre musique.',
+    'accessoires': 'Indispensables pour tous vos appareils.',
+};
+
+
+export function FeaturedCategories({ categories }: { categories: Category[] }) {
+  // Suggestion: Manually select the top 4 categories to feature.
+  const featuredSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
+  const featured = categories.filter(c => featuredSlugs.includes(c.slug));
+  
+  if (featured.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="container px-4 md:px-8 py-8 md:py-16">
+        <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-xl md:text-3xl font-bold tracking-tight">Catégories</h2>
+            <p className="mt-2 text-muted-foreground">Parcourez nos univers de produits.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+          {featured.map((category) => {
+            const imageId = categoryImages[category.slug] || 'product-phone-1a';
+            const image = findImage(imageId);
+            const description = categoryDescriptions[category.slug];
+
+            return (
+              <Link key={category.id} href={`/products?category=${category.slug}`} className="group block">
+                  <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300">
+                      <CardContent className="p-0 relative aspect-square">
+                          <Image 
+                              src={image.imageUrl}
+                              alt={category.name}
+                              data-ai-hint={image.imageHint}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 25vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center p-4 text-center">
+                              <h3 className="font-bold text-xl text-white drop-shadow-md">{category.name}</h3>
+                              {description && <p className="text-sm text-white/90 mt-1">{description}</p>}
+                          </div>
+                      </CardContent>
+                  </Card>
+              </Link>
+            );
+          })}
+        </div>
+    </div>
+  );
+}

@@ -1,0 +1,129 @@
+import { neon } from '@neondatabase/serverless';
+import fs from 'fs';
+import path from 'path';
+
+const envPath = path.resolve(process.cwd(), '.env.local');
+const env = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
+const url =
+  process.env.DATABASE_URL_UNPOOLED ||
+  process.env.DATABASE_URL ||
+  (env.match(/^DATABASE_URL_UNPOOLED="?([^"\n]+)"?/m)?.[1]) ||
+  (env.match(/^DATABASE_URL="?([^"\n]+)"?/m)?.[1]);
+
+if (!url) {
+  console.error('DATABASE_URL not found in env or .env.local');
+  process.exit(1);
+}
+
+const sql = neon(url);
+
+const statements = [
+  `create extension if not exists pgcrypto`,
+
+  `create table if not exists users (
+    id uuid primary key default gen_random_uuid(),
+    email text not null unique,
+    password_hash text not null,
+    is_admin boolean not null default false,
+    created_at timestamptz not null default now()
+  )`,
+
+  `create table if not exists categories (
+    id text primary key,
+    name text not null,
+    slug text not null,
+    parent_id text,
+    "order" integer not null default 0,
+    banner_image_url text
+  )`,
+
+  `create table if not exists products (
+    id text primary key,
+    title text not null,
+    slug text not null,
+    images jsonb not null default '[]'::jsonb,
+    price numeric not null default 0,
+    sale_price numeric,
+    currency text not null default 'FCA',
+    brand text,
+    category text,
+    specs jsonb not null default '{}'::jsonb,
+    stock integer not null default 0,
+    variants jsonb not null default '[]'::jsonb,
+    status text not null default 'active',
+    created_at timestamptz not null default now(),
+    is_bestseller boolean not null default false,
+    is_new boolean not null default false,
+    description text not null default '',
+    meta_title text,
+    meta_description text
+  )`,
+  `create index if not exists products_slug_idx on products (slug)`,
+  `create index if not exists products_status_idx on products (status)`,
+
+  `create table if not exists reviews (
+    id text primary key,
+    product_id text not null,
+    rating integer not null default 5,
+    title text not null default '',
+    text text not null default '',
+    author text not null default '',
+    created_at timestamptz not null default now()
+  )`,
+  `create index if not exists reviews_product_idx on reviews (product_id)`,
+
+  `create table if not exists banners (
+    id text primary key,
+    title text,
+    subtitle text,
+    images jsonb not null default '[]'::jsonb,
+    link_url text,
+    position text not null default 'hero',
+    is_active boolean not null default true,
+    "order" integer not null default 0
+  )`,
+
+  `create table if not exists faq (
+    id text primary key,
+    question text not null,
+    answer text not null,
+    "order" integer not null default 0
+  )`,
+
+  `create table if not exists settings (
+    id text primary key,
+    data jsonb not null default '{}'::jsonb
+  )`,
+
+  `create table if not exists orders (
+    id text primary key,
+    order_id text not null,
+    customer_info jsonb not null default '{}'::jsonb,
+    items jsonb not null default '[]'::jsonb,
+    total_price numeric not null default 0,
+    shipping_cost numeric not null default 0,
+    grand_total numeric not null default 0,
+    status text not null default 'pending',
+    created_at timestamptz not null default now(),
+    delivery_method text,
+    payment_method text,
+    admin_notes text,
+    public_notes jsonb not null default '[]'::jsonb
+  )`,
+
+  `create table if not exists public_orders (
+    id text primary key,
+    order_id text not null,
+    status text not null default 'pending',
+    created_at timestamptz not null default now(),
+    status_history jsonb not null default '[]'::jsonb,
+    public_notes jsonb not null default '[]'::jsonb
+  )`,
+];
+
+for (const stmt of statements) {
+  await sql.query(stmt);
+  console.log('ok:', stmt.split('\n')[0].trim().slice(0, 70));
+}
+
+console.log('\nSchema applied.');

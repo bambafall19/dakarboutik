@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+coverage
+.genkit
+.vercel
+.git
+.env*
+.neon
+*.log
+.DS_Store
+public/sw.js
+public/workbox-*.js
+.agents

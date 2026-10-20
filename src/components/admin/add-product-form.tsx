@@ -209,7 +209,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
   }
 
   return (
-    <Card>
+    <Card className="rounded-2xl border-border/70">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -245,9 +245,9 @@ export function AddProductForm({ categories }: AddProductFormProps) {
               />
             </div>
             
-            <Card>
+            <Card className="rounded-2xl border-border/70">
               <CardHeader>
-                <CardTitle>Images du produit</CardTitle>
+                <CardTitle className="font-headline font-bold">Images du produit</CardTitle>
                 <CardDescription>Ajoutez une ou plusieurs images pour votre produit. La première image sera l'image principale.</CardDescription>
               </CardHeader>
               <CardContent>
@@ -398,9 +398,9 @@ export function AddProductForm({ categories }: AddProductFormProps) {
               </div>
             </div>
 
-            <Card>
+            <Card className="rounded-2xl border-border/70">
               <CardHeader>
-                <CardTitle>SEO (Référencement)</CardTitle>
+                <CardTitle className="font-headline font-bold">SEO (Référencement)</CardTitle>
                 <CardDescription>Optimisez le référencement de votre produit sur Google.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

@@ -52,6 +52,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <Suspense>
       <div className="min-h-screen w-full">
         {isSnowing && <Snowfall />}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:shadow-lg"
+        >
+          Aller au contenu principal
+        </a>
         <HeaderWrapper
             settings={settings}
             settingsLoading={settingsLoading}
@@ -60,7 +66,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onMobileMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={handleSearchClick}
         />
-        <main>
+        <main id="main-content">
             <div className="pb-24 md:pb-0">
                 {children}
             </div>

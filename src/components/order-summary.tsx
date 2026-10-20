@@ -23,9 +23,9 @@ export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
   const grandTotal = totalPrice + shippingCost;
 
   return (
-    <Card className="bg-muted/50">
+    <Card className="rounded-2xl border-border/70 bg-secondary/40">
       <CardHeader>
-        <CardTitle>Récapitulatif de la commande</CardTitle>
+        <CardTitle className="font-headline text-lg font-bold">Récapitulatif de la commande</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-4 max-h-64 overflow-y-auto pr-2">

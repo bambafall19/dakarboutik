@@ -17,7 +17,7 @@ export function CartDrawer() {
   return (
     <>
       <SheetHeader>
-        <SheetTitle>Mon Panier ({totalItems})</SheetTitle>
+        <SheetTitle className="font-headline">Mon Panier ({totalItems})</SheetTitle>
       </SheetHeader>
       {state.items.length > 0 ? (
         <>
@@ -74,22 +74,24 @@ export function CartDrawer() {
           <SheetFooter className="mt-auto">
             <div className="w-full space-y-4">
               <Separator />
-              <div className="flex justify-between font-bold text-lg">
+              <div className="flex justify-between font-headline text-lg font-bold">
                 <span>Sous-total</span>
                 <Price price={totalPrice} currency="FCA" className="text-lg text-nav-foreground" />
               </div>
-              <Button asChild size="lg" className="w-full">
+              <Button asChild size="lg" className="w-full rounded-full">
                 <Link href="/checkout">Passer la commande</Link>
               </Button>
             </div>
           </SheetFooter>
         </>
       ) : (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <Icons.shoppingBag className="w-20 h-20 text-muted-foreground/30" />
-            <h3 className="font-semibold text-lg">Votre panier est vide</h3>
-            <p className="text-muted-foreground text-sm">Parcourez nos produits pour trouver votre bonheur.</p>
-            <Button asChild>
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+            <span className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10 ring-1 ring-primary/10">
+              <Icons.shoppingBag className="h-10 w-10 text-primary/60" />
+            </span>
+            <h3 className="font-headline text-lg font-bold">Votre panier est vide</h3>
+            <p className="max-w-[16rem] text-sm text-muted-foreground">Parcourez nos produits pour trouver votre bonheur.</p>
+            <Button asChild className="rounded-full bg-primary hover:bg-primary/90">
                 <Link href="/products">Commencer mes achats</Link>
             </Button>
         </div>

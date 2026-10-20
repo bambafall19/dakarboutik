@@ -128,7 +128,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Informations de contact</h2>
+            <h2 className="font-headline text-xl font-bold">Informations de contact</h2>
             <FormField
                 control={form.control}
                 name="name"
@@ -173,7 +173,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         </div>
 
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Adresse de livraison</h2>
+            <h2 className="font-headline text-xl font-bold">Adresse de livraison</h2>
             <FormField
                 control={form.control}
                 name="address"
@@ -203,7 +203,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         </div>
         
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Mode de livraison</h2>
+            <h2 className="font-headline text-xl font-bold">Mode de livraison</h2>
             <FormField
               control={form.control}
               name="deliveryMethod"
@@ -215,16 +215,16 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                       defaultValue={field.value}
                       className="flex flex-col space-y-2"
                     >
-                      <FormItem className="flex items-center space-x-3 space-y-0 border p-4 rounded-md has-[[data-state=checked]]:border-primary">
+                      <FormItem className="flex items-center space-x-3 space-y-0 rounded-xl border border-border/70 p-4 transition has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5">
                         <FormControl>
                           <RadioGroupItem value="dakar" />
                         </FormControl>
-                        <FormLabel className="font-normal flex-1 m-0">
+                        <FormLabel className="m-0 flex-1 font-normal">
                             Dakar intra-muros
                             <p className="text-xs text-muted-foreground">Livraison sous 24h</p>
                         </FormLabel>
                       </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0 border p-4 rounded-md has-[[data-state=checked]]:border-primary">
+                      <FormItem className="flex items-center space-x-3 space-y-0 rounded-xl border border-border/70 p-4 transition has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5">
                         <FormControl>
                           <RadioGroupItem value="hors-dakar" />
                         </FormControl>
@@ -242,7 +242,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         </div>
 
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Méthode de paiement</h2>
+            <h2 className="font-headline text-xl font-bold">Méthode de paiement</h2>
             <FormField
               control={form.control}
               name="paymentMethod"
@@ -259,10 +259,10 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                           <RadioGroupItem value="cod" className="sr-only" id="cod" />
                         </FormControl>
                         <Label htmlFor="cod">
-                          <Card className={cn("cursor-pointer", field.value === 'cod' && "border-primary ring-1 ring-primary")}>
+                          <Card className={cn("rounded-xl transition", field.value === 'cod' && "border-primary ring-1 ring-primary")}>
                             <div className="p-4">
-                              <h3 className="font-semibold">Paiement à la livraison</h3>
-                              <p className="text-sm text-muted-foreground mt-1">Payez en espèces directement au livreur.</p>
+                              <h3 className="font-headline font-bold">Paiement à la livraison</h3>
+                              <p className="mt-1 text-sm text-muted-foreground">Payez en espèces directement au livreur.</p>
                             </div>
                           </Card>
                         </Label>
@@ -272,9 +272,9 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                           <RadioGroupItem value="mobile_money" className="sr-only" id="mobile_money" />
                         </FormControl>
                         <Label htmlFor="mobile_money">
-                          <Card className={cn("cursor-pointer", field.value === 'mobile_money' && "border-primary ring-1 ring-primary")}>
+                          <Card className={cn("rounded-xl transition", field.value === 'mobile_money' && "border-primary ring-1 ring-primary")}>
                             <div className="p-4">
-                              <h3 className="font-semibold">Mobile Money</h3>
+                              <h3 className="font-headline font-bold">Mobile Money</h3>
                               <p className="text-sm text-muted-foreground mt-1">Nous vous contacterons pour le paiement via Wave, Orange Money, etc.</p>
                               <div className="relative h-8 w-48 mt-2">
                                 <Image src={paymentMethodsImage.imageUrl} alt="Moyens de paiement" layout="fill" objectFit="contain" />
@@ -292,8 +292,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         </div>
         
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Finalisation</h2>
-            <Button type="submit" size="lg" className="w-full" disabled={form.formState.isSubmitting}>
+            <h2 className="font-headline text-xl font-bold">Finalisation</h2>
+            <Button type="submit" size="lg" className="w-full rounded-full" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting 
                 ? 'Traitement...' 
                 : paymentMethod === 'cod' 

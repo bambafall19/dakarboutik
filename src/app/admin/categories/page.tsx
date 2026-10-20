@@ -172,7 +172,7 @@ export default function CategoriesPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-                <CardTitle>Catégories de produits</CardTitle>
+                <CardTitle className="font-headline font-bold">Catégories de produits</CardTitle>
                 <CardDescription>
                     Gérez la structure de votre catalogue de produits.
                 </CardDescription>

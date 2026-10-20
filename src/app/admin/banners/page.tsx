@@ -143,7 +143,7 @@ export default function BannersPage() {
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div>
-                <CardTitle>Bannières</CardTitle>
+                <CardTitle className="font-headline font-bold">Bannières</CardTitle>
                 <CardDescription>
                     Gérez les bannières affichées sur votre site.
                 </CardDescription>

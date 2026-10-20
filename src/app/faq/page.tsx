@@ -35,9 +35,9 @@ export default function FAQPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Card>
+      <Card className="rounded-2xl border-border/70">
         <CardHeader>
-          <CardTitle className="text-3xl md:text-4xl">Questions Fréquentes (FAQ)</CardTitle>
+          <CardTitle className="font-headline text-2xl md:text-3xl">Questions Fréquentes (FAQ)</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (

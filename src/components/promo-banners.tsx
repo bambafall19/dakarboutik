@@ -32,7 +32,7 @@ const PromoBanner = ({ banner }: { banner: Banner }) => {
     if (!banner.images || banner.images.length === 0) return null;
     
     return (
-        <div className="relative group rounded-lg overflow-hidden aspect-video">
+        <div className="relative group overflow-hidden rounded-3xl aspect-video ring-1 ring-border/60 shadow-sm transition-shadow duration-300 hover:shadow-[0_24px_50px_-24px_rgba(11,110,79,0.4)]">
              {banner.images.length > 1 ? (
                 <ClientOnly>
                     <Carousel 
@@ -68,9 +68,13 @@ const PromoBanner = ({ banner }: { banner: Banner }) => {
                     />
                 </div>
             )}
-            <div className="absolute inset-0 bg-black/30 p-8 flex flex-col justify-end pointer-events-none">
-                {banner.subtitle && <p className="text-white font-semibold">{banner.subtitle}</p>}
-                <h3 className="text-3xl font-bold text-white mt-2">{banner.title}</h3>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent p-6 flex flex-col justify-end pointer-events-none md:p-8">
+                {banner.subtitle && <span className="w-fit rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">{banner.subtitle}</span>}
+                <h3 className="font-headline text-2xl font-extrabold text-white mt-3 md:text-4xl">{banner.title}</h3>
+                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm ring-1 ring-white/20 transition group-hover:bg-white/25">
+                    Découvrir
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
             </div>
         </div>
     )

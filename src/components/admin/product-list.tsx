@@ -262,11 +262,11 @@ export function ProductList({ products }: { products: Product[] }) {
 
   return (
     <>
-      <Card>
+      <Card className="rounded-2xl border-border/70">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Produits</CardTitle>
+              <CardTitle className="font-headline font-bold">Produits</CardTitle>
               <CardDescription>
                 Gérez vos produits, leur inventaire et leur statut.
               </CardDescription>

@@ -4,7 +4,8 @@ import type { Category } from '@/lib/types';
 import Link from 'next/link';
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { CategoryIcons } from './icons';
+import { LayoutGrid, Check } from 'lucide-react';
 
 interface CategorySidebarProps {
   categories: Category[];
@@ -33,35 +34,68 @@ export function CategorySidebar({ categories, currentCategorySlug, basePath, cur
   };
 
   const topLevelCategories = categories.filter(c => !c.parentId);
+  const isAllActive = !currentCategorySlug;
 
   return (
-    <Accordion type="single" collapsible defaultValue="categories" className="w-full">
-      <AccordionItem value="categories" className="border-b-0">
-        <AccordionTrigger className="font-semibold text-base hover:no-underline py-0">Achetez par catégories</AccordionTrigger>
-        <AccordionContent>
-          <div className="pt-2 space-y-1">
-             <Link 
-              href={createCategoryUrl(null)}
+    <div>
+      <h3 className="mb-3 font-headline text-sm font-bold uppercase tracking-wider text-foreground">
+        Catégories
+      </h3>
+      <div className="space-y-0.5">
+        <Link
+          href={createCategoryUrl(null)}
+          scroll={false}
+          className={cn(
+            'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition',
+            isAllActive
+              ? 'bg-primary text-primary-foreground shadow-sm'
+              : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+          )}
+        >
+          <span className={cn(
+            'flex h-8 w-8 items-center justify-center rounded-lg',
+            isAllActive ? 'bg-white/15' : 'bg-secondary text-primary'
+          )}>
+            <LayoutGrid className="h-4 w-4" />
+          </span>
+          <span className="flex-1">Tous les produits</span>
+          {isAllActive && <Check className="h-4 w-4" />}
+        </Link>
+
+        {topLevelCategories.map(category => {
+          const isActive = currentCategorySlug === category.slug;
+          const Icon = CategoryIcons[category.slug] || LayoutGrid;
+          return (
+            <Link
+              key={category.id}
+              href={createCategoryUrl(category.slug)}
               scroll={false}
-              className={cn('block px-2 py-1.5 rounded-md hover:bg-accent text-sm text-blue-600', !currentCategorySlug && 'font-bold')}>
-              Tous les produits
-            </Link>
-            {topLevelCategories.map(category => (
-               <Link 
-                key={category.id} 
-                href={createCategoryUrl(category.slug)}
-                scroll={false}
-                className={cn(
-                    "block px-2 py-1.5 rounded-md hover:bg-accent text-sm text-muted-foreground",
-                    currentCategorySlug === category.slug && "text-primary font-semibold"
-                )}
+              className={cn(
+                'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition',
+                isActive
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+              )}
             >
-                {category.name}
-               </Link>
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+              <span className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-lg [&>svg]:h-4 [&>svg]:w-4',
+                isActive ? 'bg-white/15' : 'bg-secondary text-primary'
+              )}>
+                <Icon />
+              </span>
+              <span className="flex-1 truncate">{category.name}</span>
+              {typeof category.productCount === 'number' && category.productCount > 0 && (
+                <span className={cn(
+                  'rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                  isActive ? 'bg-white/15 text-primary-foreground' : 'bg-secondary text-muted-foreground'
+                )}>
+                  {category.productCount}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }

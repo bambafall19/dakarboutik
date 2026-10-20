@@ -60,49 +60,61 @@ export function ProductFilters({
   const isDefaultPrice = currentPriceRange[0] === 0 && (currentPriceRange[1] === 10000000);
 
   return (
-    <Accordion type="multiple" defaultValue={['price', 'brand']} className="w-full">
-        <AccordionItem value="price" className="border-b-0">
-            <AccordionTrigger className="font-semibold text-base hover:no-underline py-0">Filtrer par prix</AccordionTrigger>
-            <AccordionContent>
-                <div className="pt-2 space-y-1">
-                    {priceRanges.map(range => {
-                        const isActive = (range.label === 'Tous' && isDefaultPrice) || (currentPriceRange[0] === range.min && currentPriceRange[1] === range.max);
-                        return (
-                            <button
-                                key={range.label}
-                                onClick={() => handlePriceChange(range.min, range.max)}
-                                className={cn("w-full text-left px-2 py-1.5 rounded-md hover:bg-accent text-sm text-muted-foreground", {
-                                    'text-primary font-semibold': isActive
-                                })}
-                            >
-                                {range.label === 'Tous' ? <span className="text-blue-600">Tous</span> : range.label}
-                            </button>
-                        )
-                    })}
-                </div>
-            </AccordionContent>
-        </AccordionItem>
-        {availableBrands.length > 0 && (
-             <AccordionItem value="brand" className="border-b-0">
-                <AccordionTrigger className="font-semibold text-base hover:no-underline py-2">Marques</AccordionTrigger>
-                <AccordionContent>
-                    <div className="pt-2 space-y-2 max-h-48 overflow-y-auto">
-                        {availableBrands.map(brand => (
-                            <div key={brand} className="flex items-center space-x-2 p-1.5">
-                                <Checkbox 
-                                    id={`brand-${brand}`} 
-                                    checked={currentBrands.includes(brand)}
-                                    onCheckedChange={() => handleBrandChange(brand)}
-                                />
-                                <Label htmlFor={`brand-${brand}`} className="font-normal text-sm text-muted-foreground">
-                                    {brand}
-                                </Label>
-                            </div>
-                        ))}
-                    </div>
-                </AccordionContent>
-            </AccordionItem>
-        )}
-    </Accordion>
+    <div className="space-y-5">
+      <div>
+        <h3 className="mb-3 font-headline text-sm font-bold uppercase tracking-wider text-foreground">
+          Prix
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {priceRanges.map(range => {
+            const isActive = (range.label === 'Tous' && isDefaultPrice) || (currentPriceRange[0] === range.min && currentPriceRange[1] === range.max);
+            return (
+              <button
+                key={range.label}
+                onClick={() => handlePriceChange(range.min, range.max)}
+                className={cn(
+                  'rounded-full border px-3 py-1.5 text-xs font-medium transition',
+                  isActive
+                    ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                    : 'border-border/70 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                )}
+              >
+                {range.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {availableBrands.length > 0 && (
+        <div>
+          <h3 className="mb-3 font-headline text-sm font-bold uppercase tracking-wider text-foreground">
+            Marques
+          </h3>
+          <div className="max-h-52 space-y-1 overflow-y-auto pr-1">
+            {availableBrands.map(brand => {
+              const checked = currentBrands.includes(brand);
+              return (
+                <label
+                  key={brand}
+                  htmlFor={`brand-${brand}`}
+                  className={cn(
+                    'flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 text-sm transition',
+                    checked ? 'bg-primary/5 text-foreground' : 'text-muted-foreground hover:bg-secondary'
+                  )}
+                >
+                  <Checkbox 
+                    id={`brand-${brand}`} 
+                    checked={checked}
+                    onCheckedChange={() => handleBrandChange(brand)}
+                  />
+                  <span className="flex-1">{brand}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

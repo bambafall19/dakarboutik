@@ -1,29 +1,25 @@
-
 'use client';
 
 import type { SiteSettings } from '@/lib/types';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
-import Link from "next/link";
+import Link from 'next/link';
 import { Skeleton } from './ui/skeleton';
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import React from 'react';
+import { Truck, ArrowRight } from 'lucide-react';
 
-
-// This wrapper ensures the component only renders on the client side.
 function ClientOnly({ children }: { children: React.ReactNode }) {
-    const [hasMounted, setHasMounted] = React.useState(false);
-    React.useEffect(() => {
-        setHasMounted(true);
-    }, []);
+  const [hasMounted, setHasMounted] = React.useState(false);
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
-    if (!hasMounted) {
-        return null;
-    }
+  if (!hasMounted) {
+    return null;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 }
-
 
 interface AnnouncementBarProps {
   settings?: SiteSettings | null;
@@ -32,41 +28,55 @@ interface AnnouncementBarProps {
 
 export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
   if (loading) {
-    return <Skeleton className="h-10" />;
+    return <Skeleton className="h-9" />;
   }
 
   const announcements = [
     settings?.announcementMessage1,
     settings?.announcementMessage2,
-    settings?.announcementMessage3
-  ].filter(Boolean);
+    settings?.announcementMessage3,
+  ].filter(Boolean) as string[];
 
   if (announcements.length === 0) {
-      announcements.push('Annonce -10% sur tous les articles');
+    announcements.push('Livraison offerte à Dakar dès 25 000 FCA');
   }
 
   return (
-    <div className="bg-primary text-primary-foreground text-xs">
-      <div className="container h-10 flex items-center justify-between">
-        <div className="flex-1 overflow-hidden">
-            <ClientOnly>
-                <Carousel 
-                    opts={{ loop: true, align: 'start' }}
-                    plugins={[Autoplay({ delay: 3000 })]}
-                    className="w-full"
-                >
-                    <CarouselContent>
-                        {announcements.map((text, index) => (
-                            <CarouselItem key={index} className="flex items-center justify-center md:justify-start">
-                                <p className='truncate'>{text}</p>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                </Carousel>
-            </ClientOnly>
+    <div className="relative overflow-hidden bg-nav text-nav-foreground">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+      <div className="container flex h-9 items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/15">
+            <Truck className="h-3 w-3 text-accent" />
+          </span>
+          <ClientOnly>
+            <Carousel
+              opts={{ loop: true, align: 'start' }}
+              plugins={[Autoplay({ delay: 3500 })]}
+              className="w-full"
+            >
+              <CarouselContent>
+                {announcements.map((text, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="flex items-center justify-center md:justify-start"
+                  >
+                    <p className="truncate text-[11px] font-medium tracking-wide text-nav-foreground/85">
+                      {text}
+                    </p>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </ClientOnly>
         </div>
-        <div className='flex items-center gap-4 pl-4'>
-        </div>
+        <Link
+          href="/suivi"
+          className="group hidden shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold text-nav-foreground/80 transition hover:border-accent/40 hover:text-accent sm:flex"
+        >
+          Suivre ma commande
+          <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+        </Link>
       </div>
     </div>
   );

@@ -92,15 +92,15 @@ export default function ContactPage() {
       </Breadcrumb>
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
-            <h1 className="text-3xl md:text-4xl font-bold">Entrez en contact</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">Entrez en contact</h1>
             <p className="text-muted-foreground">
                 Une question ? Une suggestion ? N'hésitez pas à nous contacter via le formulaire ou directement par nos canaux de communication. Notre équipe vous répondra dans les plus brefs délais.
             </p>
             <ContactLinks />
         </div>
-        <Card>
+        <Card className="rounded-2xl border-border/70">
             <CardHeader>
-                <CardTitle>Envoyer un message</CardTitle>
+                <CardTitle className="font-headline font-bold">Envoyer un message</CardTitle>
             </CardHeader>
             <CardContent>
                 <form className="space-y-4">

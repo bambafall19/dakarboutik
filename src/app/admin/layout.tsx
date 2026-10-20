@@ -3,6 +3,7 @@
 
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Loader2, Search, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
@@ -162,30 +163,44 @@ export default function AdminLayout({
       <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
         <AdminSidebar />
         <div className="flex flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <header className="flex h-16 items-center gap-4 border-b bg-card/80 px-6 backdrop-blur">
+            <div className="hidden sm:block">
+              <h1 className="font-headline text-sm font-extrabold">Administration</h1>
+              <p className="text-[11px] text-muted-foreground">Gérez votre boutique</p>
+            </div>
+            <div className="relative ml-auto w-full max-w-xs">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search..."
-                className="w-full bg-background pl-8 md:w-[200px] lg:w-[300px]"
+                placeholder="Rechercher..."
+                className="w-full rounded-full bg-secondary/60 pl-9"
               />
             </div>
+            <Button asChild variant="outline" size="sm" className="hidden rounded-full md:flex">
+              <Link href="/" target="_blank">
+                Voir la boutique
+              </Link>
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative h-8 w-8 rounded-full"
+                  className="relative h-9 w-9 rounded-full ring-2 ring-primary/20"
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-9 w-9">
                      <AvatarImage src={''} alt={user?.email ?? 'Admin'} />
-                    <AvatarFallback>{user?.email?.[0].toUpperCase()}</AvatarFallback>
+                    <AvatarFallback className="bg-primary text-primary-foreground">{user?.email?.[0].toUpperCase()}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col">
+                    <span>Mon Compte</span>
+                    <span className="text-xs font-normal text-muted-foreground">{user?.email}</span>
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.push('/admin/settings')}>Réglages</DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -193,7 +208,7 @@ export default function AdminLayout({
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex-1 overflow-auto p-4 md:p-6 bg-muted/40">
+          <main className="flex-1 overflow-auto bg-muted/40 p-4 md:p-6">
             {children}
           </main>
         </div>

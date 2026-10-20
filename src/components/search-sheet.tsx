@@ -13,6 +13,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { useCategories, useProducts } from '@/hooks/use-site-data';
 import Link from 'next/link';
 import { useDebounce } from '@/hooks/use-debounce';
+import { SearchX } from 'lucide-react';
 import Image from 'next/image';
 import { findImage } from '@/lib/placeholder-images';
 import { Card } from './ui/card';
@@ -138,7 +139,13 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="text-center text-muted-foreground py-8">Aucun produit trouvé pour "{debouncedQuery}"</p>
+                                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                                        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10 ring-1 ring-primary/10">
+                                            <SearchX className="h-7 w-7 text-primary/60" />
+                                        </span>
+                                        <p className="mt-4 text-sm font-medium">Aucun produit trouvé</p>
+                                        <p className="mt-1 text-xs text-muted-foreground">Aucun résultat pour &quot;{debouncedQuery}&quot;</p>
+                                    </div>
                                 )}
                             </div>
                         )}

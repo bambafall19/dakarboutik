@@ -34,7 +34,7 @@ export default async function HomePage() {
     <div className="flex flex-col">
       <HeroSection banners={allBanners} loading={false} />
       
-      <main className="flex flex-col gap-12 md:gap-16 lg:gap-20 py-8">
+      <main className="flex flex-col gap-10 md:gap-12 lg:gap-14 py-6">
         <FeaturedCategories categories={categories} />
         
         {newProducts.length > 0 && (

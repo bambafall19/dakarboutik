@@ -121,7 +121,7 @@ export default function FaqAdminPage() {
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div>
-                <CardTitle>Questions Fréquentes (FAQ)</CardTitle>
+                <CardTitle className="font-headline font-bold">Questions Fréquentes (FAQ)</CardTitle>
                 <CardDescription>
                     Gérez les questions et réponses qui apparaissent sur la page FAQ.
                 </CardDescription>

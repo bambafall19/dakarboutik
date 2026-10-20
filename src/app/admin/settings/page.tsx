@@ -28,7 +28,7 @@ export default function SettingsPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <h1 className="text-3xl font-bold mb-8">Réglages du site</h1>
+      <h1 className="font-headline text-3xl font-extrabold mb-8">Réglages du site</h1>
       <div className="max-w-2xl">
         {loading ? <Skeleton className="h-96 w-full" /> : <SettingsForm settings={settings} />}
       </div>

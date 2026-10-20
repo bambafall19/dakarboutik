@@ -21,9 +21,9 @@ export default function SuiviPage() {
 
   return (
     <div className="container py-12 md:py-20 flex justify-center">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-lg rounded-2xl border-border/70">
         <CardHeader>
-          <CardTitle className="text-2xl">Suivre ma commande</CardTitle>
+          <CardTitle className="font-headline text-2xl font-bold">Suivre ma commande</CardTitle>
           <CardDescription>
             Entrez votre numéro de commande pour voir son statut.
           </CardDescription>
@@ -40,7 +40,7 @@ export default function SuiviPage() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full rounded-full">
               Suivre
             </Button>
           </form>

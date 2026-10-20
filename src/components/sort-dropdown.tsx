@@ -23,13 +23,13 @@ export function SortDropdown({ sortBy, basePath, currentQuery }: SortDropdownPro
   return (
     <div className='flex items-center gap-2'>
       <Select value={sortBy} onValueChange={handleSortChange}>
-        <SelectTrigger className='w-auto md:w-[200px] text-sm'>
+        <SelectTrigger className='h-10 w-auto rounded-full border-border/70 bg-card text-sm md:w-[200px]'>
           <SelectValue placeholder="Trier par..." />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl">
           <SelectItem value="newest">Nouveautés</SelectItem>
-          <SelectItem value="price_asc">Prix: Croissant</SelectItem>
-          <SelectItem value="price_desc">Prix: Décroissant</SelectItem>
+          <SelectItem value="price_asc">Prix : Croissant</SelectItem>
+          <SelectItem value="price_desc">Prix : Décroissant</SelectItem>
         </SelectContent>
       </Select>
     </div>

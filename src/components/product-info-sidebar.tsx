@@ -30,8 +30,8 @@ export function ProductInfoSidebar() {
 
     if (loading) {
         return (
-            <Card className="bg-muted/50">
-                <CardContent className="p-6 space-y-6">
+            <Card className="rounded-2xl border-border/70 bg-secondary/40">
+                <CardContent className="space-y-6 p-6">
                     <Skeleton className="h-24 w-full" />
                     <Skeleton className="h-24 w-full" />
                     <Skeleton className="h-24 w-full" />
@@ -41,14 +41,16 @@ export function ProductInfoSidebar() {
     }
 
     return (
-        <Card className="bg-muted/50">
-            <CardContent className="p-6 space-y-6">
+        <Card className="rounded-2xl border-border/70 bg-secondary/40">
+            <CardContent className="space-y-6 p-6">
                 {infoItems.map((item, index) => item.content && (
                     <div key={index} className="flex items-start gap-4">
-                        <item.icon className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                          <item.icon className="h-5 w-5 text-primary" />
+                        </div>
                         <div>
-                            <h3 className="font-semibold text-base">{item.title}</h3>
-                            <p className="text-sm text-muted-foreground">{item.content}</p>
+                            <h3 className="font-headline text-sm font-bold">{item.title}</h3>
+                            <p className="mt-0.5 text-sm text-muted-foreground">{item.content}</p>
                         </div>
                     </div>
                 ))}

@@ -73,21 +73,21 @@ export function ActiveFilters({
   }
 
   return (
-    <div className="flex flex-wrap gap-2 items-center mb-4">
-      <span className="text-sm font-medium">Filtres actifs:</span>
+    <div className="mb-4 flex flex-wrap items-center gap-2">
+      <span className="text-sm font-medium text-muted-foreground">Filtres actifs :</span>
       {activeFilters.map(filter => (
-        <Badge key={filter.label} variant="secondary" className="pl-3 pr-1 py-1 text-sm">
+        <Badge key={filter.label} variant="secondary" className="rounded-full border-primary/20 bg-primary/5 py-1 pl-3 pr-1 text-sm font-medium text-foreground">
           {filter.label}
           <button
             onClick={() => handleRemoveFilter(filter.key, filter.value)}
-            className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
+            className="ml-1.5 rounded-full p-0.5 transition hover:bg-primary/15"
+            aria-label={`Retirer le filtre ${filter.label}`}
           >
             <X className="h-3 w-3" />
-            <span className="sr-only">Retirer le filtre {filter.label}</span>
           </button>
         </Badge>
       ))}
-       <button onClick={() => router.push(pathname, { scroll: false })} className="text-sm text-primary hover:underline">
+       <button onClick={() => router.push(pathname, { scroll: false })} className="text-sm font-semibold text-primary hover:underline">
           Tout effacer
         </button>
     </div>

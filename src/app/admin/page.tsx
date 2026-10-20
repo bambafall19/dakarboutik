@@ -116,16 +116,23 @@ export default function AdminDashboardPage() {
     return (
       <>
         <div className="flex flex-col gap-8">
+            <div>
+              <h1 className="font-headline text-2xl font-extrabold">Tableau de bord</h1>
+              <p className="text-sm text-muted-foreground">Vue d&apos;ensemble de votre activité.</p>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card className="overflow-hidden rounded-2xl border-border/70">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-primary to-emerald-400" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">
                             Revenu Total
                         </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                          <DollarSign className="h-4 w-4 text-primary" />
+                        </span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="font-headline text-2xl font-extrabold">
                             <Price price={totalRevenue} currency="FCA" />
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -133,25 +140,31 @@ export default function AdminDashboardPage() {
                         </p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="overflow-hidden rounded-2xl border-border/70">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-accent to-amber-300" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Ventes</CardTitle>
-                        <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Ventes</CardTitle>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15">
+                          <ShoppingCart className="h-4 w-4 text-accent" />
+                        </span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalSales}</div>
+                        <div className="font-headline text-2xl font-extrabold">{totalSales}</div>
                         <p className="text-xs text-muted-foreground">
                         Nombre de commandes finalisées
                         </p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="overflow-hidden rounded-2xl border-border/70">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-sky-500 to-cyan-300" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Panier Moyen</CardTitle>
-                        <Receipt className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Panier Moyen</CardTitle>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10">
+                          <Receipt className="h-4 w-4 text-sky-600" />
+                        </span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="font-headline text-2xl font-extrabold">
                             <Price price={averageOrderValue} currency="FCA" />
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -159,13 +172,16 @@ export default function AdminDashboardPage() {
                         </p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="overflow-hidden rounded-2xl border-border/70">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-violet-500 to-fuchsia-400" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Ventes (7 derniers jours)</CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Ventes (7 derniers jours)</CardTitle>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/10">
+                          <DollarSign className="h-4 w-4 text-violet-600" />
+                        </span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="font-headline text-2xl font-extrabold">
                             <Price price={salesLast7Days} currency="FCA" />
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -176,7 +192,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid gap-8 lg:grid-cols-2">
-                <Card>
+                <Card className="rounded-2xl border-border/70">
                     <CardHeader>
                         <CardTitle>Ventes des 7 derniers jours</CardTitle>
                     </CardHeader>
@@ -198,7 +214,7 @@ export default function AdminDashboardPage() {
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-2xl border-border/70">
                     <CardHeader>
                         <CardTitle>Meilleures Ventes</CardTitle>
                         <CardDescription>
@@ -234,7 +250,7 @@ export default function AdminDashboardPage() {
             </div>
             
             {lowStockProducts.length > 0 && (
-                 <Card>
+                 <Card className="rounded-2xl border-border/70">
                     <CardHeader>
                         <div className="flex items-center gap-2">
                              <TriangleAlert className="h-5 w-5 text-destructive" />
@@ -274,7 +290,7 @@ export default function AdminDashboardPage() {
                 </Card>
             )}
 
-            <Card>
+            <Card className="rounded-2xl border-border/70">
                 <CardHeader className="flex flex-row items-center">
                     <div className="grid gap-2">
                         <CardTitle>Commandes Récentes</CardTitle>

@@ -11,34 +11,39 @@ interface LogoProps {
   imageUrl?: string | null;
   loading?: boolean;
   hideTextOnMobile?: boolean;
+  inverted?: boolean;
 }
 
-export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false }: LogoProps) => {
-
+export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false, inverted = false }: LogoProps) => {
   if (loading) {
-    return <Skeleton className="h-10 w-32" />
+    return <Skeleton className="h-10 w-32" />;
   }
 
-  const content = (
-    <>
-      {imageUrl ? (
-        <div className="relative h-10 w-10 shrink-0 rounded-full overflow-hidden">
-            <Image src={imageUrl} alt="DakarBoutik Logo" fill className="object-cover" />
-        </div>
-      ) : null}
-      <span className={cn(
-          "text-xl tracking-wider text-foreground font-bold",
-          hideTextOnMobile && "hidden sm:inline-block"
-        )}>
-          DakarBoutik
-        </span>
-      <span className="sr-only">DakarBoutik</span>
-    </>
-  );
-
   return (
-    <Link href="/" className={cn('flex items-center gap-2', className)} onClick={onClick}>
-      {content}
+    <Link
+      href="/"
+      className={cn('group flex items-center gap-2.5', className)}
+      onClick={onClick}
+    >
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl ring-2 ring-accent/60 ring-offset-2 ring-offset-background transition group-hover:ring-accent">
+        <Image
+          src={imageUrl || '/logo.svg'}
+          alt="DakarBoutik Logo"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
+      <span
+        className={cn(
+          'font-headline text-xl font-extrabold tracking-tight',
+          inverted ? 'text-nav-foreground' : 'text-foreground',
+          hideTextOnMobile && 'hidden sm:inline-block'
+        )}
+      >
+        Dakar<span className={inverted ? 'text-accent' : 'text-primary'}>Boutik</span>
+      </span>
+      <span className="sr-only">DakarBoutik</span>
     </Link>
   );
 };

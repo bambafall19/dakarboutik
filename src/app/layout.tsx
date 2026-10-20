@@ -1,6 +1,6 @@
 'use client';
 
-import { Lexend } from 'next/font/google';
+import { Lexend, Plus_Jakarta_Sans } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,12 @@ const lexend = Lexend({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-lexend',
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-jakarta',
 });
 
 export default function RootLayout({
@@ -51,22 +57,24 @@ export default function RootLayout({
         />
         <meta property="og:title" content="DakarBoutik - Électronique & Smartphones au Sénégal" />
         <meta property="og:description" content="Votre boutique en ligne de référence pour les smartphones, accessoires, audio, et PC à Dakar. Qualité, service client et livraison rapide garantis." />
-        <meta property="og:image" content="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" />
+        <meta property="og:image" content="https://dakarboutik.net/logo.svg" />
         <meta property="og:url" content="https://dakarboutik.net" />
         <meta property="og:type" content="website" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" sizes="any" type="image/png" />
+        <link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+        <link rel="mask-icon" href="/logo.svg" color="#0B6E4F" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#112D55" />
-        <link rel="apple-touch-icon" href="https://storage.googleapis.com/studioprod-52595.appspot.com/dakarboutik/logo.png?v=2" />
-        <meta name="apple-mobile-web-app-status-bar" content="#112D55" />
+        <meta name="theme-color" content="#0B6E4F" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
+        <meta name="apple-mobile-web-app-status-bar" content="#0B6E4F" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body
         className={cn(
           'relative h-full font-body antialiased',
-          lexend.variable
+          lexend.variable,
+          jakarta.variable
         )}
       >
         <Script id="google-tag-manager" strategy="afterInteractive">

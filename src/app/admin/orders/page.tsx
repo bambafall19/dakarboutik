@@ -188,7 +188,7 @@ export default function OrdersPage() {
             <TabsContent value={statusFilter} className="mt-4">
                  <Card>
                     <CardHeader className="px-7">
-                    <CardTitle>Commandes</CardTitle>
+                    <CardTitle className="font-headline font-bold">Commandes</CardTitle>
                     <CardDescription>
                         {statusFilter === 'all' ? 'Toutes les commandes' : `Commandes avec le statut: ${statusLabels[statusFilter]}`}
                     </CardDescription>

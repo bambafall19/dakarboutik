@@ -11,15 +11,19 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        lg: '2rem',
+      },
       screens: {
-        '2xl': '1536px',
+        '2xl': '1320px',
       },
     },
     extend: {
       fontFamily: {
         body: ['var(--font-lexend)', 'Arial', 'Helvetica', 'sans-serif'],
-        headline: ['var(--font-lexend)', 'Arial', 'Helvetica', 'sans-serif'],
+        headline: ['var(--font-jakarta)', 'var(--font-lexend)', 'Arial', 'Helvetica', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -56,6 +60,10 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        nav: {
+          DEFAULT: 'hsl(var(--nav))',
+          foreground: 'hsl(var(--nav-foreground))',
+        },
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',

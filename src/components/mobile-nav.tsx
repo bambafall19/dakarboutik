@@ -4,11 +4,10 @@ import Link from 'next/link';
 import { CategoryIcons, Icons } from './icons';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import type { Category } from '@/lib/types';
-import { Logo } from './logo';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Headset, Truck, X, Heart, Info, Mail } from 'lucide-react';
+import { Headset, Truck, X, Heart, Info, Mail, Sparkles } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { ThemeToggle } from './theme-toggle';
 import { SnowToggleButton } from './snow-toggle-button';
@@ -59,11 +58,18 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b bg-background sticky top-0 z-10">
+      <div className="sticky top-0 z-10 border-b bg-nav p-4 text-nav-foreground">
         <SheetTitle className="sr-only">Menu Principal</SheetTitle>
         <div className='flex justify-between items-center'>
-          <Logo onClick={onLinkClick} hideTextOnMobile={true} />
-           <Button variant="ghost" size="icon" onClick={onLinkClick}>
+          <Link href="/" onClick={onLinkClick} className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 font-headline text-base font-extrabold text-primary-foreground ring-2 ring-accent/60">
+              D
+            </span>
+            <span className="font-headline text-lg font-extrabold tracking-tight">
+              Dakar<span className="text-accent">Boutik</span>
+            </span>
+          </Link>
+           <Button variant="ghost" size="icon" onClick={onLinkClick} className="text-nav-foreground hover:bg-white/10">
             <X className="h-6 w-6" />
           </Button>
         </div>

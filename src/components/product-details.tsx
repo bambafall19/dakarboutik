@@ -180,13 +180,13 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                         <CarouselContent>
                         {product.images?.map((img) => (
                             <CarouselItem key={img.id}>
-                            <div className="aspect-square relative rounded-lg border overflow-hidden bg-secondary/30">
+                            <div className="relative aspect-square overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-b from-secondary/40 to-secondary/10">
                                 <Image
                                 src={img.imageUrl}
                                 alt={product.title}
                                 data-ai-hint={img.imageHint}
                                 fill
-                                className="object-contain"
+                                className="object-contain p-6"
                                 />
                             </div>
                             </CarouselItem>
@@ -199,11 +199,16 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                 
                 {/* Product Info */}
                 <div className="flex flex-col">
-                    {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
-                    <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.title}</h1>
+                    {product.brand && <span className="text-xs font-bold uppercase tracking-wider text-primary">{product.brand}</span>}
+                    <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight lg:text-4xl">{product.title}</h1>
                     
                     <div className="mt-4 flex items-center gap-4">
-                        <Badge variant={stockBadgeVariant}>{stockStatus}</Badge>
+                        <Badge
+                          variant={stockBadgeVariant}
+                          className={currentStock > 10 ? 'border-transparent bg-primary text-primary-foreground' : undefined}
+                        >
+                          {stockStatus}
+                        </Badge>
                         {reviewsLoading ? (
                             <Skeleton className="h-5 w-32" />
                         ) : reviewCount > 0 ? (
@@ -217,7 +222,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                     </div>
 
                     <div className="mt-4">
-                        <Price price={product.price} salePrice={product.salePrice} currency={product.currency} className="text-2xl" />
+                        <Price price={product.price} salePrice={product.salePrice} currency={product.currency} className="text-3xl font-headline font-extrabold" />
                     </div>
 
                     <Separator className="my-6" />
@@ -245,24 +250,24 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                     ))}
                     
                     <div className="mt-6 flex flex-col gap-4">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                            <div className="flex items-center gap-2">
-                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                            <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
                                 <Icons.minus className="h-4 w-4" />
                             </Button>
-                            <span className="font-bold text-lg w-12 text-center">{quantity}</span>
-                            <Button variant="outline" size="icon" onClick={() => setQuantity(q => q + 1)}>
+                            <span className="w-10 text-center font-headline text-lg font-bold">{quantity}</span>
+                            <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQuantity(q => q + 1)}>
                                 <Icons.plus className="h-4 w-4" />
                             </Button>
                             </div>
-                            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="flex-1">
+                            <Button size="lg" onClick={handleAddToCart} disabled={currentStock === 0} className="h-12 flex-1 rounded-full">
                                 <Icons.shoppingBag className="mr-2 h-5 w-5" /> Ajouter au panier
                             </Button>
-                            <Button variant="outline" size="icon" onClick={handleToggleWishlist} className="h-12 w-12 flex-shrink-0">
+                            <Button variant="outline" size="icon" onClick={handleToggleWishlist} className="h-12 w-12 flex-shrink-0 rounded-full">
                                 <Heart className={cn("h-6 w-6", isInWishlist && "fill-red-500 text-red-500")} />
                             </Button>
                         </div>
-                        <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="w-full">
+                        <Button variant="outline" size="lg" onClick={handleWhatsAppOrder} className="h-12 w-full rounded-full border-primary/30 text-primary hover:bg-primary/5 hover:text-primary">
                             <Icons.whatsapp className="mr-2 h-5 w-5"/> Commander sur WhatsApp
                         </Button>
                     </div>
@@ -274,8 +279,8 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
       <div className="mt-12 lg:col-span-9 lg:col-start-4">
         {product.specs && Object.keys(product.specs).length > 0 && (
             <div className="mt-8">
-              <h3 className="font-semibold text-xl mb-4">Fiche Technique</h3>
-              <div className="border rounded-lg overflow-hidden">
+              <h3 className="mb-4 font-headline text-xl font-bold">Fiche technique</h3>
+              <div className="overflow-hidden rounded-2xl border border-border/70">
                 <Table>
                   <TableBody>
                     {Object.entries(product.specs).map(([key, value]) => (

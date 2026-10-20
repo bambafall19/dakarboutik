@@ -10,8 +10,7 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { AnnouncementBar } from './announcement-bar';
-import { Heart } from 'lucide-react';
-import { Input } from './ui/input';
+import { Heart, Search, Menu, Trophy } from 'lucide-react';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ThemeToggle } from './theme-toggle';
@@ -26,90 +25,118 @@ interface HeaderProps {
   onSearchClick: () => void;
 }
 
-export function Header({ settings, loading, categories, onMobileMenuClick, onSearchClick }: HeaderProps) {
+export function Header({
+  settings,
+  loading,
+  categories,
+  onMobileMenuClick,
+  onSearchClick,
+}: HeaderProps) {
   const { totalItems, totalPrice } = useCart();
   const { totalItems: wishlistTotal } = useWishlist();
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background">
+    <header className="sticky top-0 z-40 w-full">
       <AnnouncementBar settings={settings} loading={loading} />
-      
-      {/* Mobile Header */}
-      <div className="md:hidden border-b">
-        <div className="container flex h-16 items-center justify-center gap-4">
-            <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={false} />
-        </div>
-      </div>
 
-      {/* Desktop & Tablet Header */}
-      <div className="hidden md:block border-b">
-        <div className="container flex h-20 items-center gap-4">
-            {/* Left: Logo and Menu toggle */}
-            <div className="flex items-center gap-2">
-                <div className='lg:hidden'>
-                  <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
-                      <Icons.menu className="h-6 w-6" />
-                  </Button>
-                </div>
-                <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
-            </div>
+      <div className="container pt-3">
+        <div className="flex h-16 items-center gap-3 rounded-2xl border border-border/60 bg-background/85 px-3 shadow-sm shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
+          {/* Mobile: menu */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMobileMenuClick}
+            className="h-10 w-10 shrink-0 rounded-full lg:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-            {/* Center: Search Bar */}
-            <div className="flex flex-1 items-center justify-center">
-                <div className="w-full max-w-lg">
-                    <form className="w-full relative" onSubmit={(e) => { e.preventDefault(); onSearchClick(); }}>
-                        <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Rechercher un produit..."
-                            className="w-full bg-muted pl-10 h-11 text-base rounded-full cursor-pointer"
-                            onClick={onSearchClick}
-                            readOnly
-                        />
-                    </form>
-                </div>
-            </div>
-            
-            {/* Right: Icons */}
-            <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost" asChild size="icon" className="relative h-10 w-10">
-                    <Link href="/favoris">
-                    <Heart className="h-6 w-6" />
-                    <span className="sr-only">Favoris</span>
-                        {wishlistTotal > 0 && (
-                        <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]">
-                            {wishlistTotal}
-                        </span>
-                        )}
-                    </Link>
+          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
+
+          {/* Badge Sénégal Champion 2025 */}
+          <Link
+            href="/products?on_sale=true"
+            className="group ml-1 hidden shrink-0 items-center gap-1.5 rounded-full border border-accent/40 bg-gradient-to-r from-accent/15 to-accent/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-accent transition hover:border-accent hover:from-accent/25 xl:flex"
+          >
+            <Trophy className="h-3.5 w-3.5 transition group-hover:scale-110" />
+            Sénégal Champion 2025
+          </Link>
+
+          {/* Center: Search */}
+          <button
+            type="button"
+            onClick={onSearchClick}
+            className="group relative hidden h-10 flex-1 items-center gap-3 rounded-full border border-transparent bg-secondary/70 px-4 text-left text-sm text-muted-foreground transition hover:border-primary/30 hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
+          >
+            <Search className="h-[18px] w-[18px] shrink-0 text-primary transition group-hover:scale-110" />
+            <span className="flex-1 truncate">Rechercher un produit, une marque...</span>
+            <kbd className="hidden items-center gap-0.5 rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground lg:flex">
+              ⌘K
+            </kbd>
+          </button>
+
+          {/* Right: actions */}
+          <div className="ml-auto flex items-center gap-1 md:ml-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onSearchClick}
+              className="h-10 w-10 rounded-full md:hidden"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              asChild
+              size="icon"
+              className="relative hidden h-10 w-10 rounded-full sm:flex"
+            >
+              <Link href="/favoris" aria-label="Favoris">
+                <Heart className="h-5 w-5" />
+                {wishlistTotal > 0 && (
+                  <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                    {wishlistTotal}
+                  </span>
+                )}
+              </Link>
+            </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="secondary"
+                  className="ml-1 flex h-10 items-center gap-2 rounded-full bg-primary px-3.5 text-primary-foreground hover:bg-primary/90"
+                >
+                  <span className="relative">
+                    <Icons.shoppingBag className="h-5 w-5" />
+                    {totalItems > 0 && (
+                      <span className="absolute -right-2 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                        {totalItems}
+                      </span>
+                    )}
+                  </span>
+                  <span className="hidden text-xs font-semibold sm:inline">
+                    <Price price={totalPrice} currency="FCA" />
+                  </span>
                 </Button>
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="ghost" className="relative rounded-full h-auto p-2 flex flex-col gap-1 text-xs font-normal">
-                        <Icons.shoppingBag className="h-6 w-6" />
-                        {totalItems > 0 && (
-                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                                {totalItems}
-                            </span>
-                        )}
-                        <Price price={totalPrice} currency='FCA' />
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent className="flex flex-col">
-                        <CartDrawer />
-                    </SheetContent>
-                </Sheet>
-                <ThemeToggle />
-                <SnowToggleButton />
+              </SheetTrigger>
+              <SheetContent className="flex flex-col">
+                <CartDrawer />
+              </SheetContent>
+            </Sheet>
+
+            <div className="hidden items-center sm:flex">
+              <ThemeToggle />
+              <SnowToggleButton />
             </div>
-        </div>
-      </div>
-      
-       {/* Category Nav */}
-      <div className="hidden lg:block bg-nav text-nav-foreground">
-          <div className="container flex justify-center">
-            <MainNav items={categories} />
           </div>
+        </div>
+
+        {/* Category Nav (desktop) */}
+        <div className="mt-2 hidden justify-center lg:flex">
+          <MainNav items={categories} />
+        </div>
       </div>
     </header>
   );

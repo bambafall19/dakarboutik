@@ -34,7 +34,7 @@ function AddProductPageContent() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <h1 className="text-3xl font-bold mb-8">Ajouter un nouveau produit</h1>
+      <h1 className="font-headline text-3xl font-extrabold mb-8">Ajouter un nouveau produit</h1>
       <AddProductForm categories={categories} />
     </div>
   );

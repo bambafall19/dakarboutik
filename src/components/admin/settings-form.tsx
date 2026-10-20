@@ -84,9 +84,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Card>
+        <Card className="rounded-2xl border-border/70">
           <CardHeader>
-            <CardTitle>Informations Générales</CardTitle>
+            <CardTitle className="font-headline font-bold">Informations Générales</CardTitle>
             <CardDescription>
               Gérez les informations et l'apparence de votre boutique.
             </CardDescription>
@@ -205,9 +205,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="rounded-2xl border-border/70">
            <CardHeader>
-            <CardTitle>Informations Produits</CardTitle>
+            <CardTitle className="font-headline font-bold">Informations Produits</CardTitle>
             <CardDescription>
               Gérez les informations affichées sur les pages produits (livraison, retours, etc.).
             </CardDescription>

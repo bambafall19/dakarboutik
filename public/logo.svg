@@ -1,0 +1,16 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DakarBoutik">
+  <defs>
+    <linearGradient id="db-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E8A61" />
+      <stop offset="1" stop-color="#0B6E4F" />
+    </linearGradient>
+    <linearGradient id="db-gold" x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D4A24C" />
+      <stop offset="1" stop-color="#E8C27A" />
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="38" height="38" rx="12" fill="url(#db-grad)" />
+  <rect x="1" y="1" width="38" height="38" rx="12" stroke="url(#db-gold)" stroke-width="1.5" />
+  <path d="M12 11.5h6.2c5 0 8.3 3.3 8.3 8.5s-3.3 8.5-8.3 8.5H12V11.5Zm3.9 3.4v10.2h2.2c2.8 0 4.5-2 4.5-5.1s-1.7-5.1-4.5-5.1h-2.2Z" fill="#FFFFFF" />
+  <rect x="28.5" y="11" width="3" height="18" rx="1.5" fill="url(#db-gold)" />
+</svg>

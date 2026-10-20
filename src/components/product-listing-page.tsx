@@ -140,13 +140,13 @@ export function ProductListingPage() {
 
   const filterNode = (
     <div className="space-y-4">
-        <Card>
-            <CardContent className='p-2'>
+        <Card className="rounded-2xl border-border/70 shadow-sm">
+            <CardContent className='p-4'>
                 <QuickFilters />
             </CardContent>
         </Card>
-        <Card>
-            <CardContent className='p-2'>
+        <Card className="rounded-2xl border-border/70 shadow-sm">
+            <CardContent className='p-4'>
                 <CategorySidebar 
                     categories={categories} 
                     currentCategorySlug={categoryFilter}
@@ -155,8 +155,8 @@ export function ProductListingPage() {
                 />
             </CardContent>
         </Card>
-        <Card>
-            <CardContent className='p-2'>
+        <Card className="rounded-2xl border-border/70 shadow-sm">
+            <CardContent className='p-4'>
                 <ProductFilters 
                     availableBrands={availableBrands}
                     currentBrands={brandFilter}
@@ -170,17 +170,17 @@ export function ProductListingPage() {
   );
 
   return (
-    <div className="py-2 container">
-      <div className='md:hidden mb-4'>
+    <div className="container py-6">
+      <div className='mb-4 md:hidden'>
         <Sheet open={isMobileFiltersOpen} onOpenChange={setIsMobileFiltersOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full rounded-full">
               <Filter className="mr-2 h-4 w-4" />
               Filtres et Catégories
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className='p-0'>
-             <SheetHeader className='p-4 border-b'>
+             <SheetHeader className='border-b p-4'>
                 <SheetTitle>Filtres</SheetTitle>
               </SheetHeader>
             <div className="p-4 overflow-y-auto" onClick={() => setIsMobileFiltersOpen(false)}>
@@ -190,8 +190,8 @@ export function ProductListingPage() {
         </Sheet>
       </div>
 
-       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8">
-        <aside className="hidden md:block md:col-span-1">
+       <div className="grid grid-cols-1 gap-6 md:grid-cols-4 md:gap-8">
+        <aside className="hidden md:col-span-1 md:block">
             <div className="sticky top-24">
                 {filterNode}
             </div>

@@ -63,7 +63,7 @@ export default function MediaPage() {
       
       <Card>
         <CardHeader>
-          <CardTitle>Médiathèque</CardTitle>
+          <CardTitle className="font-headline font-bold">Médiathèque</CardTitle>
           <CardDescription>
             Voici la liste des images de référence utilisées dans le projet. Vous pouvez copier leurs URLs pour les utiliser dans les produits ou les bannières.
             <br/>

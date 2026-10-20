@@ -42,11 +42,13 @@ export default function WishlistPage() {
       ) : wishlistProducts.length > 0 ? (
         <ProductGrid products={wishlistProducts} />
       ) : (
-        <div className="text-center py-16 border rounded-lg bg-muted/50">
-          <Heart className="mx-auto h-12 w-12 text-muted-foreground/30" />
-          <h2 className="mt-4 text-xl font-semibold">Votre liste de favoris est vide.</h2>
-          <p className="mt-2 text-muted-foreground">Parcourez nos produits et cliquez sur le cœur pour les ajouter.</p>
-          <Button asChild className="mt-6">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-border/70 bg-card py-16 text-center">
+          <span className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10 ring-1 ring-primary/10">
+            <Heart className="h-10 w-10 text-primary/60" />
+          </span>
+          <h2 className="mt-6 font-headline text-xl font-bold">Votre liste de favoris est vide</h2>
+          <p className="mt-2 max-w-sm text-sm text-muted-foreground">Parcourez nos produits et cliquez sur le cœur pour les ajouter.</p>
+          <Button asChild className="mt-6 rounded-full bg-primary hover:bg-primary/90">
             <Link href="/products">Découvrir les produits</Link>
           </Button>
         </div>

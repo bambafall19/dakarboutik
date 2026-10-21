@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { OrderChannels } from "@/components/order-channels";
 import { CheckCircle2, Loader2, Truck } from "lucide-react";
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from "next/navigation";
@@ -82,6 +83,21 @@ function OrderConfirmationContent() {
                             <Link href="/products">Continuer mes achats</Link>
                         </Button>
                     </div>
+                    {orderId && (
+                        <div className="w-full space-y-3 rounded-xl border border-border/70 bg-secondary/40 p-4 text-left">
+                            <p className="text-sm font-semibold">
+                                Une question sur votre commande&nbsp;?
+                            </p>
+                            <OrderChannels
+                                items={[]}
+                                customMessage={`Bonjour, je souhaite connaître le statut de ma commande ${orderId}.`}
+                                size="sm"
+                                whatsappLabel="Suivre sur WhatsApp"
+                                phoneLabel="Appeler le service client"
+                                buttonClassName="h-10 text-sm"
+                            />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

@@ -186,7 +186,7 @@ export function ReviewsSection({ product, reviews, averageRating, reviewCount }:
                   <Progress value={(ratingDistribution[rating as keyof typeof ratingDistribution] / reviewCount) * 100} className="h-2 flex-1" />
                   <span className="text-sm text-muted-foreground w-8 text-right">{ratingDistribution[rating as keyof typeof ratingDistribution]}</span>
                 </div>
-              )) : <p className="text-muted-foreground">Pas encore d'évaluations.</p>}
+              )) : <p className="text-muted-foreground">Pas encore d&apos;évaluations.</p>}
             </div>
             <div className="flex flex-col items-center justify-center text-center p-4 bg-muted/50 rounded-lg">
               <h4 className="font-semibold">Vous avez ce produit ?</h4>

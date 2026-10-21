@@ -80,6 +80,11 @@ export type CartItem = {
 
 export type SiteSettings = {
   id: string;
+  siteName?: string;
+  siteDescription?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
   logoUrl?: string | null;
   announcementMessage1?: string;
   announcementMessage2?: string;
@@ -91,6 +96,13 @@ export type SiteSettings = {
   returnPolicy?: string;
   afterSalesService?: string;
   allProductsBannerUrl?: string;
+  shippingCostDakar?: number;
+  shippingCostOutsideDakar?: number;
+  freeShippingThreshold?: number;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  maintenanceMode?: boolean;
 };
 
 export type CustomerInfo = {
@@ -140,10 +152,14 @@ export type PublicOrder = {
 
 export type Review = {
   id: string;
+  productId?: string;
+  productTitle?: string | null;
+  productImage?: string | null;
   rating: number; // 1 to 5
   title: string;
   text: string;
   author: string;
+  isPublished?: boolean;
   createdAt: string; // ISO date string
 };
     

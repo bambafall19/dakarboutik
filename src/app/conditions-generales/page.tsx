@@ -47,7 +47,7 @@ export default function TermsPage() {
           
           <h2 className="font-headline text-xl font-bold text-foreground">4. Commandes et modalités de paiement</h2>
           <p>
-            Le paiement des achats s'effectue à la livraison. Le client peut passer commande sur le site internet. La confirmation d’une commande entraîne acceptation des présentes conditions de vente, la reconnaissance d’en avoir parfaite connaissance et la renonciation à se prévaloir de ses propres conditions d’achat. L’ensemble des données fournies et la confirmation enregistrée vaudront preuve de la transaction.
+            Le paiement des achats s&apos;effectue à la livraison. Le client peut passer commande sur le site internet. La confirmation d’une commande entraîne acceptation des présentes conditions de vente, la reconnaissance d’en avoir parfaite connaissance et la renonciation à se prévaloir de ses propres conditions d’achat. L’ensemble des données fournies et la confirmation enregistrée vaudront preuve de la transaction.
           </p>
 
           <h2 className="font-headline text-xl font-bold text-foreground">5. Livraison</h2>
@@ -57,7 +57,7 @@ export default function TermsPage() {
           
            <h2 className="font-headline text-xl font-bold text-foreground">6. Rétractation et Garantie</h2>
           <p>
-           Tous les produits fournis par DakarBoutik bénéficient de la garantie légale. En cas de non conformité d’un produit vendu, il pourra être retourné à DakarBoutik qui le reprendra, l’échangera ou le remboursera. Toutes les réclamations doivent s'effectuer par voie postale ou par email dans un délai de sept (7) jours après livraison. Pour plus de détails, veuillez consulter notre page <a href="/sav" className="text-primary underline">Garantie & SAV</a>.
+           Tous les produits fournis par DakarBoutik bénéficient de la garantie légale. En cas de non conformité d’un produit vendu, il pourra être retourné à DakarBoutik qui le reprendra, l’échangera ou le remboursera. Toutes les réclamations doivent s&apos;effectuer par voie postale ou par email dans un délai de sept (7) jours après livraison. Pour plus de détails, veuillez consulter notre page <a href="/sav" className="text-primary underline">Garantie & SAV</a>.
           </p>
 
           <h2 className="font-headline text-xl font-bold text-foreground">7. Responsabilité</h2>

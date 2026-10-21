@@ -32,7 +32,6 @@ import {
   } from '@/components/ui/dropdown-menu';
 import { FaqForm } from '@/components/admin/faq-form';
 import { api } from '@/lib/api-client';
-import { useApiData } from '@/hooks/use-api-data';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -46,17 +45,21 @@ import {
   } from '@/components/ui/alert-dialog';
 import { initialFaqItems } from '@/lib/faq-data';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AdminError } from '@/components/admin/admin-error';
 
 
 export default function FaqAdminPage() {
-    const { faqs, loading } = useFaqs();
-    const { refetch } = useApiData<FaqItem[]>('/api/faq');
+    const { faqs, loading, error, refetch } = useFaqs();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedFaq, setSelectedFaq] = useState<FaqItem | null>(null);
     const [faqToDelete, setFaqToDelete] = useState<FaqItem | null>(null);
     const [isSeeding, setIsSeeding] = useState(false);
     
     const { toast } = useToast();
+
+    const handleFormSaved = useCallback(async () => {
+        await refetch();
+    }, [refetch]);
 
     const handleAddClick = useCallback(() => {
         setSelectedFaq(null);
@@ -117,16 +120,16 @@ export default function FaqAdminPage() {
         </BreadcrumbList>
       </Breadcrumb>
       
-      <Card>
+      <Card className="rounded-2xl border-border/70">
         <CardHeader>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <CardTitle className="font-headline font-bold">Questions Fréquentes (FAQ)</CardTitle>
                 <CardDescription>
                     Gérez les questions et réponses qui apparaissent sur la page FAQ.
                 </CardDescription>
             </div>
-            <Button size="sm" onClick={handleAddClick}>
+            <Button size="sm" onClick={handleAddClick} className="w-full sm:w-auto">
                   <PlusCircle className="h-3.5 w-3.5 mr-2" />
                   Ajouter une question
             </Button>
@@ -135,8 +138,10 @@ export default function FaqAdminPage() {
         <CardContent>
             {loading ? (
                 <div className="flex justify-center items-center h-48">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+            ) : error ? (
+                <AdminError description={error.message} onRetry={refetch} />
             ) : faqs.length === 0 ? (
                 <Alert>
                     <Info className="h-4 w-4" />
@@ -150,6 +155,7 @@ export default function FaqAdminPage() {
                     </AlertDescription>
                 </Alert>
             ) : (
+                <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -168,7 +174,7 @@ export default function FaqAdminPage() {
                             <TableCell>
                                 <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <Button aria-haspopup="true" size="icon" variant="ghost" aria-label={`Actions pour la question : ${faq.question}`}>
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                     </Button>
@@ -176,7 +182,7 @@ export default function FaqAdminPage() {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                     <DropdownMenuItem onClick={() => handleEditClick(faq)}>Modifier</DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteClick(faq)}>Supprimer</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => handleDeleteClick(faq)}>Supprimer</DropdownMenuItem>
                                 </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
@@ -184,6 +190,7 @@ export default function FaqAdminPage() {
                        ))}
                     </TableBody>
                 </Table>
+                </div>
             )}
         </CardContent>
       </Card>
@@ -192,6 +199,7 @@ export default function FaqAdminPage() {
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         faqItem={selectedFaq}
+        onSaved={handleFormSaved}
       />
       <AlertDialog open={!!faqToDelete} onOpenChange={(open) => !open && setFaqToDelete(null)}>
           <AlertDialogContent>

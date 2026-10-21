@@ -5,7 +5,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,8 +21,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import type { SiteSettings } from '@/lib/types';
 import { api } from '@/lib/api-client';
 import { Textarea } from '../ui/textarea';
+import { Switch } from '../ui/switch';
 
 const formSchema = z.object({
+  siteName: z.string().min(2, 'Veuillez entrer le nom de la boutique.').optional().or(z.literal('')),
+  siteDescription: z.string().optional(),
+  email: z.string().email("Veuillez entrer un email valide.").optional().or(z.literal('')),
+  phone: z.string().optional(),
+  address: z.string().optional(),
   logoUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
   allProductsBannerUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
   announcementMessage1: z.string().optional(),
@@ -35,19 +40,31 @@ const formSchema = z.object({
   deliveryInfo: z.string().optional(),
   returnPolicy: z.string().optional(),
   afterSalesService: z.string().optional(),
+  shippingCostDakar: z.coerce.number().min(0, 'Le montant ne peut pas être négatif.').optional(),
+  shippingCostOutsideDakar: z.coerce.number().min(0, 'Le montant ne peut pas être négatif.').optional(),
+  freeShippingThreshold: z.coerce.number().min(0, 'Le montant ne peut pas être négatif.').optional(),
+  facebookUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
+  instagramUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
+  tiktokUrl: z.string().url('Veuillez entrer une URL valide.').optional().or(z.literal('')),
+  maintenanceMode: z.boolean().optional(),
 });
 
 interface SettingsFormProps {
   settings: SiteSettings;
+  onSaved?: () => void;
 }
 
-export function SettingsForm({ settings }: SettingsFormProps) {
-  const router = useRouter();
+export function SettingsForm({ settings, onSaved }: SettingsFormProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      siteName: settings.siteName || 'DakarBoutik',
+      siteDescription: settings.siteDescription || '',
+      email: settings.email || '',
+      phone: settings.phone || '',
+      address: settings.address || '',
       logoUrl: settings.logoUrl || '',
       allProductsBannerUrl: settings.allProductsBannerUrl || '',
       announcementMessage1: settings.announcementMessage1 || '',
@@ -58,7 +75,14 @@ export function SettingsForm({ settings }: SettingsFormProps) {
       supportEmail: settings.supportEmail || '',
       deliveryInfo: settings.deliveryInfo || "Livraison gratuite partout à Dakar, sauf les accessoires. Les frais de livraison varient selon le lieu. Détails à la commande.",
       returnPolicy: settings.returnPolicy || "Retours gratuits sous 7 jours si le produit présente un défaut matériel.",
-      afterSalesService: settings.afterSalesService || "Vous pouvez nous appeler au +221 77 485 52 56 pour toute assistance.",
+      afterSalesService: settings.afterSalesService || "",
+      shippingCostDakar: settings.shippingCostDakar ?? 0,
+      shippingCostOutsideDakar: settings.shippingCostOutsideDakar ?? 0,
+      freeShippingThreshold: settings.freeShippingThreshold ?? 0,
+      facebookUrl: settings.facebookUrl || '',
+      instagramUrl: settings.instagramUrl || '',
+      tiktokUrl: settings.tiktokUrl || '',
+      maintenanceMode: settings.maintenanceMode ?? false,
     },
   });
 
@@ -70,10 +94,11 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         title: 'Réglages mis à jour !',
         description: 'Vos modifications ont été enregistrées avec succès.',
       });
+      onSaved?.();
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erreur de permission',
+        title: 'Erreur',
         description:
           'Une erreur est survenue. Vérifiez vos permissions et réessayez.' +
           (error instanceof Error ? error.message : ''),
@@ -86,9 +111,85 @@ export function SettingsForm({ settings }: SettingsFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card className="rounded-2xl border-border/70">
           <CardHeader>
+            <CardTitle className="font-headline font-bold">Identité de la boutique</CardTitle>
+            <CardDescription>
+              Ces informations sont utilisées dans les pages publiques, le pied de page et les métadonnées.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="siteName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nom de la boutique</FormLabel>
+                  <FormControl>
+                    <Input placeholder="DakarBoutik" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="siteDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description de la boutique</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Votre boutique en ligne de référence au Sénégal..." {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email de contact</FormLabel>
+                  <FormControl>
+                    <Input placeholder="contact@dakarboutik.com" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Téléphone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+221 33 123 45 67" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Adresse</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Dakar, Sénégal" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70">
+          <CardHeader>
             <CardTitle className="font-headline font-bold">Informations Générales</CardTitle>
             <CardDescription>
-              Gérez les informations et l'apparence de votre boutique.
+              Gérez les informations et l&apos;apparence de votre boutique.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -110,7 +211,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               name="allProductsBannerUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de la bannière pour "Tous les produits"</FormLabel>
+                  <FormLabel>URL de la bannière pour &quot;Tous les produits&quot;</FormLabel>
                   <FormControl>
                     <Input placeholder="https://example.com/banner.png" {...field} value={field.value ?? ''} />
                   </FormControl>
@@ -126,7 +227,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               name="announcementMessage1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message d'annonce 1</FormLabel>
+                  <FormLabel>Message d&apos;annonce 1</FormLabel>
                   <FormControl>
                     <Input placeholder="Livraison gratuite pour les commandes de plus de..." {...field} />
                   </FormControl>
@@ -139,7 +240,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               name="announcementMessage2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message d'annonce 2</FormLabel>
+                  <FormLabel>Message d&apos;annonce 2</FormLabel>
                   <FormControl>
                     <Input placeholder="Message promotionnel..." {...field} />
                   </FormControl>
@@ -152,7 +253,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               name="announcementMessage3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message d'annonce 3</FormLabel>
+                  <FormLabel>Message d&apos;annonce 3</FormLabel>
                   <FormControl>
                     <Input placeholder="Nouveautés, offres spéciales..." {...field} />
                   </FormControl>
@@ -170,7 +271,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                     <Input placeholder="221776384676" {...field} />
                   </FormControl>
                    <FormDescription>
-                    Entrez le numéro (avec l'indicatif pays) pour les commandes WhatsApp.
+                    Entrez le numéro (avec l&apos;indicatif pays) pour les commandes WhatsApp.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -249,6 +350,142 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                     <Textarea placeholder="Informations sur le SAV..." {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70">
+          <CardHeader>
+            <CardTitle className="font-headline font-bold">Livraison &amp; Frais</CardTitle>
+            <CardDescription>
+              Frais de livraison et seuil de livraison offerte.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="shippingCostDakar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frais de livraison (Dakar) en FCFA</FormLabel>
+                  <FormControl>
+                    <Input type="number" min={0} step={100} {...field} value={field.value ?? 0} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                  </FormControl>
+                  <FormDescription>0 = livraison gratuite.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shippingCostOutsideDakar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frais de livraison (hors Dakar) en FCFA</FormLabel>
+                  <FormControl>
+                    <Input type="number" min={0} step={100} {...field} value={field.value ?? 0} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                  </FormControl>
+                  <FormDescription>0 = livraison gratuite.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="freeShippingThreshold"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Livraison offerte à partir de (FCFA)</FormLabel>
+                  <FormControl>
+                    <Input type="number" min={0} step={1000} {...field} value={field.value ?? 0} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                  </FormControl>
+                  <FormDescription>
+                    0 désactive la livraison offerte.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70">
+          <CardHeader>
+            <CardTitle className="font-headline font-bold">Réseaux sociaux</CardTitle>
+            <CardDescription>
+              Liens affichés dans le pied de page et sur la page contact.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="facebookUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Facebook</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://facebook.com/dakarboutik" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="instagramUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Instagram</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://instagram.com/dakarboutik" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tiktokUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>TikTok</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://tiktok.com/@dakarboutik" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70">
+          <CardHeader>
+            <CardTitle className="font-headline font-bold">Mode maintenance</CardTitle>
+            <CardDescription>
+              Affiche un message d&apos;indisponibilité aux visiteurs sur le site public.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="maintenanceMode"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/70 p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel>Activer le mode maintenance</FormLabel>
+                    <FormDescription>
+                      Le catalogue reste accessible depuis l&apos;admin, mais le site public affiche un avertissement.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={!!field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

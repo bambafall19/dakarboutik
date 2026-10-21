@@ -6,15 +6,17 @@ import { getProductBySlug } from '@/lib/data-firebase';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 
 type ProductDetailPageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata(
   { params }: ProductDetailPageProps
 ): Promise<Metadata> {
-  const slug = params.slug;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -43,7 +45,7 @@ export async function generateMetadata(
 
 // This is the Server Component that reads params and passes them to the client component.
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const slug = params.slug;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
 
   if (!product) {

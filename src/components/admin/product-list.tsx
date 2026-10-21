@@ -64,11 +64,16 @@ import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
 import { useCategories } from '@/hooks/use-site-data';
 import { Checkbox } from '../ui/checkbox';
+import { exportCsv } from '@/lib/export-csv';
 
-function EditableStock({ product }: { product: Product }) {
+function EditableStock({ product, onUpdated }: { product: Product; onUpdated?: () => void }) {
   const [stock, setStock] = useState(product.stock);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    setStock(product.stock);
+  }, [product.stock]);
 
   const handleStockUpdate = async () => {
     setIsEditing(false);
@@ -80,6 +85,7 @@ function EditableStock({ product }: { product: Product }) {
         title: 'Stock mis à jour',
         description: `Le stock de "${product.title}" est maintenant de ${stock}.`,
       });
+      onUpdated?.();
     } catch (error) {
       setStock(product.stock); // Revert on error
       toast({
@@ -95,8 +101,9 @@ function EditableStock({ product }: { product: Product }) {
       {isEditing ? (
         <Input
           type="number"
+          min={0}
           value={stock}
-          onChange={(e) => setStock(Number(e.target.value))}
+          onChange={(e) => setStock(Math.max(0, Number(e.target.value)))}
           onBlur={handleStockUpdate}
           onKeyDown={(e) => e.key === 'Enter' && handleStockUpdate()}
           autoFocus
@@ -106,11 +113,11 @@ function EditableStock({ product }: { product: Product }) {
         <button
           onClick={() => setIsEditing(true)}
           className={cn(
-            "w-full text-left px-2 py-1 rounded-md text-sm",
+            'w-full rounded-full border px-2.5 py-1 text-left text-xs font-semibold transition',
             {
-              "text-green-800 bg-green-100": stock > 5,
-              "text-yellow-800 bg-yellow-100": stock > 0 && stock <= 5,
-              "text-red-800 bg-red-100": stock === 0,
+              'border-primary/20 bg-primary/10 text-primary': stock > 5,
+              'border-accent/30 bg-accent/15 text-accent-foreground': stock > 0 && stock <= 5,
+              'border-destructive/20 bg-destructive/10 text-destructive': stock === 0,
             }
           )}
         >
@@ -122,7 +129,15 @@ function EditableStock({ product }: { product: Product }) {
 }
 
 
-export function ProductList({ products }: { products: Product[] }) {
+export function ProductList({
+  products,
+  onRefresh,
+  initialSearch = '',
+}: {
+  products: Product[];
+  onRefresh?: () => void;
+  initialSearch?: string;
+}) {
   const { toast } = useToast();
   const router = useRouter();
   
@@ -132,9 +147,13 @@ export function ProductList({ products }: { products: Product[] }) {
 
   const { rawCategories, loading: categoriesLoading } = useCategories();
   
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+
+  React.useEffect(() => {
+    setSearchTerm(initialSearch);
+  }, [initialSearch]);
 
   const categoryMap = useMemo(() => {
     if (categoriesLoading || !rawCategories) return new Map();
@@ -162,7 +181,9 @@ export function ProductList({ products }: { products: Product[] }) {
           newStatus === 'active' ? 'actif' : 'inactif'
         }.`,
       });
+      onRefresh?.();
     } catch (error) {
+      onRefresh?.();
       toast({
         variant: 'destructive',
         title: 'Erreur',
@@ -181,6 +202,7 @@ export function ProductList({ products }: { products: Product[] }) {
         description: `Le produit "${productToDelete.title}" a été supprimé avec succès.`,
       });
       setProductToDelete(null);
+      onRefresh?.();
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -193,30 +215,38 @@ export function ProductList({ products }: { products: Product[] }) {
   const handleBulkDelete = async () => {
     if (selectedProductIds.length === 0) return;
 
-    try {
-      for (const id of selectedProductIds) {
-        await api.delete(`/api/products?id=${id}`);
-      }
+    const results = await Promise.allSettled(
+      selectedProductIds.map((id) => api.delete(`/api/products?id=${id}`))
+    );
+    const failed = results.filter((r) => r.status === 'rejected').length;
+    const succeeded = results.length - failed;
+
+    if (failed === 0) {
       toast({
         title: 'Produits supprimés',
-        description: `${selectedProductIds.length} produits ont été supprimés.`,
+        description: `${succeeded} produit(s) ont été supprimés.`,
       });
       setSelectedProductIds([]);
-    } catch (error) {
-       toast({
+    } else {
+      toast({
         variant: 'destructive',
-        title: 'Erreur',
-        description: 'Impossible de supprimer les produits sélectionnés.',
+        title: 'Suppression partielle',
+        description: `${succeeded} supprimé(s), ${failed} échec(s). Réessayez pour les produits restants.`,
       });
+      const failedIds = selectedProductIds.filter(
+        (_, i) => results[i]?.status === 'rejected'
+      );
+      setSelectedProductIds(failedIds);
     }
     setBulkDeleteConfirmation(false);
+    onRefresh?.();
   };
   
   const exportToCsv = () => {
     if (!filteredProducts || filteredProducts.length === 0) {
       toast({
-        variant: 'destructive',
         title: 'Aucun produit à exporter',
+        description: 'Ajustez vos filtres pour exporter des produits.',
       });
       return;
     }
@@ -225,15 +255,7 @@ export function ProductList({ products }: { products: Product[] }) {
       'ID', 'Titre', 'Statut', 'Catégorie', 'Stock', 'Prix', 'Prix Barré', 'Date de création'
     ];
 
-    const escapeCsvCell = (cellData: any): string => {
-        const cellString = String(cellData ?? '');
-        if (/[",\n]/.test(cellString)) {
-            return `"${cellString.replace(/"/g, '""')}"`;
-        }
-        return cellString;
-    };
-
-    const rows = filteredProducts.map(p => [
+    const rows = filteredProducts.map((p) => [
       p.id,
       p.title,
       p.status,
@@ -242,29 +264,17 @@ export function ProductList({ products }: { products: Product[] }) {
       p.price,
       p.salePrice || '',
       new Date(p.createdAt).toLocaleDateString('fr-SN'),
-    ].map(escapeCsvCell).join(','));
+    ]);
 
-    const csvContent = [headers.join(','), ...rows].join('\n');
-    
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    
-    const url = URL.createObjectURL(blob);
-    link.href = url;
     const date = new Date().toISOString().split('T')[0];
-    link.setAttribute('download', `produits-dakarboutik-${date}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    exportCsv(`produits-dakarboutik-${date}.csv`, headers, rows);
   };
 
   return (
     <>
       <Card className="rounded-2xl border-border/70">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="font-headline font-bold">Produits</CardTitle>
               <CardDescription>
@@ -272,11 +282,11 @@ export function ProductList({ products }: { products: Product[] }) {
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={exportToCsv}>
+              <Button size="sm" variant="outline" className="rounded-full" onClick={exportToCsv}>
                 <File className="h-3.5 w-3.5 mr-2" />
                 Exporter
               </Button>
-              <Button size="sm" asChild>
+              <Button size="sm" asChild className="rounded-full">
                 <Link href="/admin/add-product">
                   <PlusCircle className="h-3.5 w-3.5 mr-2" />
                   Ajouter un produit
@@ -284,19 +294,19 @@ export function ProductList({ products }: { products: Product[] }) {
               </Button>
             </div>
           </div>
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center">
             <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     type="search"
                     placeholder="Rechercher par nom..."
-                    className="pl-8 w-full md:w-1/2 lg:w-1/3"
+                    className="pl-8 w-full"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Filtrer par catégorie" />
                 </SelectTrigger>
                 <SelectContent>
@@ -307,7 +317,7 @@ export function ProductList({ products }: { products: Product[] }) {
                 </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Filtrer par statut" />
                 </SelectTrigger>
                 <SelectContent>
@@ -320,15 +330,16 @@ export function ProductList({ products }: { products: Product[] }) {
         </CardHeader>
         <CardContent>
           {selectedProductIds.length > 0 && (
-            <div className="bg-muted p-2 rounded-md mb-4 flex items-center justify-between">
+            <div className="bg-secondary/60 p-2.5 rounded-xl mb-4 flex items-center justify-between gap-3">
                 <span className='text-sm font-medium'>{selectedProductIds.length} produit(s) sélectionné(s)</span>
-                 <Button variant="destructive" size="sm" onClick={() => setBulkDeleteConfirmation(true)}>
+                 <Button variant="destructive" size="sm" className="rounded-full" onClick={() => setBulkDeleteConfirmation(true)}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     Supprimer la sélection
                 </Button>
             </div>
           )}
           {filteredProducts.length > 0 ? (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -377,12 +388,18 @@ export function ProductList({ products }: { products: Product[] }) {
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
                         <div className="relative h-12 w-12 rounded-md border bg-secondary overflow-hidden">
-                            <Image
-                                src={product.images[0]?.imageUrl}
-                                alt={product.title}
-                                fill
-                                className="object-contain p-1"
-                            />
+                            {product.images[0]?.imageUrl ? (
+                                <Image
+                                    src={product.images[0].imageUrl}
+                                    alt={product.title}
+                                    fill
+                                    className="object-contain p-1"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+                                    Aucune
+                                </div>
+                            )}
                         </div>
                     </TableCell>
                     <TableCell className="font-medium">{product.title}</TableCell>
@@ -390,25 +407,25 @@ export function ProductList({ products }: { products: Product[] }) {
                       <Switch
                         checked={product.status === 'active'}
                         onCheckedChange={(checked) => handleStatusChange(product, checked)}
-                        aria-label="product status"
+                        aria-label={`Statut de ${product.title}`}
                       />
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{categoryMap.get(product.category) || product.category}</Badge>
                     </TableCell>
                      <TableCell className="hidden md:table-cell">
-                        <EditableStock product={product} />
+                        <EditableStock product={product} onUpdated={onRefresh} />
                     </TableCell>
                     <TableCell>
                       <Price price={product.price} salePrice={product.salePrice} currency={product.currency} />
                     </TableCell>
                      <TableCell className="hidden md:table-cell">
-                      {new Date(product.createdAt).toLocaleDateString()}
+                      {new Date(product.createdAt).toLocaleDateString('fr-SN')}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <Button aria-haspopup="true" size="icon" variant="ghost" aria-label="Actions du produit">
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Toggle menu</span>
                           </Button>
@@ -418,7 +435,7 @@ export function ProductList({ products }: { products: Product[] }) {
                           <DropdownMenuItem onClick={() => router.push(`/admin/edit-product/${product.id}`)}>Modifier</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                          className="text-destructive focus:text-destructive focus:bg-destructive/10"
                           onClick={() => setProductToDelete(product)}
                         >
                           Supprimer
@@ -430,6 +447,7 @@ export function ProductList({ products }: { products: Product[] }) {
                 ))}
               </TableBody>
             </Table>
+            </div>
           ) : (
              <div className="text-center py-16">
                 <h3 className="text-lg font-semibold">Aucun produit trouvé</h3>

@@ -2,7 +2,7 @@
 
 import type { Product } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import React, { createContext, useReducer, useEffect, useCallback, useMemo } from "react";
+import React, { createContext, useReducer, useEffect, useCallback, useMemo, useState } from "react";
 
 // State is an array of product IDs
 type WishlistState = {
@@ -52,6 +52,7 @@ export const WishlistContext = createContext<WishlistContextType | undefined>(un
 
 export const WishlistProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(wishlistReducer, initialState);
+  const [isHydrated, setIsHydrated] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,16 +63,20 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
       }
     } catch (error) {
       console.error("Failed to load wishlist from localStorage", error);
+    } finally {
+      setIsHydrated(true);
     }
   }, []);
 
   useEffect(() => {
+    // On n'écrit qu'après hydratation, sinon l'état vide écraserait la liste stockée.
+    if (!isHydrated) return;
     try {
       localStorage.setItem("dakarboutik_wishlist", JSON.stringify(state));
     } catch (error) {
       console.error("Failed to save wishlist to localStorage", error);
     }
-  }, [state]);
+  }, [state, isHydrated]);
 
   const toggleWishlist = useCallback((product: Product) => {
     const isAdding = !state.productIds.includes(product.id);

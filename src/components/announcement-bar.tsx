@@ -7,6 +7,7 @@ import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import React from 'react';
 import { Truck, ArrowRight } from 'lucide-react';
+import { buildWhatsAppUrl, getWhatsAppNumber } from '@/lib/order-channels';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = React.useState(false);
@@ -70,13 +71,27 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
             </Carousel>
           </ClientOnly>
         </div>
-        <Link
-          href="/suivi"
-          className="group hidden shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold text-nav-foreground/80 transition hover:border-accent/40 hover:text-accent sm:flex"
-        >
-          Suivre ma commande
-          <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-        </Link>
+        {(() => {
+          const whatsappNumber = getWhatsAppNumber(settings);
+          const href = whatsappNumber
+            ? buildWhatsAppUrl(
+                whatsappNumber,
+                "Bonjour/Bonsoir Dakarboutik, je souhaite passer une commande. @https://dakarboutik.net/"
+              )
+            : '/contact';
+
+          return (
+            <Link
+              href={href}
+              target={whatsappNumber ? '_blank' : undefined}
+              rel={whatsappNumber ? 'noopener noreferrer' : undefined}
+              className="group hidden shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold text-nav-foreground/80 transition hover:border-accent/40 hover:text-accent sm:flex"
+            >
+              Commander sur WhatsApp
+              <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+            </Link>
+          );
+        })()}
       </div>
     </div>
   );

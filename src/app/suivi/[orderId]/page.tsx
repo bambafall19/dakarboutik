@@ -11,6 +11,7 @@ import { statusLabels } from '@/components/admin/status-selector';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { OrderChannels } from '@/components/order-channels';
 
 const timelineIcons: Record<string, React.ElementType> = {
   pending: Package,
@@ -67,13 +68,21 @@ function OrderTracker() {
           <CardTitle>Commande non trouvée</CardTitle>
           <CardDescription>
             Impossible de trouver une commande avec le numéro <span className="font-bold">{orderId}</span>.
-            Vérifiez le numéro et réessayez.
+            Contactez-nous sur WhatsApp ou par téléphone, nous retrouverons votre commande.
           </CardDescription>
         </CardHeader>
-         <CardContent>
+         <CardContent className="space-y-4">
           <Button asChild>
-            <Link href="/suivi">Réessayer</Link>
+            <Link href="/contact">Contacter le service client</Link>
           </Button>
+          <OrderChannels
+            items={[]}
+            customMessage={`Bonjour, je cherche le statut de ma commande ${orderId}.`}
+            size="sm"
+            whatsappLabel="Demander sur WhatsApp"
+            phoneLabel="Appeler le service client"
+            buttonClassName="h-10 text-sm"
+          />
         </CardContent>
       </Card>
     );
@@ -85,13 +94,19 @@ function OrderTracker() {
         <CardTitle>Suivi de la commande {order.orderId}</CardTitle>
         <CardDescription>
           Commande passée le {new Date(order.createdAt).toLocaleDateString('fr-SN')}.
-          Dernière mise à jour: {new Date(timelineEvents[0].date).toLocaleString('fr-SN')}
+          {timelineEvents[0] ? (
+            <>
+              {' '}
+              Dernière mise à jour:{' '}
+              {new Date(timelineEvents[0].date).toLocaleString('fr-SN')}
+            </>
+          ) : null}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
             {timelineEvents.map((event, index) => {
-                const Icon = timelineIcons[event.type === 'status' ? event.status : 'note'] || Package;
+                const Icon = timelineIcons[(event.type === 'status' ? event.status : 'note') ?? 'note'] || Package;
                 const isCurrent = index === 0;
 
                 return (

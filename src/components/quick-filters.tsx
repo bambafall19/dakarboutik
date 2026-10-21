@@ -4,9 +4,9 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
-import { Flame, Sparkles, Tag } from 'lucide-react';
+import { Flame, Sparkles, Tag, type LucideIcon } from 'lucide-react';
 
-const quickLinks = [
+const quickLinks: { label: string; icon: LucideIcon; query: Record<string, string> }[] = [
   { label: 'Meilleures ventes', icon: Flame, query: { bestseller: 'true' } },
   { label: 'Nouveautés', icon: Sparkles, query: { sortBy: 'newest' } },
   { label: 'Promotions', icon: Tag, query: { on_sale: 'true' } },

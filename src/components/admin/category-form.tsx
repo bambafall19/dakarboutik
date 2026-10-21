@@ -48,9 +48,10 @@ interface CategoryFormProps {
   onOpenChange: (open: boolean) => void;
   category?: Category | null;
   allCategories: Category[];
+  onSaved?: () => void;
 }
 
-export function CategoryForm({ open, onOpenChange, category, allCategories }: CategoryFormProps) {
+export function CategoryForm({ open, onOpenChange, category, allCategories, onSaved }: CategoryFormProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,6 +97,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
             toast({ title: 'Catégorie ajoutée !' });
         }
       onOpenChange(false);
+      onSaved?.();
     } catch (error) {
         console.error(error)
         toast({
@@ -132,7 +134,7 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
               name="order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ordre d'affichage</FormLabel>
+                  <FormLabel>Ordre d&apos;affichage</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -172,12 +174,12 @@ export function CategoryForm({ open, onOpenChange, category, allCategories }: Ca
               name="bannerImageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de l'image de la bannière (optionnel)</FormLabel>
+                  <FormLabel>URL de l&apos;image de la bannière (optionnel)</FormLabel>
                   <FormControl>
                     <Input placeholder="https://example.com/banner.jpg" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Cette image s'affichera en haut de la page de cette catégorie.
+                    Cette image s&apos;affichera en haut de la page de cette catégorie.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

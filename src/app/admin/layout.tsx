@@ -5,8 +5,9 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Loader2, Search, ShieldCheck, TriangleAlert } from 'lucide-react';
-import { AdminSidebar } from '@/components/admin/admin-sidebar';
+import { Loader2, Search, ShieldCheck, TriangleAlert, Menu } from 'lucide-react';
+import { AdminSidebar, AdminSidebarContent } from '@/components/admin/admin-sidebar';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
@@ -65,7 +66,7 @@ function AdminSetupFlow({ user, onAdminCreated }: { user: any; onAdminCreated: (
                     </div>
                     <CardTitle>Accès Refusé</CardTitle>
                     <CardDescription>
-                      Un administrateur a déjà été configuré pour ce site. Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+                      Un administrateur a déjà été configuré pour ce site. Vous n&apos;avez pas les permissions nécessaires pour accéder à cette page.
                     </CardDescription>
                 </CardHeader>
             </Card>
@@ -83,8 +84,8 @@ function AdminSetupFlow({ user, onAdminCreated }: { user: any; onAdminCreated: (
                     </div>
                     <CardTitle>Devenir le premier administrateur</CardTitle>
                     <CardDescription>
-                       Cette étape est unique et ne peut être réalisée qu'une seule fois.
-                       Le compte <span className="font-bold text-foreground">{user.email}</span> deviendra l'administrateur du site.
+                       Cette étape est unique et ne peut être réalisée qu&apos;une seule fois.
+                       Le compte <span className="font-bold text-foreground">{user.email}</span> deviendra l&apos;administrateur du site.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
@@ -117,6 +118,8 @@ export default function AdminLayout({
   const { user, isAdmin, loading, setUser } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -141,6 +144,12 @@ export default function AdminLayout({
       });
     }
   };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    router.push(q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products');
+  };
   
   const handleAdminCreated = () => {
     window.location.reload();
@@ -163,19 +172,32 @@ export default function AdminLayout({
       <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
         <AdminSidebar />
         <div className="flex flex-col">
-          <header className="flex h-16 items-center gap-4 border-b bg-card/80 px-6 backdrop-blur">
+          <header className="flex h-16 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur md:px-6">
+            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Ouvrir le menu">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 border-0 p-0">
+                <SheetTitle className="sr-only">Navigation administrateur</SheetTitle>
+                <AdminSidebarContent onNavigate={() => setMobileNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
             <div className="hidden sm:block">
               <h1 className="font-headline text-sm font-extrabold">Administration</h1>
               <p className="text-[11px] text-muted-foreground">Gérez votre boutique</p>
             </div>
-            <div className="relative ml-auto w-full max-w-xs">
+            <form onSubmit={handleSearch} className="relative ml-auto w-full max-w-xs">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Rechercher..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher un produit..."
                 className="w-full rounded-full bg-secondary/60 pl-9"
               />
-            </div>
+            </form>
             <Button asChild variant="outline" size="sm" className="hidden rounded-full md:flex">
               <Link href="/" target="_blank">
                 Voir la boutique

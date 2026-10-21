@@ -13,27 +13,44 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useProductsById } from '@/hooks/use-site-data';
 import { Loader2 } from 'lucide-react';
-import { notFound, useParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { useParams } from 'next/navigation';
+import { AdminError } from '@/components/admin/admin-error';
 
 function EditProductPageContent() {
   const params = useParams();
   const id = params.id as string;
-  
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { product, loading: productLoading } = useProductsById(id);
+
+  const { categories, loading: categoriesLoading, error: categoriesError, refetch: refetchCategories } = useCategories();
+  const { product, loading: productLoading, error: productError, refetch: refetchProduct } = useProductsById(id);
 
   if (productLoading || categoriesLoading) {
     return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
 
+  if (productError || categoriesError) {
+    return (
+      <AdminError
+        title="Impossible de charger le produit"
+        onRetry={() => {
+          refetchProduct();
+          refetchCategories();
+        }}
+      />
+    );
+  }
+
   if (!product) {
-    notFound();
+    return (
+      <AdminError
+        title="Produit introuvable"
+        description="Ce produit n'existe plus ou a été supprimé."
+      />
+    );
   }
 
   return (
-    <div className="py-12">
-      <Breadcrumb className="mb-6">
+    <div className="space-y-6">
+      <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href="/admin">Admin</BreadcrumbLink>
@@ -44,18 +61,12 @@ function EditProductPageContent() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <h1 className="text-3xl font-bold mb-8">Modifier: {product.title}</h1>
+      <h1 className="font-headline text-3xl font-extrabold">Modifier : {product.title}</h1>
       <EditProductForm categories={categories} product={product} />
     </div>
   );
 }
 
-
-// This is the Server Component that reads searchParams and passes them to the client component.
 export default function EditProductPage() {
-  return (
-    <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-        <EditProductPageContent />
-    </Suspense>
-  )
+  return <EditProductPageContent />;
 }

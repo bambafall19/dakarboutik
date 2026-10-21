@@ -47,7 +47,7 @@ const statements = [
     currency text not null default 'FCA',
     brand text,
     category text,
-    specs jsonb not null default '{}'::jsonb,
+    specs json not null default '{}'::json,
     stock integer not null default 0,
     variants jsonb not null default '[]'::jsonb,
     status text not null default 'active',
@@ -68,8 +68,10 @@ const statements = [
     title text not null default '',
     text text not null default '',
     author text not null default '',
-    created_at timestamptz not null default now()
+    created_at timestamptz not null default now(),
+    is_published boolean not null default true
   )`,
+  `alter table reviews add column if not exists is_published boolean not null default true`,
   `create index if not exists reviews_product_idx on reviews (product_id)`,
 
   `create table if not exists banners (
@@ -118,6 +120,33 @@ const statements = [
     created_at timestamptz not null default now(),
     status_history jsonb not null default '[]'::jsonb,
     public_notes jsonb not null default '[]'::jsonb
+  )`,
+
+  `create table if not exists media (
+    id text primary key,
+    name text not null default '',
+    url text not null,
+    kind text not null default 'image',
+    created_at timestamptz not null default now(),
+    data bytea,
+    content_type text,
+    size integer,
+    original_name text
+  )`,
+  `create unique index if not exists media_url_idx on media (url)`,
+  `alter table media add column if not exists data bytea`,
+  `alter table media add column if not exists content_type text`,
+  `alter table media add column if not exists size integer`,
+  `alter table media add column if not exists original_name text`,
+
+  `create table if not exists contact_messages (
+    id text primary key,
+    name text not null default '',
+    email text not null default '',
+    subject text not null default '',
+    message text not null default '',
+    is_read boolean not null default false,
+    created_at timestamptz not null default now()
   )`,
 ];
 

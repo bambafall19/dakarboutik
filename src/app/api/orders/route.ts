@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
-import type { Order, PublicOrder } from '@/lib/types';
+import { computeOrderTotals } from '@/lib/order-totals';
+import type { DeliveryMethod } from '@/lib/shipping';
+import type { CartItem, Order, PublicOrder } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,21 +35,52 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const b = await req.json();
   const orderId = b.orderId || `DKB-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-  const createdAt = b.createdAt || new Date().toISOString();
+  if (!/^[A-Za-z0-9_-]{4,48}$/.test(String(orderId))) {
+    return NextResponse.json({ error: 'Numéro de commande invalide.' }, { status: 400 });
+  }
+  const createdAt = new Date().toISOString();
+  const deliveryMethod: DeliveryMethod = b.deliveryMethod === 'hors-dakar' ? 'hors-dakar' : 'dakar';
+  const items: CartItem[] = Array.isArray(b.items) ? b.items : [];
 
-  await query(
-    `insert into orders (id,order_id,customer_info,items,total_price,shipping_cost,grand_total,status,created_at,delivery_method,payment_method,admin_notes,public_notes)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-    [orderId, orderId, JSON.stringify(b.customerInfo ?? {}), JSON.stringify(b.items ?? []), b.totalPrice ?? 0,
-     b.shippingCost ?? 0, b.grandTotal ?? 0, b.status ?? 'pending', createdAt, b.deliveryMethod ?? null,
-     b.paymentMethod ?? null, b.adminNotes ?? null, JSON.stringify(b.publicNotes ?? [])]
-  );
+  const totals = await computeOrderTotals(items, deliveryMethod);
+
+  if (!totals.itemsAreValid) {
+    return NextResponse.json(
+      { error: 'Panier invalide : un des produits n’est plus disponible. Merci de vérifier votre panier.' },
+      { status: 400 }
+    );
+  }
+
+  if (totals.unavailableProductIds.length > 0) {
+    return NextResponse.json(
+      { error: 'Panier invalide : un des produits n’est plus disponible. Merci de vérifier votre panier.' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    await query(
+      `insert into orders (id,order_id,customer_info,items,total_price,shipping_cost,grand_total,status,created_at,delivery_method,payment_method,admin_notes,public_notes)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+      [orderId, orderId, JSON.stringify(b.customerInfo ?? {}), JSON.stringify(totals.sanitizedItems), totals.totalPrice,
+       totals.shippingCost, totals.grandTotal, 'pending', createdAt, deliveryMethod,
+       b.paymentMethod ?? null, null, JSON.stringify([])]
+    );
+  } catch (err: any) {
+    if (err?.code === '23505') {
+      return NextResponse.json(
+        { error: 'Une commande avec ce numéro existe déjà.' },
+        { status: 409 }
+      );
+    }
+    throw err;
+  }
 
   await query(
     `insert into public_orders (id,order_id,status,created_at,status_history,public_notes)
      values ($1,$2,$3,$4,$5,$6)
      on conflict (id) do nothing`,
-    [orderId, orderId, b.status ?? 'pending', createdAt, JSON.stringify([{ status: b.status ?? 'pending', date: createdAt }]), JSON.stringify([])]
+    [orderId, orderId, 'pending', createdAt, JSON.stringify([{ status: 'pending', date: createdAt }]), JSON.stringify([])]
   );
 
   return NextResponse.json({ id: orderId });

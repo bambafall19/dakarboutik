@@ -10,17 +10,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { buildWhatsAppUrl, getWhatsAppNumber } from '@/lib/order-channels';
 
 export function WhatsAppButton() {
     const { settings, loading } = useSiteSettings();
+    const whatsappNumber = getWhatsAppNumber(settings);
 
-    if (loading || !settings?.whatsappNumber) {
+    if (loading || !whatsappNumber) {
         return null;
     }
     
-    const message = "Bonjour/Bonsoir Dakarboutik, j'ai besoin de plus d'informations. @https://dakarboutik.net/";
+    const message = "Bonjour/Bonsoir Dakarboutik, je souhaite passer une commande. @https://dakarboutik.net/";
     
-    const whatsappUrl = `https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = buildWhatsAppUrl(whatsappNumber, message);
 
     return (
         <TooltipProvider delayDuration={100}>

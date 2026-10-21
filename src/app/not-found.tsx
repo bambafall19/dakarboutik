@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, Search, Package, ArrowRight } from 'lucide-react';
+import { Home, Search, ArrowRight } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -46,7 +46,6 @@ export default function NotFound() {
         <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
           {[
             { href: '/products?on_sale=true', label: 'Promotions' },
-            { href: '/suivi', label: 'Suivre ma commande', icon: Package },
             { href: '/contact', label: 'Contact' },
           ].map((link) => (
             <Link

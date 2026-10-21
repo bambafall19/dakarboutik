@@ -5,7 +5,7 @@ import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Facebook, Instagram, Phone, Mail, MessageCircle, MapPin, Send } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MessageCircle, MapPin, Music2, Send } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { Logo } from './logo';
+import { normalizePhoneNumber } from '@/lib/order-channels';
 
 const footerLinks = {
   Boutique: [
@@ -28,7 +29,6 @@ const footerLinks = {
     { name: 'À propos', href: '/a-propos' },
     { name: 'Contact', href: '/contact' },
     { name: 'Garantie & SAV', href: '/sav' },
-    { name: 'Suivi de Commande', href: '/suivi' },
     { name: 'FAQ', href: '/faq' },
   ],
 };
@@ -88,7 +88,7 @@ export function Footer({ settings }: FooterProps) {
                 <>
                   {settings?.supportPhone && (
                     <a
-                      href={`tel:${settings.supportPhone}`}
+                      href={`tel:${normalizePhoneNumber(settings.phone) ?? normalizePhoneNumber(settings.supportPhone) ?? settings.supportPhone}`}
                       className="group flex items-center gap-3 text-sm text-nav-foreground/70 transition hover:text-accent"
                     >
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 transition group-hover:bg-accent/15">
@@ -188,23 +188,42 @@ export function Footer({ settings }: FooterProps) {
             </h4>
             <p className="flex items-start gap-3 text-sm text-nav-foreground/70">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-              <span>Dakar, Sénégal</span>
+              <span>{settings?.address || 'Dakar, Sénégal'}</span>
             </p>
             <div className="mt-5 flex items-center gap-3">
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-nav-foreground/80 ring-1 ring-white/10 transition hover:bg-accent hover:text-accent-foreground hover:ring-accent"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-nav-foreground/80 ring-1 ring-white/10 transition hover:bg-accent hover:text-accent-foreground hover:ring-accent"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
+              {settings?.facebookUrl ? (
+                <a
+                  href={settings.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-nav-foreground/80 ring-1 ring-white/10 transition hover:bg-accent hover:text-accent-foreground hover:ring-accent"
+                >
+                  <Facebook className="h-4 w-4" />
+                </a>
+              ) : null}
+              {settings?.instagramUrl ? (
+                <a
+                  href={settings.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-nav-foreground/80 ring-1 ring-white/10 transition hover:bg-accent hover:text-accent-foreground hover:ring-accent"
+                >
+                  <Instagram className="h-4 w-4" />
+                </a>
+              ) : null}
+              {settings?.tiktokUrl ? (
+                <a
+                  href={settings.tiktokUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-nav-foreground/80 ring-1 ring-white/10 transition hover:bg-accent hover:text-accent-foreground hover:ring-accent"
+                >
+                  <Music2 className="h-4 w-4" />
+                </a>
+              ) : null}
             </div>
           </div>
         </div>
@@ -213,7 +232,7 @@ export function Footer({ settings }: FooterProps) {
         <div className="flex flex-col items-center justify-between gap-4 text-sm text-nav-foreground/60 md:flex-row">
           <div className="text-center md:text-left">
             {isClient ? (
-              <p>© {new Date().getFullYear()} DakarBoutik. Une entreprise fièrement sénégalaise.</p>
+              <p>© {new Date().getFullYear()} {settings?.siteName || 'DakarBoutik'}. Une entreprise fièrement sénégalaise.</p>
             ) : (
               <Skeleton className="mb-1 h-5 w-80 bg-white/10" />
             )}

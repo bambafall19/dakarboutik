@@ -8,6 +8,7 @@ import { Icons } from '@/components/icons';
 import { getProducts, getBanners, getCategories as getRawCategories } from '@/lib/data-firebase';
 import { RecentProductsGrid } from '@/components/recent-products-grid';
 import { getCategoriesWithCounts } from '@/lib/data-helpers';
+import { getNewProducts } from '@/lib/product-freshness';
 import { Star, Tag } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -21,10 +22,7 @@ export default async function HomePage() {
 
   const categories = getCategoriesWithCounts(rawCategories, allProducts);
 
-  const newProducts = allProducts
-    .filter(p => p.isNew || new Date(p.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000))
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 8);
+  const newProducts = getNewProducts(allProducts);
   
   const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
   
@@ -41,10 +39,12 @@ export default async function HomePage() {
           <div className="container">
             <ProductGrid 
               title="Nouveaux arrivages"
+              eyebrow="Fraîchement en boutique"
               products={newProducts}
               link={{href: "/products?sortBy=newest", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              icon={<Icons.flash className="text-primary" />}
+              icon={<Icons.flash />}
+              accent="primary"
             />
           </div>
         )}
@@ -55,10 +55,12 @@ export default async function HomePage() {
            <div className="container">
              <ProductGrid 
               title="Nos meilleures ventes"
+              eyebrow="Les favoris des clients"
               products={bestsellers}
               link={{href: "/products", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              icon={<Star className="text-primary" />}
+              icon={<Star />}
+              accent="gold"
             />
            </div>
         )}
@@ -67,10 +69,12 @@ export default async function HomePage() {
            <div className="container">
              <ProductGrid 
               title="Promotions"
+              eyebrow="Prix réduits, stock limité"
               products={saleProducts}
               link={{href: "/products", text: "Voir tout"}}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              icon={<Tag className="text-primary" />}
+              icon={<Tag />}
+              accent="sale"
             />
            </div>
         )}

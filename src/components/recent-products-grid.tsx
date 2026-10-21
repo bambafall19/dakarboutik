@@ -15,9 +15,11 @@ export function RecentProductsGrid() {
         <div className="container">
             <ProductGrid 
               title="Suggestions pour vous"
+              eyebrow="Repris de votre navigation"
               products={recentProducts}
               gridClass="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-              icon={<Icons.sparkles className="text-primary" />}
+              icon={<Icons.sparkles />}
+              accent="primary"
             />
         </div>
     );

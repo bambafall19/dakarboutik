@@ -6,20 +6,19 @@ import { useCart } from "@/hooks/use-cart";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Price } from './price';
-
-export const SHIPPING_COSTS = {
-  dakar: 2000,
-  "hors-dakar": 5000,
-};
+import { useSiteSettings } from '@/hooks/use-site-data';
+import { getShippingQuote, type DeliveryMethod } from '@/lib/shipping';
 
 interface OrderSummaryProps {
-    deliveryMethod: 'dakar' | 'hors-dakar';
+    deliveryMethod: DeliveryMethod;
 }
 
 export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
   const { state, totalPrice } = useCart();
-  
-  const shippingCost = SHIPPING_COSTS[deliveryMethod] || 0;
+  const { settings } = useSiteSettings();
+
+  const quote = getShippingQuote(settings, deliveryMethod, totalPrice);
+  const shippingCost = quote.shippingCost;
   const grandTotal = totalPrice + shippingCost;
 
   return (
@@ -54,6 +53,16 @@ export function OrderSummary({ deliveryMethod }: OrderSummaryProps) {
                 <span>Livraison</span>
                 <Price price={shippingCost} currency="FCA" className="font-medium" />
             </div>
+            {quote.isFreeShipping ? (
+                <p className="text-xs font-medium text-primary">
+                    Livraison offerte pour votre commande.
+                </p>
+            ) : quote.remainingForFreeShipping > 0 ? (
+                <p className="text-xs text-muted-foreground">
+                    Plus que {quote.remainingForFreeShipping.toLocaleString('fr-FR')} FCFA pour la
+                    livraison offerte.
+                </p>
+            ) : null}
         </div>
       </CardContent>
       <CardFooter>

@@ -3,7 +3,7 @@
 
 import type { CartItem, Product, SelectedVariant } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import React, { createContext, useReducer, useEffect, useCallback } from "react";
+import React, { createContext, useReducer, useEffect, useCallback, useState } from "react";
 
 // Function to generate a unique ID for a cart item based on product and variants
 const generateCartItemId = (productId: string, variants?: SelectedVariant[]): string => {
@@ -89,12 +89,14 @@ type CartContextType = {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  isHydrated: boolean;
 };
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [isHydrated, setIsHydrated] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -105,16 +107,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (error) {
       console.error("Failed to load cart from localStorage", error);
+    } finally {
+      setIsHydrated(true);
     }
   }, []);
 
   useEffect(() => {
+    // On n'écrit qu'après hydratation, sinon l'état vide écraserait le panier stocké.
+    if (!isHydrated) return;
     try {
       localStorage.setItem("dakarboutik_cart", JSON.stringify(state));
     } catch (error) {
       console.error("Failed to save cart to localStorage", error);
     }
-  }, [state]);
+  }, [state, isHydrated]);
 
   const addToCart = useCallback((product: Product, quantity: number, selectedVariants?: SelectedVariant[]) => {
     dispatch({ type: "ADD_ITEM", payload: { product, quantity, selectedVariants } });
@@ -157,6 +163,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         clearCart,
         totalItems,
         totalPrice,
+        isHydrated,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -29,11 +29,22 @@ import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api-client';
 import { Icons } from '../icons';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface OrderDetailDialogProps {
   order: Order;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUpdated?: () => void;
 }
 
 export const paymentMethodLabels: Record<Order['paymentMethod'], string> = {
@@ -42,11 +53,18 @@ export const paymentMethodLabels: Record<Order['paymentMethod'], string> = {
 };
 
 
-export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDialogProps) {
+export function OrderDetailDialog({ order, open, onOpenChange, onUpdated }: OrderDetailDialogProps) {
   const [adminNotes, setAdminNotes] = useState(order.adminNotes || '');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [newPublicNote, setNewPublicNote] = useState('');
   const [isSavingPublicNote, setIsSavingPublicNote] = useState(false);
+  const [confirmPublicNote, setConfirmPublicNote] = useState(false);
+  const [localStatus, setLocalStatus] = useState(order.status);
+
+  useEffect(() => {
+    setAdminNotes(order.adminNotes || '');
+    setLocalStatus(order.status);
+  }, [order.adminNotes, order.status, order.id]);
 
   const { toast } = useToast();
 
@@ -71,11 +89,13 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
 
       toast({ title: 'Note publique ajoutée' });
       setNewPublicNote('');
+      onUpdated?.();
     } catch (error) {
       console.error(error);
       toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible d\'ajouter la note publique.' });
     } finally {
       setIsSavingPublicNote(false);
+      setConfirmPublicNote(false);
     }
 };
 
@@ -87,7 +107,6 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
       totalPrice,
       shippingCost,
       grandTotal,
-      status,
     } = order;
 
     let phoneNumber = customerInfo.phone.replace(/\s/g, ''); // Remove spaces
@@ -116,13 +135,13 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
     message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCA\n`;
     message += `*Total à payer : ${grandTotal.toLocaleString('fr-SN')} FCA*\n\n`;
 
-    message += `Statut actuel : *${statusLabels[status]}*\n\n`;
+    message += `Statut actuel : *${statusLabels[localStatus]}*\n\n`;
 
     message += `Vous pouvez suivre votre commande à tout moment ici :\n${trackingUrl}\n\n`;
     message += `Merci de votre confiance,\nL'équipe DakarBoutik`;
 
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
 
@@ -130,9 +149,15 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-4'>
+          <DialogTitle className='flex flex-wrap items-center gap-4'>
             Commande {order.orderId}
-            <StatusSelector order={order} />
+            <StatusSelector
+              order={{ ...order, status: localStatus }}
+              onStatusChange={(newStatus) => {
+                setLocalStatus(newStatus);
+                onUpdated?.();
+              }}
+            />
           </DialogTitle>
           <DialogDescription>
             Détails de la commande passée le {new Date(order.createdAt).toLocaleString('fr-SN')}.
@@ -176,7 +201,7 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
 
             <div className='my-4'>
                 <h3 className="font-semibold mb-2">Articles commandés</h3>
-                <div className="border rounded-md">
+                <div className="border rounded-md overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -191,7 +216,9 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
                                 <TableRow key={item.id}>
                                     <TableCell>
                                         <div className='relative h-12 w-12 bg-muted rounded-md overflow-hidden'>
-                                            <Image src={item.product.images[0].imageUrl} alt={item.product.title} fill className='object-contain p-1' />
+                                            {item.product.images[0]?.imageUrl ? (
+                                                <Image src={item.product.images[0].imageUrl} alt={item.product.title} fill className='object-contain p-1' />
+                                            ) : null}
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -221,7 +248,7 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
                     onChange={(e) => setNewPublicNote(e.target.value)}
                     rows={3}
                 />
-                <Button onClick={handleSavePublicNote} disabled={isSavingPublicNote || !newPublicNote.trim()} size="sm">
+                <Button onClick={() => setConfirmPublicNote(true)} disabled={isSavingPublicNote || !newPublicNote.trim()} size="sm">
                     {isSavingPublicNote ? 'Envoi...' : 'Envoyer la note au client'}
                 </Button>
             </div>
@@ -249,6 +276,24 @@ export function OrderDetailDialog({ order, open, onOpenChange }: OrderDetailDial
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <AlertDialog open={confirmPublicNote} onOpenChange={setConfirmPublicNote}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Envoyer cette note au client ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette note sera <strong>visible par le client</strong> sur son suivi de commande.
+              Vérifiez son contenu avant d&apos;envoyer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSavePublicNote}>
+              Envoyer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

@@ -24,7 +24,7 @@ import type { Order } from '@/lib/types';
 import { OrderDetailDialog } from './order-detail-dialog';
 import { StatusSelector } from './status-selector';
 
-export function OrderList({ orders }: { orders: Order[] }) {
+export function OrderList({ orders, onRefresh }: { orders: Order[]; onRefresh?: () => void }) {
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
 
   if (orders.length === 0) {
@@ -38,6 +38,7 @@ export function OrderList({ orders }: { orders: Order[] }) {
   
   return (
     <>
+        <div className="overflow-x-auto">
         <Table>
             <TableHeader>
               <TableRow>
@@ -56,14 +57,14 @@ export function OrderList({ orders }: { orders: Order[] }) {
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>
-                    <StatusSelector order={order} />
+                    <StatusSelector order={order} onStatusChange={onRefresh} />
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="font-medium">{order.customerInfo.name}</div>
                     <div className="text-xs text-muted-foreground">{order.customerInfo.email}</div>
                   </TableCell>
                   <TableCell>
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {new Date(order.createdAt).toLocaleDateString('fr-SN')}
                   </TableCell>
                    <TableCell className="text-right">
                     <Price price={order.grandTotal} currency="FCA" />
@@ -71,7 +72,7 @@ export function OrderList({ orders }: { orders: Order[] }) {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <Button aria-haspopup="true" size="icon" variant="ghost" aria-label="Actions de la commande">
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
                         </Button>
@@ -88,10 +89,12 @@ export function OrderList({ orders }: { orders: Order[] }) {
               ))}
             </TableBody>
           </Table>
+          </div>
       {selectedOrder && (
         <OrderDetailDialog 
           order={selectedOrder} 
           open={!!selectedOrder}
+          onUpdated={onRefresh}
           onOpenChange={(isOpen) => {
             if (!isOpen) {
               setSelectedOrder(null);

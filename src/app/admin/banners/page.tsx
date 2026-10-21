@@ -32,7 +32,6 @@ import {
   } from '@/components/ui/dropdown-menu';
 import { BannerForm, positionLabels } from '@/components/admin/banner-form';
 import { api } from '@/lib/api-client';
-import { useApiData } from '@/hooks/use-api-data';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -48,17 +47,21 @@ import { getBanners as getStaticBanners } from '@/lib/data';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { AdminError } from '@/components/admin/admin-error';
 
 
 export default function BannersPage() {
-    const { banners: allBanners, loading } = useBanners();
-    const { refetch } = useApiData<Banner[]>('/api/banners');
+    const { banners: allBanners, loading, error, refetch } = useBanners();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
     const [bannerToDelete, setBannerToDelete] = useState<Banner | null>(null);
     const [isSeeding, setIsSeeding] = useState(false);
     
     const { toast } = useToast();
+
+    const handleFormSaved = useCallback(async () => {
+        await refetch();
+    }, [refetch]);
 
     const banners = React.useMemo(() => {
         if (!allBanners) return [];
@@ -139,16 +142,16 @@ export default function BannersPage() {
         </BreadcrumbList>
       </Breadcrumb>
       
-      <Card>
+      <Card className="rounded-2xl border-border/70">
         <CardHeader>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
                 <CardTitle className="font-headline font-bold">Bannières</CardTitle>
                 <CardDescription>
                     Gérez les bannières affichées sur votre site.
                 </CardDescription>
             </div>
-            <Button size="sm" onClick={handleAddClick}>
+            <Button size="sm" onClick={handleAddClick} className="w-full sm:w-auto">
                   <PlusCircle className="h-3.5 w-3.5 mr-2" />
                   Ajouter une bannière
             </Button>
@@ -157,8 +160,10 @@ export default function BannersPage() {
         <CardContent>
             {loading ? (
                 <div className="flex justify-center items-center h-48">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+            ) : error ? (
+                <AdminError description={error.message} onRetry={refetch} />
             ) : banners.length === 0 ? (
                 <Alert>
                     <Info className="h-4 w-4" />
@@ -172,6 +177,7 @@ export default function BannersPage() {
                     </AlertDescription>
                 </Alert>
             ) : (
+                <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -190,19 +196,19 @@ export default function BannersPage() {
                             <TableCell>{banner.order}</TableCell>
                             <TableCell className="font-medium">{banner.title}</TableCell>
                              <TableCell>
-                                <Badge variant="secondary">{positionLabels[banner.position]}</Badge>
+                                <Badge variant="secondary" className="rounded-full">{positionLabels[banner.position]}</Badge>
                             </TableCell>
                             <TableCell>
                                <Switch
                                     checked={banner.isActive}
                                     onCheckedChange={(checked) => handleStatusChange(banner, checked)}
-                                    aria-label="banner status"
+                                    aria-label={`Statut de la bannière ${banner.title}`}
                                 />
                             </TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                    <Button aria-haspopup="true" size="icon" variant="ghost" aria-label={`Actions pour ${banner.title}`}>
                                     <MoreHorizontal className="h-4 w-4" />
                                     <span className="sr-only">Toggle menu</span>
                                     </Button>
@@ -210,7 +216,7 @@ export default function BannersPage() {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                     <DropdownMenuItem onClick={() => handleEditClick(banner)}>Modifier</DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteClick(banner)}>Supprimer</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => handleDeleteClick(banner)}>Supprimer</DropdownMenuItem>
                                 </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
@@ -218,6 +224,7 @@ export default function BannersPage() {
                        ))}
                     </TableBody>
                 </Table>
+                </div>
             )}
         </CardContent>
       </Card>
@@ -226,6 +233,7 @@ export default function BannersPage() {
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         banner={selectedBanner}
+        onSaved={handleFormSaved}
       />
       <AlertDialog open={!!bannerToDelete} onOpenChange={(open) => !open && setBannerToDelete(null)}>
           <AlertDialogContent>

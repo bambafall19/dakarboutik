@@ -13,6 +13,7 @@ import { WhatsAppButton } from './whatsapp-button';
 import { CookieConsentBanner } from './cookie-consent-banner';
 import { useSnow } from '@/hooks/use-snow';
 import Snowfall from './snowfall';
+import { MaintenanceBanner } from './maintenance-banner';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -52,6 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <Suspense>
       <div className="min-h-screen w-full">
         {isSnowing && <Snowfall />}
+        <MaintenanceBanner settings={settings} />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:shadow-lg"

@@ -23,17 +23,21 @@ import { statusLabels } from '@/components/admin/status-selector';
 import { Badge } from '@/components/ui/badge';
 import { OrderDetailDialog } from '@/components/admin/order-detail-dialog';
 import { useApiData } from '@/hooks/use-api-data';
+import { AdminError } from '@/components/admin/admin-error';
+
+const COMPLETED = ['delivered', 'paid', 'shipped'];
+const EXCLUDED = ['cancelled'];
 
 export default function AdminDashboardPage() {
-    const { products, loading: productsLoading } = useAdminProducts();
+    const { products, loading: productsLoading, error: productsError, refetch: refetchProducts } = useAdminProducts();
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   
-    const { data: orders, loading: ordersLoading } = useApiData<Order[]>('/api/orders');
+    const { data: orders, loading: ordersLoading, error: ordersError, refetch: refetchOrders } = useApiData<Order[]>('/api/orders');
 
     const { totalRevenue, totalSales, salesLast7Days, chartData, averageOrderValue } = useMemo(() => {
         if (!orders) return { totalRevenue: 0, totalSales: 0, salesLast7Days: 0, chartData: [], averageOrderValue: 0 };
 
-        const completedOrders = orders.filter(o => o.status === 'delivered' || o.status === 'paid' || o.status === 'shipped');
+        const completedOrders = orders.filter(o => COMPLETED.includes(o.status));
 
         const totalRevenue = completedOrders.reduce((sum, order) => sum + order.grandTotal, 0);
         const totalSales = completedOrders.length;
@@ -72,7 +76,9 @@ export default function AdminDashboardPage() {
 
         const productSales: { [productId: string]: { product: Product, quantity: number } } = {};
 
-        orders.forEach(order => {
+        orders
+            .filter(order => !EXCLUDED.includes(order.status))
+            .forEach(order => {
             order.items.forEach(item => {
                 const productId = item.product.id;
                 // Ensure we have the full product info from the products hook, not just the cart item snapshot
@@ -99,17 +105,35 @@ export default function AdminDashboardPage() {
     const lowStockProducts = useMemo(() => {
         if (!products) return [];
         return products
-            .filter(p => p.stock <= 5 && p.stock > 0 && p.status === 'active')
+            .filter(p => p.stock <= 5 && p.status === 'active')
             .sort((a,b) => a.stock - b.stock)
             .slice(0, 5);
     }, [products]);
 
+    const recentOrders = useMemo(() => {
+        if (!orders) return [];
+        return [...orders]
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5);
+    }, [orders]);
+
 
     if (ordersLoading || productsLoading) {
       return (
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full min-h-[60vh] items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      );
+    }
+
+    if (ordersError || productsError) {
+      return (
+        <AdminError
+          onRetry={() => {
+            refetchOrders();
+            refetchProducts();
+          }}
+        />
       );
     }
   
@@ -156,11 +180,11 @@ export default function AdminDashboardPage() {
                     </CardContent>
                 </Card>
                 <Card className="overflow-hidden rounded-2xl border-border/70">
-                    <div className="h-1.5 w-full bg-gradient-to-r from-sky-500 to-cyan-300" />
+                    <div className="h-1.5 w-full bg-gradient-to-r from-primary to-emerald-400" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Panier Moyen</CardTitle>
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10">
-                          <Receipt className="h-4 w-4 text-sky-600" />
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                          <Receipt className="h-4 w-4 text-primary" />
                         </span>
                     </CardHeader>
                     <CardContent>
@@ -173,11 +197,11 @@ export default function AdminDashboardPage() {
                     </CardContent>
                 </Card>
                 <Card className="overflow-hidden rounded-2xl border-border/70">
-                    <div className="h-1.5 w-full bg-gradient-to-r from-violet-500 to-fuchsia-400" />
+                    <div className="h-1.5 w-full bg-gradient-to-r from-accent to-amber-300" />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Ventes (7 derniers jours)</CardTitle>
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/10">
-                          <DollarSign className="h-4 w-4 text-violet-600" />
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15">
+                          <DollarSign className="h-4 w-4 text-accent" />
                         </span>
                     </CardHeader>
                     <CardContent>
@@ -222,6 +246,7 @@ export default function AdminDashboardPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -230,21 +255,30 @@ export default function AdminDashboardPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {topProducts.map(({ product, quantity }) => (
+                                {topProducts.length > 0 ? topProducts.map(({ product, quantity }) => (
                                     <TableRow key={product.id}>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
-                                                <div className="relative h-10 w-10 shrink-0">
-                                                    <Image src={product.images[0].imageUrl} alt={product.title} fill className="rounded-md object-contain" />
+                                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border bg-secondary">
+                                                    {product.images[0]?.imageUrl ? (
+                                                        <Image src={product.images[0].imageUrl} alt={product.title} fill className="object-contain" />
+                                                    ) : null}
                                                 </div>
                                                 <span className="font-medium text-sm truncate">{product.title}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-right font-bold">{quantity}</TableCell>
                                     </TableRow>
-                                ))}
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={2} className="py-8 text-center text-sm text-muted-foreground">
+                                            Aucune vente enregistrée pour le moment.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -261,6 +295,7 @@ export default function AdminDashboardPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -273,8 +308,10 @@ export default function AdminDashboardPage() {
                                     <TableRow key={product.id}>
                                         <TableCell>
                                             <Link href={`/admin/edit-product/${product.id}`} className="flex items-center gap-3 group">
-                                                <div className="relative h-10 w-10 shrink-0">
-                                                    <Image src={product.images[0].imageUrl} alt={product.title} fill className="rounded-md object-contain" />
+                                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border bg-secondary">
+                                                    {product.images[0]?.imageUrl ? (
+                                                        <Image src={product.images[0].imageUrl} alt={product.title} fill className="object-contain" />
+                                                    ) : null}
                                                 </div>
                                                 <span className="font-medium text-sm truncate group-hover:underline">{product.title}</span>
                                             </Link>
@@ -286,6 +323,7 @@ export default function AdminDashboardPage() {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
             )}
@@ -305,6 +343,7 @@ export default function AdminDashboardPage() {
                     </Button>
                 </CardHeader>
                 <CardContent>
+                    <div className="overflow-x-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -314,7 +353,7 @@ export default function AdminDashboardPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {(orders || []).slice(0, 5).map(order => (
+                            {recentOrders.length > 0 ? recentOrders.map(order => (
                                 <TableRow key={order.id} className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
                                     <TableCell>
                                         <div className="font-medium">{order.customerInfo.name}</div>
@@ -325,9 +364,16 @@ export default function AdminDashboardPage() {
                                     </TableCell>
                                     <TableCell className="text-right"><Price price={order.grandTotal} currency="FCA" /></TableCell>
                                 </TableRow>
-                            ))}
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="py-8 text-center text-sm text-muted-foreground">
+                                        Aucune commande pour le moment.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
+                    </div>
                 </CardContent>
             </Card>
         </div>

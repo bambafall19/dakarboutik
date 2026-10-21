@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api-client";
-import { SHIPPING_COSTS } from "@/components/order-summary";
+import { getShippingQuote, type DeliveryMethod } from "@/lib/shipping";
 import { useSiteSettings } from "@/hooks/use-site-data";
 import { findImage } from '@/lib/placeholder-images';
 import { Card } from "./ui/card";
@@ -37,7 +37,7 @@ const formSchema = z.object({
 });
 
 interface CheckoutFormProps {
-    onDeliveryMethodChange: (method: 'dakar' | 'hors-dakar') => void;
+    onDeliveryMethodChange: (method: DeliveryMethod) => void;
 }
 
 export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
@@ -68,7 +68,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   }, [deliveryMethod, onDeliveryMethodChange]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const shippingCost = SHIPPING_COSTS[values.deliveryMethod] || 0;
+    const shippingCost = getShippingQuote(settings, values.deliveryMethod, totalPrice).shippingCost;
     const grandTotal = totalPrice + shippingCost;
     const randomPart = Math.random().toString(36).substring(2, 7);
     const orderId = `DKB-${Date.now()}-${randomPart}`;
@@ -221,7 +221,12 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                         </FormControl>
                         <FormLabel className="m-0 flex-1 font-normal">
                             Dakar intra-muros
-                            <p className="text-xs text-muted-foreground">Livraison sous 24h</p>
+                            <p className="text-xs text-muted-foreground">
+                              Livraison sous 24h ·{' '}
+                              {getShippingQuote(settings, 'dakar', totalPrice).shippingCost === 0
+                                ? 'Offerte'
+                                : `${getShippingQuote(settings, 'dakar', totalPrice).shippingCost.toLocaleString('fr-FR')} FCFA`}
+                            </p>
                         </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0 rounded-xl border border-border/70 p-4 transition has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5">
@@ -230,7 +235,12 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                         </FormControl>
                         <FormLabel className="font-normal flex-1 m-0">
                             Hors Dakar
-                            <p className="text-xs text-muted-foreground">Livraison sous 2 à 3 jours</p>
+                            <p className="text-xs text-muted-foreground">
+                              Livraison sous 2 à 3 jours ·{' '}
+                              {getShippingQuote(settings, 'hors-dakar', totalPrice).shippingCost === 0
+                                ? 'Offerte'
+                                : `${getShippingQuote(settings, 'hors-dakar', totalPrice).shippingCost.toLocaleString('fr-FR')} FCFA`}
+                            </p>
                         </FormLabel>
                       </FormItem>
                     </RadioGroup>

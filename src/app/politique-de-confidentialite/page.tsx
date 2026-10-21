@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
             La présente Politique de Confidentialité décrit la manière dont DakarBoutik collecte, utilise et protège les informations que vous nous fournissez lorsque vous utilisez notre site web.
           </p>
           
-          <h2 className="font-headline text-xl font-bold text-foreground">1. Collecte de l'information</h2>
+          <h2 className="font-headline text-xl font-bold text-foreground">1. Collecte de l&apos;information</h2>
           <p>
             Nous collectons des informations lorsque vous passez une commande sur notre site. Les informations collectées incluent votre nom, votre adresse e-mail, votre numéro de téléphone, et votre adresse de livraison.
           </p>

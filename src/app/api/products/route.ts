@@ -16,7 +16,7 @@ function toProduct(r: any): Product {
     currency: 'FCA',
     brand: r.brand ?? undefined,
     category: r.category ?? '',
-    specs: r.specs ?? {},
+    specs: r.specs && Object.keys(r.specs).length ? r.specs : {},
     stock: Number(r.stock),
     variants: r.variants ?? [],
     status: r.status,

@@ -14,7 +14,7 @@ interface ProductListingProps {
     products: Product[];
     suggestedProducts?: Product[];
     pageTitle: string;
-    category: Category | null;
+    category?: Category | null;
     sortBy: string;
     basePath: string;
     currentQuery: string;

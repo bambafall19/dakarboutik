@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { query, queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -37,10 +37,18 @@ export async function PUT(req: NextRequest) {
   if (!session?.isAdmin) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 });
   const b = await req.json();
   if (!b.id) return NextResponse.json({ error: 'id requis' }, { status: 400 });
+
+  const previous = await queryOne<{ slug: string }>('select slug from categories where id = $1', [b.id]);
+
   const rows = await query(
     'update categories set name=$2, slug=$3, parent_id=$4, "order"=$5, banner_image_url=$6 where id=$1 returning *',
     [b.id, b.name, b.slug, b.parentId ?? null, b.order ?? 0, b.bannerImageUrl ?? null]
   );
+
+  if (previous?.slug && previous.slug !== b.slug) {
+    await query('update products set category = $1 where category = $2', [b.slug, previous.slug]);
+  }
+
   return NextResponse.json(toCategory(rows[0]));
 }
 

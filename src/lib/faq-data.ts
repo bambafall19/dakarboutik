@@ -18,7 +18,7 @@ export const initialFaqItems = [
   {
     order: 4,
     question: "Comment puis-je suivre ma commande ?",
-    answer: "Après avoir passé votre commande, vous recevrez un numéro de commande sur la page de confirmation. Vous pouvez utiliser ce numéro sur notre page de <a href='/suivi' class='underline text-primary'>Suivi de Commande</a> pour voir l'état d'avancement de votre livraison."
+    answer: "Après avoir passé votre commande, vous recevez un numéro de commande sur la page de confirmation. Pour connaître l'avancement de votre livraison, contactez-nous sur <a href='/contact' class='underline text-primary'>WhatsApp</a> ou par téléphone : notre équipe vous répond avec le statut de votre colis."
   },
   {
     order: 5,

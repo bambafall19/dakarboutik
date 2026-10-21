@@ -31,6 +31,7 @@ import {
   Home,
   LayoutGrid,
   Sparkles,
+  Phone,
 } from 'lucide-react';
 
 // Custom WhatsApp icon
@@ -114,6 +115,7 @@ export const Icons = {
   user: User,
   flash: Zap,
   whatsapp: WhatsApp,
+  phone: Phone,
   tiktok: TikTok,
   home: Home,
   layoutGrid: LayoutGrid,

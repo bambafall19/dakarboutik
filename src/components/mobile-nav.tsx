@@ -7,7 +7,7 @@ import type { Category } from '@/lib/types';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import { Headset, Truck, X, Heart, Info, Mail, Sparkles } from 'lucide-react';
+import { Headset, X, Heart, Info, Mail, Sparkles } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { ThemeToggle } from './theme-toggle';
 import { SnowToggleButton } from './snow-toggle-button';
@@ -111,14 +111,6 @@ export function MobileNav({ items, onLinkClick }: MobileNavProps) {
             >
                 <Heart className="h-5 w-5" />
                 Mes favoris
-            </Link>
-            <Link
-                href="/suivi"
-                className="flex items-center gap-4 py-3 text-base font-medium"
-                onClick={onLinkClick}
-            >
-                <Truck className="h-5 w-5" />
-                Suivi de Commande
             </Link>
             <Link
                 href="/sav"

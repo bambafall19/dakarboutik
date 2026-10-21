@@ -32,7 +32,6 @@ import {
   } from '@/components/ui/dropdown-menu';
 import { CategoryForm } from '@/components/admin/category-form';
 import { api } from '@/lib/api-client';
-import { useApiData } from '@/hooks/use-api-data';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -46,6 +45,7 @@ import {
   } from '@/components/ui/alert-dialog';
 import { initialCategories } from '@/lib/category-data';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AdminError } from '@/components/admin/admin-error';
 
 function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Category, level?: number, onEdit: (cat: Category) => void, onDelete: (cat: Category) => void }) {
     const hasSubCategories = category.subCategories && category.subCategories.length > 0;
@@ -60,7 +60,7 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
         <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-              <Button aria-haspopup="true" size="icon" variant="ghost">
+              <Button aria-haspopup="true" size="icon" variant="ghost" aria-label={`Actions pour ${category.name}`}>
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Toggle menu</span>
               </Button>
@@ -68,7 +68,7 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
           <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => onEdit(category)}>Modifier</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => onDelete(category)}>Supprimer</DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => onDelete(category)}>Supprimer</DropdownMenuItem>
           </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -77,14 +77,17 @@ function CategoryRow({ category, level = 0, onEdit, onDelete }: { category: Cate
 }
 
 export default function CategoriesPage() {
-    const { categories, rawCategories, loading } = useCategories();
-    const { refetch } = useApiData<Category[]>('/api/categories');
+    const { categories, rawCategories, loading, error, refetch } = useCategories();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
     const [isSeeding, setIsSeeding] = useState(false);
     
     const { toast } = useToast();
+
+    const handleFormSaved = useCallback(async () => {
+        await refetch();
+    }, [refetch]);
 
     const handleAddClick = useCallback(() => {
         setSelectedCategory(null);
@@ -168,16 +171,16 @@ export default function CategoriesPage() {
         </BreadcrumbList>
       </Breadcrumb>
       
-      <Card>
+      <Card className="rounded-2xl border-border/70">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <CardTitle className="font-headline font-bold">Catégories de produits</CardTitle>
                 <CardDescription>
                     Gérez la structure de votre catalogue de produits.
                 </CardDescription>
             </div>
-            <Button size="sm" onClick={handleAddClick}>
+            <Button size="sm" onClick={handleAddClick} className="w-full sm:w-auto">
                   <PlusCircle className="h-3.5 w-3.5 mr-2" />
                   Ajouter une catégorie
             </Button>
@@ -186,8 +189,10 @@ export default function CategoriesPage() {
         <CardContent>
             {loading ? (
                 <div className="flex justify-center items-center h-48">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
+            ) : error ? (
+                <AdminError description={error.message} onRetry={refetch} />
             ) : categories.length === 0 ? (
                  <Alert>
                     <Info className="h-4 w-4" />
@@ -201,6 +206,7 @@ export default function CategoriesPage() {
                     </AlertDescription>
                 </Alert>
             ) : (
+                <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -216,6 +222,7 @@ export default function CategoriesPage() {
                         {categoryRows}
                     </TableBody>
                 </Table>
+                </div>
             )}
         </CardContent>
       </Card>
@@ -225,13 +232,14 @@ export default function CategoriesPage() {
         onOpenChange={setIsFormOpen}
         category={selectedCategory}
         allCategories={rawCategories}
+        onSaved={handleFormSaved}
       />
       <AlertDialog open={!!categoryToDelete} onOpenChange={(open) => !open && setCategoryToDelete(null)}>
           <AlertDialogContent>
               <AlertDialogHeader>
                   <AlertDialogTitle>Êtes-vous sûr(e)?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Cette action est irréversible. La catégorie "{categoryToDelete?.name}" sera définitivement supprimée.
+                    Cette action est irréversible. La catégorie &quot;{categoryToDelete?.name}&quot; sera définitivement supprimée.
                   </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

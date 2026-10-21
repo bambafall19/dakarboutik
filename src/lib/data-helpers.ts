@@ -2,17 +2,19 @@
 
 import type { Category, Product } from "./types";
 
+type CategoryNode = Category & { children: CategoryNode[] };
+
 /**
  * Builds a nested category tree from a flat array of categories.
  */
 export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] => {
-    const categoryMap: { [key: string]: Category & { children: Category[] } } = {};
-    const topLevelCategories: (Category & { children: Category[] })[] = [];
+    const categoryMap: { [key: string]: CategoryNode } = {};
+    const topLevelCategories: CategoryNode[] = [];
 
     // First pass: create a map of all categories and initialize children array.
     for (const category of rawCategories) {
-        categoryMap[category.id] = { 
-            ...category, 
+        categoryMap[category.id] = {
+            ...category,
             children: [],
         };
     }
@@ -28,7 +30,7 @@ export const buildCategoryHierarchy = (rawCategories: Category[]): Category[] =>
     }
     
     // Recursive function to build the final nested structure.
-    const buildHierarchy = (cats: (Category & { children: Category[] })[]): Category[] => {
+    const buildHierarchy = (cats: CategoryNode[]): Category[] => {
         return cats.map(cat => {
             const { children, ...rest } = cat;
             const subCategories = children.length > 0 ? buildHierarchy(children) : undefined;

@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import type { Category } from '@/lib/types';
 
 interface ActiveFiltersProps {
-  currentCategory: Category | null;
+  currentCategory?: Category | null;
   currentBrands: string[];
   currentPriceRange: [number, number];
   searchQuery: string | null;

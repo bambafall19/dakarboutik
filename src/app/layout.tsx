@@ -1,5 +1,3 @@
-'use client';
-
 import { Lexend, Plus_Jakarta_Sans } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
@@ -7,12 +5,14 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/context/cart-provider';
 import { AuthProvider } from '@/lib/auth-context';
-import { AppShell } from '@/components/app-shell';
+import AppShellServer from '@/components/app-shell-server';
 import { ThemeProvider } from '@/components/theme-provider';
 import { WishlistProvider } from '@/context/wishlist-provider';
-import { useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { SnowProvider } from '@/context/snow-provider';
+import { DataRefreshBridge } from '@/components/data-refresh-bridge';
+import { ContextMenuGuard } from '@/components/context-menu-guard';
+
+export const dynamic = 'force-dynamic';
 
 const lexend = Lexend({
   subsets: ['latin'],
@@ -31,22 +31,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const handleContextmenu = (e: MouseEvent) => {
-      e.preventDefault();
-      toast({
-        title: 'Action non autorisée',
-        description: 'Le contenu de ce site est protégé.',
-      });
-    };
-    document.addEventListener('contextmenu', handleContextmenu);
-    return () => {
-      document.removeEventListener('contextmenu', handleContextmenu);
-    };
-  }, [toast]);
-  
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
@@ -102,8 +86,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <SnowProvider>
               <WishlistProvider>
                 <CartProvider>
-                  <AppShell>{children}</AppShell>
+                  <AppShellServer>{children}</AppShellServer>
+                  <DataRefreshBridge />
                   <Toaster />
+                  <ContextMenuGuard />
                 </CartProvider>
               </WishlistProvider>
             </SnowProvider>

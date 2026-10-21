@@ -1,68 +1,73 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Product, SiteSettings, Category, Banner, SimpleCategory, FaqItem } from '@/lib/types';
-import { getBanners as getStaticBanners } from '@/lib/data';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
+import { withDefaultSettings } from '@/lib/settings-defaults';
 import { useApiData } from './use-api-data';
+import { useSiteDataSeed } from '@/context/site-data-context';
 
 // --- Products ---
 export function useProducts() {
-  const { data, loading, error } = useApiData<Product[]>('/api/products');
+  const { products: seededProducts } = useSiteDataSeed();
+  const { data, loading, error, refetch } = useApiData<Product[]>(
+    '/api/products',
+    [],
+    (seededProducts as Product[]) ?? null
+  );
   const products = useMemo(() => (data || []).filter(p => p.status === 'active'), [data]);
-  return { products, loading, error };
+  return { products, loading, error, refetch };
 }
 
 export function useAdminProducts() {
-  const { data, loading, error } = useApiData<Product[]>('/api/products');
-  return { products: data || [], loading, error };
+  const { data, loading, error, refetch } = useApiData<Product[]>('/api/products');
+  return { products: data || [], loading, error, refetch };
 }
 
 export function useProductsById(id: string) {
-  const { data, loading, error } = useApiData<Product[]>(id ? '/api/products' : null);
+  const { data, loading, error, refetch } = useApiData<Product[]>(id ? '/api/products' : null);
   const product = useMemo(() => (data || []).find(p => p.id === id) || null, [data, id]);
-  return { product, loading, error };
+  return { product, loading, error, refetch };
 }
 
 export function useProductsBySlug(slug: string) {
-  const { data, loading, error } = useApiData<Product>(slug ? `/api/products?slug=${encodeURIComponent(slug)}` : null);
-  return { product: data, loading, error };
+  const { data, loading, error, refetch } = useApiData<Product>(slug ? `/api/products?slug=${encodeURIComponent(slug)}` : null);
+  return { product: data, loading, error, refetch };
 }
 
 // --- Site Settings ---
 export function useSiteSettings() {
-  const { data, loading, error } = useApiData<SiteSettings>('/api/settings');
+  const { settings: seededSettings } = useSiteDataSeed();
+  const { data, loading, error, refetch } = useApiData<SiteSettings>(
+    '/api/settings',
+    [],
+    seededSettings ?? null
+  );
 
-  const defaultSettings: SiteSettings = {
-    id: 'siteConfig',
-    logoUrl: null,
-    announcementMessage1: "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
-    whatsappNumber: '221776384676',
-    supportPhone: '33 123 45 67',
-    supportEmail: 'contact@exemple.com'
-  };
+  const settings = useMemo(() => withDefaultSettings(data), [data]);
 
-  return { settings: data || defaultSettings, loading, error };
+  return { settings, loading, error, refetch };
 }
 
 // --- Banners ---
 export function useBanners() {
-  const { data, loading, error } = useApiData<Banner[]>('/api/banners');
-  const defaultBanners = useMemo(() => getStaticBanners(), []);
-
-  const displayedBanners = useMemo(() => {
-    if (loading) return defaultBanners;
-    if (data && data.length > 0) return data;
-    return defaultBanners;
-  }, [data, defaultBanners, loading]);
-
-  return { banners: displayedBanners, loading, error };
+  const { data, loading, error, refetch } = useApiData<Banner[]>('/api/banners');
+  return { banners: data || [], loading, error, refetch };
 }
 
 // --- Categories ---
 export function useCategories() {
-  const { products, loading: productsLoading } = useProducts();
-  const { data, loading: categoriesLoading, error } = useApiData<Category[]>('/api/categories');
+  const { categories: seededCategories } = useSiteDataSeed();
+  const { products, loading: productsLoading, refetch: refetchProducts } = useProducts();
+  const { data, loading: categoriesLoading, error, refetch: refetchCategories } = useApiData<Category[]>(
+    '/api/categories',
+    [],
+    seededCategories ?? null
+  );
+
+  const refetch = useCallback(async () => {
+    await Promise.all([refetchCategories(), refetchProducts()]);
+  }, [refetchCategories, refetchProducts]);
 
   const rawCategories = useMemo(() => {
     if (!data) return [];
@@ -112,11 +117,12 @@ export function useCategories() {
     simpleCategories,
     loading: categoriesLoading || productsLoading,
     error,
+    refetch,
   };
 }
 
 // --- FAQs ---
 export function useFaqs() {
-  const { data, loading, error } = useApiData<FaqItem[]>('/api/faq');
-  return { faqs: data || [], loading, error };
+  const { data, loading, error, refetch } = useApiData<FaqItem[]>('/api/faq');
+  return { faqs: data || [], loading, error, refetch };
 }

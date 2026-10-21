@@ -10,9 +10,22 @@ import { SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from './icons';
 import { Price } from './price';
+import { OrderChannels } from './order-channels';
+import { useMemo } from 'react';
 
 export function CartDrawer() {
   const { state, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
+
+  const channelItems = useMemo(
+    () =>
+      state.items.map((item) => ({
+        title: item.product.title,
+        quantity: item.quantity,
+        unitPrice: item.product.salePrice ?? item.product.price,
+        options: item.selectedVariants?.map((variant) => variant.value).join(', ') || undefined,
+      })),
+    [state.items]
+  );
 
   return (
     <>
@@ -81,6 +94,13 @@ export function CartDrawer() {
               <Button asChild size="lg" className="w-full rounded-full">
                 <Link href="/checkout">Passer la commande</Link>
               </Button>
+              <OrderChannels
+                items={channelItems}
+                size="sm"
+                whatsappLabel="Commander via WhatsApp"
+                phoneLabel="Commander par téléphone"
+                buttonClassName="h-10 text-sm"
+              />
             </div>
           </SheetFooter>
         </>

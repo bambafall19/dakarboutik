@@ -59,9 +59,10 @@ interface BannerFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   banner?: Banner | null;
+  onSaved?: () => void;
 }
 
-export function BannerForm({ open, onOpenChange, banner }: BannerFormProps) {
+export function BannerForm({ open, onOpenChange, banner, onSaved }: BannerFormProps) {
   const { toast } = useToast();
   
   const [imageFields, setImageFields] = useState<{ url: string; description: string }[]>([]);
@@ -137,12 +138,12 @@ export function BannerForm({ open, onOpenChange, banner }: BannerFormProps) {
             await api.put('/api/banners', { id: banner.id, ...data });
             toast({ title: 'Bannière mise à jour !' });
         } else {
-            // Create
-            const id = slug + '-' + Date.now();
-            await api.post('/api/banners', { id, ...data });
+            // Create (id généré côté serveur)
+            await api.post('/api/banners', data);
             toast({ title: 'Bannière ajoutée !' });
         }
       onOpenChange(false);
+      onSaved?.();
     } catch (error) {
         console.error(error)
         toast({
@@ -209,7 +210,7 @@ export function BannerForm({ open, onOpenChange, banner }: BannerFormProps) {
                               />
                           </div>
                           <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
-                            <Trash className="text-red-500" />
+                            <Trash className="text-destructive" />
                           </Button>
                         </div>
                       ))}
@@ -237,7 +238,7 @@ export function BannerForm({ open, onOpenChange, banner }: BannerFormProps) {
                   name="position"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Position d'affichage</FormLabel>
+                      <FormLabel>Position d&apos;affichage</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                             <SelectTrigger>
@@ -261,7 +262,7 @@ export function BannerForm({ open, onOpenChange, banner }: BannerFormProps) {
                   name="order"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ordre d'affichage</FormLabel>
+                      <FormLabel>Ordre d&apos;affichage</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>

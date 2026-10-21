@@ -14,7 +14,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { CategoryIcons } from './icons';
-import { LayoutGrid, Tag, ArrowRight, Package, Wrench, MessageCircle } from 'lucide-react';
+import { LayoutGrid, Tag, ArrowRight, Wrench, MessageCircle } from 'lucide-react';
 
 interface MainNavProps {
   items: Category[];
@@ -72,15 +72,6 @@ export function MainNav({ items }: MainNavProps) {
             <Link href="/products?on_sale=true">
               <Tag className="h-4 w-4" />
               Promotions
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), pillClass, 'gap-2')}>
-            <Link href="/suivi">
-              <Package className="h-4 w-4" />
-              Suivi
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>

@@ -251,7 +251,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
             <Card className="rounded-2xl border-border/70">
               <CardHeader>
                 <CardTitle className="font-headline font-bold">Images du produit</CardTitle>
-                <FormDescription>Ajoutez une ou plusieurs images pour votre produit. La première image sera l'image principale.</FormDescription>
+                <FormDescription>Ajoutez une ou plusieurs images pour votre produit. La première image sera l&apos;image principale.</FormDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -450,7 +450,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                     <div className="space-y-1 leading-none">
                       <FormLabel>Nouveau produit</FormLabel>
                       <FormDescription>
-                        Cochez cette case pour afficher un badge "NOUVEAU".
+                        Cochez cette case pour afficher un badge &quot;NOUVEAU&quot;.
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -470,8 +470,8 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                     <div className="space-y-1 leading-none">
                       <FormLabel>Meilleure vente</FormLabel>
                       <FormDescription>
-                        Cochez pour inclure dans la section "Meilleures
-                        Ventes".
+                        Cochez pour inclure dans la section &quot;Meilleures
+                        Ventes&quot;.
                       </FormDescription>
                     </div>
                   </FormItem>

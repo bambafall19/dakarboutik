@@ -39,9 +39,10 @@ interface FaqFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   faqItem?: FaqItem | null;
+  onSaved?: () => void;
 }
 
-export function FaqForm({ open, onOpenChange, faqItem }: FaqFormProps) {
+export function FaqForm({ open, onOpenChange, faqItem, onSaved }: FaqFormProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -82,6 +83,7 @@ export function FaqForm({ open, onOpenChange, faqItem }: FaqFormProps) {
             toast({ title: 'Question ajoutée !' });
         }
       onOpenChange(false);
+      onSaved?.();
     } catch (error) {
         console.error(error)
         toast({
@@ -131,7 +133,7 @@ export function FaqForm({ open, onOpenChange, faqItem }: FaqFormProps) {
               name="order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ordre d'affichage</FormLabel>
+                  <FormLabel>Ordre d&apos;affichage</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>

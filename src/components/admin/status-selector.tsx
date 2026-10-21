@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import {
     Select,
     SelectContent,
@@ -14,11 +15,11 @@ import type { Order, OrderStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 export const statusColors: Record<OrderStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    paid: 'bg-blue-100 text-blue-800 border-blue-200',
-    shipped: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    delivered: 'bg-green-100 text-green-800 border-green-200',
-    cancelled: 'bg-red-100 text-red-800 border-red-200',
+    pending: 'bg-accent/15 text-accent-foreground border-accent/30',
+    paid: 'bg-primary/10 text-primary border-primary/20',
+    shipped: 'bg-primary/15 text-primary border-primary/25',
+    delivered: 'bg-primary/20 text-primary border-primary/30',
+    cancelled: 'bg-destructive/10 text-destructive border-destructive/20',
 };
   
 export const statusLabels: Record<OrderStatus, string> = {
@@ -29,10 +30,21 @@ export const statusLabels: Record<OrderStatus, string> = {
       cancelled: 'Annulée',
 }
 
-export function StatusSelector({ order, className }: { order: Order; className?: string }) {
+export function StatusSelector({
+    order,
+    className,
+    onStatusChange,
+}: {
+    order: Order;
+    className?: string;
+    onStatusChange?: (newStatus: OrderStatus) => void;
+}) {
     const { toast } = useToast();
+    const [status, setStatus] = useState<OrderStatus>(order.status);
   
     const handleStatusChange = async (newStatus: OrderStatus) => {
+      const previous = status;
+      setStatus(newStatus);
       try {
         await api.put('/api/orders', { id: order.id, status: newStatus });
 
@@ -40,8 +52,10 @@ export function StatusSelector({ order, className }: { order: Order; className?:
           title: 'Statut mis à jour',
           description: `La commande ${order.orderId} est maintenant "${statusLabels[newStatus]}".`,
         });
+        onStatusChange?.(newStatus);
       } catch (error) {
         console.error(error);
+        setStatus(previous);
         toast({
           variant: 'destructive',
           title: 'Erreur',
@@ -51,14 +65,14 @@ export function StatusSelector({ order, className }: { order: Order; className?:
     };
   
     return (
-      <Select defaultValue={order.status} onValueChange={handleStatusChange}>
-        <SelectTrigger className={cn("h-8 w-[120px] text-xs", statusColors[order.status], className)}>
+      <Select value={status} onValueChange={handleStatusChange}>
+        <SelectTrigger className={cn("h-8 w-[130px] rounded-full text-xs", statusColors[status], className)} aria-label={`Statut de la commande ${order.orderId}`}>
           <SelectValue placeholder="Changer statut" />
         </SelectTrigger>
         <SelectContent>
-          {Object.keys(statusLabels).map((status) => (
-            <SelectItem key={status} value={status}>
-              {statusLabels[status as OrderStatus]}
+          {Object.keys(statusLabels).map((s) => (
+            <SelectItem key={s} value={s}>
+              {statusLabels[s as OrderStatus]}
             </SelectItem>
           ))}
         </SelectContent>

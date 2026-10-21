@@ -42,7 +42,7 @@ const BannerDisplay = ({ banner, isMain }: { banner: Banner; isMain?: boolean })
                     alt={banner.title}
                     data-ai-hint={image.imageHint}
                     fill
-                    sizes="100vw"
+                    sizes="(min-width: 768px) 50vw, 100vw"
                     className="object-cover"
                     priority={isMain && index === 0}
                   />
@@ -63,7 +63,7 @@ const BannerDisplay = ({ banner, isMain }: { banner: Banner; isMain?: boolean })
         alt={banner.title}
         data-ai-hint={image.imageHint}
         fill
-        sizes="100vw"
+        sizes="(min-width: 768px) 50vw, 100vw"
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         priority={isMain}
       />

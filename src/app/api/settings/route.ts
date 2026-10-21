@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query, queryOne } from '@/lib/db';
+import { queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { getSiteSettings } from '@/lib/site-settings-server';
 import type { SiteSettings } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const row = await queryOne<{ data: any }>('select data from settings where id = $1', ['siteConfig']);
-  const data = row?.data ?? {};
-  return NextResponse.json({ id: 'siteConfig', ...data } as SiteSettings);
+  return NextResponse.json((await getSiteSettings()) as SiteSettings);
 }
 
 export async function PUT(req: NextRequest) {
@@ -22,6 +21,5 @@ export async function PUT(req: NextRequest) {
      returning id`,
     [JSON.stringify(data)]
   );
-  const row = await queryOne<{ data: any }>('select data from settings where id = $1', ['siteConfig']);
-  return NextResponse.json({ id: 'siteConfig', ...(row?.data ?? {}) } as SiteSettings);
+  return NextResponse.json((await getSiteSettings()) as SiteSettings);
 }

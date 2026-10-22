@@ -29,7 +29,7 @@ export function PartnerBoutiques({ vendors }: PartnerBoutiquesProps) {
         <div className="relative flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-              Réseau de confiance
+              Réseau de confiance · {activeVendors.length} boutique{activeVendors.length > 1 ? 's' : ''}
             </span>
             <h2
               id="partner-boutiques-title"
@@ -49,7 +49,7 @@ export function PartnerBoutiques({ vendors }: PartnerBoutiquesProps) {
           </div>
         </div>
 
-        <div className="relative mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="relative mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-6">
           {activeVendors.map((vendor) => (
             <div
               key={vendor.id}

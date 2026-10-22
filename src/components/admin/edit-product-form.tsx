@@ -30,6 +30,7 @@ import type { Category, Product, ProductFormData } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api-client';
+import { useAdminVendors } from '@/hooks/use-site-data';
 import { Trash } from 'lucide-react';
 
 function slugify(text: string) {
@@ -55,6 +56,7 @@ const formSchema = z.object({
   specs: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
+  vendorId: z.string().optional(),
 });
 
 interface EditProductFormProps {
@@ -65,6 +67,7 @@ interface EditProductFormProps {
 export function EditProductForm({ categories, product }: EditProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { vendors } = useAdminVendors();
   
   const [specFields, setSpecFields] = useState<{ key: string; value: string }[]>(
     product.specs ? Object.entries(product.specs).map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]
@@ -89,6 +92,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
       isBestseller: product.isBestseller || false,
       metaTitle: product.metaTitle || '',
       metaDescription: product.metaDescription || '',
+      vendorId: product.vendorId || '',
     },
   });
 
@@ -189,6 +193,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
         specs: specsObject,
         metaTitle: values.metaTitle,
         metaDescription: values.metaDescription,
+        vendorId: values.vendorId || undefined,
       };
 
       await api.put('/api/products', { id: product.id, ...updatedProductData });
@@ -371,6 +376,39 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                 )}
               </div>
             </div>
+
+            <FormField
+              control={form.control}
+              name="vendorId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Boutique partenaire (interne)</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === '__none__' ? '' : value)}
+                    value={field.value || '__none__'}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choisir une boutique" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="__none__">Aucune / DakarBoutik</SelectItem>
+                      {vendors.map((vendor) => (
+                        <SelectItem key={vendor.id} value={vendor.id}>
+                          {vendor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Information interne uniquement. Le client ne voit jamais cette boutique sur la
+                    fiche produit et toutes les commandes WhatsApp restent chez DakarBoutik.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div>
               <FormLabel>Fiche Technique</FormLabel>

@@ -3,6 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { ArrowUpDown } from 'lucide-react';
 
 interface SortDropdownProps {
   sortBy: string;
@@ -22,8 +23,12 @@ export function SortDropdown({ sortBy, basePath, currentQuery }: SortDropdownPro
 
   return (
     <div className='flex items-center gap-2'>
+      <span className="hidden items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground sm:inline-flex">
+        <ArrowUpDown className="h-3.5 w-3.5" />
+        Trier
+      </span>
       <Select value={sortBy} onValueChange={handleSortChange}>
-        <SelectTrigger className='h-10 w-auto rounded-full border-border/70 bg-card text-sm md:w-[200px]'>
+        <SelectTrigger className='h-11 w-full rounded-full border-border/70 bg-background text-sm font-semibold shadow-sm transition hover:border-primary/40 md:w-[210px]'>
           <SelectValue placeholder="Trier par..." />
         </SelectTrigger>
         <SelectContent className="rounded-xl">

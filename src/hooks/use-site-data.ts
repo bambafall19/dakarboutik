@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import type { Product, SiteSettings, Category, Banner, SimpleCategory, FaqItem } from '@/lib/types';
+import type { Product, SiteSettings, Category, Banner, SimpleCategory, FaqItem, Vendor } from '@/lib/types';
 import { buildCategoryHierarchy } from '@/lib/data-helpers';
 import { withDefaultSettings } from '@/lib/settings-defaults';
 import { useApiData } from './use-api-data';
@@ -33,6 +33,17 @@ export function useProductsById(id: string) {
 export function useProductsBySlug(slug: string) {
   const { data, loading, error, refetch } = useApiData<Product>(slug ? `/api/products?slug=${encodeURIComponent(slug)}` : null);
   return { product: data, loading, error, refetch };
+}
+
+// --- Vendors / Boutiques partenaires ---
+export function useVendors() {
+  const { data, loading, error, refetch } = useApiData<Vendor[]>('/api/vendors');
+  return { vendors: data || [], loading, error, refetch };
+}
+
+export function useAdminVendors() {
+  const { data, loading, error, refetch } = useApiData<Vendor[]>('/api/vendors?all=1');
+  return { vendors: data || [], loading, error, refetch };
 }
 
 // --- Site Settings ---

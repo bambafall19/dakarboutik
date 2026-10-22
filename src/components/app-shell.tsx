@@ -5,7 +5,7 @@ import { Footer } from '@/components/footer';
 import { useSiteSettings, useCategories } from '@/hooks/use-site-data';
 import { HeaderWrapper } from './header-wrapper';
 import { usePathname } from 'next/navigation';
-import { Sheet, SheetContent } from './ui/sheet';
+import { Sheet, SheetContent, SheetDescription } from './ui/sheet';
 import { MobileNav } from './mobile-nav';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SearchSheet } from './search-sheet';
@@ -69,25 +69,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onSearchClick={handleSearchClick}
         />
         <main id="main-content">
-            <div className="pb-24 md:pb-0">
+            <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
                 {children}
             </div>
         </main>
-        <Footer settings={settings} />
+        <div className="hidden md:block">
+          <Footer settings={settings} />
+        </div>
         <WhatsAppButton />
         <CookieConsentBanner />
         <ClientOnly>
           <div className="md:hidden">
             <MobileBottomNav 
               onMenuClick={() => setIsMobileMenuOpen(true)} 
-              onSearchClick={handleSearchClick}
             />
           </div>
         </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="w-full max-w-sm flex flex-col p-0">
-            <MobileNav items={categories} onLinkClick={() => setIsMobileMenuOpen(false)} />
+            <SheetDescription className="sr-only">
+              Menu principal : raccourcis boutique, catégories, support et informations légales.
+            </SheetDescription>
+            <MobileNav items={categories} settings={settings} onLinkClick={() => setIsMobileMenuOpen(false)} />
         </SheetContent>
       </Sheet>
       <SearchSheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen} />

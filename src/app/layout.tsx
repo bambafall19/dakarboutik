@@ -55,6 +55,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body
+        suppressHydrationWarning
         className={cn(
           'relative h-full font-body antialiased',
           lexend.variable,

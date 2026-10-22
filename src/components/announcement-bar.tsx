@@ -43,7 +43,7 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
   }
 
   return (
-    <div className="relative overflow-hidden bg-nav text-nav-foreground">
+    <div className="relative overflow-hidden bg-nav pt-[env(safe-area-inset-top)] text-nav-foreground">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
       <div className="container flex h-9 items-center justify-between gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-2">

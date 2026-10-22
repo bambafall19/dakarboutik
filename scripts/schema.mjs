@@ -148,6 +148,59 @@ const statements = [
     is_read boolean not null default false,
     created_at timestamptz not null default now()
   )`,
+
+  // ── Marketplace: Boutiques Virtuelles (Vendors) ───────────────────────────
+  `create table if not exists vendors (
+    id          text primary key,
+    slug        text not null unique,
+    name        text not null,
+    description text,
+    logo_url    text,
+    banner_url  text,
+    owner_id    uuid,
+    city        text not null default 'Dakar',
+    rating      numeric(3,2) not null default 0,
+    review_count integer not null default 0,
+    is_verified boolean not null default false,
+    is_active   boolean not null default true,
+    created_at  timestamptz not null default now()
+  )`,
+  `create unique index if not exists vendors_slug_idx on vendors (slug)`,
+
+  // Link products to vendors
+  `alter table products add column if not exists vendor_id text references vendors(id)`,
+  `alter table products add column if not exists wholesale_tiers jsonb not null default '[]'::jsonb`,
+
+  // Verified purchase reviews
+  `alter table reviews add column if not exists order_id text`,
+  `alter table reviews add column if not exists is_verified_purchase boolean not null default false`,
+
+  // ── Marketplace: Points Relais ────────────────────────────────────────────
+  `create table if not exists relay_points (
+    id        text primary key,
+    name      text not null,
+    address   text not null,
+    zone      text not null,
+    lat       numeric(10,7),
+    lng       numeric(10,7),
+    is_active boolean not null default true
+  )`,
+
+  // ── Marketplace: Programme de Fidélité ───────────────────────────────────
+  `create table if not exists loyalty_points (
+    id         text primary key,
+    user_id    uuid,
+    points     integer not null default 0,
+    reason     text not null default '',
+    order_id   text,
+    created_at timestamptz not null default now()
+  )`,
+  `create index if not exists loyalty_user_idx on loyalty_points (user_id)`,
+
+  // Extend orders with zone_id for granular delivery
+  `alter table orders add column if not exists zone_id text`,
+  `alter table orders add column if not exists vendor_id text`,
+  `alter table public_orders add column if not exists zone_id text`,
 ];
 
 for (const stmt of statements) {

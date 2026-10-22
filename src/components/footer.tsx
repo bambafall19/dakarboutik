@@ -25,6 +25,11 @@ const footerLinks = {
     { name: 'PC & Portables', href: '/products?category=informatique' },
     { name: 'Promotions', href: '/products?on_sale=true' },
   ],
+  'Commandes & livraison': [
+    { name: 'Suivi de commande', href: '/contact' },
+    { name: 'Livraison & délais', href: '/sav' },
+    { name: 'Modes de paiement', href: '/faq' },
+  ],
   Support: [
     { name: 'À propos', href: '/a-propos' },
     { name: 'Contact', href: '/contact' },

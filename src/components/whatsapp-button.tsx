@@ -32,7 +32,7 @@ export function WhatsAppButton() {
                         href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="fixed bottom-24 md:bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110"
+                        className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 md:bottom-6"
                     >
                         <Icons.whatsapp className="h-8 w-8" />
                         <span className="sr-only">Contactez-nous sur WhatsApp</span>

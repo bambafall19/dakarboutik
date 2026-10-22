@@ -5,19 +5,22 @@ import { FeaturedCategories } from '@/components/featured-categories';
 import { PromoBanners } from '@/components/promo-banners';
 import { Engagements } from '@/components/engagements';
 import { Icons } from '@/components/icons';
-import { getProducts, getBanners, getCategories as getRawCategories } from '@/lib/data-firebase';
+import { SeasonalEvents } from '@/components/seasonal-events';
+import { getProducts, getBanners, getCategories as getRawCategories, getVendors } from '@/lib/data-firebase';
 import { RecentProductsGrid } from '@/components/recent-products-grid';
 import { getCategoriesWithCounts } from '@/lib/data-helpers';
 import { getNewProducts } from '@/lib/product-freshness';
+import { PartnerBoutiques } from '@/components/partner-boutiques';
 import { Star, Tag } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [allProducts, allBanners, rawCategories] = await Promise.all([
+  const [allProducts, allBanners, rawCategories, vendors] = await Promise.all([
     getProducts(),
     getBanners(),
     getRawCategories(),
+    getVendors(),
   ]);
 
   const categories = getCategoriesWithCounts(rawCategories, allProducts);
@@ -34,7 +37,9 @@ export default async function HomePage() {
       
       <main className="flex flex-col gap-10 md:gap-12 lg:gap-14 py-6">
         <FeaturedCategories categories={categories} />
-        
+
+        <PartnerBoutiques vendors={vendors} />
+
         {newProducts.length > 0 && (
           <div className="container">
             <ProductGrid 
@@ -50,6 +55,8 @@ export default async function HomePage() {
         )}
         
         <PromoBanners banners={allBanners} loading={false} />
+
+        <SeasonalEvents />
 
         {bestsellers.length > 0 && (
            <div className="container">
@@ -80,7 +87,7 @@ export default async function HomePage() {
         )}
 
         <RecentProductsGrid />
-        
+
         <Engagements />
 
       </main>

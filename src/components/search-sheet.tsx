@@ -3,10 +3,9 @@
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Icons } from './icons';
-import { Button } from './ui/button';
 import { useRecentProducts } from '@/hooks/use-recent-products';
 import { ProductCard } from './product-card';
 import { ScrollArea } from './ui/scroll-area';
@@ -71,6 +70,9 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="p-0 gap-0 top-20 translate-y-0 sm:max-w-2xl">
                  <DialogTitle className="sr-only">Panneau de recherche</DialogTitle>
+                 <DialogDescription className="sr-only">
+                     Recherchez un produit par nom, catégorie ou marque.
+                 </DialogDescription>
                 <div className="flex items-center gap-2 border-b p-4">
                     <form onSubmit={handleSearch} className="flex-1 relative">
                         <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -113,6 +115,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                                                     src={image.imageUrl}
                                                                     alt={category.name}
                                                                     fill
+                                                                    sizes="(max-width: 640px) 100vw, 33vw"
                                                                     className="object-cover group-hover:scale-105 transition-transform"
                                                                 />
                                                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">

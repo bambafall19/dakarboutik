@@ -12,6 +12,12 @@ export type ProductVariant = {
   options: ProductVariantOption[];
 };
 
+export type WholesaleTier = {
+  minQty: number;
+  price: number;
+  label: string; // e.g. "Détail" | "Demi-gros" | "Gros"
+};
+
 export type Product = {
   id: string;
   title: string;
@@ -32,6 +38,11 @@ export type Product = {
   description: string;
   metaTitle?: string;
   metaDescription?: string;
+  // Marketplace extensions
+  vendorId?: string;
+  vendorName?: string;
+  vendorSlug?: string;
+  wholesaleTiers?: WholesaleTier[];
 };
 
 export type ProductFormData = Omit<Product, 'id' | 'slug' | 'createdAt' | 'images'> & {
@@ -168,4 +179,56 @@ export type FaqItem = {
   question: string;
   answer: string;
   order: number;
+};
+
+// ── Marketplace: Boutiques Virtuelles ─────────────────────────────────────────
+
+export type Vendor = {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  ownerId?: string;
+  city?: string;
+  rating?: number;
+  reviewCount?: number;
+  isVerified?: boolean;
+  isActive?: boolean;
+  createdAt: string;
+  productCount?: number;
+};
+
+// ── Marketplace: Points Relais ────────────────────────────────────────────────
+
+export type RelayPoint = {
+  id: string;
+  name: string;
+  address: string;
+  zone: string;
+  lat?: number;
+  lng?: number;
+  isActive?: boolean;
+};
+
+// ── Marketplace: Fidélité ─────────────────────────────────────────────────────
+
+export type LoyaltyTransaction = {
+  id: string;
+  userId: string;
+  points: number;
+  reason: string;
+  orderId?: string;
+  createdAt: string;
+};
+
+// ── Marketplace: Zones de Livraison ───────────────────────────────────────────
+
+export type DeliveryZone = {
+  id: string;
+  label: string;
+  cost: number;
+  eta: string;
+  region: 'dakar' | 'hors-dakar';
 };

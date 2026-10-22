@@ -3,17 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutGrid, Search, Heart } from 'lucide-react';
+import { LayoutGrid, Heart } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { Icons } from './icons';
 
 interface MobileBottomNavProps {
     onMenuClick: () => void;
-    onSearchClick: () => void;
 }
 
-export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavProps) {
+export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
   const pathname = usePathname();
   const { totalItems } = useCart();
   const { totalItems: wishlistTotal } = useWishlist();
@@ -21,39 +20,43 @@ export function MobileBottomNav({ onMenuClick, onSearchClick }: MobileBottomNavP
   const navItems = [
     { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
-    { onClick: onSearchClick, label: 'Recherche', icon: Search },
     { href: '/favoris', label: 'Favoris', icon: Heart, isActive: pathname.startsWith('/favoris'), isWishlist: true },
-    { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true },
+    { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true, isActive: pathname.startsWith('/checkout') },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-20 bg-background/80 backdrop-blur-lg border-t">
-        <div className="container h-full">
-            <div className="grid grid-cols-5 h-full items-center">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 h-[calc(5rem+env(safe-area-inset-bottom))] border-t bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
+        <div className="container h-20">
+            <div className="grid grid-cols-4 h-full items-center">
             {navItems.map((item) => {
                 const isActive = item.isActive;
                 const content = (
                     <div
                         className={cn(
-                        'relative flex flex-col items-center justify-center transition-all duration-300 gap-1 h-full w-full',
-                        !isActive && 'text-muted-foreground hover:text-primary'
+                        'relative flex h-full w-full flex-col items-center justify-center gap-1 transition-all duration-300',
+                        !isActive && 'text-muted-foreground'
                         )}
                     >
                         <div className={cn(
-                            "flex items-center justify-center gap-2 h-10 px-4 rounded-full transition-all duration-300",
+                            "flex h-8 w-12 items-center justify-center rounded-full transition-all duration-300",
                             isActive ? "bg-primary text-primary-foreground" : "bg-transparent"
                         )}>
-                            <item.icon className="h-6 w-6 flex-shrink-0" />
-                            {isActive && <span className="text-sm font-medium">{item.label}</span>}
+                            <item.icon className="h-5 w-5 flex-shrink-0" />
                         </div>
+                        <span className={cn(
+                            "text-[10px] font-semibold leading-none",
+                            isActive ? "text-primary" : "text-muted-foreground"
+                        )}>
+                            {item.label}
+                        </span>
 
                         {item.isCart && totalItems > 0 && (
-                        <span className="absolute top-2 right-1/2 translate-x-5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                        <span className="absolute right-[22%] top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                             {totalItems}
                         </span>
                         )}
                         {item.isWishlist && wishlistTotal > 0 && (
-                          <span className="absolute top-2 right-1/2 translate-x-5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                          <span className="absolute right-[22%] top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                             {wishlistTotal}
                           </span>
                         )}

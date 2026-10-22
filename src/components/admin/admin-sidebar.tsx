@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Mail,
   Plus,
+  Store,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,6 +47,7 @@ const menuItems: MenuItem[] = [
       { href: '/admin/categories', label: 'Catégories', icon: Tags },
     ],
   },
+  { href: '/admin/boutiques', label: 'Boutiques', icon: Store },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '/admin/messages', label: 'Messages', icon: Mail },
   { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },

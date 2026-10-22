@@ -66,7 +66,7 @@ function OrderConfirmationContent() {
                         <div className="flex flex-col items-center gap-2 rounded-lg border p-4 bg-muted/50">
                             <p className="text-sm font-semibold">Payez avec :</p>
                             <div className="relative h-10 w-full max-w-sm">
-                                <Image src={paymentMethodsImage.imageUrl} alt="Moyens de paiement" layout="fill" objectFit="contain" />
+                                <Image src={paymentMethodsImage.imageUrl} alt="Moyens de paiement" fill sizes="(max-width: 640px) 100vw, 384px" className="object-contain" />
                             </div>
                         </div>
                     )}

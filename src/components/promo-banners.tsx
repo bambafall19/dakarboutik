@@ -3,11 +3,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
 import type { Banner } from '@/lib/types';
 import { Skeleton } from './ui/skeleton';
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import React from 'react';
 
@@ -49,6 +47,7 @@ const PromoBanner = ({ banner }: { banner: Banner }) => {
                                             alt={banner.title}
                                             data-ai-hint={image.imageHint}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, 50vw"
                                             className="object-cover"
                                         />
                                     </div>
@@ -64,6 +63,7 @@ const PromoBanner = ({ banner }: { banner: Banner }) => {
                         alt={banner.title}
                         data-ai-hint={banner.images[0].imageHint}
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                 </div>

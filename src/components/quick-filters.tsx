@@ -32,36 +32,33 @@ export function QuickFilters() {
   };
 
   return (
-    <div>
-      <h3 className="mb-3 font-headline text-sm font-bold uppercase tracking-wider text-foreground">
-        À la une
-      </h3>
-      <div className="space-y-0.5">
-        {quickLinks.map((link) => {
-          const active = isActive(link.query);
-          return (
-            <Link
-              key={link.label}
-              href={createUrl(link.query)}
-              scroll={false}
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
+      {quickLinks.map((link) => {
+        const active = isActive(link.query);
+        return (
+          <Link
+            key={link.label}
+            href={createUrl(link.query)}
+            scroll={false}
+            className={cn(
+              'group flex items-center gap-3 rounded-2xl border px-3 py-2.5 text-sm font-semibold transition-all duration-300',
+              active
+                ? 'border-primary/30 bg-primary text-primary-foreground shadow-[0_12px_24px_-16px_rgba(11,110,79,0.9)]'
+                : 'border-border/60 bg-background/70 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:bg-card hover:text-foreground hover:shadow-[0_12px_24px_-18px_rgba(16,42,35,0.55)]'
+            )}
+          >
+            <span
               className={cn(
-                'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition',
-                active
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors',
+                active ? 'bg-white/15 text-accent' : 'bg-primary/8 text-primary group-hover:bg-primary/12'
               )}
             >
-              <span className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-lg',
-                active ? 'bg-white/15' : 'bg-secondary text-primary'
-              )}>
-                <link.icon className="h-4 w-4" />
-              </span>
-              <span className="flex-1">{link.label}</span>
-            </Link>
-          );
-        })}
-      </div>
+              <link.icon className="h-4 w-4" />
+            </span>
+            <span className="flex-1 truncate">{link.label}</span>
+          </Link>
+        );
+      })}
     </div>
   );
 }

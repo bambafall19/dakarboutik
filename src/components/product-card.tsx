@@ -49,7 +49,6 @@ export function ProductCard({ product, variant = 'default', accent = 'primary' }
   const discountPct = hasDiscount
     ? Math.round(((product.price - product.salePrice!) / product.price) * 100)
     : 0;
-  const savings = hasDiscount ? product.price - product.salePrice! : 0;
 
   const stockLabel =
     product.stock <= 0 ? 'Épuisé' : product.stock <= 5 ? `Plus que ${product.stock}` : 'En stock';
@@ -60,15 +59,22 @@ export function ProductCard({ product, variant = 'default', accent = 'primary' }
         ? 'bg-accent/15 text-accent-foreground ring-accent/30'
         : 'bg-primary/10 text-primary ring-primary/15';
 
+  const coverImage = product.images?.[0] ?? {
+    id: 'not-found',
+    description: product.title,
+    imageUrl: 'https://placehold.co/600x600?text=DakarBoutik',
+    imageHint: 'placeholder',
+  };
+
   if (variant === 'horizontal') {
     return (
       <Card className="group overflow-hidden rounded-xl transition-all duration-300">
         <Link href={`/products/${product.slug}`} className="flex items-center gap-4">
           <div className="relative h-24 w-24 flex-shrink-0 bg-secondary/30">
             <Image
-              src={product.images[0].imageUrl}
+              src={coverImage.imageUrl}
               alt={product.title}
-              data-ai-hint={product.images[0].imageHint}
+              data-ai-hint={coverImage.imageHint}
               fill
               sizes="100px"
               className="object-contain p-2"
@@ -95,9 +101,9 @@ export function ProductCard({ product, variant = 'default', accent = 'primary' }
       <div className="relative">
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gradient-to-b from-secondary/70 via-background to-secondary/20">
           <Image
-            src={product.images[0].imageUrl}
+            src={coverImage.imageUrl}
             alt={product.title}
-            data-ai-hint={product.images[0].imageHint}
+            data-ai-hint={coverImage.imageHint}
             fill
             className="object-contain p-7 transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -190,11 +196,6 @@ export function ProductCard({ product, variant = 'default', accent = 'primary' }
             currency={product.currency}
             className="font-headline text-lg font-extrabold tracking-tight text-primary"
           />
-          {savings > 0 && (
-            <span className="shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">
-              -{savings.toLocaleString('fr-SN')} F
-            </span>
-          )}
           <Button
             size="icon"
             variant="ghost"

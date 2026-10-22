@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from './icons';
 import { Price } from './price';
@@ -31,6 +31,9 @@ export function CartDrawer() {
     <>
       <SheetHeader>
         <SheetTitle className="font-headline">Mon Panier ({totalItems})</SheetTitle>
+        <SheetDescription className="sr-only">
+          Contenu de votre panier et options de commande.
+        </SheetDescription>
       </SheetHeader>
       {state.items.length > 0 ? (
         <>
@@ -44,6 +47,7 @@ export function CartDrawer() {
                       alt={item.product.title}
                       data-ai-hint={item.product.images[0].imageHint}
                       fill
+                      sizes="80px"
                       className="object-contain p-1"
                     />
                   </div>

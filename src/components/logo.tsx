@@ -30,6 +30,7 @@ export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile =
           src={imageUrl || '/logo.svg'}
           alt="DakarBoutik Logo"
           fill
+          sizes="40px"
           className="object-contain"
           priority
         />

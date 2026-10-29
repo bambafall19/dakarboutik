@@ -61,7 +61,7 @@ export async function computeOrderTotals(items: CartItem[], deliveryMethod: Deli
     const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
     const available = Number(product.stock) > 0 && product.status !== 'draft';
     if (!available) unavailableProductIds.push(product.id);
-    const unit = unitPrice(product as unknown as Product);
+    const unit = unitPrice(toProduct(product));
     subtotal += unit * quantity;
     sanitizedItems.push({
       id: item.id ?? product.id,

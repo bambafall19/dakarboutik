@@ -126,14 +126,14 @@ export function OrderDetailDialog({ order, open, onOpenChange, onUpdated }: Orde
     items.forEach(item => {
       const itemPrice = item.quantity * (item.product.salePrice ?? item.product.price);
       const variantText = item.selectedVariants?.map(v => v.value).join(', ') || '';
-      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''} : ${itemPrice.toLocaleString('fr-SN')} FCA\n`;
+      message += `- ${item.quantity} x ${item.product.title} ${variantText ? `(${variantText})` : ''} : ${itemPrice.toLocaleString('fr-SN')} FCFA\n`;
     });
     message += "\n";
 
     message += `*Résumé du paiement :*\n`;
-    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCA\n`;
-    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCA\n`;
-    message += `*Total à payer : ${grandTotal.toLocaleString('fr-SN')} FCA*\n\n`;
+    message += `Sous-total : ${totalPrice.toLocaleString('fr-SN')} FCFA\n`;
+    message += `Livraison : ${shippingCost.toLocaleString('fr-SN')} FCFA\n`;
+    message += `*Total à payer : ${grandTotal.toLocaleString('fr-SN')} FCFA*\n\n`;
 
     message += `Statut actuel : *${statusLabels[localStatus]}*\n\n`;
 

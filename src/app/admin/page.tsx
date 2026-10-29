@@ -231,7 +231,7 @@ export default function AdminDashboardPage() {
                                         backgroundColor: 'hsl(var(--background))',
                                         borderColor: 'hsl(var(--border))'
                                     }}
-                                    formatter={(value) => new Intl.NumberFormat('fr-SN').format(value as number) + ' FCA'}
+                                    formatter={(value) => new Intl.NumberFormat('fr-SN').format(value as number) + ' FCFA'}
                                 />
                                 <Line type="monotone" dataKey="Total" stroke="hsl(var(--primary))" strokeWidth={2} activeDot={{ r: 8 }} />
                             </LineChart>

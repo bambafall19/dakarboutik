@@ -23,15 +23,15 @@ export function Price({ price, salePrice, currency, className }: PriceProps) {
       {hasSale ? (
         <>
           <span className="font-bold">
-            {formatPrice(salePrice)} FCA
+            {formatPrice(salePrice)} FCFA
           </span>
           <span className="text-sm text-gray-400 line-through">
-            {formatPrice(price)} FCA
+            {formatPrice(price)} FCFA
           </span>
         </>
       ) : (
         <span className="font-bold">
-          {formatPrice(price)} FCA
+          {formatPrice(price)} FCFA
         </span>
       )}
     </div>

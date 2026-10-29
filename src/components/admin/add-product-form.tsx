@@ -291,7 +291,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prix (FCA)</FormLabel>
+                      <FormLabel>Prix (FCFA)</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>

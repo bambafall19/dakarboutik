@@ -86,9 +86,9 @@ export default function OrdersPage() {
       'Adresse',
       'Ville',
       'Méthode Livraison',
-      'Sous-total (FCA)',
-      'Frais Livraison (FCA)',
-      'Total (FCA)',
+      'Sous-total (FCFA)',
+      'Frais Livraison (FCFA)',
+      'Total (FCFA)',
       'Produits',
     ];
 

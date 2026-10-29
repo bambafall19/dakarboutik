@@ -42,7 +42,7 @@ export default function TermsPage() {
 
           <h2 className="font-headline text-xl font-bold text-foreground">3. Tarifs</h2>
           <p>
-            Les prix figurant sur les fiches produits du catalogue internet sont des prix en Francs CFA (FCA) toutes taxes comprises (TTC). DakarBoutik se réserve le droit de modifier ses prix à tout moment, étant toutefois entendu que le prix figurant au catalogue le jour de la commande sera le seul applicable à l’acheteur. Les prix indiqués ne comprennent pas les frais de livraison, facturés en supplément du prix des produits achetés.
+            Les prix figurant sur les fiches produits du catalogue internet sont des prix en Francs CFA (FCFA) toutes taxes comprises (TTC). DakarBoutik se réserve le droit de modifier ses prix à tout moment, étant toutefois entendu que le prix figurant au catalogue le jour de la commande sera le seul applicable à l’acheteur. Les prix indiqués ne comprennent pas les frais de livraison, facturés en supplément du prix des produits achetés.
           </p>
           
           <h2 className="font-headline text-xl font-bold text-foreground">4. Commandes et modalités de paiement</h2>

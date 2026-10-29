@@ -39,7 +39,7 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
   ].filter(Boolean) as string[];
 
   if (announcements.length === 0) {
-    announcements.push('Livraison offerte à Dakar dès 25 000 FCA');
+    announcements.push('Livraison offerte à Dakar dès 25 000 FCFA');
   }
 
   return (

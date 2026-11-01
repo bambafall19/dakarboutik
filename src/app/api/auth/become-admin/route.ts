@@ -8,6 +8,11 @@ export async function POST() {
     return NextResponse.json({ error: 'Non authentifié.' }, { status: 401 });
   }
 
+  // Public merchant registration must never grant the first visitor administrator rights.
+  if (!session.isAdmin && (!process.env.ADMIN_BOOTSTRAP_EMAIL || session.email.toLowerCase() !== process.env.ADMIN_BOOTSTRAP_EMAIL.toLowerCase())) {
+    return NextResponse.json({ error: 'Accès réservé à l’administrateur.' }, { status: 403 });
+  }
+
   const anyAdmin = await queryOne<{ id: string }>('select id from users where is_admin = true limit 1');
   if (anyAdmin && !session.isAdmin) {
     return NextResponse.json({ error: 'Un administrateur existe déjà.' }, { status: 403 });

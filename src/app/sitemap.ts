@@ -1,9 +1,19 @@
 import { MetadataRoute } from 'next';
 import { getProducts, getCategories } from '@/lib/data-firebase';
+import { publicMarketplace } from '@/lib/marketplace-server';
+
+export const dynamic = 'force-dynamic';
  
 const BASE_URL = 'https://dakarboutik.net';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+    if (process.env.MARKETPLACE_ENABLED === 'true') {
+        const { shops } = await publicMarketplace();
+        return [
+            { url: `${BASE_URL}/boutiques`, changeFrequency: 'daily', priority: 1 },
+            ...shops.map(shop => ({ url: `${BASE_URL}/boutiques/${shop.id}`, lastModified: new Date(shop.updated_at), changeFrequency: 'daily' as const, priority: 0.8 })),
+        ];
+    }
     const products = await getProducts();
     const categories = await getCategories();
 

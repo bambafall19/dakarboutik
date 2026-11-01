@@ -48,6 +48,7 @@ const menuItems: MenuItem[] = [
     ],
   },
   { href: '/admin/boutiques', label: 'Boutiques', icon: Store },
+  { href: '/admin/marketplace', label: 'Commerçants et publicités', icon: Store },
   { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
   { href: '/admin/messages', label: 'Messages', icon: Mail },
   { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },

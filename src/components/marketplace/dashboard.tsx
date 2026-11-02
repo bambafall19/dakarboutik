@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { authClient } from "@/lib/auth/client";
 import { MarketplaceNav } from "./catalog";
+import { PhotoField } from "./photo-field";
 import {
   availabilityLabels,
   statusLabels,
@@ -112,7 +113,9 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   const [listings, setListings] = useState<Listing[]>([]);
   const [message, setMessage] = useState("");
   const [ready, setReady] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [saving, setBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const busy = saving || photoBusy;
   const [editing, setEditing] = useState<Listing | null>(null);
   const [formKey, setFormKey] = useState(0);
   const reload = useCallback(async () => {
@@ -149,6 +152,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
     };
   }, [user, admin]);
   async function save(body: object) {
+    if (photoBusy) return false;
     setBusy(true);
     setMessage("");
     try {
@@ -416,12 +420,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     label="Horaires d’ouverture"
                     value={shop?.profile.hours}
                   />
-                  <Input
-                    name="image"
-                    label="Lien HTTPS de votre image (facultatif)"
-                    type="url"
-                    value={shop?.profile.image}
-                  />
+                  <PhotoField label="Logo ou photo de la boutique (facultatif)" value={shop?.profile.image} disabled={busy} onBusy={setPhotoBusy} />
                 </div>
                 <label className="block">
                   Présentation
@@ -483,12 +482,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                       value={editing?.details.category || shop.profile.category}
                       required
                     />
-                    <Input
-                      name="image"
-                      type="url"
-                      label="Lien HTTPS de la photo"
-                      value={editing?.details.image}
-                    />
+                    <PhotoField label="Photo du produit" value={editing?.details.image} disabled={busy} onBusy={setPhotoBusy} />
                   </div>
                   <label className="block">
                     Description
@@ -526,6 +520,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                   {editing && (
                     <button
                       type="button"
+                      disabled={busy}
                       className="ml-4 underline"
                       onClick={() => setEditing(null)}
                     >
@@ -571,7 +566,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                         )}
                       </select>
                     </label>
-                    <button className="underline" onClick={() => setEditing(l)}>
+                    <button disabled={busy} className="underline" onClick={() => setEditing(l)}>
                       Modifier
                     </button>
                   </article>

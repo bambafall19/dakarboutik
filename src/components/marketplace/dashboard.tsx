@@ -195,7 +195,14 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   return (
     <>
       <MarketplaceNav />
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main
+        className="min-h-screen bg-amber-50 text-slate-900"
+        style={{
+          backgroundImage: "radial-gradient(ellipse at 0% 0%, #a7f3d0 0%, transparent 48%), radial-gradient(ellipse at 100% 12%, #fde68a 0%, transparent 42%), radial-gradient(ellipse at 95% 90%, #fecaca 0%, transparent 38%), linear-gradient(145deg, #f0fdf4, #fffbeb 55%, #fff1f2)",
+          backgroundSize: "100% 100vh",
+          backgroundRepeat: "repeat-y",
+        }}
+      >
         <div className="container space-y-8 py-10">
           <h1 className="text-3xl font-bold">
             {admin ? "Validation et publicités" : "Mon espace boutique"}

@@ -16,8 +16,8 @@ export function MarketplaceNav() {
         className="container flex flex-wrap items-center justify-between gap-4 py-5"
         aria-label="Navigation DakarBoutik"
       >
-        <Link className="text-2xl font-bold text-emerald-800" href="/boutiques">
-          DakarBoutik
+        <Link className="inline-flex items-center" href="/boutiques" aria-label="DakarBoutik — accueil">
+          <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={96} height={96} className="h-20 w-20 object-contain sm:h-24 sm:w-24" />
         </Link>
         <div className="flex flex-wrap gap-5 text-sm">
           <Link href="/boutiques">Boutiques et produits</Link>
@@ -127,7 +127,7 @@ export function MarketplaceCatalog({
     <>
       <MarketplaceNav />
       <main className="min-h-screen bg-yellow-50/40 text-slate-900">
-        <section className="border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-950 to-emerald-800 text-white">
+        <section className="border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-700 to-green-700 text-white">
           <div className="container py-14 md:py-20">
             <p className="mb-4 text-sm uppercase tracking-widest text-emerald-200">
               Les boutiques physiques prennent leur place en ligne

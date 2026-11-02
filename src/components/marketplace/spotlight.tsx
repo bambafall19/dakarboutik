@@ -38,7 +38,7 @@ export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: numbe
         </div>
       </section>
 
-      <section id="actualites" aria-labelledby="news-title" className="scroll-mt-6 overflow-hidden rounded-2xl border-t-8 border-yellow-400 bg-emerald-950 text-white">
+      <section id="actualites" aria-labelledby="news-title" className="scroll-mt-6 overflow-hidden rounded-2xl border-t-8 border-yellow-400 bg-emerald-700 text-white">
         <div className="grid gap-6 p-6 md:grid-cols-[1fr_2fr] md:p-8">
           <div className="border-b border-emerald-700 pb-6 md:border-b-0 md:border-r md:pb-0 md:pr-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-200">Actualité · Sport au Sénégal</p>

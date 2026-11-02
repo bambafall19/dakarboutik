@@ -90,6 +90,13 @@ export function ListingCard({
             timeZone: "Africa/Dakar",
           })}
         </p>
+        <Link
+          className="flex items-center justify-center gap-2 rounded-xl border border-emerald-700 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          href={`/boutiques/${shop.id}`}
+        >
+          <Store className="h-5 w-5 shrink-0" aria-hidden="true" />
+          Voir tous les produits de cette boutique
+        </Link>
         {p.availability !== "sold_out" && (
           <a
             className="inline-flex rounded-full bg-emerald-800 px-4 py-3 text-sm font-semibold text-white"

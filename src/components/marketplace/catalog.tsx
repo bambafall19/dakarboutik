@@ -16,6 +16,7 @@ import {
   contactUrl,
   isSponsored,
   isProductUrl,
+  normalizeMarketplaceText,
   type Shop,
   type Listing,
 } from "@/lib/marketplace-model";
@@ -115,15 +116,20 @@ export function MarketplaceCatalog({
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
-  const categories = Array.from(new Set([...featuredCategories.map((c) => c.name), ...shops.map((s) => s.profile.category), ...listings.map((l) => l.details.category)])).sort();
-  const term = search.trim().toLocaleLowerCase("fr");
+  const categoryLabels = new Map<string, string>();
+  for (const name of [...featuredCategories.map(c => c.name), ...shops.map(s => s.profile.category), ...listings.map(l => l.details.category)]) {
+    const key = normalizeMarketplaceText(name);
+    if (key && !categoryLabels.has(key)) categoryLabels.set(key, name.trim());
+  }
+  const categories = Array.from(categoryLabels.values()).sort((a, b) => a.localeCompare(b, "fr"));
+  const categoryKey = normalizeMarketplaceText(category);
+  const term = normalizeMarketplaceText(search);
   const matchingShops = shops.filter(
     (s) =>
       (!city || s.profile.city === city) &&
-      (!category || s.profile.category === category) &&
+      (!category || normalizeMarketplaceText(s.profile.category) === categoryKey) &&
       (!term ||
-        `${s.profile.name} ${s.profile.description} ${s.profile.district}`
-          .toLocaleLowerCase("fr")
+        normalizeMarketplaceText(`${s.profile.name} ${s.profile.description} ${s.profile.district} ${s.profile.city} ${s.profile.category}`)
           .includes(term)),
   );
   const matchingListings = listings.filter((l) => {
@@ -132,11 +138,10 @@ export function MarketplaceCatalog({
       s &&
       (!city || s.profile.city === city) &&
       (!category ||
-        l.details.category === category ||
-        s.profile.category === category) &&
+        normalizeMarketplaceText(l.details.category) === categoryKey ||
+        normalizeMarketplaceText(s.profile.category) === categoryKey) &&
       (!term ||
-        `${l.details.title} ${l.details.description} ${s.profile.name}`
-          .toLocaleLowerCase("fr")
+        normalizeMarketplaceText(`${l.details.title} ${l.details.description} ${l.details.category} ${s.profile.name} ${s.profile.category} ${s.profile.city} ${s.profile.district}`)
           .includes(term))
     );
   });

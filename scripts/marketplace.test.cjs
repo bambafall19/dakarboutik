@@ -27,6 +27,7 @@ function load(file, dependencies) {
   const code = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
+      esModuleInterop: true,
       target: ts.ScriptTarget.ES2022,
     },
   }).outputText;
@@ -214,5 +215,52 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
     assert.equal((await (await get()).json()).shops[0].status, "suspended");
   } finally {
     await db.close();
+  }
+});
+
+test("Photo upload requires owner session, validates content, strips metadata and limits storage", async () => {
+  let session = null;
+  let shop = { id: "shop-owner", status: "pending" };
+  let uploaded = null;
+  let count = 0;
+  const sharp = require("sharp");
+  const previous = process.env.BLOB_STORE_ID;
+  process.env.BLOB_STORE_ID = "test-only";
+  const api = load("src/app/api/marketplace/photos/route.ts", {
+    "@/lib/auth": { getSession: async () => session },
+    "@/lib/db": { queryOne: async (_, values) => { assert.equal(values[0], "owner"); return shop; } },
+    "@vercel/blob": {
+      list: async ({ prefix }) => { assert.equal(prefix, "marketplace/shop-owner/"); return { blobs: Array(count).fill({}), hasMore: false }; },
+      put: async (pathname, bytes, options) => { uploaded = { pathname, bytes, options }; return { url: "https://store.public.blob.vercel-storage.com/photo.webp" }; },
+    },
+  });
+  const request = (bytes, type = "image/png", origin = "https://shop.test") => {
+    const data = new FormData(); data.set("photo", new Blob([bytes], { type }), "photo.png");
+    return new NextRequest("https://shop.test/api/marketplace/photos", { method: "POST", headers: { origin }, body: data });
+  };
+  try {
+    const png = await sharp({ create: { width: 2000, height: 1000, channels: 3, background: "green" } }).png().withMetadata().toBuffer();
+    assert.equal((await api.POST(request(png))).status, 401);
+    session = { uid: "owner" };
+    assert.equal((await api.POST(request(png, "image/png", "https://foreign.test"))).status, 403);
+    shop.status = "suspended";
+    assert.equal((await api.POST(request(png))).status, 403);
+    shop = null;
+    assert.equal((await api.POST(request(png))).status, 403);
+    shop = { id: "shop-owner", status: "pending" };
+    assert.equal((await api.POST(request("<svg></svg>", "image/svg+xml"))).status, 400);
+    assert.equal((await api.POST(request("not an image"))).status, 400);
+    assert.equal((await api.POST(request(Buffer.alloc(3 * 1024 * 1024 + 1)))).status, 413);
+    assert.equal(uploaded, null);
+    assert.equal((await api.POST(request(png))).status, 201);
+    assert.match(uploaded.pathname, /^marketplace\/shop-owner\/.+\.webp$/);
+    assert.equal(uploaded.options.access, "public");
+    const metadata = await sharp(uploaded.bytes).metadata();
+    assert.equal(metadata.format, "webp"); assert.equal(metadata.width, 1600); assert.equal(metadata.exif, undefined);
+    count = 100; uploaded = null;
+    assert.equal((await api.POST(request(png))).status, 409);
+    assert.equal(uploaded, null);
+  } finally {
+    if (previous === undefined) delete process.env.BLOB_STORE_ID; else process.env.BLOB_STORE_ID = previous;
   }
 });

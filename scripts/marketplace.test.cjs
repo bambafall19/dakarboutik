@@ -92,6 +92,7 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
     };
     const details = {
       title: "Produit test",
+      productUrl: "https://boutique.example/produits/onduleur",
       description: "Description de test",
       category: "Mode",
       price: 1000,
@@ -134,6 +135,8 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
     );
     assert.equal((await post({ action: "listing", details })).status, 200);
     const listingA = (await (await get()).json()).listings[0];
+    assert.equal(listingA.details.productUrl, details.productUrl);
+    assert.equal((await post({ action: "listing", id: listingA.id, details: { ...details, productUrl: "javascript:alert(1)" } })).status, 400);
     session = { uid: "merchant-b", isAdmin: false };
     await post({
       action: "shop",
@@ -169,6 +172,7 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
       status: "approved",
     });
     assert.equal((await catalog.publicMarketplace()).listings.length, 1);
+    assert.equal((await catalog.publicMarketplace()).listings[0].details.productUrl, details.productUrl);
     const visible = (await catalog.publicMarketplace()).shops[0];
     assert.equal("owner_id" in visible, false);
     assert.equal(
@@ -262,5 +266,16 @@ test("Photo upload requires owner session, validates content, strips metadata an
     assert.equal(uploaded, null);
   } finally {
     if (previous === undefined) delete process.env.BLOB_STORE_ID; else process.env.BLOB_STORE_ID = previous;
+  }
+});
+
+test("Optional external product links preserve older listings and reject unsafe URLs", () => {
+  const { listingSchema, isProductUrl } = load("src/lib/marketplace-model.ts", {});
+  const details = { title: "Onduleur", description: "Un onduleur solaire", category: "Solaire", price: 150000, image: "", availability: "available" };
+  assert.equal(listingSchema.safeParse(details).success, true);
+  for (const productUrl of ["", "https://example.com/produit?id=1"]) assert.equal(listingSchema.safeParse({ ...details, productUrl }).success, true);
+  for (const productUrl of ["javascript:alert(1)", "http://example.com", "https://user:password@example.com", "not a link"]) {
+    assert.equal(listingSchema.safeParse({ ...details, productUrl }).success, false);
+    assert.equal(isProductUrl(productUrl), false);
   }
 });

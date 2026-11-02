@@ -279,3 +279,12 @@ test("Optional external product links preserve older listings and reject unsafe 
     assert.equal(isProductUrl(productUrl), false);
   }
 });
+
+test("Marketplace filters match category case, accents and spacing", () => {
+  const { normalizeMarketplaceText: normalize } = load("src/lib/marketplace-model.ts", {});
+  assert.equal(normalize(" SOLAIRE "), normalize("Solaire"));
+  assert.equal(normalize("Téléphones"), normalize("TELEPHONES"));
+  assert.equal(normalize("  Onduleur   hybride 5KW "), "onduleur hybride 5kw");
+  assert.ok(normalize("Onduleur hybride 5KW SOLAIRE MMD TECH Dakar MBAO").includes(normalize("solaire")));
+  assert.notEqual(normalize("Solaire"), normalize("Maison"));
+});

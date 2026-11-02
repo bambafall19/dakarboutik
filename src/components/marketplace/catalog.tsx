@@ -1,6 +1,16 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { Shirt, Smartphone, Sparkles, House, ShoppingBasket, Sun, Store } from "lucide-react";
+
+const featuredCategories = [
+  { name: "Mode", icon: Shirt },
+  { name: "Téléphones", icon: Smartphone },
+  { name: "Beauté", icon: Sparkles },
+  { name: "Maison", icon: House },
+  { name: "Alimentation", icon: ShoppingBasket },
+  { name: "Solaire", icon: Sun },
+];
 import {
   availabilityLabels,
   contactUrl,
@@ -13,7 +23,7 @@ export function MarketplaceNav() {
   return (
     <header className="border-b-4 border-yellow-400 bg-white text-slate-900">
       <nav
-        className="container flex flex-wrap items-center justify-between gap-4 py-5"
+        className="container flex flex-wrap items-center justify-between gap-4 py-2"
         aria-label="Navigation DakarBoutik"
       >
         <Link className="inline-flex items-center" href="/boutiques" aria-label="DakarBoutik — accueil">
@@ -80,7 +90,7 @@ export function ListingCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Contacter le vendeur
+            Demander la disponibilité sur WhatsApp
           </a>
         )}
       </div>
@@ -99,6 +109,7 @@ export function MarketplaceCatalog({
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
+  const categories = Array.from(new Set([...featuredCategories.map((c) => c.name), ...shops.map((s) => s.profile.category), ...listings.map((l) => l.details.category)])).sort();
   const term = search.trim().toLocaleLowerCase("fr");
   const matchingShops = shops.filter(
     (s) =>
@@ -128,28 +139,28 @@ export function MarketplaceCatalog({
       <MarketplaceNav />
       <main className="min-h-screen bg-yellow-50/40 text-slate-900">
         <section className="border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-700 to-green-700 text-white">
-          <div className="container py-14 md:py-20">
-            <p className="mb-4 text-sm uppercase tracking-widest text-emerald-200">
+          <div className="container py-7 md:py-10">
+            <p className="mb-3 text-xs uppercase tracking-widest text-emerald-200">
               Les boutiques physiques prennent leur place en ligne
             </p>
-            <h1 className="max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
-              Découvrez près de vous.
+            <h1 className="max-w-3xl text-3xl font-bold leading-tight md:text-4xl">
+              Vos boutiques à Dakar,
               <br />
-              <span className="text-yellow-300">Achetez auprès du vendeur.</span>
+              <span className="text-yellow-300">leurs nouveautés à portée de main.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg text-emerald-100">
+            <p className="mt-4 max-w-2xl text-base text-emerald-100">
               Nouveautés, produits disponibles et bonnes adresses. Contactez
               directement la boutique par WhatsApp ou rendez-vous sur place.
             </p>
             <Link
               href="/commercant"
-              className="mt-7 inline-block rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
+              className="mt-4 inline-block rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
             >
               Présenter ma boutique
             </Link>
           </div>
         </section>
-        <div className="container space-y-12 py-10">
+        <div className="container space-y-8 py-6">
           <form
             onSubmit={(e) => e.preventDefault()}
             className="grid gap-4 rounded-2xl border bg-white p-5 md:grid-cols-3"
@@ -186,20 +197,49 @@ export function MarketplaceCatalog({
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="">Toutes les catégories</option>
-                {Array.from(
-                  new Set([
-                    ...shops.map((s) => s.profile.category),
-                    ...listings.map((l) => l.details.category),
-                  ]),
-                )
-                  .sort()
-                  .map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
+                {categories.map((c) => <option key={c}>{c}</option>)}
               </select>
             </label>
           </form>
-          {spotlight}
+          <section aria-label="Parcourir par catégorie">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-bold">Qu’est-ce qui vous intéresse ?</h2>
+              {(category || search || city) && <button type="button" onClick={() => { setCategory(""); setSearch(""); setCity(""); }} className="rounded-full border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-800">Effacer les filtres</button>}
+            </div>
+            <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+              {featuredCategories.map(({ name, icon: Icon }) => (
+                <button key={name} type="button" aria-pressed={category === name} onClick={() => setCategory(category === name ? "" : name)} className={`flex min-w-0 flex-col items-center gap-2 rounded-2xl border p-3 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 ${category === name ? "border-emerald-700 bg-emerald-700 text-white" : "border-yellow-200 bg-white text-emerald-900 hover:bg-yellow-100"}`}>
+                  <Icon aria-hidden="true" className="h-7 w-7" /><span className="break-words">{name}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+          <section>
+            <h2 className="mb-2 text-2xl font-bold">
+              Nouveautés des boutiques
+            </h2>
+            <p className="mb-6 text-slate-600">
+              Les annonces les plus récentes. Confirmez le prix et la
+              disponibilité auprès du vendeur.
+            </p>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {matchingListings.map((l) => (
+                <ListingCard
+                  key={l.id}
+                  listing={l}
+                  shop={shops.find((s) => s.id === l.shop_id)!}
+                />
+              ))}
+            </div>
+            {!matchingListings.length && (
+              <div className="rounded-2xl border border-yellow-300 bg-white p-6" role="status">
+                <Store aria-hidden="true" className="mb-3 h-8 w-8 text-emerald-700" />
+                <h3 className="text-lg font-semibold">{listings.length ? "Aucun produit pour ces critères" : "Les premières nouveautés arrivent bientôt"}</h3>
+                <p className="mt-2 text-sm text-slate-600">{listings.length ? "Essayez une autre catégorie ou effacez vos filtres." : "Les produits des boutiques seront présentés ici après validation. Vous êtes commerçant ? Faites découvrir votre sélection."}</p>
+                {!listings.length && <Link href="/commercant" className="mt-4 inline-flex rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950">Inscrire ma boutique →</Link>}
+              </div>
+            )}
+          </section>
           <section>
             <h2 className="mb-6 text-2xl font-bold">
               Les boutiques à découvrir
@@ -253,27 +293,7 @@ export function MarketplaceCatalog({
               </p>
             )}
           </section>
-          <section>
-            <h2 className="mb-2 text-2xl font-bold">
-              Nouveautés des boutiques
-            </h2>
-            <p className="mb-6 text-slate-600">
-              Les annonces les plus récentes. Confirmez le prix et la
-              disponibilité auprès du vendeur.
-            </p>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {matchingListings.map((l) => (
-                <ListingCard
-                  key={l.id}
-                  listing={l}
-                  shop={shops.find((s) => s.id === l.shop_id)!}
-                />
-              ))}
-            </div>
-            {!matchingListings.length && (
-              <p>Aucun produit publié ne correspond à votre recherche.</p>
-            )}
-          </section>
+          {spotlight}
           <footer className="border-t py-6 text-sm text-slate-600">
             DakarBoutik met en relation clients et boutiques. Le paiement, la
             remise du produit et les conditions de vente se conviennent

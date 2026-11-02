@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   availabilityLabels,
@@ -21,6 +21,8 @@ export function MarketplaceNav() {
         </Link>
         <div className="flex flex-wrap gap-5 text-sm">
           <Link href="/boutiques">Boutiques et produits</Link>
+          <Link href="/boutiques#publicite">Publicité</Link>
+          <Link href="/boutiques#actualites">Actualités JOJ</Link>
           <Link href="/commercant">Espace commerçant</Link>
         </div>
       </nav>
@@ -88,9 +90,11 @@ export function ListingCard({
 export function MarketplaceCatalog({
   shops,
   listings,
+  spotlight,
 }: {
   shops: Shop[];
   listings: Listing[];
+  spotlight?: ReactNode;
 }) {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
@@ -195,6 +199,7 @@ export function MarketplaceCatalog({
               </select>
             </label>
           </form>
+          {spotlight}
           <section>
             <h2 className="mb-6 text-2xl font-bold">
               Les boutiques à découvrir

@@ -1,4 +1,5 @@
 
+import { redirect } from 'next/navigation';
 import { HeroSection } from '@/components/hero-section';
 import { ProductGrid } from '@/components/product-grid';
 import { FeaturedCategories } from '@/components/featured-categories';
@@ -16,6 +17,7 @@ import { Star, Tag } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
+  if (process.env.MARKETPLACE_ENABLED === 'true') redirect('/boutiques');
   const [allProducts, allBanners, rawCategories, vendors] = await Promise.all([
     getProducts(),
     getBanners(),

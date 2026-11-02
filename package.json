@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:schema": "node scripts/schema.mjs",
-    "db:seed": "node scripts/seed.mjs"
+    "db:seed": "node scripts/seed.mjs",
+    "test:marketplace": "node --test scripts/marketplace.test.cjs",
+    "db:marketplace": "node scripts/marketplace-migrate.mjs"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.42.0",
@@ -68,6 +70,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.13",
     "@eslint/eslintrc": "^3.3.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

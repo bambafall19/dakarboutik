@@ -34,13 +34,13 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
-        <title>DakarBoutik - Électronique & Smartphones au Sénégal</title>
+        <title>DakarBoutik - Boutiques, nouveautés et disponibilités au Sénégal</title>
         <meta
           name="description"
-          content="Votre boutique en ligne de référence pour les smartphones, accessoires, audio, et PC à Dakar. Qualité, service client et livraison rapide garantis."
+          content="Découvrez les boutiques physiques, leurs nouveautés et les produits disponibles. Contactez directement les commerçants pour acheter."
         />
-        <meta property="og:title" content="DakarBoutik - Électronique & Smartphones au Sénégal" />
-        <meta property="og:description" content="Votre boutique en ligne de référence pour les smartphones, accessoires, audio, et PC à Dakar. Qualité, service client et livraison rapide garantis." />
+        <meta property="og:title" content="DakarBoutik - Les boutiques près de vous" />
+        <meta property="og:description" content="Boutiques physiques, nouveautés et disponibilités : contactez directement le vendeur avec DakarBoutik." />
         <meta property="og:image" content="https://dakarboutik.net/logo.svg" />
         <meta property="og:url" content="https://dakarboutik.net" />
         <meta property="og:type" content="website" />

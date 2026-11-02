@@ -11,7 +11,7 @@ import {
 
 export function MarketplaceNav() {
   return (
-    <header className="border-b bg-white text-slate-900">
+    <header className="border-b-4 border-yellow-400 bg-white text-slate-900">
       <nav
         className="container flex flex-wrap items-center justify-between gap-4 py-5"
         aria-label="Navigation DakarBoutik"
@@ -126,8 +126,8 @@ export function MarketplaceCatalog({
   return (
     <>
       <MarketplaceNav />
-      <main className="min-h-screen bg-slate-50 text-slate-900">
-        <section className="bg-emerald-950 text-white">
+      <main className="min-h-screen bg-yellow-50/40 text-slate-900">
+        <section className="border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-950 to-emerald-800 text-white">
           <div className="container py-14 md:py-20">
             <p className="mb-4 text-sm uppercase tracking-widest text-emerald-200">
               Les boutiques physiques prennent leur place en ligne
@@ -135,7 +135,7 @@ export function MarketplaceCatalog({
             <h1 className="max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
               Découvrez près de vous.
               <br />
-              Achetez auprès du vendeur.
+              <span className="text-yellow-300">Achetez auprès du vendeur.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-emerald-100">
               Nouveautés, produits disponibles et bonnes adresses. Contactez
@@ -143,7 +143,7 @@ export function MarketplaceCatalog({
             </p>
             <Link
               href="/commercant"
-              className="mt-7 inline-block rounded-full bg-white px-6 py-3 font-semibold text-emerald-950"
+              className="mt-7 inline-block rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
             >
               Présenter ma boutique
             </Link>
@@ -216,7 +216,7 @@ export function MarketplaceCatalog({
                       {shop.profile.category}
                     </span>
                     {isSponsored(shop) && (
-                      <span className="rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-900">
+                      <span className="rounded-full bg-yellow-200 px-3 py-1 text-xs text-emerald-950">
                         Sponsorisé
                       </span>
                     )}

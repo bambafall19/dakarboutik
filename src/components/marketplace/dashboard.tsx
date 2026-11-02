@@ -6,6 +6,7 @@ import { MarketplaceNav } from "./catalog";
 import { PhotoField } from "./photo-field";
 import {
   availabilityLabels,
+  isProductUrl,
   statusLabels,
   type Shop,
   type Listing,
@@ -117,6 +118,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   const [photoBusy, setPhotoBusy] = useState(false);
   const busy = saving || photoBusy;
   const [editing, setEditing] = useState<Listing | null>(null);
+  const [productMode, setProductMode] = useState<"new" | "stock">("new");
   const [formKey, setFormKey] = useState(0);
   const reload = useCallback(async () => {
     const r = await fetch(`/api/marketplace${admin ? "?admin=1" : ""}`, {
@@ -310,6 +312,9 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     {shops.find((s) => s.id === l.shop_id)?.profile.name}
                   </h3>
                   <p>{l.details.description}</p>
+                  {isProductUrl(l.details.productUrl) && (
+                    <a href={l.details.productUrl} target="_blank" rel="noopener noreferrer" className="block underline">Vérifier la fiche produit externe ↗</a>
+                  )}
                   <p>
                     {l.details.price} FCFA ·{" "}
                     {availabilityLabels[l.details.availability]} ·{" "}
@@ -439,7 +444,29 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                 </button>
               </form>
               {shop && shop.status !== "suspended" && (
+                <section className="space-y-3 rounded-2xl border bg-white p-6" aria-labelledby="product-menu-title">
+                  <h2 id="product-menu-title" className="text-2xl font-bold">Gérer mes produits</h2>
+                  <label className="block text-sm">Que souhaitez-vous faire ?
+                    <select className={field} disabled={busy} value={editing?.id || productMode}
+                      onChange={e => {
+                        const value = e.target.value;
+                        setEditing(listings.find(l => l.id === value) || null);
+                        setProductMode(value === "stock" ? "stock" : "new");
+                        setFormKey(k => k + 1);
+                      }}>
+                      <option value="new">Ajouter un produit</option>
+                      <option value="stock">Actualiser les disponibilités</option>
+                      {listings.length > 0 && <optgroup label="Modifier un produit existant">
+                        {listings.map(l => <option key={l.id} value={l.id}>{l.details.title} — {l.details.price.toLocaleString("fr-FR")} FCFA</option>)}
+                      </optgroup>}
+                    </select>
+                  </label>
+                  <p className="text-sm text-slate-600">Choisissez un produit pour retrouver ses informations, son prix et sa photo. Un changement de sélection remplace le formulaire en cours.</p>
+                </section>
+              )}
+              {shop && shop.status !== "suspended" && productMode !== "stock" && (
                 <form
+                  id="product-form"
                   key={`${editing?.id || "new"}-${formKey}`}
                   className="space-y-5 rounded-2xl border bg-white p-6"
                   onSubmit={async (e) => {
@@ -483,6 +510,10 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                       required
                     />
                     <PhotoField label="Photo du produit" value={editing?.details.image} disabled={busy} onBusy={setPhotoBusy} />
+                    <div className="space-y-2">
+                      <Input name="productUrl" type="url" label="Lien de la fiche produit sur un autre site (facultatif)" value={editing?.details.productUrl} />
+                      <p className="text-xs text-slate-600">Collez une adresse HTTPS. Ce lien ouvre la fiche externe ; renseignez ici le prix, la description et la photo.</p>
+                    </div>
                   </div>
                   <label className="block">
                     Description
@@ -530,7 +561,8 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                 </form>
               )}
               <section className="space-y-4">
-                <h2 className="text-2xl font-bold">Mes produits</h2>
+                <h2 className="text-2xl font-bold">{productMode === "stock" ? "Actualiser les disponibilités" : "Mes produits"}</h2>
+                {listings.length === 0 && <p className="text-slate-600">Aucun produit pour le moment. Choisissez « Ajouter un produit » dans le menu pour commencer.</p>}
                 {listings.map((l) => (
                   <article
                     key={l.id}
@@ -566,7 +598,10 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                         )}
                       </select>
                     </label>
-                    <button disabled={busy} className="underline" onClick={() => setEditing(l)}>
+                    <button disabled={busy || shop?.status === "suspended"} className="underline" onClick={() => {
+                      setProductMode("new"); setEditing(l); setFormKey(k => k + 1);
+                      requestAnimationFrame(() => document.getElementById("product-form")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+                    }}>
                       Modifier
                     </button>
                   </article>

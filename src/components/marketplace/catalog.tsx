@@ -15,6 +15,7 @@ import {
   availabilityLabels,
   contactUrl,
   isSponsored,
+  isProductUrl,
   type Shop,
   type Listing,
 } from "@/lib/marketplace-model";
@@ -71,6 +72,11 @@ export function ListingCard({
         <p className="whitespace-pre-line text-sm text-slate-600">
           {p.description}
         </p>
+        {isProductUrl(p.productUrl) && (
+          <a href={p.productUrl} target="_blank" rel="noopener noreferrer nofollow ugc" className="block text-sm underline">
+            Voir la fiche produit sur le site externe ↗
+          </a>
+        )}
         <Link
           className="block text-sm underline"
           href={`/boutiques/${shop.id}`}

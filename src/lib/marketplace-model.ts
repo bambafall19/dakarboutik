@@ -31,8 +31,19 @@ export const listingSchema = z.object({
   category: text(80).min(2),
   price: z.coerce.number().finite().min(0).max(1000000000),
   image,
+  productUrl: z.union([
+    z.literal(""),
+    z.string().trim().url().max(2000).refine(isProductUrl, "Utilisez un lien produit HTTPS sans identifiant ni mot de passe."),
+  ]).optional(),
   availability: z.enum(["available", "order", "sold_out"]),
 });
+export function isProductUrl(value?: string): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
+  } catch { return false; }
+}
 export type ShopProfile = z.infer<typeof shopSchema>;
 export type ListingDetails = z.infer<typeof listingSchema>;
 export type ModerationStatus = "pending" | "approved" | "suspended";

@@ -85,3 +85,8 @@ export function contactUrl(shop: Shop, listing?: Listing) {
     : `Bonjour ${shop.profile.name}, je vous contacte via DakarBoutik.`;
   return `https://wa.me/${shop.profile.whatsapp}?text=${encodeURIComponent(message)}`;
 }
+
+// Match user-entered labels independently of case, accents and extra spaces.
+export function normalizeMarketplaceText(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim().replace(/\s+/g, " ");
+}

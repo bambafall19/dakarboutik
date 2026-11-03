@@ -58,13 +58,13 @@ export async function POST(req: NextRequest) {
   const b = await req.json();
   const id = b.id || crypto.randomUUID();
   const rows = await query(
-    `insert into products (id,title,slug,images,price,sale_price,currency,brand,category,specs,stock,variants,status,created_at,is_bestseller,is_new,description,meta_title,meta_description,vendor_id)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+    `insert into products (id,title,slug,images,price,sale_price,currency,brand,category,specs,stock,variants,status,created_at,is_bestseller,is_new,description,meta_title,meta_description${b.vendorId ? ",vendor_id" : ""})
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19${b.vendorId ? ",$20" : ""})
      returning *`,
     [id, b.title, b.slug, JSON.stringify(b.images ?? []), b.price ?? 0, b.salePrice ?? null, 'FCA', b.brand ?? null,
      b.category ?? null, JSON.stringify(b.specs ?? {}), b.stock ?? 0, JSON.stringify(b.variants ?? []), b.status ?? 'active',
      b.createdAt ?? new Date().toISOString(), !!b.isBestseller, !!b.isNew, b.description ?? '', b.metaTitle ?? null, b.metaDescription ?? null,
-     b.vendorId ?? null]
+     ...(b.vendorId ? [b.vendorId] : [])]
   );
   return NextResponse.json(toProduct(rows[0]));
 }

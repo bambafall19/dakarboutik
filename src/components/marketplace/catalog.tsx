@@ -18,6 +18,7 @@ import {
   isSponsored,
   isProductUrl,
   normalizeMarketplaceText,
+  matchesMarketplaceCategory,
   type Shop,
   type Listing,
 } from "@/lib/marketplace-model";
@@ -114,16 +115,20 @@ export function ListingCard({
     </article>
   );
 }
-function OfficialStore() {
+function OfficialStore({ category, search }: { category: string; search: string }) {
   const { products, loading } = useProducts();
-  const selection = products.filter(p => p.status === "active").slice(0, 4);
+  const term = normalizeMarketplaceText(search);
+  const matches = products.filter(p => p.status === "active" && matchesMarketplaceCategory(p, category) &&
+    (!term || normalizeMarketplaceText(`${p.title} ${p.description} ${p.category}`).includes(term)));
+  const selection = category || term ? matches : matches.slice(0, 4);
   return <section aria-labelledby="official-store-title" className="rounded-3xl border border-yellow-300 bg-white p-5 md:p-7">
     <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Vente directe · Vendu par DakarBoutik</p>
     <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-      <h2 id="official-store-title" className="text-2xl font-bold">Boutique officielle DakarBoutik</h2>
+      <h2 id="official-store-title" tabIndex={-1} className="scroll-mt-6 text-2xl font-bold focus:outline-none">{category ? `${category} · Produits DakarBoutik` : "Boutique officielle DakarBoutik"}</h2>
       <Link href="/products" className="rounded-full bg-yellow-300 px-5 py-3 font-semibold text-emerald-950">Tous nos produits →</Link>
     </div>
     <p className="mt-3 text-sm text-slate-600">Électronique, maison, mode et bien plus. Choisissez votre produit, puis commandez avec le panier ou par WhatsApp.</p>
+    {!loading && <p role="status" className="mt-4 text-sm text-slate-600">{matches.length ? `${matches.length} produit(s) DakarBoutik correspondant(s).` : "Aucun produit DakarBoutik ne correspond à ces critères. Retrouvez les partenaires ci-dessous."}</p>}
     {loading ? <p className="mt-5" role="status">Chargement du catalogue…</p> : <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {selection.map(p => <Link key={p.id} href={`/products/${p.slug}`} className="min-w-0 rounded-2xl border p-4 transition-colors hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700">
         {p.images?.[0]?.imageUrl && <img src={p.images[0].imageUrl} alt={p.title} loading="lazy" className="h-40 w-full object-contain" />}
@@ -183,7 +188,7 @@ export function MarketplaceCatalog({
     setCategory(name);
     setSearch("");
     requestAnimationFrame(() => {
-      const heading = document.getElementById("boutiques-resultats");
+      const heading = document.getElementById("official-store-title");
       heading?.focus({ preventScroll: true });
       heading?.scrollIntoView({ block: "start", behavior: "instant" });
     });
@@ -218,7 +223,6 @@ export function MarketplaceCatalog({
           </div>
         </section>
         <div className="container space-y-8 py-6">
-          <OfficialStore />
           <form
             onSubmit={(e) => e.preventDefault()}
             role="search"
@@ -236,7 +240,7 @@ export function MarketplaceCatalog({
               />
             </label>
             <label className="text-sm">
-              Ville
+              Ville des boutiques partenaires
               <select
                 className="mt-2 w-full rounded-lg border p-3"
                 value={city}
@@ -275,9 +279,10 @@ export function MarketplaceCatalog({
               ))}
             </div>
           </section>
+          <OfficialStore category={category} search={search} />
           <section id="nouveautes" className="scroll-mt-6">
             <h2 className="mb-2 text-2xl font-bold">
-              Nouveautés des boutiques
+              Produits des boutiques partenaires
             </h2>
             <p className="mb-6 text-slate-600">
               Les annonces les plus récentes. Confirmez le prix et la

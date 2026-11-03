@@ -23,7 +23,8 @@ import {
   type Listing,
 } from "@/lib/marketplace-model";
 
-export function MarketplaceNav() {
+export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header className="border-b-4 border-yellow-400 bg-white text-slate-900">
       <nav
@@ -33,7 +34,8 @@ export function MarketplaceNav() {
         <Link className="inline-flex items-center" href="/boutiques" aria-label="DakarBoutik — accueil">
           <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={96} height={96} className="h-20 w-20 object-contain sm:h-24 sm:w-24" />
         </Link>
-        <div className="flex flex-wrap gap-5 text-sm">
+        {compact && <button type="button" aria-expanded={menuOpen} aria-controls="marketplace-menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold md:hidden">{menuOpen ? "Fermer" : "Menu"}</button>}
+        <div id="marketplace-menu" className={`${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}>
           <Link href="/boutiques">Boutiques partenaires</Link>
           <Link href="/products" className="font-bold text-emerald-800">Acheter chez DakarBoutik</Link>
           <Link href="/checkout">Mon panier</Link>

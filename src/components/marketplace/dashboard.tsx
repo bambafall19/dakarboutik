@@ -44,6 +44,8 @@ function Input({
 }
 function AuthForm() {
   const [register, setRegister] = useState(false);
+  const [emailLogin, setEmailLogin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const { refresh } = useAuth();
@@ -53,60 +55,59 @@ function AuthForm() {
     setBusy(true);
     setMessage("");
     try {
-      const email = String(data.get("email"));
-      const password = String(data.get("password"));
-      const result = register
-        ? await authClient.signUp.email({
-            email,
-            password,
-            name: String(data.get("name")),
-          })
-        : await authClient.signIn.email({ email, password });
-      if (result.error)
-        throw Error(result.error.message || "Connexion impossible.");
+      const password = String(data.get("password") || "");
+      if (!register && emailLogin) {
+        const result = await authClient.signIn.email({ email: String(data.get("email") || "").trim(), password });
+        if (result.error) throw Error("E-mail ou mot de passe incorrect, ou connexion indisponible. Réessayez.");
+      } else {
+        const response = await fetch("/api/auth/session", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: register ? "register-phone" : "login-phone", phone: data.get("phone"), password, name: data.get("name"), email: data.get("email") || "" }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error || "Connexion impossible.");
+      }
       await refresh();
-      setMessage(
-        register
-          ? "Compte créé. Si un e-mail de vérification est demandé, ouvrez-le pour confirmer votre inscription."
-          : "Connexion effectuée.",
-      );
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Connexion impossible.");
-    } finally {
-      setBusy(false);
-    }
+      setMessage(register ? "Compte créé. Présentez maintenant votre boutique." : "Connexion effectuée.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Connexion impossible.");
+    } finally { setBusy(false); }
   }
-  return (
-    <form
-      onSubmit={submit}
-      className="mx-auto max-w-md space-y-5 rounded-2xl border bg-white p-6"
-    >
-      <h2 className="text-xl font-bold">
-        {register ? "Créer mon compte commerçant" : "Connexion commerçant"}
-      </h2>
-      {register && <Input name="name" label="Votre nom" required />}
-      <Input name="email" label="E-mail" type="email" required />
-      <Input name="password" label="Mot de passe" type="password" required />
-      <button
-        disabled={busy}
-        className="rounded-full bg-emerald-800 px-6 py-3 text-white"
-      >
-        {busy
-          ? "Veuillez patienter…"
-          : register
-            ? "Créer mon compte"
-            : "Se connecter"}
-      </button>
-      <button
-        type="button"
-        className="block text-sm underline"
-        onClick={() => setRegister(!register)}
-      >
-        {register ? "J’ai déjà un compte" : "Créer un compte commerçant"}
-      </button>
-      <p role="status">{message}</p>
-    </form>
-  );
+  function changeMode(next: boolean) {
+    setRegister(next); setMessage(""); setShowPassword(false);
+  }
+  return <section className="mx-auto max-w-md">
+    <p className="mb-5 text-center text-slate-700">Présentez vos produits et recevez les demandes de vos clients.</p>
+    <div className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-sm sm:p-7">
+      <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-emerald-50 p-1" aria-label="Accès commerçant">
+        <button type="button" disabled={busy} aria-pressed={!register} onClick={() => changeMode(false)} className={`rounded-lg px-2 py-3 text-sm font-semibold ${!register ? "bg-emerald-800 text-white" : "text-emerald-900"}`}>Se connecter</button>
+        <button type="button" disabled={busy} aria-pressed={register} onClick={() => changeMode(true)} className={`rounded-lg px-2 py-3 text-sm font-semibold ${register ? "bg-emerald-800 text-white" : "text-emerald-900"}`}>Créer mon compte</button>
+      </div>
+      <h2 className="mb-5 text-xl font-bold">{register ? "Bienvenue chez DakarBoutik" : "Retrouvez votre boutique"}</h2>
+      <form key={`${register}-${emailLogin}`} onSubmit={submit} className="space-y-4" aria-busy={busy}>
+        <fieldset disabled={busy} className="space-y-4">
+          {register && <label className="block text-sm">Votre nom<input className={field} name="name" autoComplete="name" required maxLength={100} /></label>}
+          {(!emailLogin || register) && <label className="block text-sm">Numéro de téléphone<input className={field} name="phone" type="tel" autoComplete="username" inputMode="tel" placeholder="77 123 45 67" required maxLength={25} aria-describedby="phone-help" /><span id="phone-help" className="mt-1 block text-xs text-slate-500">Sénégal : 9 chiffres. Autre pays : ajoutez l’indicatif (+…).</span></label>}
+          {(emailLogin && !register) && <label className="block text-sm">E-mail de votre compte<input className={field} name="email" type="email" autoComplete="username" required /></label>}
+          <label className="block text-sm">Mot de passe
+            <div className="relative"><input className={`${field} pr-24`} name="password" type={showPassword ? "text" : "password"} autoComplete={register ? "new-password" : "current-password"} required minLength={register ? 6 : undefined} maxLength={72} aria-describedby={register ? "password-help" : undefined} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} className="absolute inset-y-0 right-2 px-2 text-sm font-medium text-emerald-800">{showPassword ? "Masquer" : "Afficher"}</button>
+            </div>
+            {register && <span id="password-help" className="mt-1 block text-xs text-slate-500">6 caractères minimum. Vous pouvez choisir un mot de passe plus long.</span>}
+          </label>
+          {register && <details className="text-sm"><summary className="cursor-pointer py-2 text-emerald-800">Ajouter un e-mail (facultatif)</summary><label className="block">E-mail de contact<input className={field} name="email" type="email" autoComplete="email" maxLength={254} /></label><p className="mt-1 text-xs text-slate-500">Pour vous contacter. Votre connexion reste par téléphone.</p></details>}
+          <button disabled={busy} className="w-full rounded-xl bg-emerald-800 px-4 py-3 font-semibold text-white disabled:opacity-60">{busy ? "Veuillez patienter…" : register ? "Créer mon compte" : "Se connecter"}</button>
+        </fieldset>
+        {message && <p role="alert" className="rounded-lg bg-amber-50 p-3 text-sm text-slate-800">{message}</p>}
+      </form>
+      {!register && <button disabled={busy} type="button" onClick={() => { setEmailLogin(!emailLogin); setMessage(""); setShowPassword(false); }} className="mt-4 w-full py-2 text-sm text-emerald-800 underline">{emailLogin ? "Me connecter avec mon téléphone" : "J’ai déjà un compte avec mon e-mail"}</button>}
+      <div className="mt-5 border-t pt-4 text-sm">
+        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221776384676?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." target="_blank" rel="noopener noreferrer">Mot de passe oublié ? Aide WhatsApp ↗</a>
+        <p className="mt-2 text-xs text-slate-500">Notre équipe vérifiera votre demande. Ne communiquez jamais votre mot de passe.</p>
+      </div>
+    </div>
+    {register && <p className="mt-4 text-center text-sm text-slate-600">1. Créez votre compte · 2. Présentez votre boutique · 3. Attendez sa validation</p>}
+  </section>;
 }
 export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   const { user, loading, refresh } = useAuth();
@@ -179,7 +180,8 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   async function logout() {
     setBusy(true);
     try {
-      await authClient.signOut();
+      const response = await fetch("/api/auth/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "logout" }) });
+      if (!response.ok) throw Error("Déconnexion impossible.");
       setShops([]);
       setListings([]);
       setEditing(null);
@@ -194,7 +196,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   }
   return (
     <>
-      <MarketplaceNav />
+      <MarketplaceNav compact />
       <main
         className="min-h-screen bg-amber-50 text-slate-900"
         style={{
@@ -203,20 +205,35 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
           backgroundRepeat: "repeat-y",
         }}
       >
-        <div className="container space-y-8 py-10">
+        <div className="container space-y-5 py-6 sm:py-10">
           <h1 className="text-3xl font-bold">
             {admin ? "Validation et publicités" : "Mon espace boutique"}
           </h1>
           <div className="flex flex-wrap items-center gap-4">
             {user && (
               <>
-                <span className="text-sm">{user.email}</span>
+                <span className="text-sm">{user.phone || user.email}</span>
                 <button className="underline" disabled={busy} onClick={logout}>
                   Se déconnecter
                 </button>
               </>
             )}
           </div>
+          {user?.phone && <details className="max-w-md rounded-xl border bg-white p-4"><summary className="cursor-pointer text-sm font-medium">Modifier mon mot de passe</summary>
+            <form className="mt-4 space-y-3" onSubmit={async e => {
+              e.preventDefault(); const form = e.currentTarget; const data = new FormData(form); setBusy(true); setMessage("");
+              try {
+                const response = await fetch("/api/auth/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "change-phone-password", oldPassword: data.get("oldPassword"), newPassword: data.get("newPassword") }) });
+                const result = await response.json(); if (!response.ok) throw Error(result.error || "Modification impossible.");
+                form.reset(); setMessage("Mot de passe modifié. Les anciennes sessions ont été fermées.");
+              } catch (error) { setMessage(error instanceof Error ? error.message : "Modification impossible."); }
+              finally { setBusy(false); }
+            }}>
+              <label className="block text-sm">Mot de passe actuel<input className={field} type="password" name="oldPassword" autoComplete="current-password" required /></label>
+              <label className="block text-sm">Nouveau mot de passe<input className={field} type="password" name="newPassword" autoComplete="new-password" minLength={6} maxLength={72} required /></label>
+              <button disabled={busy} className="rounded-lg bg-emerald-800 px-4 py-3 text-sm text-white">Enregistrer le nouveau mot de passe</button>
+            </form>
+          </details>}
           <p role="status" className="whitespace-pre-line">
             {message}
           </p>

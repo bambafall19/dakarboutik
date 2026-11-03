@@ -2,6 +2,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
 import { ProductListing } from './product-listing';
@@ -187,6 +188,11 @@ export function ProductListingPage() {
 
   return (
     <div className="container py-4 md:py-8">
+      <section className="mb-6 rounded-2xl border border-yellow-300 bg-yellow-50 p-5 text-slate-900">
+        <h2 className="text-xl font-bold">Boutique officielle DakarBoutik</h2>
+        <p className="mt-2 text-sm">Vendu par DakarBoutik. Ajoutez vos produits au panier pour commander sur le site, ou choisissez WhatsApp sur la fiche produit.</p>
+        <Link href="/boutiques" className="mt-3 inline-block text-sm font-semibold text-emerald-800 underline">Découvrir aussi les boutiques partenaires →</Link>
+      </section>
       {/* Barre mobile : filtres rapides + ouverture des filtres */}
       <div className="mb-4 flex items-center gap-2 lg:hidden">
         <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>

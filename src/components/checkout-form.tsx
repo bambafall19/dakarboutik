@@ -18,7 +18,6 @@ import { api } from "@/lib/api-client";
 import {
   DELIVERY_ZONES,
   getZonesByRegion,
-  getZoneShippingQuote,
   getShippingQuote,
   type DeliveryMethod,
 } from "@/lib/shipping";
@@ -109,7 +108,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   const paymentMethod = form.watch('paymentMethod');
 
   const selectedZone = DELIVERY_ZONES.find((z) => z.id === zoneId);
-  const shippingQuote = getZoneShippingQuote(settings, zoneId, totalPrice);
+  const shippingQuote = getShippingQuote(settings, selectedZone?.region ?? "dakar", totalPrice);
 
   // Keep legacy DeliveryMethod in sync for parent component
   React.useEffect(() => {
@@ -131,7 +130,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   }, [selectedZone, form]);
 
   async function onSubmit(values: FormValues) {
-    const shippingCost = getZoneShippingQuote(settings, values.zoneId, totalPrice).shippingCost;
+    const shippingCost = getShippingQuote(settings, DELIVERY_ZONES.find(z => z.id === values.zoneId)?.region ?? "dakar", totalPrice).shippingCost;
     const grandTotal = totalPrice + shippingCost;
     const randomPart = Math.random().toString(36).substring(2, 7);
     const orderId = `DKB-${Date.now()}-${randomPart}`;
@@ -444,7 +443,7 @@ function ZoneOption({
   settings: any;
 }) {
   const isSelected = field.value === zone.id;
-  const quote = getZoneShippingQuote(settings, zone.id, totalPrice);
+  const quote = getShippingQuote(settings, zone.region, totalPrice);
 
   return (
     <label

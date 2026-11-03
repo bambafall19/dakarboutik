@@ -1,9 +1,6 @@
-'use client';
-
-import Link from 'next/link';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
-import { Skeleton } from './ui/skeleton';
+"use client";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
@@ -13,38 +10,11 @@ interface LogoProps {
   hideTextOnMobile?: boolean;
   inverted?: boolean;
 }
-
-export const Logo = ({ className, onClick, imageUrl, loading, hideTextOnMobile = false, inverted = false }: LogoProps) => {
-  if (loading) {
-    return <Skeleton className="h-10 w-32" />;
-  }
-
-  return (
-    <Link
-      href="/"
-      className={cn('group flex items-center gap-2.5', className)}
-      onClick={onClick}
-    >
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl ring-2 ring-accent/60 ring-offset-2 ring-offset-background transition group-hover:ring-accent">
-        <Image
-          src={imageUrl || '/logo.svg'}
-          alt="DakarBoutik Logo"
-          fill
-          sizes="40px"
-          className="object-contain"
-          priority
-        />
-      </div>
-      <span
-        className={cn(
-          'font-headline text-xl font-extrabold tracking-tight',
-          inverted ? 'text-nav-foreground' : 'text-foreground',
-          hideTextOnMobile && 'hidden sm:inline-block'
-        )}
-      >
-        Dakar<span className={inverted ? 'text-accent' : 'text-primary'}>Boutik</span>
-      </span>
-      <span className="sr-only">DakarBoutik</span>
-    </Link>
-  );
-};
+// One official brand asset across the storefront, marketplace and account pages.
+// Legacy settings props are retained for compatibility, but cannot replace the brand.
+export const Logo = ({ className, onClick, inverted = false }: LogoProps) => (
+  <Link href="/" aria-label="DakarBoutik — accueil" onClick={onClick}
+    className={cn("inline-flex shrink-0 items-center rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700", inverted && "bg-white p-1", className)}>
+    <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={64} height={64} className="h-16 w-16 object-contain" />
+  </Link>
+);

@@ -138,7 +138,9 @@ export function MarketplaceCatalog({
         listings.some(l => l.shop_id === s.id && normalizeMarketplaceText(l.details.category) === categoryKey)) &&
       (!term ||
         normalizeMarketplaceText(`${s.profile.name} ${s.profile.description} ${s.profile.district} ${s.profile.city} ${s.profile.category}`)
-          .includes(term)),
+          .includes(term) || listings.some(l => l.shop_id === s.id &&
+            (!category || normalizeMarketplaceText(s.profile.category) === categoryKey || normalizeMarketplaceText(l.details.category) === categoryKey) &&
+            normalizeMarketplaceText(`${l.details.title} ${l.details.description} ${l.details.category}`).includes(term))),
   );
   const matchingListings = listings.filter((l) => {
     const s = shops.find((s) => s.id === l.shop_id);
@@ -194,6 +196,8 @@ export function MarketplaceCatalog({
         <div className="container space-y-8 py-6">
           <form
             onSubmit={(e) => e.preventDefault()}
+            role="search"
+            aria-label="Rechercher une boutique ou un produit"
             className="grid gap-4 rounded-2xl border bg-white p-5 md:grid-cols-3"
           >
             <label className="text-sm">
@@ -202,6 +206,7 @@ export function MarketplaceCatalog({
                 className="mt-2 w-full rounded-lg border p-3"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                type="search"
                 placeholder="Produit, boutique, quartier…"
               />
             </label>
@@ -276,7 +281,7 @@ export function MarketplaceCatalog({
               {category ? `Les boutiques · ${category}` : "Les boutiques à découvrir"}
             </h2>
             <p className="mb-6 text-sm text-slate-600" role="status">
-              {matchingShops.length} boutique{matchingShops.length > 1 ? "s" : ""} trouvée{matchingShops.length > 1 ? "s" : ""}. Ouvrez une boutique pour découvrir ses produits.
+              {matchingShops.length} boutique{matchingShops.length > 1 ? "s" : ""} trouvée{matchingShops.length > 1 ? "s" : ""}. {matchingShops.length > 0 ? "Ouvrez une boutique pour découvrir ses produits." : "Essayez une autre catégorie ou une autre recherche."}
             </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingShops.map((shop) => (
@@ -297,7 +302,7 @@ export function MarketplaceCatalog({
                   </div>
                   {shop.profile.image && (
                     <img
-                      className="mb-4 h-40 w-full rounded-xl object-cover"
+                      className="mb-4 h-40 w-full rounded-xl bg-slate-50 p-3 object-contain"
                       src={shop.profile.image}
                       alt={shop.profile.name}
                       loading="lazy"
@@ -320,11 +325,12 @@ export function MarketplaceCatalog({
               ))}
             </div>
             {!matchingShops.length && (
-              <p className="rounded-xl border bg-white p-6">
-                {shops.length
+              <div className="space-y-4 rounded-xl border bg-white p-6">
+                <p>{shops.length
                   ? "Aucune boutique ne correspond à ces critères."
-                  : "Les premières boutiques seront affichées après validation."}
-              </p>
+                  : "Les premières boutiques seront affichées après validation."}</p>
+                {(category || search || city) && <button type="button" onClick={() => { setCategory(""); setSearch(""); setCity(""); }} className="rounded-full bg-emerald-800 px-5 py-3 font-semibold text-white">Voir toutes les boutiques</button>}
+              </div>
             )}
           </section>
           {spotlight}

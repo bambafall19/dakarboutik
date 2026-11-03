@@ -155,8 +155,10 @@ export function MarketplaceCatalog({
   return (
     <>
       <MarketplaceNav />
-      <main className="min-h-screen bg-yellow-50/40 text-slate-900">
-        <section className="border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-700 to-green-700 text-white">
+      <main className="marketplace-lively min-h-screen bg-yellow-50/40 text-slate-900">
+        <section className="marketplace-welcome relative isolate overflow-hidden border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-700 to-green-700 text-white">
+          <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border-[28px] border-yellow-300/25 bg-yellow-300/10" />
+          <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -bottom-20 right-1/3 -z-10 h-44 w-44 rounded-full bg-emerald-300/15" />
           <div className="container py-7 md:py-10">
             <p className="mb-3 text-xs uppercase tracking-widest text-emerald-200">
               Les boutiques physiques prennent leur place en ligne
@@ -176,6 +178,7 @@ export function MarketplaceCatalog({
             >
               Présenter ma boutique
             </Link>
+            <a href="#nouveautes" className="ml-0 mt-3 inline-flex rounded-full border border-white/60 px-6 py-3 font-semibold text-white transition-colors hover:bg-white/15 sm:ml-3">Découvrir les nouveautés ↓</a>
           </div>
         </section>
         <div className="container space-y-8 py-6">
@@ -232,7 +235,7 @@ export function MarketplaceCatalog({
               ))}
             </div>
           </section>
-          <section>
+          <section id="nouveautes" className="scroll-mt-6">
             <h2 className="mb-2 text-2xl font-bold">
               Nouveautés des boutiques
             </h2>
@@ -319,6 +322,44 @@ export function MarketplaceCatalog({
           </footer>
         </div>
       </main>
+      <style jsx global>{`
+        .marketplace-lively { background: linear-gradient(135deg, #f0fdf4, #fffbeb 55%, #fff1f2); }
+        .marketplace-welcome .container { animation: marketplace-enter 650ms ease-out both; }
+        .marketplace-lively form { box-shadow: 0 12px 30px -20px #065f4660; }
+        .marketplace-lively article,
+        .marketplace-lively section > .grid > a,
+        .marketplace-lively section[aria-label="Parcourir par catégorie"] button {
+          transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+        }
+        .marketplace-lively article { border-top: 4px solid #34d399; }
+        .marketplace-lively article:nth-child(3n + 2) { border-top-color: #facc15; }
+        .marketplace-lively article:nth-child(3n + 3) { border-top-color: #fb7185; }
+        .marketplace-lively article:focus-within { box-shadow: 0 12px 28px -16px #065f4680; }
+        .marketplace-orb { animation: marketplace-float 4s ease-in-out 1; }
+        @media (hover: hover) {
+          .marketplace-lively article:hover,
+          .marketplace-lively section > .grid > a:hover,
+          .marketplace-lively section[aria-label="Parcourir par catégorie"] button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px -18px #065f4680;
+          }
+        }
+        @keyframes marketplace-enter {
+          from { opacity: 0; transform: translateY(14px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes marketplace-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(18px) rotate(8deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marketplace-lively *, .marketplace-lively *::before, .marketplace-lively *::after {
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

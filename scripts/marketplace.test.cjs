@@ -288,3 +288,18 @@ test("Marketplace filters match category case, accents and spacing", () => {
   assert.ok(normalize("Onduleur hybride 5KW SOLAIRE MMD TECH Dakar MBAO").includes(normalize("solaire")));
   assert.notEqual(normalize("Solaire"), normalize("Maison"));
 });
+
+test("Official solar and phone products map to public categories", () => {
+  const { matchesMarketplaceCategory: match } = load("src/lib/marketplace-model.ts", {});
+  const battery = { title: "Batterie lithium 50 kWh", category: "electricite-energie-and-securite" };
+  const inverter = { title: "Master U-Power Inverseur Chargeur Hybride PMS Top 5000 W", category: "electricite-energie-and-securite" };
+  const phone = { title: "IPhone 16 pro max", category: "electronique-and-technologies" };
+  assert.equal(match(battery, "Solaire"), true);
+  assert.equal(match(inverter, "Solaire"), true);
+  assert.equal(match(phone, "Téléphones"), true);
+  assert.equal(match(phone, "Solaire"), false);
+  assert.equal(match(battery, "Téléphones"), false);
+  assert.equal(match(inverter, "Téléphones"), false);
+  assert.equal(match({ title: "Routeur WiFi", category: "electronique-and-technologies" }, "Téléphones"), false);
+  assert.equal(match(phone, ""), true);
+});

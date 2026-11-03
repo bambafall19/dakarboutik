@@ -90,3 +90,23 @@ export function contactUrl(shop: Shop, listing?: Listing) {
 export function normalizeMarketplaceText(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim().replace(/\s+/g, " ");
 }
+
+export function matchesMarketplaceCategory(product: { title: string; category: string }, category: string) {
+  const key = normalizeMarketplaceText(category);
+  if (!key) return true;
+  const label = normalizeMarketplaceText(product.category).replace(/[-_]/g, " ");
+  if (label === key) return true;
+  const title = normalizeMarketplaceText(product.title);
+  const words: Record<string, string[]> = {
+    solaire: ["solaire", "solaires", "onduleur", "onduleurs", "inverseur", "batterie lithium", "batteries lithium", "photovoltaique"],
+    telephones: ["telephone", "telephones", "telephonie", "smartphone", "smartphones", "iphone", "galaxy", "tecno", "infinix", "redmi", "coque", "chargeur"],
+    mode: ["mode", "vetement", "vetements", "chaussures", "sac", "bijoux", "montre"],
+    beaute: ["beaute", "cosmetique", "parfum", "soins", "maquillage"],
+    maison: ["maison", "meubles", "jardin", "refrigerateur", "linge", "cuisine"],
+    alimentation: ["alimentation", "alimentaire", "epicerie", "boissons"],
+  };
+  const text = ` ${title} ${label} `.replace(/[^a-z0-9 ]/g, " ");
+  // A hybrid inverter charger belongs to solar, not phone chargers.
+  if (key === "telephones" && /onduleur|inverseur/.test(title)) return false;
+  return words[key]?.some(word => text.includes(` ${word} `)) ?? false;
+}

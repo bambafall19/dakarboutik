@@ -1,6 +1,7 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useProducts } from "@/hooks/use-site-data";
 import { Shirt, Smartphone, Sparkles, House, ShoppingBasket, Sun, Store } from "lucide-react";
 
 const featuredCategories = [
@@ -32,7 +33,9 @@ export function MarketplaceNav() {
           <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={96} height={96} className="h-20 w-20 object-contain sm:h-24 sm:w-24" />
         </Link>
         <div className="flex flex-wrap gap-5 text-sm">
-          <Link href="/boutiques">Boutiques et produits</Link>
+          <Link href="/boutiques">Boutiques partenaires</Link>
+          <Link href="/products" className="font-bold text-emerald-800">Acheter chez DakarBoutik</Link>
+          <Link href="/checkout">Mon panier</Link>
           <Link href="/boutiques#publicite">Publicité</Link>
           <Link href="/boutiques#actualites">Actualités JOJ</Link>
           <Link href="/commercant">Espace commerçant</Link>
@@ -110,6 +113,27 @@ export function ListingCard({
       </div>
     </article>
   );
+}
+function OfficialStore() {
+  const { products, loading } = useProducts();
+  const selection = products.filter(p => p.status === "active").slice(0, 4);
+  return <section aria-labelledby="official-store-title" className="rounded-3xl border border-yellow-300 bg-white p-5 md:p-7">
+    <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Vente directe · Vendu par DakarBoutik</p>
+    <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+      <h2 id="official-store-title" className="text-2xl font-bold">Boutique officielle DakarBoutik</h2>
+      <Link href="/products" className="rounded-full bg-yellow-300 px-5 py-3 font-semibold text-emerald-950">Tous nos produits →</Link>
+    </div>
+    <p className="mt-3 text-sm text-slate-600">Électronique, maison, mode et bien plus. Choisissez votre produit, puis commandez avec le panier ou par WhatsApp.</p>
+    {loading ? <p className="mt-5" role="status">Chargement du catalogue…</p> : <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {selection.map(p => <Link key={p.id} href={`/products/${p.slug}`} className="min-w-0 rounded-2xl border p-4 transition-colors hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700">
+        {p.images?.[0]?.imageUrl && <img src={p.images[0].imageUrl} alt={p.title} loading="lazy" className="h-40 w-full object-contain" />}
+        <h3 className="mt-3 line-clamp-2 font-semibold">{p.title}</h3>
+        <p className="mt-2 font-bold text-emerald-800">{(p.salePrice && p.salePrice > 0 && p.salePrice < p.price ? p.salePrice : p.price).toLocaleString("fr-FR")} FCFA</p>
+        <p className="mt-1 text-xs text-slate-600">{p.stock > 0 ? "En stock" : "Indisponible"}</p>
+        <span className="mt-3 block text-sm font-semibold">Voir le produit et commander →</span>
+      </Link>)}
+    </div>}
+  </section>;
 }
 export function MarketplaceCatalog({
   shops,
@@ -194,6 +218,7 @@ export function MarketplaceCatalog({
           </div>
         </section>
         <div className="container space-y-8 py-6">
+          <OfficialStore />
           <form
             onSubmit={(e) => e.preventDefault()}
             role="search"

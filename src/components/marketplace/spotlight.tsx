@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Trophy, CalendarDays, ArrowUpRight } from "lucide-react";
 import { isSponsored, type Shop } from "@/lib/marketplace-model";
 
 export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: number }) {
@@ -38,20 +39,23 @@ export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: numbe
         </div>
       </section>
 
-      <section id="actualites" aria-labelledby="news-title" className="scroll-mt-6 overflow-hidden rounded-2xl border-t-8 border-yellow-400 bg-emerald-700 text-white">
+      <section id="actualites" aria-labelledby="news-title" className="relative isolate scroll-mt-6 overflow-hidden rounded-3xl border-t-8 border-yellow-400 bg-gradient-to-br from-emerald-700 via-emerald-800 to-teal-900 text-white shadow-xl">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 -z-10 h-64 w-64 rounded-full border-[30px] border-yellow-300/15" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-16 left-1/3 -z-10 h-48 w-48 rounded-full bg-rose-400/10" />
         <div className="grid gap-6 p-6 md:grid-cols-[1fr_2fr] md:p-8">
           <div className="border-b border-emerald-700 pb-6 md:border-b-0 md:border-r md:pb-0 md:pr-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-200">Actualité · Sport au Sénégal</p>
+            <Trophy aria-hidden="true" className="mt-5 h-12 w-12 text-yellow-300 motion-safe:animate-bounce" style={{ animationIterationCount: 3 }} />
             <p className="mt-4 text-4xl font-black md:text-5xl">DAKAR<br /><span className="text-yellow-300">2026</span></p>
-            <p className="mt-4 text-sm text-emerald-100">31 octobre — 13 novembre 2026</p>
+            <p className="mt-4 flex items-center gap-2 text-sm text-emerald-100"><CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0" />31 octobre — 13 novembre 2026</p>
           </div>
           <div>
             <span className="inline-block rounded-full bg-emerald-800 px-3 py-1 text-xs font-semibold">{ended ? "Retour sur l’événement" : started ? "Les Jeux sont en cours" : "À venir"}</span>
             <h2 id="news-title" className="mt-4 text-2xl font-bold md:text-3xl">Les Jeux Olympiques de la Jeunesse à Dakar</h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-emerald-100">Dakar 2026 marque la première organisation d’un événement sportif olympique sur le continent africain. Retrouvez les actualités, le programme sportif et les sites de compétition auprès du Comité International Olympique.</p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <a href="https://www.olympics.com/ioc/dakar-2026" target="_blank" rel="noopener noreferrer" className="rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950 hover:bg-yellow-200">Actualités officielles ↗</a>
-              <a href="https://www.olympics.com/ioc/dakar-2026-sports-programme" target="_blank" rel="noopener noreferrer" className="rounded-full border border-yellow-300 px-5 py-3 text-sm font-semibold">Programme sportif ↗</a>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <a href="https://www.olympics.com/ioc/dakar-2026" target="_blank" rel="noopener noreferrer" className="group flex min-h-24 flex-1 items-center justify-between gap-4 rounded-2xl bg-yellow-300 px-5 py-4 text-sm font-semibold text-emerald-950 transition-colors hover:bg-yellow-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-yellow-300"><span><span className="block text-xs font-normal">Suivre Dakar 2026</span>Actualités officielles</span><ArrowUpRight aria-hidden="true" className="h-6 w-6 shrink-0 transition-transform motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" /></a>
+              <a href="https://www.olympics.com/ioc/dakar-2026-sports-programme" target="_blank" rel="noopener noreferrer" className="group flex min-h-24 flex-1 items-center justify-between gap-4 rounded-2xl border border-white/40 bg-white/10 px-5 py-4 text-sm font-semibold transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-yellow-300"><span><span className="block text-xs font-normal text-emerald-100">Découvrir les disciplines</span>Programme sportif</span><ArrowUpRight aria-hidden="true" className="h-6 w-6 shrink-0 transition-transform motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" /></a>
             </div>
             <p className="mt-5 text-xs leading-relaxed text-emerald-200">Source : CIO · Informations vérifiées le 2 novembre 2026. Rubrique indépendante, sans affiliation officielle aux Jeux. Les résultats ne sont pas actualisés en direct sur DakarBoutik.</p>
           </div>

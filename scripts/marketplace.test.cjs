@@ -303,3 +303,73 @@ test("Official solar and phone products map to public categories", () => {
   assert.equal(match({ title: "Routeur WiFi", category: "electronique-and-technologies" }, "Téléphones"), false);
   assert.equal(match(phone, ""), true);
 });
+
+
+test("Phone accounts: normalization, hashed sessions, isolation, revocation and durable throttling", async () => {
+  const db = new PGlite();
+  const jar = new Map();
+  const cookieOptions = [];
+  try {
+    const migration = fs.readFileSync(path.join(__dirname, "merchant-phone-auth.sql"), "utf8");
+    await db.exec(migration); await db.exec(migration);
+    const adapter = {
+      query: async (sql, values = []) => (await db.query(sql, values)).rows,
+      queryOne: async (sql, values = []) => (await db.query(sql, values)).rows[0] ?? null,
+    };
+    const phone = load("src/lib/merchant-phone-auth.ts", {
+      "server-only": {}, "@/lib/db": adapter,
+      "next/headers": { cookies: async () => ({ get: key => jar.has(key) ? { value: jar.get(key) } : undefined,
+        set: (key, value, options) => { cookieOptions.push(options); if (value) jar.set(key, value); else jar.delete(key); } }) },
+    });
+    assert.equal(phone.normalizePhone("77 123 45 67"), "+221771234567");
+    assert.equal(phone.normalizePhone("00221 77 123 45 67"), "+221771234567");
+    assert.equal(phone.normalizePhone("+33 6 12 34 56 78"), "+33612345678");
+    assert.equal(phone.normalizePhone("abc771234567"), null);
+    assert.equal(phone.normalizePhone("123"), null);
+    const register = { action: "register-phone", phone: "77 123 45 67", name: "Test", password: "six123", email: "admin@example.test" };
+    assert.equal((await phone.authenticatePhone({ ...register, password: "short" })).status, 400);
+    assert.equal((await phone.authenticatePhone(register)).status, 200);
+    const session = await phone.phoneSession();
+    assert.equal(session.isAdmin, false); assert.equal(session.email, ""); assert.equal(session.phone, "+221771234567");
+    const saved = (await db.query("select * from merchant_phone_accounts")).rows[0];
+    assert.notEqual(saved.password_hash, register.password);
+    assert.equal(saved.contact_email, "admin@example.test");
+    const token = jar.get(phone.phoneCookie);
+    const savedSession = (await db.query("select * from merchant_phone_sessions")).rows[0];
+    assert.notEqual(savedSession.token_hash, token);
+    assert.equal(cookieOptions.at(-1).httpOnly, true); assert.equal(cookieOptions.at(-1).sameSite, "lax");
+    assert.equal((await phone.authenticatePhone({ ...register, phone: "+221771234567" })).status, 409);
+    await phone.clearPhoneSession(); assert.equal(await phone.phoneSession(), null);
+    jar.set(phone.phoneCookie, token); assert.equal(await phone.phoneSession(), null);
+    const login = { action: "login-phone", phone: "+221771234567", password: "six123" };
+    assert.equal((await phone.authenticatePhone({ ...login, password: "wrong1" })).status, 401);
+    assert.equal((await phone.authenticatePhone(login)).status, 200);
+    assert.equal((await phone.phoneSession()).uid, session.uid);
+    await db.exec("update merchant_phone_sessions set expires_at=now()-interval '1 second'");
+    assert.equal(await phone.phoneSession(), null);
+    await phone.clearPhoneSession();
+    assert.equal((await phone.authenticatePhone({ ...register, phone: "78 123 45 67", email: "" })).status, 200);
+    assert.notEqual((await phone.phoneSession()).uid, session.uid);
+    assert.equal((await db.query("select contact_email from merchant_phone_accounts where phone='+221781234567'")).rows[0].contact_email, null);
+    assert.equal(await phone.consumePhoneLimit("test", 1, 900), true);
+    assert.equal(await phone.consumePhoneLimit("test", 1, 900), false);
+    await db.exec("update merchant_auth_limits set expires_at=now()-interval '1 second'");
+    assert.equal(await phone.consumePhoneLimit("test", 1, 900), true);
+    const route = load("src/app/api/auth/session/route.ts", { "@/lib/db": adapter,
+      "@/lib/auth": { getSession: async () => session, destroySession: async () => phone.clearPhoneSession() },
+      "@/lib/merchant-phone-auth": phone });
+    const publicSession = await (await route.GET()).json();
+    assert.equal(publicSession.user.isAdmin, false); assert.equal(publicSession.user.id, session.uid);
+    const post = (body, origin="https://shop.test") => route.POST(new NextRequest("https://shop.test/api/auth/session", {
+      method: "POST", headers: { origin, "content-type": "application/json", "x-forwarded-for": "192.0.2.1" }, body: JSON.stringify(body) }));
+    assert.equal((await post(login, "https://evil.test")).status, 403);
+    assert.equal((await post({ action: "make-admin" })).status, 400);
+    assert.equal((await post(login)).status, 200);
+    assert.equal((await post({ action: "change-phone-password", oldPassword: "wrong", newPassword: "new123" })).status, 401);
+    assert.equal((await post({ action: "change-phone-password", oldPassword: "six123", newPassword: "new123" })).status, 200);
+    assert.equal((await phone.authenticatePhone(login)).status, 401);
+    assert.equal((await phone.authenticatePhone({ ...login, password: "new123" })).status, 200);
+    assert.equal((await post({ action: "logout" })).status, 200);
+    assert.equal(await phone.phoneSession(), null);
+  } finally { await db.close(); }
+});

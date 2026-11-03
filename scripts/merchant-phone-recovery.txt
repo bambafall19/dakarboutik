@@ -1,0 +1,11 @@
+Récupération des comptes téléphone — assistance DakarBoutik
+
+Le lien WhatsApp ouvre une demande, jamais une réinitialisation automatique.
+Vérifier le contrôle du numéro ET la propriété de la boutique à partir d’éléments déjà connus. Une capture ou un numéro simplement déclaré ne suffisent pas. Si le commerçant n’a plus accès au numéro, faire une vérification complémentaire avant toute modification.
+Ne jamais demander l’ancien mot de passe. Ne pas fusionner avec un compte e-mail sur la seule base d’une adresse déclarée.
+
+Après vérification, un opérateur technique utilise scripts/merchant-phone-reset.mjs avec DATABASE_URL, MERCHANT_RESET_PHONE (format +221...), MERCHANT_RESET_PASSWORD (mot de passe temporaire aléatoire d’au moins 12 caractères recommandé), MERCHANT_RECOVERY_VERIFIED=yes dans son environnement local. Ne pas envoyer ces variables ou des captures de secrets dans le chat. Le script remplace le hash et révoque les sessions, sans journaliser le secret.
+Transmettre le mot de passe temporaire uniquement au propriétaire vérifié. Lui demander de le modifier immédiatement dans son espace, rubrique « Modifier mon mot de passe ». Effacer les variables de l’environnement de l’opérateur après usage.
+Les comptes historiques par e-mail restent gérés par Neon ; ce script ne les modifie pas.
+
+Maintenance : supprimer périodiquement uniquement les sessions et compteurs expirés (expires_at < now()). Aucun compte ou produit ne doit être supprimé pour nettoyer ces données temporaires.

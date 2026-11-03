@@ -207,7 +207,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
       >
         <div className="container space-y-5 py-6 sm:py-10">
           <h1 className="text-3xl font-bold">
-            {admin ? "Validation et publicités" : "Mon espace boutique"}
+            {admin ? "Validation et publicités" : user ? "Mon tableau de bord" : "Mon espace boutique"}
           </h1>
           <div className="flex flex-wrap items-center gap-4">
             {user && (
@@ -384,6 +384,33 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
             </>
           ) : (
             <>
+              <section className="space-y-5 rounded-3xl border border-emerald-100 bg-white p-5 sm:p-7" aria-labelledby="merchant-overview-title">
+                <div className="flex flex-wrap items-center gap-4">
+                  {shop?.profile.image && <img src={shop.profile.image} alt="Logo de votre boutique" className="h-16 w-16 rounded-xl border object-contain" />}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Votre espace personnel</p>
+                    <h2 id="merchant-overview-title" className="break-words text-2xl font-bold">{shop?.profile.name || "Bienvenue chez DakarBoutik"}</h2>
+                    <p className="mt-1 text-sm text-slate-600">{shop ? `${shop.profile.city} · ${statusLabels[shop.status]}` : "Commencez par présenter votre boutique."}</p>
+                  </div>
+                  {shop?.status === "approved" && <a href={`/boutiques/${shop.id}`} className="rounded-xl border border-emerald-300 px-4 py-3 text-sm font-semibold text-emerald-900">Voir ma boutique publique ↗</a>}
+                </div>
+                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                  {[
+                    { label: "Mes produits", value: listings.length },
+                    { label: "Visibles en ligne", value: shop?.status === "approved" ? listings.filter(l => l.status === "approved").length : 0 },
+                    { label: "En attente", value: listings.filter(l => l.status === "pending").length },
+                    { label: "Suspendus", value: listings.filter(l => l.status === "suspended").length },
+                  ].map(stat => <div key={stat.label} className="rounded-xl bg-emerald-50 p-4"><p className="text-3xl font-bold text-emerald-900">{stat.value}</p><p className="mt-1 text-sm text-slate-600">{stat.label}</p></div>)}
+                </div>
+                {shop?.status === "pending" && <p className="rounded-xl bg-amber-50 p-3 text-sm">Votre boutique attend la validation de DakarBoutik. Elle sera visible après approbation.</p>}
+                {shop?.status === "suspended" && <p className="rounded-xl bg-amber-50 p-3 text-sm">Votre boutique est suspendue. Contactez l’assistance pour faire le point.</p>}
+              </section>
+              <nav aria-label="Mon tableau de bord" className="sticky top-0 z-20 grid grid-cols-2 gap-2 rounded-2xl border bg-white/95 p-2 shadow-sm backdrop-blur sm:grid-cols-4">
+                <a className="rounded-xl bg-emerald-50 px-3 py-3 text-center text-sm font-semibold text-emerald-900" href="#merchant-shop">Ma boutique</a>
+                <a className="rounded-xl bg-emerald-50 px-3 py-3 text-center text-sm font-semibold text-emerald-900" href="#merchant-products">Mes produits ({listings.length})</a>
+                {shop && shop.status !== "suspended" ? <button disabled={busy} className="rounded-xl bg-emerald-800 px-3 py-3 text-sm font-semibold text-white" onClick={() => { setProductMode("new"); requestAnimationFrame(() => document.getElementById("product-form")?.scrollIntoView({ block: "start" })); }}>Ajouter / modifier</button> : <a className="rounded-xl bg-emerald-800 px-3 py-3 text-center text-sm font-semibold text-white" href="#merchant-shop">Ma présentation</a>}
+                <a className="rounded-xl bg-yellow-100 px-3 py-3 text-center text-sm font-semibold" href="https://wa.me/221776384676" target="_blank" rel="noopener noreferrer">Aide WhatsApp ↗</a>
+              </nav>
               <p>
                 Vous gérez uniquement votre boutique. Les créations et
                 modifications de contenu sont soumises à validation. Les
@@ -395,8 +422,9 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                 </p>
               )}
               <form
+                id="merchant-shop"
                 key={shop?.updated_at || "new"}
-                className="space-y-5 rounded-2xl border bg-white p-6"
+                className="scroll-mt-36 space-y-5 rounded-2xl border bg-white p-5 sm:p-6"
                 onSubmit={(e) => {
                   e.preventDefault();
                   void save({
@@ -492,7 +520,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                 <form
                   id="product-form"
                   key={`${editing?.id || "new"}-${formKey}`}
-                  className="space-y-5 rounded-2xl border bg-white p-6"
+                  className="scroll-mt-36 space-y-5 rounded-2xl border bg-white p-5 sm:p-6"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     const details = Object.fromEntries(
@@ -584,7 +612,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                   )}
                 </form>
               )}
-              <section className="space-y-4">
+              <section id="merchant-products" className="scroll-mt-36 space-y-4">
                 <h2 className="text-2xl font-bold">{productMode === "stock" ? "Actualiser les disponibilités" : "Mes produits"}</h2>
                 {listings.length === 0 && <p className="text-slate-600">Aucun produit pour le moment. Choisissez « Ajouter un produit » dans le menu pour commencer.</p>}
                 {listings.map((l) => (

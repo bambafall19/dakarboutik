@@ -41,16 +41,15 @@ export default function RootLayout({
         />
         <meta property="og:title" content="DakarBoutik - Les boutiques près de vous" />
         <meta property="og:description" content="Boutiques physiques, nouveautés et disponibilités : contactez directement le vendeur avec DakarBoutik." />
-        <meta property="og:image" content="https://dakarboutik.net/logo.svg" />
+        <meta property="og:image" content="https://dakarboutik.net/dakarboutik-logo-tricolore.png" />
         <meta property="og:url" content="https://dakarboutik.net" />
         <meta property="og:type" content="website" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
-        <link rel="mask-icon" href="/logo.svg" color="#0B6E4F" />
+        <link rel="icon" href="/dakarboutik-logo-tricolore.png" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0B6E4F" />
-        <link rel="apple-touch-icon" href="/logo.svg" />
+        <link rel="apple-touch-icon" href="/dakarboutik-logo-tricolore.png" />
         <meta name="apple-mobile-web-app-status-bar" content="#0B6E4F" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>

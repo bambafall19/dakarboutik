@@ -4,6 +4,8 @@ import { useAuth } from "@/lib/auth-context";
 import { authClient } from "@/lib/auth/client";
 import { MarketplaceNav } from "./catalog";
 import { PhotoField } from "./photo-field";
+import { MerchantOverview, DashboardCharts, ProductInventory, type MerchantPanel } from "./dashboard-panels";
+import { LayoutDashboard, Store, Package, PlusCircle } from "lucide-react";
 import {
   availabilityLabels,
   isProductUrl,
@@ -13,7 +15,7 @@ import {
 } from "@/lib/marketplace-model";
 
 const field =
-  "mt-1 w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900";
+  "mt-2 w-full min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-base text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100";
 function Input({
   name,
   label,
@@ -29,7 +31,7 @@ function Input({
 }) {
   return (
     <label className="block text-sm">
-      {label}
+      {label}{required && <span className="ml-1 text-emerald-700" aria-hidden="true">*</span>}
       <input
         className={field}
         name={name}
@@ -121,6 +123,11 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
   const [editing, setEditing] = useState<Listing | null>(null);
   const [productMode, setProductMode] = useState<"new" | "stock">("new");
   const [formKey, setFormKey] = useState(0);
+  const [panel, setPanel] = useState<MerchantPanel>("overview");
+  function navigate(next: MerchantPanel) {
+    setPanel(next);
+    requestAnimationFrame(() => document.getElementById("merchant-workspace")?.scrollIntoView({ block: "start" }));
+  }
   const reload = useCallback(async () => {
     const r = await fetch(`/api/marketplace${admin ? "?admin=1" : ""}`, {
       cache: "no-store",
@@ -255,6 +262,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
             </p>
           ) : admin ? (
             <>
+              <DashboardCharts listings={listings} />
               <h2 className="text-2xl font-bold">Boutiques</h2>
               {shops.length === 0 && <p>Aucune boutique inscrite.</p>}
               {shops.map((s) => (
@@ -384,43 +392,15 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
             </>
           ) : (
             <>
-              <section className="space-y-5 rounded-3xl border border-emerald-100 bg-white p-5 sm:p-7" aria-labelledby="merchant-overview-title">
-                <div className="flex flex-wrap items-center gap-4">
-                  {shop?.profile.image && <img src={shop.profile.image} alt="Logo de votre boutique" className="h-16 w-16 rounded-xl border object-contain" />}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Votre espace personnel</p>
-                    <h2 id="merchant-overview-title" className="break-words text-2xl font-bold">{shop?.profile.name || "Bienvenue chez DakarBoutik"}</h2>
-                    <p className="mt-1 text-sm text-slate-600">{shop ? `${shop.profile.city} · ${statusLabels[shop.status]}` : "Commencez par présenter votre boutique."}</p>
-                  </div>
-                  {shop?.status === "approved" && <a href={`/boutiques/${shop.id}`} className="rounded-xl border border-emerald-300 px-4 py-3 text-sm font-semibold text-emerald-900">Voir ma boutique publique ↗</a>}
-                </div>
-                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                  {[
-                    { label: "Mes produits", value: listings.length },
-                    { label: "Visibles en ligne", value: shop?.status === "approved" ? listings.filter(l => l.status === "approved").length : 0 },
-                    { label: "En attente", value: listings.filter(l => l.status === "pending").length },
-                    { label: "Suspendus", value: listings.filter(l => l.status === "suspended").length },
-                  ].map(stat => <div key={stat.label} className="rounded-xl bg-emerald-50 p-4"><p className="text-3xl font-bold text-emerald-900">{stat.value}</p><p className="mt-1 text-sm text-slate-600">{stat.label}</p></div>)}
-                </div>
-                {shop?.status === "pending" && <p className="rounded-xl bg-amber-50 p-3 text-sm">Votre boutique attend la validation de DakarBoutik. Elle sera visible après approbation.</p>}
-                {shop?.status === "suspended" && <p className="rounded-xl bg-amber-50 p-3 text-sm">Votre boutique est suspendue. Contactez l’assistance pour faire le point.</p>}
-              </section>
-              <nav aria-label="Mon tableau de bord" className="sticky top-0 z-20 grid grid-cols-2 gap-2 rounded-2xl border bg-white/95 p-2 shadow-sm backdrop-blur sm:grid-cols-4">
-                <a className="rounded-xl bg-emerald-50 px-3 py-3 text-center text-sm font-semibold text-emerald-900" href="#merchant-shop">Ma boutique</a>
-                <a className="rounded-xl bg-emerald-50 px-3 py-3 text-center text-sm font-semibold text-emerald-900" href="#merchant-products">Mes produits ({listings.length})</a>
-                {shop && shop.status !== "suspended" ? <button disabled={busy} className="rounded-xl bg-emerald-800 px-3 py-3 text-sm font-semibold text-white" onClick={() => { setProductMode("new"); requestAnimationFrame(() => document.getElementById("product-form")?.scrollIntoView({ block: "start" })); }}>Ajouter / modifier</button> : <a className="rounded-xl bg-emerald-800 px-3 py-3 text-center text-sm font-semibold text-white" href="#merchant-shop">Ma présentation</a>}
-                <a className="rounded-xl bg-yellow-100 px-3 py-3 text-center text-sm font-semibold" href="https://wa.me/221776384676" target="_blank" rel="noopener noreferrer">Aide WhatsApp ↗</a>
+              <nav aria-label="Mon tableau de bord" className="sticky top-0 z-20 grid grid-cols-2 gap-2 rounded-2xl border border-white bg-white/95 p-2 shadow-sm backdrop-blur sm:grid-cols-4">
+                {([{ id: "overview", label: "Vue d’ensemble", icon: LayoutDashboard }, { id: "products", label: "Mes produits", icon: Package }, { id: "editor", label: editing ? "Modifier le produit" : "Ajouter un produit", icon: PlusCircle }, { id: "shop", label: "Ma boutique", icon: Store }] as const).map(item => <button type="button" key={item.id} aria-pressed={panel === item.id} aria-controls="merchant-workspace" disabled={busy || (item.id === "editor" && (!shop || shop.status === "suspended"))} onClick={() => navigate(item.id)} className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-semibold transition-colors disabled:opacity-40 sm:text-sm ${panel === item.id ? "bg-emerald-800 text-white shadow-sm" : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-900"}`}><item.icon size={18} className="shrink-0" aria-hidden="true" /><span>{item.label}</span></button>)}
               </nav>
-              <p>
-                Vous gérez uniquement votre boutique. Les créations et
-                modifications de contenu sont soumises à validation. Les
-                disponibilités peuvent être actualisées immédiatement.
-              </p>
-              {shop && (
-                <p className="rounded-xl bg-emerald-50 p-4">
-                  Votre boutique : {statusLabels[shop.status]}
-                </p>
-              )}
+              <div id="merchant-workspace" className="scroll-mt-36 space-y-5">
+              <div hidden={panel !== "overview"} className="space-y-5">
+                <MerchantOverview shop={shop} listings={listings} onNavigate={navigate} />
+                <DashboardCharts listings={listings} />
+              </div>
+              <div hidden={panel !== "shop"}>
               <form
                 id="merchant-shop"
                 key={shop?.updated_at || "new"}
@@ -433,10 +413,9 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                   });
                 }}
               >
-                <h2 className="text-2xl font-bold">
-                  Présentation de ma boutique
-                </h2>
+                <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre vitrine</p><h2 className="mt-2 text-2xl font-bold">Présentation de ma boutique</h2><p className="mt-2 text-sm text-slate-500">Une photo, une adresse précise et des horaires à jour aident vos clients à vous trouver. Les champs marqués * sont obligatoires.</p></div>
                 <div className="grid gap-5 md:grid-cols-2">
+                  <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 · Identité de la boutique</h3>
                   <Input
                     name="name"
                     label="Nom de la boutique"
@@ -449,6 +428,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     value={shop?.profile.category}
                     required
                   />
+                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900 md:col-span-2">02 · Adresse et contact</h3>
                   <Input
                     name="city"
                     label="Ville"
@@ -477,13 +457,15 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     label="Horaires d’ouverture"
                     value={shop?.profile.hours}
                   />
-                  <PhotoField label="Logo ou photo de la boutique (facultatif)" value={shop?.profile.image} disabled={busy} onBusy={setPhotoBusy} />
+                  <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">03 · Votre image et votre présentation</h3>
+                  <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/30 p-4 md:col-span-2"><PhotoField label="Logo ou photo de la boutique (facultatif)" value={shop?.profile.image} disabled={busy} onBusy={setPhotoBusy} /></div>
                 </div>
                 <label className="block">
                   Présentation
                   <textarea
                     name="description"
                     className={field}
+                    rows={4}
                     defaultValue={shop?.profile.description}
                     maxLength={1500}
                   />
@@ -492,22 +474,25 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                   disabled={busy}
                   className="rounded-full bg-emerald-800 px-5 py-3 text-white"
                 >
-                  Soumettre ma boutique
+                  {busy ? "Enregistrement…" : "Enregistrer ma présentation"}
                 </button>
               </form>
+              </div>
+              <div hidden={panel !== "editor"} className="space-y-5">
               {shop && shop.status !== "suspended" && (
                 <section className="space-y-3 rounded-2xl border bg-white p-6" aria-labelledby="product-menu-title">
-                  <h2 id="product-menu-title" className="text-2xl font-bold">Gérer mes produits</h2>
+                  <h2 id="product-menu-title" className="text-lg font-bold">Choisir une fiche produit</h2>
                   <label className="block text-sm">Que souhaitez-vous faire ?
                     <select className={field} disabled={busy} value={editing?.id || productMode}
                       onChange={e => {
                         const value = e.target.value;
                         setEditing(listings.find(l => l.id === value) || null);
-                        setProductMode(value === "stock" ? "stock" : "new");
+                        setProductMode("new");
+                        if (value === "stock") navigate("products");
                         setFormKey(k => k + 1);
                       }}>
                       <option value="new">Ajouter un produit</option>
-                      <option value="stock">Actualiser les disponibilités</option>
+                      
                       {listings.length > 0 && <optgroup label="Modifier un produit existant">
                         {listings.map(l => <option key={l.id} value={l.id}>{l.details.title} — {l.details.price.toLocaleString("fr-FR")} FCFA</option>)}
                       </optgroup>}
@@ -538,10 +523,9 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     }
                   }}
                 >
-                  <h2 className="text-2xl font-bold">
-                    {editing ? "Modifier le produit" : "Ajouter un produit"}
-                  </h2>
+                  <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre catalogue</p><h2 className="mt-2 text-2xl font-bold">{editing ? "Modifier le produit" : "Ajouter un produit"}</h2><p className="mt-2 text-sm text-slate-500">Renseignez les informations, ajoutez une photo, puis soumettez la fiche à validation.</p></div>
                   <div className="grid gap-5 md:grid-cols-2">
+                    <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 · Informations du produit</h3>
                     <Input
                       name="title"
                       label="Nom du produit"
@@ -561,17 +545,20 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                       value={editing?.details.category || shop.profile.category}
                       required
                     />
-                    <PhotoField label="Photo du produit" value={editing?.details.image} disabled={busy} onBusy={setPhotoBusy} />
-                    <div className="space-y-2">
+                    <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">02 · Photo et fiche externe</h3>
+                    <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/30 p-4"><PhotoField label="Photo du produit" value={editing?.details.image} disabled={busy} onBusy={setPhotoBusy} /></div>
+                    <div className="space-y-2 rounded-2xl bg-slate-50 p-4">
                       <Input name="productUrl" type="url" label="Lien de la fiche produit sur un autre site (facultatif)" value={editing?.details.productUrl} />
                       <p className="text-xs text-slate-600">Collez une adresse HTTPS. Ce lien ouvre la fiche externe ; renseignez ici le prix, la description et la photo.</p>
                     </div>
                   </div>
+                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900">03 · Description et disponibilité</h3>
                   <label className="block">
                     Description
                     <textarea
                       name="description"
                       className={field}
+                      rows={4}
                       defaultValue={editing?.details.description}
                       required
                       minLength={10}
@@ -598,7 +585,7 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                     disabled={busy}
                     className="rounded-full bg-emerald-800 px-5 py-3 text-white"
                   >
-                    Soumettre le produit
+                    {busy ? "Enregistrement…" : editing ? "Enregistrer les modifications" : "Soumettre le produit"}
                   </button>
                   {editing && (
                     <button
@@ -612,53 +599,11 @@ export function MarketplaceDashboard({ admin = false }: { admin?: boolean }) {
                   )}
                 </form>
               )}
-              <section id="merchant-products" className="scroll-mt-36 space-y-4">
-                <h2 className="text-2xl font-bold">{productMode === "stock" ? "Actualiser les disponibilités" : "Mes produits"}</h2>
-                {listings.length === 0 && <p className="text-slate-600">Aucun produit pour le moment. Choisissez « Ajouter un produit » dans le menu pour commencer.</p>}
-                {listings.map((l) => (
-                  <article
-                    key={l.id}
-                    className="flex flex-wrap items-center gap-4 rounded-xl border bg-white p-5"
-                  >
-                    <div className="mr-auto">
-                      <h3 className="font-bold">{l.details.title}</h3>
-                      <p className="text-sm">
-                        {statusLabels[l.status]} · {l.details.price} FCFA
-                      </p>
-                    </div>
-                    <label>
-                      Disponibilité
-                      <select
-                        aria-label={`Disponibilité de ${l.details.title}`}
-                        className={field}
-                        value={l.details.availability}
-                        disabled={busy || shop?.status === "suspended"}
-                        onChange={(e) =>
-                          save({
-                            action: "availability",
-                            id: l.id,
-                            availability: e.target.value,
-                          })
-                        }
-                      >
-                        {Object.entries(availabilityLabels).map(
-                          ([v, label]) => (
-                            <option key={v} value={v}>
-                              {label}
-                            </option>
-                          ),
-                        )}
-                      </select>
-                    </label>
-                    <button disabled={busy || shop?.status === "suspended"} className="underline" onClick={() => {
-                      setProductMode("new"); setEditing(l); setFormKey(k => k + 1);
-                      requestAnimationFrame(() => document.getElementById("product-form")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-                    }}>
-                      Modifier
-                    </button>
-                  </article>
-                ))}
-              </section>
+              </div>
+              <div hidden={panel !== "products"}>
+                <ProductInventory listings={listings} disabled={busy || shop?.status === "suspended"} onAvailability={(listing, availability) => { void save({ action: "availability", id: listing.id, availability }); }} onEdit={listing => { setProductMode("new"); setEditing(listing); setFormKey(k => k + 1); navigate("editor"); }} />
+              </div>
+              </div>
             </>
           )}
         </div>

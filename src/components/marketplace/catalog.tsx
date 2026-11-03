@@ -134,7 +134,8 @@ export function MarketplaceCatalog({
   const matchingShops = shops.filter(
     (s) =>
       (!city || s.profile.city === city) &&
-      (!category || normalizeMarketplaceText(s.profile.category) === categoryKey) &&
+      (!category || normalizeMarketplaceText(s.profile.category) === categoryKey ||
+        listings.some(l => l.shop_id === s.id && normalizeMarketplaceText(l.details.category) === categoryKey)) &&
       (!term ||
         normalizeMarketplaceText(`${s.profile.name} ${s.profile.description} ${s.profile.district} ${s.profile.city} ${s.profile.category}`)
           .includes(term)),
@@ -152,6 +153,15 @@ export function MarketplaceCatalog({
           .includes(term))
     );
   });
+  function browseCategory(name: string) {
+    setCategory(name);
+    setSearch("");
+    requestAnimationFrame(() => {
+      const heading = document.getElementById("boutiques-resultats");
+      heading?.focus({ preventScroll: true });
+      heading?.scrollIntoView({ block: "start", behavior: "instant" });
+    });
+  }
   return (
     <>
       <MarketplaceNav />
@@ -229,7 +239,7 @@ export function MarketplaceCatalog({
             </div>
             <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
               {featuredCategories.map(({ name, icon: Icon }) => (
-                <button key={name} type="button" aria-pressed={category === name} onClick={() => setCategory(category === name ? "" : name)} className={`flex min-w-0 flex-col items-center gap-2 rounded-2xl border p-3 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 ${category === name ? "border-emerald-700 bg-emerald-700 text-white" : "border-yellow-200 bg-white text-emerald-900 hover:bg-yellow-100"}`}>
+                <button key={name} type="button" aria-pressed={categoryKey === normalizeMarketplaceText(name)} onClick={() => browseCategory(name)} className={`flex min-w-0 flex-col items-center gap-2 rounded-2xl border p-3 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 ${category === name ? "border-emerald-700 bg-emerald-700 text-white" : "border-yellow-200 bg-white text-emerald-900 hover:bg-yellow-100"}`}>
                   <Icon aria-hidden="true" className="h-7 w-7" /><span className="break-words">{name}</span>
                 </button>
               ))}
@@ -262,9 +272,12 @@ export function MarketplaceCatalog({
             )}
           </section>
           <section>
-            <h2 className="mb-6 text-2xl font-bold">
-              Les boutiques à découvrir
+            <h2 id="boutiques-resultats" tabIndex={-1} className="mb-3 scroll-mt-6 text-2xl font-bold focus:outline-none">
+              {category ? `Les boutiques · ${category}` : "Les boutiques à découvrir"}
             </h2>
+            <p className="mb-6 text-sm text-slate-600" role="status">
+              {matchingShops.length} boutique{matchingShops.length > 1 ? "s" : ""} trouvée{matchingShops.length > 1 ? "s" : ""}. Ouvrez une boutique pour découvrir ses produits.
+            </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingShops.map((shop) => (
                 <Link

@@ -1,6 +1,7 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { Logo } from "@/components/logo";
 import { useProducts } from "@/hooks/use-site-data";
 import { Shirt, Smartphone, Sparkles, House, ShoppingBasket, Sun, Store } from "lucide-react";
 
@@ -31,9 +32,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
         className="container flex flex-wrap items-center justify-between gap-4 py-2"
         aria-label="Navigation DakarBoutik"
       >
-        <Link className="inline-flex items-center" href="/boutiques" aria-label="DakarBoutik — accueil">
-          <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={96} height={96} className="h-20 w-20 object-contain sm:h-24 sm:w-24" />
-        </Link>
+        <Logo />
         {compact && <button type="button" aria-expanded={menuOpen} aria-controls="marketplace-menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold md:hidden">{menuOpen ? "Fermer" : "Menu"}</button>}
         <div id="marketplace-menu" className={`${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}>
           <Link href="/boutiques">Boutiques partenaires</Link>

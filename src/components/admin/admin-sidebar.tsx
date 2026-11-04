@@ -37,6 +37,7 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/publicites', label: 'Espaces publicitaires', icon: ImageIcon },
   { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   {
     label: 'Produits',
@@ -54,7 +55,7 @@ const menuItems: MenuItem[] = [
   { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },
   { href: '/admin/reviews', label: 'Avis clients', icon: MessageSquare },
   { href: '/admin/media', label: 'Médiathèque', icon: ImageIcon },
-  { hrefExternal: 'https://analytics.google.com/', label: 'Statistiques', icon: LineChart },
+  { href: '/admin/statistiques', label: 'Statistiques', icon: LineChart },
   { href: '/admin/settings', label: 'Réglages', icon: Settings },
 ];
 

@@ -48,3 +48,6 @@ firestore-debug.log
 # pwa generated (next-pwa removed)
 /public/sw.js
 /public/workbox-*.js
+
+# Local tooling
+/.tools/

@@ -43,12 +43,12 @@ export function ProductImageInput({ value, onChange, onBusyChange }: {
     <label htmlFor={`${id}-file`} className="block text-sm font-medium">Charger une photo depuis votre appareil</label>
     <Input id={`${id}-file`} type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" disabled={busy}
       onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; void upload(file); }} />
-    <p className="text-xs text-muted-foreground">JPG, PNG, WebP, AVIF ou GIF · 4 Mo maximum. Enregistrez ensuite le produit.</p>
+    <p className="text-xs text-muted-foreground">JPG, PNG, WebP, AVIF ou GIF · 4 Mo maximum. Enregistrez ensuite vos modifications.</p>
     <label htmlFor={`${id}-url`} className="block text-sm font-medium">Ou coller le lien direct de la photo</label>
     <Input id={`${id}-url`} value={value} disabled={busy} placeholder="https://..." onChange={event => onChange(event.target.value.trim())} />
     {busy && <p role="status">Chargement de la photo…</p>}
     {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
-    {valid && failedUrl !== value && <img src={value} alt="Aperçu de la photo du produit" className="h-36 w-full rounded-lg border bg-white object-contain" onError={() => setFailedUrl(value)} />}
+    {valid && failedUrl !== value && <img src={value} alt="Aperçu de la photo" className="h-36 w-full rounded-lg border bg-white object-contain" onError={() => setFailedUrl(value)} />}
     {value && (!valid || failedUrl === value) && <p className="text-sm text-amber-700">Aperçu indisponible. Chargez la photo depuis votre appareil ou utilisez un lien direct accessible.</p>}
   </div>;
 }

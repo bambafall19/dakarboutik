@@ -1,3 +1,4 @@
+import { AdvertisingSlot } from '@/components/advertising-slot';
 import Link from 'next/link';
 import { ArrowUpRight, Search, Sun, Smartphone, Monitor, House, Store } from 'lucide-react';
 import { getProducts, getBanners } from '@/lib/data-firebase';
@@ -64,6 +65,7 @@ export default async function HomePage() {
         </Link>;
       })}</div>
     </section>
+    <div className={styles.section}><AdvertisingSlot placement="home" /></div>
     {latest.length > 0 && <section className={styles.section} aria-labelledby="latest-title">
       <div className={styles.heading}><div><span className={styles.eyebrow}>La sélection officielle</span><h2 id="latest-title">Derniers arrivages DakarBoutik</h2></div><Link href="/products?sortBy=newest">Tout découvrir →</Link></div>
       <div className={styles.rail}>{latest.map(product => <div key={product.id}><ProductCard product={product} /></div>)}</div>

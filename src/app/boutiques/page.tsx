@@ -1,3 +1,4 @@
+import { AdvertisingSlot } from '@/components/advertising-slot';
 import { MarketplaceCatalog } from "@/components/marketplace/catalog";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import { MarketplaceSpotlight } from "@/components/marketplace/spotlight";
@@ -9,5 +10,5 @@ export default async function Page() {
   // Server-only dynamic page: evaluate campaign dates once per request.
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
-  return <MarketplaceCatalog {...data} products={products} promotion={<ProductSpotlight products={products} banners={banners} />} spotlight={<MarketplaceSpotlight shops={data.shops} now={now} />} />;
+  return <MarketplaceCatalog {...data} products={products} promotion={<ProductSpotlight products={products} banners={banners} />} spotlight={<><AdvertisingSlot placement="shops" /><MarketplaceSpotlight shops={data.shops} now={now} /></>} />;
 }

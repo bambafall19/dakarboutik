@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { Separator } from './ui/separator';
 import type { SiteSettings } from '@/lib/types';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Facebook, Instagram, Phone, Mail, MessageCircle, MapPin, Music2, Send } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MessageCircle, MapPin, Music2, ArrowRight } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -19,10 +18,10 @@ import { normalizePhoneNumber } from '@/lib/order-channels';
 
 const footerLinks = {
   Boutique: [
-    { name: 'Smartphones', href: '/products?category=telephonie' },
-    { name: 'Audio', href: '/products?category=audio' },
-    { name: 'Accessoires', href: '/products?category=accessoires' },
-    { name: 'PC & Portables', href: '/products?category=informatique' },
+    { name: 'Solaire & énergie', href: '/products?category=solaire' },
+    { name: 'Téléphones & accessoires', href: '/products?category=telephones' },
+    { name: 'Informatique & électronique', href: '/products?category=tech-complete' },
+    { name: 'Maison & électroménager', href: '/products?category=maison-complete' },
     { name: 'Promotions', href: '/products?on_sale=true' },
   ],
   'Commandes & livraison': [
@@ -52,28 +51,23 @@ export function Footer({ settings }: FooterProps) {
   return (
     <footer className="relative mt-16 bg-nav text-nav-foreground">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-      {/* Newsletter band */}
+      {/* Catalogue discovery */}
       <div className="border-b border-white/10">
         <div className="container flex flex-col items-center gap-6 py-10 md:flex-row md:justify-between">
           <div className="max-w-md text-center md:text-left">
             <h3 className="font-headline text-2xl font-extrabold">
-              Rejoignez la <span className="text-accent">communauté</span>
+              Découvrez nos <span className="text-accent">nouveautés</span>
             </h3>
             <p className="mt-1 text-sm text-nav-foreground/70">
-              Offres exclusives, nouveautés et bons plans livrés dans votre boîte mail.
+              Les derniers produits DakarBoutik et les boutiques partenaires, à découvrir en un clic.
             </p>
           </div>
-          <form className="flex w-full max-w-md gap-2">
-            <Input
-              type="email"
-              placeholder="Votre adresse email"
-              className="h-12 rounded-full border-white/15 bg-white/5 px-5 text-nav-foreground placeholder:text-nav-foreground/50 focus-visible:ring-accent"
-            />
-            <Button type="submit" size="lg" className="h-12 gap-2 rounded-full bg-accent px-6 text-accent-foreground hover:bg-accent/90">
-              <Send className="h-4 w-4" />
-              <span className="hidden sm:inline">S&apos;inscrire</span>
+          <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="h-12 rounded-full bg-accent px-6 text-accent-foreground hover:bg-accent/90">
+              <Link href="/products?sortBy=newest">Voir les nouveautés <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link>
             </Button>
-          </form>
+            <Link href="/boutiques" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/30 px-6 text-sm font-semibold transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">Explorer les boutiques</Link>
+          </div>
         </div>
       </div>
 

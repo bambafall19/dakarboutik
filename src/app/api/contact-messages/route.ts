@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { readPublicForm } from '@/lib/public-form-guard';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +24,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const b = await req.json();
+  const input = await readPublicForm(req, 'contact', 10, 16384);
+  if (input.response) return input.response;
+  const parsed = z.object({ name: z.string().trim().max(120).default(''),
+    email: z.string().trim().email().max(254), subject: z.string().trim().max(200).default(''),
+    message: z.string().trim().min(1).max(5000) }).safeParse(input.body);
+  if (!parsed.success) return NextResponse.json({ error: 'Vérifiez les champs et la longueur du message (5 000 caractères maximum).' }, { status: 400 });
+  const b = parsed.data;
   const message = typeof b.message === 'string' ? b.message.trim() : '';
   const email = typeof b.email === 'string' ? b.email.trim() : '';
 

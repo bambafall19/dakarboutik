@@ -35,6 +35,16 @@ function toProduct(row: any): Product {
  * Le client ne doit jamais pouvoir imposer les montants d'une commande.
  */
 export async function computeOrderTotals(items: CartItem[], deliveryMethod: DeliveryMethod) {
+  // Reject malformed quantities instead of silently turning them into a purchase.
+  if (!Array.isArray(items) || items.length === 0 || items.length > 100 || items.some(item =>
+    !item || !item.product || typeof item.product.id !== 'string' || !item.product.id ||
+    !Number.isSafeInteger(item.quantity) || item.quantity < 1 || item.quantity > 10000
+  )) {
+    return { totalPrice: 0, shippingCost: 0, grandTotal: 0, isFreeShipping: false,
+      itemsAreValid: false, unavailableProductIds: [], sanitizedItems: [] };
+  }
+  const requested = new Map<string, number>();
+  for (const item of items) requested.set(item.product.id, (requested.get(item.product.id) || 0) + item.quantity);
   const productIds = Array.from(
     new Set(items.map((item) => item.product?.id).filter((id): id is string => !!id))
   );
@@ -58,8 +68,8 @@ export async function computeOrderTotals(items: CartItem[], deliveryMethod: Deli
   for (const item of items) {
     const product = catalog.get(item.product?.id);
     if (!product) continue;
-    const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
-    const available = Number(product.stock) > 0 && product.status !== 'draft';
+    const quantity = item.quantity;
+    const available = Number(product.stock) >= requested.get(product.id)! && product.status === 'active';
     if (!available) unavailableProductIds.push(product.id);
     const unit = unitPrice(toProduct(product));
     subtotal += unit * quantity;

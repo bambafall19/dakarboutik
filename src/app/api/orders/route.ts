@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
 import { computeOrderTotals } from '@/lib/order-totals';
+import { readPublicForm } from '@/lib/public-form-guard';
+import { z } from 'zod';
+import { randomUUID } from 'node:crypto';
 import type { DeliveryMethod } from '@/lib/shipping';
-import type { CartItem, Order, PublicOrder } from '@/lib/types';
+import type { CartItem, Order } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,14 +36,25 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const b = await req.json();
-  const orderId = b.orderId || `DKB-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-  if (!/^[A-Za-z0-9_-]{4,48}$/.test(String(orderId))) {
-    return NextResponse.json({ error: 'Numéro de commande invalide.' }, { status: 400 });
-  }
+  const input = await readPublicForm(req, 'order', 15, 262144);
+  if (input.response) return input.response;
+  const parsed = z.object({
+    orderId: z.string().regex(/^[A-Za-z0-9_-]{4,48}$/).optional(),
+    customerInfo: z.object({ name: z.string().trim().min(1).max(120),
+      phone: z.string().trim().min(7).max(30), email: z.union([z.string().email().max(254), z.literal('')]).default(''),
+      address: z.string().trim().min(1).max(500), city: z.string().trim().max(120).default('') }),
+    deliveryMethod: z.enum(['dakar', 'hors-dakar']), paymentMethod: z.enum(['cod', 'mobile_money']),
+    items: z.array(z.object({ id: z.string().max(200).optional(),
+      product: z.object({ id: z.string().min(1).max(200) }), quantity: z.number().int().min(1).max(10000),
+      selectedVariants: z.array(z.object({ name: z.string().max(100), value: z.string().max(100) })).max(20).optional()
+    })).min(1).max(100),
+  }).safeParse(input.body);
+  if (!parsed.success) return NextResponse.json({ error: 'Vérifiez les coordonnées et les quantités de votre commande.' }, { status: 400 });
+  const b = parsed.data;
+  const orderId = `DKB-${randomUUID()}`;
   const createdAt = new Date().toISOString();
   const deliveryMethod: DeliveryMethod = b.deliveryMethod === 'hors-dakar' ? 'hors-dakar' : 'dakar';
-  const items: CartItem[] = Array.isArray(b.items) ? b.items : [];
+  const items = b.items as CartItem[];
 
   const totals = await computeOrderTotals(items, deliveryMethod);
 
@@ -60,8 +74,10 @@ export async function POST(req: NextRequest) {
 
   try {
     await query(
-      `insert into orders (id,order_id,customer_info,items,total_price,shipping_cost,grand_total,status,created_at,delivery_method,payment_method,admin_notes,public_notes)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+      `with saved as (insert into orders (id,order_id,customer_info,items,total_price,shipping_cost,grand_total,status,created_at,delivery_method,payment_method,admin_notes,public_notes)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id,order_id,status,created_at)
+       insert into public_orders (id,order_id,status,created_at,status_history,public_notes)
+       select id,order_id,status,created_at,jsonb_build_array(jsonb_build_object('status',status,'date',created_at)),'[]'::jsonb from saved`,
       [orderId, orderId, JSON.stringify(b.customerInfo ?? {}), JSON.stringify(totals.sanitizedItems), totals.totalPrice,
        totals.shippingCost, totals.grandTotal, 'pending', createdAt, deliveryMethod,
        b.paymentMethod ?? null, null, JSON.stringify([])]
@@ -75,13 +91,6 @@ export async function POST(req: NextRequest) {
     }
     throw err;
   }
-
-  await query(
-    `insert into public_orders (id,order_id,status,created_at,status_history,public_notes)
-     values ($1,$2,$3,$4,$5,$6)
-     on conflict (id) do nothing`,
-    [orderId, orderId, 'pending', createdAt, JSON.stringify([{ status: 'pending', date: createdAt }]), JSON.stringify([])]
-  );
 
   return NextResponse.json({ id: orderId });
 }

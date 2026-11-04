@@ -13,6 +13,8 @@ import { QuickFilters } from './quick-filters';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/button';
 import { LayoutGrid, SlidersHorizontal, Flame, Sparkles, Tag } from 'lucide-react';
+import { matchesMarketplaceCategory, normalizeMarketplaceText } from '@/lib/marketplace-model';
+import type { Category } from '@/lib/types';
 
 export function ProductListingPage() {
   const searchParams = useSearchParams();
@@ -41,15 +43,44 @@ export function ProductListingPage() {
   const sortBy = searchParams.get('sortBy') || 'newest';
 
   const basePath = '/products';
+  const catalogCategories = useMemo(() => {
+    const flat = new Map<string, Category>();
+    const visit = (items: Category[]) => items.forEach(c => { flat.set(c.slug, c); visit(c.subCategories || []); });
+    visit(categories);
+    return Array.from(flat.values());
+  }, [categories]);
+  const matchesCategory = (product: (typeof allProducts)[number], slug: string) => {
+    if (slug === 'solaire' || slug === 'telephones') return matchesMarketplaceCategory(product, slug);
+    const selected = catalogCategories.find(c => c.slug === slug);
+    let current = catalogCategories.find(c => c.slug === product.category);
+    const seen = new Set<string>();
+    while (current && !seen.has(current.id)) {
+      if (current.slug === slug) return true;
+      seen.add(current.id);
+      current = catalogCategories.find(c => c.id === current?.parentId);
+    }
+    return product.category === slug || !!selected?.subCategories?.some(c => c.slug === product.category);
+  };
+  const browseCategories = [
+    { slug: 'solaire', name: 'Solaire & énergie' },
+    { slug: 'telephones', name: 'Téléphones & accessoires' },
+    ...catalogCategories.filter(c => !['solaire', 'telephones'].includes(c.slug)),
+  ].map(c => ({ ...c, count: allProducts.filter(p => matchesCategory(p, c.slug)).length })).filter(c => c.count > 0);
+  const categoryUrl = (slug: string) => {
+    const params = new URLSearchParams();
+    if (slug) params.set('category', slug);
+    if (searchQuery) params.set('q', searchQuery);
+    return `${basePath}?${params.toString()}`;
+  };
 
   // Produits de la catégorie courante (avant filtres)
-  const categoryProducts = useMemo(() => {
+  const categoryProducts = (() => {
     if (!categorySlug) return allProducts;
-    return allProducts.filter(p => p.category === categorySlug);
-  }, [allProducts, categorySlug]);
+    return allProducts.filter(p => matchesCategory(p, categorySlug));
+  })();
 
   // Application des filtres (catégorie, marques, prix, recherche, promos, best-sellers)
-  const filteredProducts = useMemo(() => {
+  const filteredProducts = (() => {
     let result = categoryProducts;
 
     if (currentBrands.length > 0) {
@@ -64,12 +95,11 @@ export function ProductListingPage() {
     }
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase().trim();
-      result = result.filter(p =>
-        p.title.toLowerCase().includes(query) ||
-        (p.description || '').toLowerCase().includes(query) ||
-        (p.brand || '').toLowerCase().includes(query)
-      );
+      const words = normalizeMarketplaceText(searchQuery).split(/\s+/).filter(Boolean);
+      result = result.filter(p => {
+        const text = normalizeMarketplaceText(`${p.title} ${p.description || ''} ${p.brand || ''} ${p.category} ${catalogCategories.find(c => c.slug === p.category)?.name || ''}`);
+        return words.every(word => text.includes(word));
+      });
     }
 
     if (onSale) {
@@ -89,41 +119,30 @@ export function ProductListingPage() {
       }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [
-    categoryProducts,
-    currentBrands,
-    currentPriceRange,
-    searchQuery,
-    onSale,
-    bestsellerOnly,
-    sortBy,
-  ]);
+  })();
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const canShowMore = visibleCount < filteredProducts.length;
 
-  const currentCategory = categories.find(c => c.slug === categorySlug) || null;
+  const currentCategory = catalogCategories.find(c => c.slug === categorySlug) || (browseCategories.find(c => c.slug === categorySlug) ? { id: categorySlug!, slug: categorySlug!, name: browseCategories.find(c => c.slug === categorySlug)!.name } : null);
 
-  const availableBrands = useMemo(() => {
+  const availableBrands = (() => {
     const brands = new Set<string>();
     categoryProducts.forEach(p => {
       if (p.brand) brands.add(p.brand);
     });
     return Array.from(brands).sort();
-  }, [categoryProducts]);
+  })();
 
-  const brandCounts = useMemo(() => {
+  const brandCounts = (() => {
     const counts: { [brand: string]: number } = {};
     categoryProducts.forEach(p => {
       if (p.brand) counts[p.brand] = (counts[p.brand] || 0) + 1;
     });
     return counts;
-  }, [categoryProducts]);
+  })();
 
-  const onSaleCount = useMemo(
-    () => categoryProducts.filter(p => typeof p.salePrice === 'number' && p.salePrice > 0 && p.salePrice < p.price).length,
-    [categoryProducts]
-  );
+  const onSaleCount = categoryProducts.filter(p => typeof p.salePrice === 'number' && p.salePrice > 0 && p.salePrice < p.price).length;
 
   const totalCategoriesCount = categories.filter(c => !c.parentId).length;
 
@@ -192,6 +211,24 @@ export function ProductListingPage() {
         <h2 className="text-xl font-bold">Boutique officielle DakarBoutik</h2>
         <p className="mt-2 text-sm">Vendu par DakarBoutik. Ajoutez vos produits au panier pour commander sur le site, ou choisissez WhatsApp sur la fiche produit.</p>
         <Link href="/boutiques" className="mt-3 inline-block text-sm font-semibold text-emerald-800 underline">Découvrir aussi les boutiques partenaires →</Link>
+      </section>
+      <section aria-label="Rechercher et parcourir les catégories" className="mb-6 rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-6">
+        <h2 className="text-xl font-bold">Quel produit recherchez-vous ?</h2>
+        <form key={searchQuery || ''} role="search" className="mt-4 flex flex-col gap-2 sm:flex-row" onSubmit={e => {
+          e.preventDefault();
+          const query = String(new FormData(e.currentTarget).get('search') || '').trim();
+          const params = new URLSearchParams(currentQuery);
+          if (query) params.set('q', query); else params.delete('q');
+          router.push(`${basePath}?${params.toString()}`, { scroll: false });
+        }}>
+          <label className="min-w-0 flex-1"><span className="sr-only">Rechercher dans les produits DakarBoutik</span><input name="search" type="search" defaultValue={searchQuery || ''} placeholder="Batterie, onduleur, téléphone, marque…" className="h-12 w-full rounded-xl border border-slate-300 px-4 text-base" /></label>
+          <Button type="submit" className="h-12 rounded-xl px-6">Rechercher</Button>
+        </form>
+        <p className="mb-3 mt-5 text-sm font-semibold">Choisissez une catégorie</p>
+        <nav aria-label="Catégories du catalogue" className="flex flex-wrap gap-2">
+          {[{ slug: '', name: 'Tous les produits', count: allProducts.length }, ...browseCategories].map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={(categorySlug || '') === c.slug ? 'page' : undefined} className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-sm ${(categorySlug || '') === c.slug ? 'border-emerald-700 bg-emerald-700 font-semibold text-white' : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-emerald-500'}`}>{c.name}<span className="rounded-full bg-black/5 px-2 text-xs">{c.count}</span></Link>)}
+        </nav>
+        {(searchQuery || categorySlug || currentQuery) && <Link href="/products" scroll={false} className="mt-4 inline-block text-sm font-semibold text-emerald-800 underline">Effacer la recherche et les filtres</Link>}
       </section>
       {/* Barre mobile : filtres rapides + ouverture des filtres */}
       <div className="mb-4 flex items-center gap-2 lg:hidden">

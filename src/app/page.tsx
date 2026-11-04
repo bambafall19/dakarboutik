@@ -54,7 +54,7 @@ export default async function HomePage() {
     <section className={styles.section} aria-labelledby="categories-title">
       <div className={styles.heading}><div><span className={styles.eyebrow}>À chacun son univers</span><h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2></div></div>
       <div className={styles.categories}>{categories.map(({slug,name,detail,icon: Icon,query}) => {
-        const photo = products.find(p => query.test(p.title + ' ' + p.category) && p.images?.[0]?.imageUrl)?.images[0].imageUrl;
+        const photo = slug === 'tech-complete' ? undefined : products.find(p => query.test(p.title + ' ' + p.category) && p.images?.[0]?.imageUrl)?.images[0].imageUrl;
         return <Link key={slug} href={'/products?category=' + slug} className={styles.category}>
           <div className={styles.categoryVisual}>{photo ? <img src={photo} alt="" loading="lazy" width={200} height={140} /> : <Icon size={48} aria-hidden="true" />}</div>
           <strong>{name} <ArrowUpRight size={17} /></strong><span>{detail}</span>

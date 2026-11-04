@@ -10,7 +10,7 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { AnnouncementBar } from './announcement-bar';
-import { Heart, Search, Menu, Trophy } from 'lucide-react';
+import { Heart, Search, Menu } from 'lucide-react';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ThemeToggle } from './theme-toggle';
@@ -52,15 +52,6 @@ export function Header({
           </Button>
 
           <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
-
-          {/* Badge Sénégal Champion 2025 */}
-          <Link
-            href="/products?on_sale=true"
-            className="group ml-1 hidden shrink-0 items-center gap-1.5 rounded-full border border-accent/40 bg-gradient-to-r from-accent/15 to-accent/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-accent transition hover:border-accent hover:from-accent/25 xl:flex"
-          >
-            <Trophy className="h-3.5 w-3.5 transition group-hover:scale-110" />
-            Sénégal Champion 2025
-          </Link>
 
           {/* Center: Search */}
           <button

@@ -1,8 +1,9 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useState, useTransition, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
-import { useProducts } from "@/hooks/use-site-data";
+import type { Product } from "@/lib/types";
 import { Shirt, Smartphone, Sparkles, House, ShoppingBasket, Sun, Store } from "lucide-react";
 
 const featuredCategories = [
@@ -35,6 +36,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
         <Logo />
         {compact && <button type="button" aria-expanded={menuOpen} aria-controls="marketplace-menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold md:hidden">{menuOpen ? "Fermer" : "Menu"}</button>}
         <div id="marketplace-menu" className={`${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}>
+          <Link href="/">Accueil</Link>
           <Link href="/boutiques">Boutiques partenaires</Link>
           <Link href="/products" className="font-bold text-emerald-800">Acheter chez DakarBoutik</Link>
           <Link href="/checkout">Mon panier</Link>
@@ -49,9 +51,11 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
 export function ListingCard({
   listing,
   shop,
+  compact = false,
 }: {
   listing: Listing;
   shop: Shop;
+  compact?: boolean;
 }) {
   const p = listing.details;
   return (
@@ -75,7 +79,7 @@ export function ListingCard({
         </span>
         <h3 className="text-lg font-bold">{p.title}</h3>
         <p className="font-bold">{p.price.toLocaleString("fr-FR")} FCFA</p>
-        <p className="whitespace-pre-line text-sm text-slate-600">
+        <p className={`${compact ? "line-clamp-3" : "whitespace-pre-line"} text-sm text-slate-600`}>
           {p.description}
         </p>
         {isProductUrl(p.productUrl) && (
@@ -116,8 +120,8 @@ export function ListingCard({
     </article>
   );
 }
-function OfficialStore({ category, search }: { category: string; search: string }) {
-  const { products, loading } = useProducts();
+function OfficialStore({ category, search, products }: { category: string; search: string; products: Product[] }) {
+  const loading = false;
   const term = normalizeMarketplaceText(search);
   const matches = products.filter(p => p.status === "active" && matchesMarketplaceCategory(p, category) &&
     (!term || normalizeMarketplaceText(`${p.title} ${p.description} ${p.category}`).includes(term)));
@@ -145,11 +149,17 @@ export function MarketplaceCatalog({
   shops,
   listings,
   spotlight,
+  promotion,
+  products,
 }: {
   shops: Shop[];
   listings: Listing[];
   spotlight?: ReactNode;
+  promotion?: ReactNode;
+  products: Product[];
 }) {
+  const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
@@ -196,21 +206,22 @@ export function MarketplaceCatalog({
   }
   return (
     <>
-      <MarketplaceNav />
+      <MarketplaceNav compact />
       <main className="marketplace-lively min-h-screen bg-yellow-50/40 text-slate-900">
-        <section className="marketplace-welcome relative isolate overflow-hidden border-b-8 border-yellow-400 bg-gradient-to-br from-emerald-700 to-green-700 text-white">
+        {promotion && <div className="pt-6">{promotion}</div>}
+        <section className="marketplace-welcome relative isolate overflow-hidden border-b-4 border-yellow-300 bg-gradient-to-br from-emerald-50 to-yellow-50 text-emerald-950">
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border-[28px] border-yellow-300/25 bg-yellow-300/10" />
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -bottom-20 right-1/3 -z-10 h-44 w-44 rounded-full bg-emerald-300/15" />
           <div className="container py-7 md:py-10">
-            <p className="mb-3 text-xs uppercase tracking-widest text-emerald-200">
+            <p className="mb-3 text-xs uppercase tracking-widest text-emerald-700">
               Les boutiques physiques prennent leur place en ligne
             </p>
             <h1 className="max-w-3xl text-3xl font-bold leading-tight md:text-4xl">
               Vos boutiques à Dakar,
               <br />
-              <span className="text-yellow-300">leurs nouveautés à portée de main.</span>
+              <span className="text-emerald-700">leurs nouveautés à portée de main.</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-emerald-100">
+            <p className="mt-4 max-w-2xl text-base text-slate-600">
               Nouveautés, produits disponibles et bonnes adresses. Contactez
               directement la boutique par WhatsApp ou rendez-vous sur place.
             </p>
@@ -220,7 +231,7 @@ export function MarketplaceCatalog({
             >
               Présenter ma boutique
             </Link>
-            <a href="#nouveautes" className="ml-0 mt-3 inline-flex rounded-full border border-white/60 px-6 py-3 font-semibold text-white transition-colors hover:bg-white/15 sm:ml-3">Découvrir les nouveautés ↓</a>
+            <a href="#nouveautes" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Découvrir les nouveautés ↓</a>
           </div>
         </section>
         <div className="container space-y-8 py-6">
@@ -267,6 +278,7 @@ export function MarketplaceCatalog({
               </select>
             </label>
           </form>
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-4 text-sm"><p role="status">{matchingShops.length} boutique(s) · {matchingListings.length} produit(s) partenaire(s) correspondant(s)</p><button type="button" disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800 disabled:opacity-50">{refreshing ? "Actualisation…" : "Actualiser les disponibilités"}</button></div>
           <section aria-label="Parcourir par catégorie">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-bold">Qu’est-ce qui vous intéresse ?</h2>
@@ -280,7 +292,7 @@ export function MarketplaceCatalog({
               ))}
             </div>
           </section>
-          <OfficialStore category={category} search={search} />
+          <OfficialStore category={category} search={search} products={products} />
           <section id="nouveautes" className="scroll-mt-6">
             <h2 className="mb-2 text-2xl font-bold">
               Produits des boutiques partenaires
@@ -292,6 +304,7 @@ export function MarketplaceCatalog({
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingListings.map((l) => (
                 <ListingCard
+                  compact
                   key={l.id}
                   listing={l}
                   shop={shops.find((s) => s.id === l.shop_id)!}

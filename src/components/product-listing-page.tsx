@@ -218,12 +218,32 @@ export function ProductListingPage() {
 
   return (
     <div className="container py-4 md:py-8">
-      <section className="mb-6 rounded-2xl border border-yellow-300 bg-yellow-50 p-5 text-slate-900">
-        <h2 className="text-xl font-bold">Boutique officielle DakarBoutik</h2>
-        <p className="mt-2 text-sm">Vendu par DakarBoutik. Ajoutez vos produits au panier pour commander sur le site, ou choisissez WhatsApp sur la fiche produit.</p>
-        <Link href="/boutiques" className="mt-3 inline-block text-sm font-semibold text-emerald-800 underline">Découvrir aussi les boutiques partenaires →</Link>
+      <section aria-labelledby="official-store-title" className="official-hero relative mb-6 overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-yellow-100 p-5 text-slate-900 sm:p-8">
+        <div aria-hidden="true" className="hero-glow pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-yellow-300/30 blur-2xl" />
+        <div className="relative grid items-center gap-6 lg:grid-cols-[1.5fr_1fr]">
+          <div className="hero-intro">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800"><Sparkles size={15} aria-hidden="true" /> Votre sélection DakarBoutik</span>
+            <h2 id="official-store-title" className="mt-4 text-2xl font-extrabold tracking-tight sm:text-3xl">Boutique officielle <span className="text-emerald-700">DakarBoutik</span></h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Trouvez votre prochain coup de cœur. Commandez au panier ou contactez-nous sur WhatsApp depuis la fiche produit.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a href="#catalog-search" className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white shadow-sm motion-safe:transition-transform motion-safe:hover:-translate-y-1">Explorer les produits <ArrowUpRight className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1" size={18} aria-hidden="true" /></a>
+              <Link href="/boutiques" className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 motion-safe:transition-transform motion-safe:hover:-translate-y-1">Boutiques partenaires <ArrowUpRight size={17} aria-hidden="true" /></Link>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3" aria-label="Les univers DakarBoutik">{browseCategories.slice(0,4).map((c,index) => <Link key={c.slug} href={categoryUrl(c.slug) + '#catalog-search'} className="hero-tile group flex min-w-0 items-center gap-3 rounded-2xl border border-white bg-white/85 p-3 shadow-sm hover:border-emerald-300 sm:p-4" style={{animationDelay:`${index * 100}ms`}}><span className={`shrink-0 rounded-xl p-2 ${c.tone}`}><c.icon size={22} aria-hidden="true" /></span><span className="min-w-0"><span className="block text-xs font-bold sm:text-sm">{c.name}</span><span className="mt-1 block text-xs text-slate-500">{c.count} produits</span></span></Link>)}</div>
+        </div>
+        <style jsx>{`
+          @keyframes store-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes store-glow { from { transform: translate(-30px, 15px) scale(.85); } to { transform: translate(0, 0) scale(1); } }
+          @media (prefers-reduced-motion: no-preference) {
+            .hero-intro { animation: store-enter .6s ease-out both; }
+            .official-hero :global(.hero-tile) { animation: store-enter .6s ease-out both; transition: transform .2s, box-shadow .2s; }
+            .official-hero :global(.hero-tile:hover) { transform: translateY(-3px); box-shadow: 0 8px 20px -12px #047857; }
+            .hero-glow { animation: store-glow 4s ease-out both; }
+          }
+        `}</style>
       </section>
-      <section aria-label="Rechercher et parcourir les catégories" className="mb-6 rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-6">
+      <section id="catalog-search" aria-label="Rechercher et parcourir les catégories" className="mb-6 scroll-mt-44 rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="text-xl font-bold">Quel produit recherchez-vous ?</h2>
         <form key={searchQuery || ''} role="search" className="mt-4 flex flex-col gap-2 sm:flex-row" onSubmit={e => {
           e.preventDefault();

@@ -1,3 +1,4 @@
+import { SiteAnalytics } from '@/components/site-analytics';
 import { Lexend, Plus_Jakarta_Sans } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
@@ -88,6 +89,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <CartProvider>
                   <AppShellServer>{children}</AppShellServer>
                   <DataRefreshBridge />
+                  <SiteAnalytics />
                   <Toaster />
                   <ContextMenuGuard />
                 </CartProvider>

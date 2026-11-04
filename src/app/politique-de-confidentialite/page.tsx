@@ -1,76 +1,79 @@
-
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-export default function PrivacyPolicyPage() {
-  return (
-    <div className="container py-8 md:py-12">
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Politique de Confidentialité</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <Card className="rounded-2xl border-border/70">
-        <CardHeader>
-          <CardTitle className="font-headline text-2xl md:text-3xl">Politique de Confidentialité</CardTitle>
-        </CardHeader>
-        <CardContent className="prose max-w-none text-foreground/80">
-          <p>Dernière mise à jour : {new Date().toLocaleDateString('fr-SN')}</p>
-
-          <p>
-            La présente Politique de Confidentialité décrit la manière dont DakarBoutik collecte, utilise et protège les informations que vous nous fournissez lorsque vous utilisez notre site web.
-          </p>
-          
-          <h2 className="font-headline text-xl font-bold text-foreground">1. Collecte de l&apos;information</h2>
-          <p>
-            Nous collectons des informations lorsque vous passez une commande sur notre site. Les informations collectées incluent votre nom, votre adresse e-mail, votre numéro de téléphone, et votre adresse de livraison.
-          </p>
-
-          <h2 className="font-headline text-xl font-bold text-foreground">2. Utilisation des informations</h2>
-          <p>
-            Toutes les informations que nous recueillons auprès de vous peuvent être utilisées pour :
-          </p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Traiter vos transactions et livrer vos commandes.</li>
-            <li>Améliorer le service client et vos besoins de prise en charge.</li>
-            <li>Vous contacter par e-mail ou par téléphone concernant votre commande.</li>
-            <li>Personnaliser votre expérience et répondre à vos besoins individuels.</li>
-          </ul>
-
-          <h2 className="font-headline text-xl font-bold text-foreground">3. Confidentialité du commerce en ligne</h2>
-          <p>
-            Nous sommes les seuls propriétaires des informations recueillies sur ce site. Vos informations personnelles ne seront pas vendues, échangées, transférées, ou données à une autre société pour n’importe quelle raison, sans votre consentement, en dehors de ce qui est nécessaire pour répondre à une demande et / ou une transaction, comme par exemple pour expédier une commande.
-          </p>
-
-          <h2 className="font-headline text-xl font-bold text-foreground">4. Protection des informations</h2>
-          <p>
-            Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Nous utilisons une connexion sécurisée pour la transmission des informations sensibles. Seuls les employés qui ont besoin d’effectuer un travail spécifique (par exemple, la facturation ou le service à la clientèle) ont accès aux informations personnelles identifiables.
-          </p>
-          
-          <h2 className="font-headline text-xl font-bold text-foreground">5. Consentement</h2>
-          <p>
-            En utilisant notre site, vous consentez à notre politique de confidentialité.
-          </p>
-          
-           <h2 className="font-headline text-xl font-bold text-foreground">6. Contact</h2>
-          <p>
-            Pour toute question concernant cette politique de confidentialité, vous pouvez nous contacter via notre page de <a href="/contact" className="text-primary underline">contact</a>.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export default function PrivacyPolicyPage() {
+  return (
+    <div className="container py-8 md:py-12">
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Politique de Confidentialité</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <Card className="rounded-2xl border-border/70">
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl md:text-3xl">Politique de Confidentialité</CardTitle>
+        </CardHeader>
+        <CardContent className="prose max-w-none text-foreground/80">
+          <p>Dernière mise à jour : {new Date().toLocaleDateString('fr-SN')}</p>
+
+          <p>
+            La présente Politique de Confidentialité décrit la manière dont DakarBoutik collecte, utilise et protège les informations que vous nous fournissez lorsque vous utilisez notre site web.
+          </p>
+          
+          <h2 className="font-headline text-xl font-bold text-foreground">1. Collecte de l&apos;information</h2>
+          <p>
+            Nous collectons des informations lorsque vous passez une commande sur notre site. Les informations collectées incluent votre nom, votre adresse e-mail, votre numéro de téléphone, et votre adresse de livraison.
+          </p>
+
+          <h2 className="font-headline text-xl font-bold text-foreground">2. Utilisation des informations</h2>
+          <p>
+            Toutes les informations que nous recueillons auprès de vous peuvent être utilisées pour :
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Traiter vos transactions et livrer vos commandes.</li>
+            <li>Améliorer le service client et vos besoins de prise en charge.</li>
+            <li>Vous contacter par e-mail ou par téléphone concernant votre commande.</li>
+            <li>Personnaliser votre expérience et répondre à vos besoins individuels.</li>
+          </ul>
+
+          <h2 className="font-headline text-xl font-bold text-foreground">3. Confidentialité du commerce en ligne</h2>
+          <p>
+            Nous sommes les seuls propriétaires des informations recueillies sur ce site. Vos informations personnelles ne seront pas vendues, échangées, transférées, ou données à une autre société pour n’importe quelle raison, sans votre consentement, en dehors de ce qui est nécessaire pour répondre à une demande et / ou une transaction, comme par exemple pour expédier une commande.
+          </p>
+
+          <h2 className="font-headline text-xl font-bold text-foreground">4. Protection des informations</h2>
+          <p>
+            Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Nous utilisons une connexion sécurisée pour la transmission des informations sensibles. Seuls les employés qui ont besoin d’effectuer un travail spécifique (par exemple, la facturation ou le service à la clientèle) ont accès aux informations personnelles identifiables.
+          </p>
+          
+          <h2 className="font-headline text-xl font-bold text-foreground">Mesure d’audience et publicités</h2>
+          <p>Vercel Web Analytics mesure les visites des pages publiques. Les paramètres de recherche et les pages privées (administration, connexion, suivi et commande) sont exclus de cette nouvelle mesure. Le tableau Vercel présente un historique de 30 jours.</p>
+          <p>Nous comptons aussi les affichages et clics publicitaires, les consultations de boutiques et les clics vers WhatsApp ou le panier. Ces événements ne contiennent ni nom, ni téléphone, ni e-mail, ni identifiant de visiteur. Les résultats sont réservés à l’administration sur une fenêtre de 90 jours ; les événements plus anciens sont purgés progressivement lors de nouvelles mesures. Un quota technique utilise une empreinte de l’adresse réseau pour limiter les abus. Les préférences Do Not Track et Global Privacy Control désactivent ces nouvelles mesures.</p>
+          <h2 className="font-headline text-xl font-bold text-foreground">5. Consentement</h2>
+          <p>
+            En utilisant notre site, vous consentez à notre politique de confidentialité.
+          </p>
+          
+           <h2 className="font-headline text-xl font-bold text-foreground">6. Contact</h2>
+          <p>
+            Pour toute question concernant cette politique de confidentialité, vous pouvez nous contacter via notre page de <a href="/contact" className="text-primary underline">contact</a>.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

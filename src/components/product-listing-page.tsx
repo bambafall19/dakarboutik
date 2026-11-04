@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useProducts, useCategories } from '@/hooks/use-site-data';
+import { AdvertisingSlot } from './advertising-slot';
 import { ProductListing } from './product-listing';
 import { ProductListingSkeleton } from './product-listing-skeleton';
 import { CategorySidebar } from './category-sidebar';
@@ -345,6 +346,7 @@ export function ProductListingPage() {
 
         {/* Résultats */}
         <main className="lg:col-span-9">
+          <AdvertisingSlot placement="catalog" category={categorySlug || ''} />
           <ProductListing
             products={visibleProducts}
             suggestedProducts={allProducts.filter(p => p.isBestseller).slice(0, 3)}

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, Search, Sun, Smartphone, Monitor, House, Store } from 'lucide-react';
-import { getProducts } from '@/lib/data-firebase';
+import { getProducts, getBanners } from '@/lib/data-firebase';
+import { ProductSpotlight } from '@/components/product-spotlight';
 import { publicMarketplace } from '@/lib/marketplace-server';
 import { isSponsored } from '@/lib/marketplace-model';
 import { ProductCard } from '@/components/product-card';
@@ -14,9 +15,10 @@ const categories = [
   { slug: 'maison-complete', name: 'Maison', detail: 'Électroménager et confort', icon: House, query: /maison|meuble|réfrigérateur|electromenager|électroménager/i },
 ];
 export default async function HomePage() {
-  const [products, market] = await Promise.all([
+  const [products, market, banners] = await Promise.all([
     getProducts(),
     process.env.MARKETPLACE_ENABLED === 'true' ? publicMarketplace() : Promise.resolve({ shops: [], listings: [] }),
+    getBanners(),
   ]);
   const latest = products.slice(0, 8);
   const offers = products.filter(p => p.stock > 0 && p.salePrice != null && p.salePrice > 0 && p.salePrice < p.price).slice(0, 4);
@@ -27,6 +29,7 @@ export default async function HomePage() {
   const video = process.env.HOME_REALISATION_VIDEO_URL;
   const validVideo = video && /^https:\/\/[^\s]+\.(mp4|webm)(\?[^\s]*)?$/i.test(video);
   return <div className={styles.home}>
+    <ProductSpotlight products={products} banners={banners} />
     <section className={styles.hero} aria-labelledby="home-title">
       <div>
         <span className={styles.eyebrow}>Le shopping, proche de vous</span>

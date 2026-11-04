@@ -25,7 +25,7 @@ const footerLinks = {
     { name: 'Promotions', href: '/products?on_sale=true' },
   ],
   'Commandes & livraison': [
-    { name: 'Suivi de commande', href: '/contact' },
+    { name: 'Suivi de commande', href: '/suivi' },
     { name: 'Livraison & délais', href: '/sav' },
     { name: 'Modes de paiement', href: '/faq' },
   ],

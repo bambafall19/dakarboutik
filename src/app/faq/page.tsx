@@ -53,7 +53,7 @@ export default function FAQPage() {
                 <AccordionItem value={`item-${index}`} key={item.id}>
                   <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
                   <AccordionContent>
-                    <p className="whitespace-pre-line text-muted-foreground" dangerouslySetInnerHTML={{ __html: item.answer }} />
+                    <p className="whitespace-pre-line text-muted-foreground">{item.answer}</p>
                   </AccordionContent>
                 </AccordionItem>
               ))}

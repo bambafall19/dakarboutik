@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const id = new URL(req.url).searchParams.get('id');
-  if (!id) return NextResponse.json({ error: 'id requis' }, { status: 400 });
+  if (!id || !/^[A-Za-z0-9_-]{4,48}$/.test(id)) return NextResponse.json({ error: 'id requis' }, { status: 400 });
   const row = await queryOne<any>('select * from public_orders where id=$1', [id]);
   if (!row) return NextResponse.json(null, { status: 404 });
   const order: PublicOrder = {
@@ -17,5 +17,5 @@ export async function GET(req: NextRequest) {
     statusHistory: row.status_history ?? [],
     publicNotes: row.public_notes ?? [],
   };
-  return NextResponse.json(order);
+  return NextResponse.json(order, { headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
 }

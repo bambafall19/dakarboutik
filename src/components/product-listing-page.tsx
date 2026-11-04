@@ -155,7 +155,7 @@ export function ProductListingPage() {
 
   const onSaleCount = categoryProducts.filter(p => typeof p.salePrice === 'number' && p.salePrice > 0 && p.salePrice < p.price).length;
 
-  const totalCategoriesCount = categories.filter(c => !c.parentId).length;
+  const totalCategoriesCount = browseCategories.length;
 
   const pageTitle = currentCategory ? currentCategory.name : 'Tous nos produits';
   const description = currentCategory
@@ -218,7 +218,7 @@ export function ProductListingPage() {
 
   return (
     <div className="container py-4 md:py-8">
-      <section aria-labelledby="official-store-title" className="official-hero relative mb-6 overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-yellow-100 p-5 text-slate-900 sm:p-8">
+      <section aria-labelledby="official-store-title" className="official-hero relative hidden sm:block mb-6 overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-yellow-100 p-5 text-slate-900 sm:p-8">
         <div aria-hidden="true" className="hero-glow pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-yellow-300/30 blur-2xl" />
         <div className="relative grid items-center gap-6 lg:grid-cols-[1.5fr_1fr]">
           <div className="hero-intro">
@@ -256,8 +256,8 @@ export function ProductListingPage() {
           <Button type="submit" className="h-12 rounded-xl px-6">Rechercher</Button>
         </form>
         <div className="mb-3 mt-6 flex flex-wrap items-center justify-between gap-3"><div><p className="font-bold">Explorez nos univers</p><p className="mt-1 text-xs text-slate-500">Des catégories regroupées pour trouver plus vite.</p></div><Link href={categoryUrl('')} scroll={false} aria-current={!categorySlug ? 'page' : undefined} className={`rounded-full border px-4 py-2 text-sm font-semibold ${!categorySlug ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-emerald-200 text-emerald-800'}`}>Tous les produits · {allProducts.length}</Link></div>
-        <nav aria-label="Catégories du catalogue" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {browseCategories.map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={categorySlug === c.slug ? 'page' : undefined} className={`group min-w-0 rounded-2xl border p-3 motion-safe:transition-all sm:p-4 ${categorySlug === c.slug ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'}`}><div className="mb-3 flex items-center justify-between gap-2"><span className={`rounded-xl p-2.5 ${c.tone}`}><c.icon size={23} aria-hidden="true" /></span><span className="text-xs font-medium text-slate-500">{c.count} produits</span></div><span className="block text-sm font-bold text-slate-900 sm:text-base">{c.name}</span><span className="mt-1 hidden text-xs leading-relaxed text-slate-500 sm:block">{c.detail}</span><span className="mt-3 flex items-center gap-1 text-xs font-semibold text-emerald-800">{categorySlug === c.slug ? 'Sélectionné' : 'Découvrir'}<ArrowUpRight size={14} aria-hidden="true" /></span></Link>)}
+        <nav aria-label="Catégories du catalogue" className="flex gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+          {browseCategories.map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={categorySlug === c.slug ? 'page' : undefined} className={`group shrink-0 sm:shrink min-w-0 rounded-2xl border p-3 motion-safe:transition-all sm:p-4 ${categorySlug === c.slug ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'}`}><div className="hidden sm:flex mb-3 items-center justify-between gap-2"><span className={`rounded-xl p-2.5 ${c.tone}`}><c.icon size={23} aria-hidden="true" /></span><span className="text-xs font-medium text-slate-500">{c.count} produits</span></div><span className="block text-sm font-bold text-slate-900 sm:text-base">{c.name}</span><span className="mt-1 hidden text-xs leading-relaxed text-slate-500 sm:block">{c.detail}</span><span className="hidden sm:flex mt-3 items-center gap-1 text-xs font-semibold text-emerald-800">{categorySlug === c.slug ? 'Sélectionné' : 'Découvrir'}<ArrowUpRight size={14} aria-hidden="true" /></span></Link>)}
         </nav>
         {(searchQuery || categorySlug || currentQuery) && <Link href="/products" scroll={false} className="mt-4 inline-block text-sm font-semibold text-emerald-800 underline">Effacer la recherche et les filtres</Link>}
       </section>

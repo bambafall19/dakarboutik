@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "db:schema": "node scripts/schema.mjs",
     "db:seed": "node scripts/seed.mjs",
+    "test:security": "node --test scripts/security.test.cjs",
     "test:marketplace": "node --test scripts/marketplace.test.cjs",
     "db:marketplace": "node scripts/marketplace-migrate.mjs"
   },

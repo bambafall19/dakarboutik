@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from 'react';
 import type { Product, Category } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { findImage } from '@/lib/placeholder-images';
@@ -64,6 +65,7 @@ export function ProductListing({
 }: ProductListingProps) {
   const { settings } = useSiteSettings();
 
+  const [failedImage, setFailedImage] = useState<string | null>(null);
   let categoryImage;
 
   if (category?.bannerImageUrl) {
@@ -87,6 +89,11 @@ export function ProductListing({
     }
   }
 
+  const productImage = products.find(product => product.images?.[0]?.imageUrl)?.images[0].imageUrl;
+  if (category && !category.bannerImageUrl && productImage) {
+    categoryImage = { ...categoryImage, imageUrl: productImage };
+  }
+
   const subtitle = description ?? (
     category
       ? `Découvrez notre sélection ${category.name.toLowerCase()} : produits authentiques, prix justes et livraison rapide à Dakar.`
@@ -103,14 +110,14 @@ export function ProductListing({
     <>
       {/* ── En-tête éditorial ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl border border-border/60 shadow-[0_34px_80px_-56px_rgba(16,42,35,0.9)]">
-        <div className="absolute inset-0">
-          <img src={categoryImage.imageUrl} alt={pageTitle} className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 to-slate-900">
+          {failedImage !== categoryImage.imageUrl && <img src={categoryImage.imageUrl} alt="" onError={() => setFailedImage(categoryImage.imageUrl)} className="hidden h-full w-full object-cover sm:block" />}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/25" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         </div>
 
-        <div className="relative flex min-h-[230px] flex-col justify-end gap-4 p-5 sm:p-8 md:min-h-[310px] md:p-10">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="relative flex min-h-[100px] sm:min-h-[230px] flex-col justify-end gap-4 p-5 sm:p-8 md:min-h-[310px] md:p-10">
+          <div className="hidden sm:flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-foreground shadow-sm">
               <Sparkles className="h-3 w-3" />
               Boutique
@@ -124,15 +131,15 @@ export function ProductListing({
           </div>
 
           <div>
-            <h1 className="text-balance font-headline text-3xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-lg md:text-5xl">
+            <h1 className="text-balance font-headline text-xl sm:text-3xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-lg md:text-5xl">
               {pageTitle}
             </h1>
-            <p className="mt-2.5 max-w-2xl text-balance text-sm leading-relaxed text-white/80 md:text-base">
+            <p className="hidden sm:block mt-2.5 max-w-2xl text-balance text-sm leading-relaxed text-white/80 md:text-base">
               {subtitle}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2.5">
+          <div className="hidden sm:flex flex-wrap gap-2.5">
             {stats.map((stat) => (
               <span
                 key={stat.label}

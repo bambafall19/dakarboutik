@@ -132,8 +132,6 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   async function onSubmit(values: FormValues) {
     const shippingCost = getShippingQuote(settings, DELIVERY_ZONES.find(z => z.id === values.zoneId)?.region ?? "dakar", totalPrice).shippingCost;
     const grandTotal = totalPrice + shippingCost;
-    const randomPart = Math.random().toString(36).substring(2, 7);
-    const orderId = `DKB-${Date.now()}-${randomPart}`;
     const createdAt = new Date().toISOString();
 
     // Map new payment methods to legacy type for DB compatibility
@@ -146,9 +144,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         selectedVariants: item.selectedVariants || [],
       }));
 
-      await api.post('/api/orders', {
-        id: orderId,
-        orderId,
+      const saved = await api.post<{ id: string }>('/api/orders', {
         customerInfo: {
           name: values.name,
           email: values.email,
@@ -168,6 +164,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         publicNotes: [],
       });
 
+      const orderId = saved.id;
       toast({
         title: "Commande passée !",
         description: "Vous serez redirigé vers la page de confirmation.",

@@ -208,33 +208,33 @@ export function MarketplaceCatalog({
     <>
       <MarketplaceNav compact />
       <main className="marketplace-lively min-h-screen bg-yellow-50/40 text-slate-900">
-        {promotion && <div className="pt-6">{promotion}</div>}
+        {promotion && <div className="pt-3 sm:pt-6">{promotion}</div>}
         <section className="marketplace-welcome relative isolate overflow-hidden border-b-4 border-yellow-300 bg-gradient-to-br from-emerald-50 to-yellow-50 text-emerald-950">
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border-[28px] border-yellow-300/25 bg-yellow-300/10" />
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -bottom-20 right-1/3 -z-10 h-44 w-44 rounded-full bg-emerald-300/15" />
-          <div className="container py-7 md:py-10">
-            <p className="mb-3 text-xs uppercase tracking-widest text-emerald-700">
+          <div className="container py-3 md:py-10">
+            <p className="hidden sm:block mb-3 text-xs uppercase tracking-widest text-emerald-700">
               Les boutiques physiques prennent leur place en ligne
             </p>
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight md:text-4xl">
+            <h1 className="max-w-3xl text-xl sm:text-3xl font-bold leading-tight md:text-4xl">
               Vos boutiques à Dakar,
               <br />
               <span className="text-emerald-700">leurs nouveautés à portée de main.</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-slate-600">
+            <p className="hidden sm:block mt-4 max-w-2xl text-base text-slate-600">
               Nouveautés, produits disponibles et bonnes adresses. Contactez
               directement la boutique par WhatsApp ou rendez-vous sur place.
             </p>
             <Link
               href="/commercant"
-              className="mt-4 inline-block rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
+              className="hidden sm:inline-block mt-4 rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
             >
               Présenter ma boutique
             </Link>
             <a href="#nouveautes" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Découvrir les nouveautés ↓</a>
           </div>
         </section>
-        <div className="container space-y-8 py-6">
+        <div className="container space-y-4 py-4 sm:space-y-8 sm:py-6">
           <form
             onSubmit={(e) => e.preventDefault()}
             role="search"

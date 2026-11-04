@@ -28,6 +28,7 @@ export async function GET(
       'Cache-Control': 'public, max-age=31536000, immutable',
       'Content-Disposition': `inline; filename="${encodeURIComponent(row.name || id)}"`,
       'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "sandbox; default-src 'none'",
     },
   });
 }

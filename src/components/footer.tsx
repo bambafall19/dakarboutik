@@ -237,7 +237,10 @@ export function Footer({ settings }: FooterProps) {
             )}
             <p>Developed &amp; Deployed by Mouhamadou BAMBA</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/mentions-legales" className="transition hover:text-accent">
+              Mentions légales
+            </Link>
             <Link href="/conditions-generales" className="transition hover:text-accent">
               Conditions générales
             </Link>

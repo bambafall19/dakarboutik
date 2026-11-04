@@ -32,6 +32,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api-client';
 import { useAdminVendors } from '@/hooks/use-site-data';
 import { Trash } from 'lucide-react';
+import { ProductImageInput } from './product-image-input';
 
 function slugify(text: string) {
   return text
@@ -65,6 +66,7 @@ interface EditProductFormProps {
 }
 
 export function EditProductForm({ categories, product }: EditProductFormProps) {
+  const [uploadsPending, setUploadsPending] = useState(0);
   const router = useRouter();
   const { toast } = useToast();
   const { vendors } = useAdminVendors();
@@ -146,7 +148,8 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (imageFields.some(img => !img.url)) {
+    if (uploadsPending > 0) return;
+    if (!imageFields.length || imageFields.some(img => !img.url.trim())) {
         toast({
             variant: 'destructive',
             title: "Images manquantes",
@@ -181,6 +184,10 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
       }, {} as Record<string, string>);
 
       const updatedProductData: Partial<Product> = {
+        salePrice: product.salePrice,
+        brand: product.brand,
+        variants: product.variants,
+        status: product.status,
         title: values.title,
         slug: slug,
         description: values.description,
@@ -263,18 +270,16 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
                   {imageFields.map((image, index) => (
                     <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
                       <div className='flex-1 space-y-2'>
-                          <Input
-                          placeholder="URL de l'image (ex: https://...)"
-                          value={image.url}
-                          onChange={(e) => handleImageChange(index, 'url', e.target.value)}
-                          />
+<ProductImageInput value={image.url}
+                            onChange={url => handleImageChange(index, 'url', url)}
+                            onBusyChange={busy => setUploadsPending(count => count + (busy ? 1 : -1))} />
                           <Input
                           placeholder="Description de l'image (optionnel)"
                           value={image.description}
                           onChange={(e) => handleImageChange(index, 'description', e.target.value)}
                           />
                       </div>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1 || uploadsPending > 0}>
                         <Trash className="text-red-500" />
                       </Button>
                     </div>
@@ -517,7 +522,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
               />
             </div>
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting || uploadsPending > 0}>
               {form.formState.isSubmitting
                 ? 'Mise à jour...'
                 : 'Enregistrer les modifications'}

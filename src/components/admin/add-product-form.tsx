@@ -32,6 +32,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api-client';
 import { useAdminVendors } from '@/hooks/use-site-data';
 import { Trash } from 'lucide-react';
+import { ProductImageInput } from './product-image-input';
 
 // Slugify function
 function slugify(text: string) {
@@ -66,6 +67,7 @@ interface AddProductFormProps {
 }
 
 export function AddProductForm({ categories }: AddProductFormProps) {
+  const [uploadsPending, setUploadsPending] = useState(0);
   const router = useRouter();
   const { toast } = useToast();
   const { vendors } = useAdminVendors();
@@ -136,7 +138,8 @@ export function AddProductForm({ categories }: AddProductFormProps) {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (imageFields.some(img => !img.url)) {
+    if (uploadsPending > 0) return;
+    if (!imageFields.length || imageFields.some(img => !img.url.trim())) {
         toast({
             variant: 'destructive',
             title: "Images manquantes",
@@ -260,18 +263,16 @@ export function AddProductForm({ categories }: AddProductFormProps) {
                   {imageFields.map((image, index) => (
                     <div key={index} className="flex items-center gap-2 p-3 border rounded-md">
                       <div className='flex-1 space-y-2'>
-                          <Input
-                          placeholder="URL de l'image (ex: https://...)"
-                          value={image.url}
-                          onChange={(e) => handleImageChange(index, 'url', e.target.value)}
-                          />
+<ProductImageInput value={image.url}
+                            onChange={url => handleImageChange(index, 'url', url)}
+                            onBusyChange={busy => setUploadsPending(count => count + (busy ? 1 : -1))} />
                           <Input
                           placeholder="Description de l'image (optionnel)"
                           value={image.description}
                           onChange={(e) => handleImageChange(index, 'description', e.target.value)}
                           />
                       </div>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1}>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(index)} disabled={imageFields.length === 1 || uploadsPending > 0}>
                         <Trash className="text-red-500" />
                       </Button>
                     </div>
@@ -515,7 +516,7 @@ export function AddProductForm({ categories }: AddProductFormProps) {
               />
             </div>
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting || uploadsPending > 0}>
               {form.formState.isSubmitting
                 ? 'Ajout en cours...'
                 : 'Ajouter le produit'}

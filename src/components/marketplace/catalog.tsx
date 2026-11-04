@@ -382,6 +382,11 @@ export function MarketplaceCatalog({
             DakarBoutik met en relation clients et boutiques. Le paiement, la
             remise du produit et les conditions de vente se conviennent
             directement avec le vendeur.
+            <div className="mt-4 flex flex-wrap gap-4 font-semibold text-emerald-800">
+              <a href="/mentions-legales" className="underline underline-offset-4">Mentions légales</a>
+              <a href="/conditions-generales" className="underline underline-offset-4">Conditions générales</a>
+              <a href="/politique-de-confidentialite" className="underline underline-offset-4">Politique de confidentialité</a>
+            </div>
           </footer>
         </div>
       </main>

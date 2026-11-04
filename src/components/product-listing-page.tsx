@@ -12,7 +12,7 @@ import { ProductFilters } from './product-filters';
 import { QuickFilters } from './quick-filters';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/button';
-import { LayoutGrid, SlidersHorizontal, Flame, Sparkles, Tag } from 'lucide-react';
+import { LayoutGrid, SlidersHorizontal, Flame, Sparkles, Tag, Sun, Smartphone, Monitor, House, ArrowUpRight } from 'lucide-react';
 import { matchesMarketplaceCategory, normalizeMarketplaceText } from '@/lib/marketplace-model';
 import type { Category } from '@/lib/types';
 
@@ -49,7 +49,7 @@ export function ProductListingPage() {
     visit(categories);
     return Array.from(flat.values());
   }, [categories]);
-  const matchesCategory = (product: (typeof allProducts)[number], slug: string) => {
+  const matchesOriginalCategory = (product: (typeof allProducts)[number], slug: string) => {
     if (slug === 'solaire' || slug === 'telephones') return matchesMarketplaceCategory(product, slug);
     const selected = catalogCategories.find(c => c.slug === slug);
     let current = catalogCategories.find(c => c.slug === product.category);
@@ -61,11 +61,22 @@ export function ProductListingPage() {
     }
     return product.category === slug || !!selected?.subCategories?.some(c => c.slug === product.category);
   };
-  const browseCategories = [
-    { slug: 'solaire', name: 'Solaire & énergie' },
-    { slug: 'telephones', name: 'Téléphones & accessoires' },
-    ...catalogCategories.filter(c => !['solaire', 'telephones'].includes(c.slug)),
-  ].map(c => ({ ...c, count: allProducts.filter(p => matchesCategory(p, c.slug)).length })).filter(c => c.count > 0);
+  const productGroup = (product: (typeof allProducts)[number]) => {
+    if (matchesMarketplaceCategory(product, 'solaire')) return 'solaire';
+    if (matchesMarketplaceCategory(product, 'telephones')) return 'telephones';
+    if (matchesOriginalCategory(product, 'maison-meubles-and-jardin')) return 'maison-complete';
+    if (matchesOriginalCategory(product, 'electronique-and-technologies')) return 'tech-complete';
+    return 'autres-produits';
+  };
+  const groupDefinitions = [
+    { slug: 'solaire', name: 'Solaire & énergie', detail: 'Batteries, onduleurs et panneaux', icon: Sun, tone: 'bg-amber-100 text-amber-800' },
+    { slug: 'telephones', name: 'Téléphones & accessoires', detail: 'Smartphones et accessoires mobiles', icon: Smartphone, tone: 'bg-sky-100 text-sky-800' },
+    { slug: 'tech-complete', name: 'Informatique & électronique', detail: 'Ordinateurs, réseaux, audio et sécurité', icon: Monitor, tone: 'bg-violet-100 text-violet-800' },
+    { slug: 'maison-complete', name: 'Maison & électroménager', detail: 'Électroménager, meubles et jardin', icon: House, tone: 'bg-rose-100 text-rose-800' },
+    { slug: 'autres-produits', name: 'Autres produits', detail: 'Découvrez le reste du catalogue', icon: LayoutGrid, tone: 'bg-slate-100 text-slate-800' },
+  ];
+  const matchesCategory = (product: (typeof allProducts)[number], slug: string) => groupDefinitions.some(c => c.slug === slug) ? productGroup(product) === slug : matchesOriginalCategory(product, slug);
+  const browseCategories = groupDefinitions.map(c => ({ ...c, count: allProducts.filter(p => matchesCategory(p, c.slug)).length })).filter(c => c.count > 0);
   const categoryUrl = (slug: string) => {
     const params = new URLSearchParams();
     if (slug) params.set('category', slug);
@@ -186,7 +197,7 @@ export function ProductListingPage() {
           Catégories
         </h3>
         <CategorySidebar
-          categories={categories}
+          categories={browseCategories.map(c => ({ id: c.slug, slug: c.slug, name: c.name, productCount: c.count }))}
           currentCategorySlug={categorySlug}
           basePath={basePath}
           currentQuery={currentQuery}
@@ -224,9 +235,9 @@ export function ProductListingPage() {
           <label className="min-w-0 flex-1"><span className="sr-only">Rechercher dans les produits DakarBoutik</span><input name="search" type="search" defaultValue={searchQuery || ''} placeholder="Batterie, onduleur, téléphone, marque…" className="h-12 w-full rounded-xl border border-slate-300 px-4 text-base" /></label>
           <Button type="submit" className="h-12 rounded-xl px-6">Rechercher</Button>
         </form>
-        <p className="mb-3 mt-5 text-sm font-semibold">Choisissez une catégorie</p>
-        <nav aria-label="Catégories du catalogue" className="flex flex-wrap gap-2">
-          {[{ slug: '', name: 'Tous les produits', count: allProducts.length }, ...browseCategories].map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={(categorySlug || '') === c.slug ? 'page' : undefined} className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-sm ${(categorySlug || '') === c.slug ? 'border-emerald-700 bg-emerald-700 font-semibold text-white' : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-emerald-500'}`}>{c.name}<span className="rounded-full bg-black/5 px-2 text-xs">{c.count}</span></Link>)}
+        <div className="mb-3 mt-6 flex flex-wrap items-center justify-between gap-3"><div><p className="font-bold">Explorez nos univers</p><p className="mt-1 text-xs text-slate-500">Des catégories regroupées pour trouver plus vite.</p></div><Link href={categoryUrl('')} scroll={false} aria-current={!categorySlug ? 'page' : undefined} className={`rounded-full border px-4 py-2 text-sm font-semibold ${!categorySlug ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-emerald-200 text-emerald-800'}`}>Tous les produits · {allProducts.length}</Link></div>
+        <nav aria-label="Catégories du catalogue" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {browseCategories.map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={categorySlug === c.slug ? 'page' : undefined} className={`group min-w-0 rounded-2xl border p-3 motion-safe:transition-all sm:p-4 ${categorySlug === c.slug ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'}`}><div className="mb-3 flex items-center justify-between gap-2"><span className={`rounded-xl p-2.5 ${c.tone}`}><c.icon size={23} aria-hidden="true" /></span><span className="text-xs font-medium text-slate-500">{c.count} produits</span></div><span className="block text-sm font-bold text-slate-900 sm:text-base">{c.name}</span><span className="mt-1 hidden text-xs leading-relaxed text-slate-500 sm:block">{c.detail}</span><span className="mt-3 flex items-center gap-1 text-xs font-semibold text-emerald-800">{categorySlug === c.slug ? 'Sélectionné' : 'Découvrir'}<ArrowUpRight size={14} aria-hidden="true" /></span></Link>)}
         </nav>
         {(searchQuery || categorySlug || currentQuery) && <Link href="/products" scroll={false} className="mt-4 inline-block text-sm font-semibold text-emerald-800 underline">Effacer la recherche et les filtres</Link>}
       </section>

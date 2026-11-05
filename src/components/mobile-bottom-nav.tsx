@@ -19,7 +19,7 @@ export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
 
   const navItems = [
     { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
-    { onClick: onMenuClick, label: 'CatÃ©gories', icon: LayoutGrid },
+    { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
     { href: '/favoris', label: 'Favoris', icon: Heart, isActive: pathname.startsWith('/favoris'), isWishlist: true },
     { href: '/commercant?inscription=1', label: 'Inscrire ma boutique', icon: Store, isActive: pathname.startsWith('/commercant') },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true, isActive: pathname.startsWith('/checkout') },

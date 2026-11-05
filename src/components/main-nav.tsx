@@ -32,7 +32,7 @@ export function MainNav({ items }: MainNavProps) {
           ['/products', 'Produits DakarBoutik'],
           ['/boutiques', 'Boutiques partenaires'],
           ['/products?on_sale=true', 'Promotions'],
-          ['/commercant', 'Espace commerÃ§ant'],
+          ['/commercant', 'Espace commerçant'],
         ].map(([href, label]) => <NavigationMenuItem key={href}>
           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), pillClass)}>
             <Link href={href}>{label}</Link>

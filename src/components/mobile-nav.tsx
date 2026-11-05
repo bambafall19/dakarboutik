@@ -38,20 +38,20 @@ interface MobileNavProps {
 
 const shopShortcuts = [
   { name: 'Promotions', href: '/products?on_sale=true', icon: Tag },
-  { name: 'NouveautÃ©s', href: '/products?sortBy=newest', icon: Sparkles },
+  { name: 'Nouveautés', href: '/products?sortBy=newest', icon: Sparkles },
   { name: 'Best-sellers', href: '/products?bestseller=true', icon: Award },
 ];
 
 const supportLinks = [
-  { name: 'Ã€ propos', href: '/a-propos', icon: Info },
+  { name: 'À propos', href: '/a-propos', icon: Info },
   { name: 'Contact', href: '/contact', icon: Mail },
   { name: 'Garantie & SAV', href: '/sav', icon: Headset },
   { name: 'FAQ', href: '/faq', icon: HelpCircle },
 ];
 
 const legalLinks = [
-  { name: 'Conditions gÃ©nÃ©rales', href: '/conditions-generales' },
-  { name: 'Politique de confidentialitÃ©', href: '/politique-de-confidentialite' },
+  { name: 'Conditions générales', href: '/conditions-generales' },
+  { name: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
 ];
 
 export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
@@ -142,7 +142,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           {[
             ['/', 'Accueil'], ['/products', 'Produits DakarBoutik'],
             ['/boutiques', 'Boutiques partenaires'], ['/products?on_sale=true', 'Promotions'],
-            ['/commercant', 'Espace commerÃ§ant'],
+            ['/commercant', 'Espace commerçant'],
           ].map(([href, label]) => <Link key={href} href={href} onClick={onLinkClick} className="rounded-xl px-3 py-3 text-base font-semibold hover:bg-primary/10">{label}</Link>)}
         </nav>
         <div className="px-4">
@@ -239,14 +239,14 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           <Separator />
         </div>
         <div className="p-4">
-          <p className="font-headline text-sm font-bold">Rejoignez la communautÃ©</p>
+          <p className="font-headline text-sm font-bold">Rejoignez la communauté</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Offres exclusives et nouveautÃ©s, livrÃ©es dans votre boÃ®te mail.
+            Offres exclusives et nouveautés, livrées dans votre boîte mail.
           </p>
           {whatsappNumber ? (
             <a
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                'Bonjour DakarBoutik, je souhaite recevoir vos offres et nouveautÃ©s.'
+                'Bonjour DakarBoutik, je souhaite recevoir vos offres et nouveautés.'
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -267,7 +267,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           )}
         </div>
 
-        {/* RÃ©seaux sociaux */}
+        {/* Réseaux sociaux */}
         <div className="px-4">
           <Separator />
         </div>
@@ -309,7 +309,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           </div>
         </div>
 
-        {/* Mentions lÃ©gales */}
+        {/* Mentions légales */}
         <div className="px-4">
           <Separator />
         </div>
@@ -325,15 +325,15 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
             </Link>
           ))}
           <p className="pt-2 text-[11px] text-muted-foreground/80">
-            Â© {new Date().getFullYear()} {settings?.siteName || 'DakarBoutik'}. Entreprise fiÃ¨rement
-            sÃ©nÃ©galaise.
+            © {new Date().getFullYear()} {settings?.siteName || 'DakarBoutik'}. Entreprise fièrement
+            sénégalaise.
           </p>
         </nav>
       </ScrollArea>
 
       <div className="p-4 border-t mt-auto bg-background">
         <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">ContrÃ´les</span>
+            <span className="text-sm font-medium">Contrôles</span>
             <div className="flex items-center">
               <SnowToggleButton />
               <ThemeToggle />

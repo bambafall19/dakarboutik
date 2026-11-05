@@ -116,7 +116,7 @@ export function ProductListing({
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         </div>
 
-        <div className="relative flex min-h-[100px] sm:min-h-[230px] flex-col justify-end gap-4 p-5 sm:p-8 md:min-h-[310px] md:p-10">
+        <div className="relative flex min-h-[100px] sm:min-h-[120px] flex-col justify-end gap-4 p-5 sm:p-8 md:min-h-[120px] md:p-6">
           <div className="hidden sm:flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-foreground shadow-sm">
               <Sparkles className="h-3 w-3" />
@@ -131,7 +131,7 @@ export function ProductListing({
           </div>
 
           <div>
-            <h1 className="text-balance font-headline text-xl sm:text-3xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-lg md:text-5xl">
+            <h1 className="text-balance font-headline text-xl sm:text-3xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-lg md:text-3xl">
               {pageTitle}
             </h1>
             <p className="hidden sm:block mt-2.5 max-w-2xl text-balance text-sm leading-relaxed text-white/80 md:text-base">

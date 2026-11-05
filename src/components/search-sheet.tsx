@@ -53,7 +53,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim()) {
-            router.push(`/products?q=${query.trim()}`);
+            router.push(`/boutiques?q=${encodeURIComponent(query.trim())}&source=tous#recherche`);
             onOpenChange(false);
         }
     };
@@ -86,7 +86,8 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                         />
                     </form>
                 </div>
-                <ScrollArea className="max-h-[calc(100vh-10rem)]">
+                <Link href={`/boutiques?q=${encodeURIComponent(query.trim())}&source=tous#recherche`} onClick={() => onOpenChange(false)} className="mx-4 rounded-xl bg-primary px-4 py-3 text-center font-semibold text-primary-foreground">Rechercher chez DakarBoutik et les partenaires →</Link>
+                <ScrollArea className="max-h-[calc(100vh-14rem)]">
                     <div className="p-6 space-y-8">
                         {showSuggestions ? (
                             <>
@@ -134,7 +135,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                             <div>
                                 {searchResults.length > 0 ? (
                                     <>
-                                        <h3 className="font-semibold mb-4">Résultats de la recherche</h3>
+                                        <h3 className="font-semibold mb-4">Suggestions DakarBoutik</h3>
                                         <div className="grid grid-cols-1 gap-4">
                                             {searchResults.map(product => (
                                                  <ProductCard key={product.id} product={product} variant="horizontal" />
@@ -146,7 +147,7 @@ function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
                                         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10 ring-1 ring-primary/10">
                                             <SearchX className="h-7 w-7 text-primary/60" />
                                         </span>
-                                        <p className="mt-4 text-sm font-medium">Aucun produit trouvé</p>
+                                        <p className="mt-4 text-sm font-medium">Aucune suggestion DakarBoutik</p>
                                         <p className="mt-1 text-xs text-muted-foreground">Aucun résultat pour &quot;{debouncedQuery}&quot;</p>
                                     </div>
                                 )}

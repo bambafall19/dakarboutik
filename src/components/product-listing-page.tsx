@@ -191,21 +191,6 @@ export function ProductListingPage() {
       </div>
 
       <div className="border-t border-border/60 pt-5">
-        <h3 className="mb-3 flex items-center gap-2 font-headline text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent/15 text-accent">
-            <LayoutGrid className="h-3.5 w-3.5" />
-          </span>
-          Catégories
-        </h3>
-        <CategorySidebar
-          categories={browseCategories.map(c => ({ id: c.slug, slug: c.slug, name: c.name, productCount: c.count }))}
-          currentCategorySlug={categorySlug}
-          basePath={basePath}
-          currentQuery={currentQuery}
-        />
-      </div>
-
-      <div className="border-t border-border/60 pt-5">
         <ProductFilters
           availableBrands={availableBrands}
           currentBrands={currentBrands}
@@ -219,31 +204,10 @@ export function ProductListingPage() {
 
   return (
     <div className="container py-4 md:py-8">
-      <section aria-labelledby="official-store-title" className="official-hero relative hidden sm:block mb-6 overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-yellow-100 p-5 text-slate-900 sm:p-8">
-        <div aria-hidden="true" className="hero-glow pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-yellow-300/30 blur-2xl" />
-        <div className="relative grid items-center gap-6 lg:grid-cols-[1.5fr_1fr]">
-          <div className="hero-intro">
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800"><Sparkles size={15} aria-hidden="true" /> Votre sélection DakarBoutik</span>
-            <h2 id="official-store-title" className="mt-4 text-2xl font-extrabold tracking-tight sm:text-3xl">Boutique officielle <span className="text-emerald-700">DakarBoutik</span></h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">Trouvez votre prochain coup de cœur. Commandez au panier ou contactez-nous sur WhatsApp depuis la fiche produit.</p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <a href="#catalog-search" className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white shadow-sm motion-safe:transition-transform motion-safe:hover:-translate-y-1">Explorer les produits <ArrowUpRight className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1" size={18} aria-hidden="true" /></a>
-              <Link href="/boutiques" className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 motion-safe:transition-transform motion-safe:hover:-translate-y-1">Boutiques partenaires <ArrowUpRight size={17} aria-hidden="true" /></Link>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3" aria-label="Les univers DakarBoutik">{browseCategories.slice(0,4).map((c,index) => <Link key={c.slug} href={categoryUrl(c.slug) + '#catalog-search'} className="hero-tile group flex min-w-0 items-center gap-3 rounded-2xl border border-white bg-white/85 p-3 shadow-sm hover:border-emerald-300 sm:p-4" style={{animationDelay:`${index * 100}ms`}}><span className={`shrink-0 rounded-xl p-2 ${c.tone}`}><c.icon size={22} aria-hidden="true" /></span><span className="min-w-0"><span className="block text-xs font-bold sm:text-sm">{c.name}</span><span className="mt-1 block text-xs text-slate-500">{c.count} produits</span></span></Link>)}</div>
-        </div>
-        <style jsx>{`
-          @keyframes store-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-          @keyframes store-glow { from { transform: translate(-30px, 15px) scale(.85); } to { transform: translate(0, 0) scale(1); } }
-          @media (prefers-reduced-motion: no-preference) {
-            .hero-intro { animation: store-enter .6s ease-out both; }
-            .official-hero :global(.hero-tile) { animation: store-enter .6s ease-out both; transition: transform .2s, box-shadow .2s; }
-            .official-hero :global(.hero-tile:hover) { transform: translateY(-3px); box-shadow: 0 8px 20px -12px #047857; }
-            .hero-glow { animation: store-glow 4s ease-out both; }
-          }
-        `}</style>
-      </section>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-slate-900">
+        <div><p className="font-bold">Produits DakarBoutik</p><p className="text-sm">Vendus par DakarBoutik · Commande au panier ou sur WhatsApp</p></div>
+        <Link href="/boutiques" className="text-sm font-semibold text-emerald-800 underline">Explorer les boutiques partenaires →</Link>
+      </div>
       <section id="catalog-search" aria-label="Rechercher et parcourir les catégories" className="mb-6 scroll-mt-44 rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="text-xl font-bold">Quel produit recherchez-vous ?</h2>
         <form key={searchQuery || ''} role="search" className="mt-4 flex flex-col gap-2 sm:flex-row" onSubmit={e => {
@@ -256,9 +220,10 @@ export function ProductListingPage() {
           <label className="min-w-0 flex-1"><span className="sr-only">Rechercher dans les produits DakarBoutik</span><input name="search" type="search" defaultValue={searchQuery || ''} placeholder="Batterie, onduleur, téléphone, marque…" className="h-12 w-full rounded-xl border border-slate-300 px-4 text-base" /></label>
           <Button type="submit" className="h-12 rounded-xl px-6">Rechercher</Button>
         </form>
+        <Link href={`/boutiques?q=${encodeURIComponent(searchQuery || '')}&source=tous#recherche`} className="mt-3 inline-block text-sm font-semibold text-emerald-800 underline">Rechercher aussi chez les partenaires →</Link>
         <div className="mb-3 mt-6 flex flex-wrap items-center justify-between gap-3"><div><p className="font-bold">Explorez nos univers</p><p className="mt-1 text-xs text-slate-500">Des catégories regroupées pour trouver plus vite.</p></div><Link href={categoryUrl('')} scroll={false} aria-current={!categorySlug ? 'page' : undefined} className={`rounded-full border px-4 py-2 text-sm font-semibold ${!categorySlug ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-emerald-200 text-emerald-800'}`}>Tous les produits · {allProducts.length}</Link></div>
-        <nav aria-label="Catégories du catalogue" className="flex gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
-          {browseCategories.map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={categorySlug === c.slug ? 'page' : undefined} className={`group shrink-0 sm:shrink min-w-0 rounded-2xl border p-3 motion-safe:transition-all sm:p-4 ${categorySlug === c.slug ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'}`}><div className="hidden sm:flex mb-3 items-center justify-between gap-2"><span className={`rounded-xl p-2.5 ${c.tone}`}><c.icon size={23} aria-hidden="true" /></span><span className="text-xs font-medium text-slate-500">{c.count} produits</span></div><span className="block text-sm font-bold text-slate-900 sm:text-base">{c.name}</span><span className="mt-1 hidden text-xs leading-relaxed text-slate-500 sm:block">{c.detail}</span><span className="hidden sm:flex mt-3 items-center gap-1 text-xs font-semibold text-emerald-800">{categorySlug === c.slug ? 'Sélectionné' : 'Découvrir'}<ArrowUpRight size={14} aria-hidden="true" /></span></Link>)}
+        <nav aria-label="Catégories du catalogue" className="flex flex-wrap gap-2">
+          {browseCategories.map(c => <Link key={c.slug} href={categoryUrl(c.slug)} scroll={false} aria-current={categorySlug === c.slug ? 'page' : undefined} className={`inline-flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold ${categorySlug === c.slug ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-slate-200 bg-white text-slate-900 hover:border-emerald-400'}`}><c.icon size={18} aria-hidden="true" />{c.name}<span className="text-xs">{c.count}</span></Link>)}
         </nav>
         {(searchQuery || categorySlug || currentQuery) && <Link href="/products" scroll={false} className="mt-4 inline-block text-sm font-semibold text-emerald-800 underline">Effacer la recherche et les filtres</Link>}
       </section>

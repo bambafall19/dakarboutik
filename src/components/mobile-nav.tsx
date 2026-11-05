@@ -137,23 +137,12 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           ))}
         </div>
 
-        <nav className="flex flex-col p-4">
-            <Link
-                href="/"
-                className="flex items-center gap-4 py-3 text-base font-medium"
-                onClick={onLinkClick}
-            >
-                <Icons.home className="h-5 w-5" />
-                Accueil
-            </Link>
-            <Link
-                href="/products"
-                className="flex items-center gap-4 py-3 text-base font-medium"
-                onClick={onLinkClick}
-            >
-                <Icons.layoutGrid className="h-5 w-5" />
-                Toute la boutique
-            </Link>
+        <nav aria-label="Navigation DakarBoutik" className="flex flex-col p-4">
+          {[
+            ['/', 'Accueil'], ['/products', 'Produits DakarBoutik'],
+            ['/boutiques', 'Boutiques partenaires'], ['/products?on_sale=true', 'Promotions'],
+            ['/commercant', 'Espace commerçant'],
+          ].map(([href, label]) => <Link key={href} href={href} onClick={onLinkClick} className="rounded-xl px-3 py-3 text-base font-semibold hover:bg-primary/10">{label}</Link>)}
         </nav>
         <div className="px-4">
           <Separator />

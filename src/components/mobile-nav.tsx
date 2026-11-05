@@ -53,7 +53,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           <SheetTitle className="flex-1 text-base text-slate-900">Bienvenue !<span className="mt-1 block text-xs font-normal text-slate-600">Vos boutiques, à portée de main</span></SheetTitle>
           <button type="button" aria-label="Fermer le menu" onClick={onLinkClick} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-white text-emerald-900 focus-visible:outline focus-visible:outline-2"><X className="h-5 w-5" aria-hidden="true" /></button>
         </div>
-        <form action="/boutiques" onSubmit={onLinkClick} role="search" aria-label="Rechercher depuis le menu" className="mt-2 flex items-center rounded-xl border border-emerald-200 bg-white">
+        <form action="/boutiques" role="search" aria-label="Rechercher depuis le menu" className="mt-2 flex items-center rounded-xl border border-emerald-200 bg-white">
           <input name="source" value="tous" type="hidden" />
           <input name="q" type="search" aria-label="Produit ou boutique" placeholder="Un produit, une boutique…" className="min-w-0 flex-1 rounded-l-xl bg-transparent px-3 py-3 text-base outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-600" />
           <button aria-label="Rechercher" className="flex h-11 w-11 shrink-0 items-center justify-center text-emerald-800"><Search className="h-5 w-5" aria-hidden="true" /></button>

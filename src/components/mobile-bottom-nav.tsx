@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { LayoutGrid, Heart } from 'lucide-react';
+import { LayoutGrid, Heart, Store } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { Icons } from './icons';
@@ -19,15 +19,16 @@ export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
 
   const navItems = [
     { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
-    { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
+    { onClick: onMenuClick, label: 'CatÃ©gories', icon: LayoutGrid },
     { href: '/favoris', label: 'Favoris', icon: Heart, isActive: pathname.startsWith('/favoris'), isWishlist: true },
+    { href: '/commercant?inscription=1', label: 'Inscrire ma boutique', icon: Store, isActive: pathname.startsWith('/commercant') },
     { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true, isActive: pathname.startsWith('/checkout') },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-[calc(5rem+env(safe-area-inset-bottom))] border-t bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
         <div className="container h-20">
-            <div className="grid grid-cols-4 h-full items-center">
+            <div className="grid grid-cols-5 h-full items-center">
             {navItems.map((item) => {
                 const isActive = item.isActive;
                 const content = (
@@ -44,7 +45,7 @@ export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
                             <item.icon className="h-5 w-5 flex-shrink-0" />
                         </div>
                         <span className={cn(
-                            "text-[10px] font-semibold leading-none",
+                            "text-[10px] font-semibold leading-tight text-center px-1",
                             isActive ? "text-primary" : "text-muted-foreground"
                         )}>
                             {item.label}

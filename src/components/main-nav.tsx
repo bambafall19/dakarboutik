@@ -32,12 +32,17 @@ export function MainNav({ items }: MainNavProps) {
           ['/products', 'Produits DakarBoutik'],
           ['/boutiques', 'Boutiques partenaires'],
           ['/products?on_sale=true', 'Promotions'],
-          ['/commercant', 'Espace commerçant'],
+          ['/commercant', 'Espace commerÃ§ant'],
         ].map(([href, label]) => <NavigationMenuItem key={href}>
           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), pillClass)}>
             <Link href={href}>{label}</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>)}
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="/commercant?inscription=1" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Inscrire ma boutique</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

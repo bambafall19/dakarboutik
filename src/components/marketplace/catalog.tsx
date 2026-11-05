@@ -37,11 +37,10 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
         {compact && <button type="button" aria-expanded={menuOpen} aria-controls="marketplace-menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold md:hidden">{menuOpen ? "Fermer" : "Menu"}</button>}
         <div id="marketplace-menu" className={`${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}>
           <Link href="/">Accueil</Link>
-          <Link href="/boutiques">Boutiques partenaires</Link>
-          <Link href="/products" className="font-bold text-emerald-800">Acheter chez DakarBoutik</Link>
+          <Link href="/products">Produits DakarBoutik</Link>
+          <Link href="/boutiques" className="font-bold text-emerald-800">Boutiques partenaires</Link>
+          <Link href="/products?on_sale=true">Promotions</Link>
           <Link href="/checkout">Mon panier</Link>
-          <Link href="/boutiques#publicite">Publicité</Link>
-          <Link href="/boutiques#actualites">Actualités JOJ</Link>
           <Link href="/commercant">Espace commerçant</Link>
         </div>
       </nav>
@@ -91,7 +90,7 @@ export function ListingCard({
           className="block text-sm underline"
           href={`/boutiques/${shop.id}`}
         >
-          {shop.profile.name} · {shop.profile.city}
+          Proposé par {shop.profile.name} · {shop.profile.city}
         </Link>
         <p className="text-xs text-slate-500">
           Disponibilité actualisée le{" "}
@@ -151,16 +150,21 @@ export function MarketplaceCatalog({
   spotlight,
   promotion,
   products,
+  initialSearch = "",
+  initialSource = "partenaires",
 }: {
   shops: Shop[];
   listings: Listing[];
   spotlight?: ReactNode;
   promotion?: ReactNode;
   products: Product[];
+  initialSearch?: string;
+  initialSource?: string;
 }) {
   const router = useRouter();
   const [refreshing, startRefresh] = useTransition();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
+  const [source, setSource] = useState(["tous", "dakarboutik", "partenaires"].includes(initialSource) ? initialSource : "partenaires");
   const [city, setCity] = useState("");
   const [category, setCategory] = useState("");
   const categoryLabels = new Map<string, string>();
@@ -199,7 +203,7 @@ export function MarketplaceCatalog({
     setCategory(name);
     setSearch("");
     requestAnimationFrame(() => {
-      const heading = document.getElementById("official-store-title");
+      const heading = document.getElementById(source === "dakarboutik" ? "official-store-title" : "boutiques-resultats");
       heading?.focus({ preventScroll: true });
       heading?.scrollIntoView({ block: "start", behavior: "instant" });
     });
@@ -208,18 +212,15 @@ export function MarketplaceCatalog({
     <>
       <MarketplaceNav compact />
       <main className="marketplace-lively min-h-screen bg-yellow-50/40 text-slate-900">
-        {promotion && <div className="pt-3 sm:pt-6">{promotion}</div>}
         <section className="marketplace-welcome relative isolate overflow-hidden border-b-4 border-yellow-300 bg-gradient-to-br from-emerald-50 to-yellow-50 text-emerald-950">
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border-[28px] border-yellow-300/25 bg-yellow-300/10" />
           <div aria-hidden="true" className="marketplace-orb pointer-events-none absolute -bottom-20 right-1/3 -z-10 h-44 w-44 rounded-full bg-emerald-300/15" />
-          <div className="container py-3 md:py-10">
-            <p className="hidden sm:block mb-3 text-xs uppercase tracking-widest text-emerald-700">
+          <div className="container py-4 md:py-5">
+            <p className="hidden mb-3 text-xs uppercase tracking-widest text-emerald-700">
               Les boutiques physiques prennent leur place en ligne
             </p>
             <h1 className="max-w-3xl text-xl sm:text-3xl font-bold leading-tight md:text-4xl">
-              Vos boutiques à Dakar,
-              <br />
-              <span className="text-emerald-700">leurs nouveautés à portée de main.</span>
+              {source === "tous" ? "Produits et boutiques" : source === "dakarboutik" ? "Produits DakarBoutik" : "Boutiques partenaires"}
             </h1>
             <p className="hidden sm:block mt-4 max-w-2xl text-base text-slate-600">
               Nouveautés, produits disponibles et bonnes adresses. Contactez
@@ -231,11 +232,12 @@ export function MarketplaceCatalog({
             >
               Présenter ma boutique
             </Link>
-            <a href="#nouveautes" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Découvrir les nouveautés ↓</a>
+            <a href="#boutiques-resultats" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Voir les boutiques ↓</a>
           </div>
         </section>
         <div className="container space-y-4 py-4 sm:space-y-8 sm:py-6">
           <form
+            id="recherche"
             onSubmit={(e) => e.preventDefault()}
             role="search"
             aria-label="Rechercher une boutique ou un produit"
@@ -256,6 +258,7 @@ export function MarketplaceCatalog({
               <select
                 className="mt-2 w-full rounded-lg border p-3"
                 value={city}
+                disabled={source === "dakarboutik"}
                 onChange={(e) => setCity(e.target.value)}
               >
                 <option value="">Toutes les villes</option>
@@ -278,6 +281,9 @@ export function MarketplaceCatalog({
               </select>
             </label>
           </form>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir les vendeurs">
+            {[["tous", "Tous les vendeurs"], ["dakarboutik", "DakarBoutik"], ["partenaires", "Partenaires"]].map(([value, label]) => <button key={value} type="button" aria-pressed={source === value} onClick={() => { setSource(value); if (value === "dakarboutik") setCity(""); }} className={`rounded-full border px-4 py-3 text-sm font-semibold ${source === value ? "bg-emerald-800 text-white" : "bg-white text-emerald-900"}`}>{label}</button>)}
+          </div>
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-4 text-sm"><p role="status">{matchingShops.length} boutique(s) · {matchingListings.length} produit(s) partenaire(s) correspondant(s)</p><button type="button" disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800 disabled:opacity-50">{refreshing ? "Actualisation…" : "Actualiser les disponibilités"}</button></div>
           <section aria-label="Parcourir par catégorie">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -292,34 +298,7 @@ export function MarketplaceCatalog({
               ))}
             </div>
           </section>
-          <OfficialStore category={category} search={search} products={products} />
-          <section id="nouveautes" className="scroll-mt-6">
-            <h2 className="mb-2 text-2xl font-bold">
-              Produits des boutiques partenaires
-            </h2>
-            <p className="mb-6 text-slate-600">
-              Les annonces les plus récentes. Confirmez le prix et la
-              disponibilité auprès du vendeur.
-            </p>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {matchingListings.map((l) => (
-                <ListingCard
-                  compact
-                  key={l.id}
-                  listing={l}
-                  shop={shops.find((s) => s.id === l.shop_id)!}
-                />
-              ))}
-            </div>
-            {!matchingListings.length && (
-              <div className="rounded-2xl border border-yellow-300 bg-white p-6" role="status">
-                <Store aria-hidden="true" className="mb-3 h-8 w-8 text-emerald-700" />
-                <h3 className="text-lg font-semibold">{listings.length ? "Aucun produit pour ces critères" : "Les premières nouveautés arrivent bientôt"}</h3>
-                <p className="mt-2 text-sm text-slate-600">{listings.length ? "Essayez une autre catégorie ou effacez vos filtres." : "Les produits des boutiques seront présentés ici après validation. Vous êtes commerçant ? Faites découvrir votre sélection."}</p>
-                {!listings.length && <Link href="/commercant" className="mt-4 inline-flex rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950">Inscrire ma boutique →</Link>}
-              </div>
-            )}
-          </section>
+          {source !== "dakarboutik" && <>
           <section>
             <h2 id="boutiques-resultats" tabIndex={-1} className="mb-3 scroll-mt-6 text-2xl font-bold focus:outline-none">
               {category ? `Les boutiques · ${category}` : "Les boutiques à découvrir"}
@@ -377,6 +356,37 @@ export function MarketplaceCatalog({
               </div>
             )}
           </section>
+          </>}
+          {source !== "partenaires" && <OfficialStore category={category} search={search} products={products} />}
+          {source === "partenaires" && <Link href="/products" className="block rounded-xl border border-emerald-200 bg-white p-4 text-sm font-semibold text-emerald-800">Vous souhaitez commander au panier ? Voir les produits DakarBoutik →</Link>}
+          {source !== "dakarboutik" && <section id="nouveautes" className="scroll-mt-6">
+            <h2 className="mb-2 text-2xl font-bold">
+              Produits des boutiques partenaires
+            </h2>
+            <p className="mb-6 text-slate-600">
+              Les annonces les plus récentes. Confirmez le prix et la
+              disponibilité auprès du vendeur.
+            </p>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {matchingListings.map((l) => (
+                <ListingCard
+                  compact
+                  key={l.id}
+                  listing={l}
+                  shop={shops.find((s) => s.id === l.shop_id)!}
+                />
+              ))}
+            </div>
+            {!matchingListings.length && (
+              <div className="rounded-2xl border border-yellow-300 bg-white p-6" role="status">
+                <Store aria-hidden="true" className="mb-3 h-8 w-8 text-emerald-700" />
+                <h3 className="text-lg font-semibold">{listings.length ? "Aucun produit pour ces critères" : "Les premières nouveautés arrivent bientôt"}</h3>
+                <p className="mt-2 text-sm text-slate-600">{listings.length ? "Essayez une autre catégorie ou effacez vos filtres." : "Les produits des boutiques seront présentés ici après validation. Vous êtes commerçant ? Faites découvrir votre sélection."}</p>
+                {!listings.length && <Link href="/commercant" className="mt-4 inline-flex rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950">Inscrire ma boutique →</Link>}
+              </div>
+            )}
+          </section>}
+          {promotion && <div>{promotion}</div>}
           {spotlight}
           <footer className="border-t py-6 text-sm text-slate-600">
             DakarBoutik met en relation clients et boutiques. Le paiement, la

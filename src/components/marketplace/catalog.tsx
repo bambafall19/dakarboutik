@@ -8,8 +8,8 @@ import { Shirt, Smartphone, Sparkles, House, ShoppingBasket, Sun, Store } from "
 
 const featuredCategories = [
   { name: "Mode", icon: Shirt },
-  { name: "TÃ©lÃ©phones", icon: Smartphone },
-  { name: "BeautÃ©", icon: Sparkles },
+  { name: "Téléphones", icon: Smartphone },
+  { name: "Beauté", icon: Sparkles },
   { name: "Maison", icon: House },
   { name: "Alimentation", icon: ShoppingBasket },
   { name: "Solaire", icon: Sun },
@@ -42,7 +42,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
           <Link href="/boutiques" className="font-bold text-emerald-800">Boutiques partenaires</Link>
           <Link href="/products?on_sale=true">Promotions</Link>
           <Link href="/checkout">Mon panier</Link>
-          <Link href="/commercant">Espace commerÃ§ant</Link>
+          <Link href="/commercant">Espace commerçant</Link>
         </div>
       </nav>
     </header>
@@ -70,7 +70,7 @@ export function ListingCard({
         />
       ) : (
         <div className="flex h-52 items-center justify-center bg-emerald-50 text-emerald-800">
-          Photo Ã  venir
+          Photo à venir
         </div>
       )}
       <div className="space-y-3 p-5">
@@ -84,17 +84,17 @@ export function ListingCard({
         </p>
         {isProductUrl(p.productUrl) && (
           <a href={p.productUrl} target="_blank" rel="noopener noreferrer nofollow ugc" className="block text-sm underline">
-            Voir la fiche produit sur le site externe â†—
+            Voir la fiche produit sur le site externe ↗
           </a>
         )}
         <Link
           className="block text-sm underline"
           href={`/boutiques/${shop.id}`}
         >
-          ProposÃ© par {shop.profile.name} Â· {shop.profile.city}
+          Proposé par {shop.profile.name} · {shop.profile.city}
         </Link>
         <p className="text-xs text-slate-500">
-          DisponibilitÃ© actualisÃ©e le{" "}
+          Disponibilité actualisée le{" "}
           {new Date(listing.updated_at).toLocaleDateString("fr-FR", {
             timeZone: "Africa/Dakar",
           })}
@@ -113,7 +113,7 @@ export function ListingCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Demander la disponibilitÃ© sur WhatsApp
+            Demander la disponibilité sur WhatsApp
           </a>
         )}
       </div>
@@ -127,20 +127,20 @@ function OfficialStore({ category, search, products }: { category: string; searc
     (!term || normalizeMarketplaceText(`${p.title} ${p.description} ${p.category}`).includes(term)));
   const selection = category || term ? matches : matches.slice(0, 4);
   return <section aria-labelledby="official-store-title" className="rounded-3xl border border-yellow-300 bg-white p-5 md:p-7">
-    <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Vente directe Â· Vendu par DakarBoutik</p>
+    <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Vente directe · Vendu par DakarBoutik</p>
     <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-      <h2 id="official-store-title" tabIndex={-1} className="scroll-mt-6 text-2xl font-bold focus:outline-none">{category ? `${category} Â· Produits DakarBoutik` : "Boutique officielle DakarBoutik"}</h2>
-      <Link href="/products" className="rounded-full bg-yellow-300 px-5 py-3 font-semibold text-emerald-950">Tous nos produits â†’</Link>
+      <h2 id="official-store-title" tabIndex={-1} className="scroll-mt-6 text-2xl font-bold focus:outline-none">{category ? `${category} · Produits DakarBoutik` : "Boutique officielle DakarBoutik"}</h2>
+      <Link href="/products" className="rounded-full bg-yellow-300 px-5 py-3 font-semibold text-emerald-950">Tous nos produits →</Link>
     </div>
-    <p className="mt-3 text-sm text-slate-600">Ã‰lectronique, maison, mode et bien plus. Choisissez votre produit, puis commandez avec le panier ou par WhatsApp.</p>
-    {!loading && <p role="status" className="mt-4 text-sm text-slate-600">{matches.length ? `${matches.length} produit(s) DakarBoutik correspondant(s).` : "Aucun produit DakarBoutik ne correspond Ã  ces critÃ¨res. Retrouvez les partenaires ci-dessous."}</p>}
-    {loading ? <p className="mt-5" role="status">Chargement du catalogueâ€¦</p> : <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <p className="mt-3 text-sm text-slate-600">Électronique, maison, mode et bien plus. Choisissez votre produit, puis commandez avec le panier ou par WhatsApp.</p>
+    {!loading && <p role="status" className="mt-4 text-sm text-slate-600">{matches.length ? `${matches.length} produit(s) DakarBoutik correspondant(s).` : "Aucun produit DakarBoutik ne correspond à ces critères. Retrouvez les partenaires ci-dessous."}</p>}
+    {loading ? <p className="mt-5" role="status">Chargement du catalogue…</p> : <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {selection.map(p => <Link key={p.id} href={`/products/${p.slug}`} className="min-w-0 rounded-2xl border p-4 transition-colors hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700">
         {p.images?.[0]?.imageUrl && <img src={p.images[0].imageUrl} alt={p.title} loading="lazy" className="h-40 w-full object-contain" />}
         <h3 className="mt-3 line-clamp-2 font-semibold">{p.title}</h3>
         <p className="mt-2 font-bold text-emerald-800">{(p.salePrice && p.salePrice > 0 && p.salePrice < p.price ? p.salePrice : p.price).toLocaleString("fr-FR")} FCFA</p>
         <p className="mt-1 text-xs text-slate-600">{p.stock > 0 ? "En stock" : "Indisponible"}</p>
-        <span className="mt-3 block text-sm font-semibold">Voir le produit et commander â†’</span>
+        <span className="mt-3 block text-sm font-semibold">Voir le produit et commander →</span>
       </Link>)}
     </div>}
   </section>;
@@ -224,16 +224,16 @@ export function MarketplaceCatalog({
               {source === "tous" ? "Produits et boutiques" : source === "dakarboutik" ? "Produits DakarBoutik" : "Boutiques partenaires"}
             </h1>
             <p className="hidden sm:block mt-4 max-w-2xl text-base text-slate-600">
-              NouveautÃ©s, produits disponibles et bonnes adresses. Contactez
+              Nouveautés, produits disponibles et bonnes adresses. Contactez
               directement la boutique par WhatsApp ou rendez-vous sur place.
             </p>
             <Link
               href="/commercant"
               className="hidden sm:inline-block mt-4 rounded-full bg-yellow-300 px-6 py-3 font-semibold text-emerald-950 transition-colors hover:bg-yellow-200"
             >
-              PrÃ©senter ma boutique
+              Présenter ma boutique
             </Link>
-            <a href="#boutiques-resultats" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Voir les boutiques â†“</a>
+            <a href="#boutiques-resultats" className="ml-0 mt-3 inline-flex rounded-full border border-emerald-700 px-6 py-3 font-semibold text-emerald-800 transition-colors hover:bg-white sm:ml-3">Voir les boutiques ↓</a>
           </div>
         </section>
         <div className="container space-y-4 py-4 sm:space-y-8 sm:py-6">
@@ -251,7 +251,7 @@ export function MarketplaceCatalog({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 type="search"
-                placeholder="Produit, boutique, quartierâ€¦"
+                placeholder="Produit, boutique, quartier…"
               />
             </label>
             <label className="text-sm">
@@ -271,13 +271,13 @@ export function MarketplaceCatalog({
               </select>
             </label>
             <label className="text-sm">
-              CatÃ©gorie
+              Catégorie
               <select
                 className="mt-2 w-full rounded-lg border p-3"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <option value="">Toutes les catÃ©gories</option>
+                <option value="">Toutes les catégories</option>
                 {categories.map((c) => <option key={c}>{c}</option>)}
               </select>
             </label>
@@ -285,10 +285,10 @@ export function MarketplaceCatalog({
           <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir les vendeurs">
             {[["tous", "Tous les vendeurs"], ["dakarboutik", "DakarBoutik"], ["partenaires", "Partenaires"]].map(([value, label]) => <button key={value} type="button" aria-pressed={source === value} onClick={() => { setSource(value); if (value === "dakarboutik") setCity(""); }} className={`rounded-full border px-4 py-3 text-sm font-semibold ${source === value ? "bg-emerald-800 text-white" : "bg-white text-emerald-900"}`}>{label}</button>)}
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-4 text-sm"><p role="status">{matchingShops.length} boutique(s) Â· {matchingListings.length} produit(s) partenaire(s) correspondant(s)</p><button type="button" disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800 disabled:opacity-50">{refreshing ? "Actualisationâ€¦" : "Actualiser les disponibilitÃ©s"}</button></div>
-          <section aria-label="Parcourir par catÃ©gorie">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-4 text-sm"><p role="status">{matchingShops.length} boutique(s) · {matchingListings.length} produit(s) partenaire(s) correspondant(s)</p><button type="button" disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} className="rounded-lg border border-emerald-700 px-4 py-2 font-semibold text-emerald-800 disabled:opacity-50">{refreshing ? "Actualisation…" : "Actualiser les disponibilités"}</button></div>
+          <section aria-label="Parcourir par catégorie">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-bold">Quâ€™est-ce qui vous intÃ©resse ?</h2>
+              <h2 className="text-lg font-bold">Qu’est-ce qui vous intéresse ?</h2>
               {(category || search || city) && <button type="button" onClick={() => { setCategory(""); setSearch(""); setCity(""); }} className="rounded-full border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-800">Effacer les filtres</button>}
             </div>
             <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
@@ -302,10 +302,10 @@ export function MarketplaceCatalog({
           {source !== "dakarboutik" && <>
           <section>
             <h2 id="boutiques-resultats" tabIndex={-1} className="mb-3 scroll-mt-6 text-2xl font-bold focus:outline-none">
-              {category ? `Les boutiques Â· ${category}` : "Les boutiques Ã  dÃ©couvrir"}
+              {category ? `Les boutiques · ${category}` : "Les boutiques à découvrir"}
             </h2>
             <p className="mb-6 text-sm text-slate-600" role="status">
-              {matchingShops.length} boutique{matchingShops.length > 1 ? "s" : ""} trouvÃ©e{matchingShops.length > 1 ? "s" : ""}. {matchingShops.length > 0 ? "Ouvrez une boutique pour dÃ©couvrir ses produits." : "Essayez une autre catÃ©gorie ou une autre recherche."}
+              {matchingShops.length} boutique{matchingShops.length > 1 ? "s" : ""} trouvée{matchingShops.length > 1 ? "s" : ""}. {matchingShops.length > 0 ? "Ouvrez une boutique pour découvrir ses produits." : "Essayez une autre catégorie ou une autre recherche."}
             </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingShops.map((shop) => (
@@ -320,7 +320,7 @@ export function MarketplaceCatalog({
                     </span>
                     {isSponsored(shop) && (
                       <span className="rounded-full bg-yellow-200 px-3 py-1 text-xs text-emerald-950">
-                        SponsorisÃ©
+                        Sponsorisé
                       </span>
                     )}
                   </div>
@@ -337,13 +337,13 @@ export function MarketplaceCatalog({
                     {shop.profile.name}
                   </h3>
                   <p className="mt-2 text-sm text-slate-600">
-                    {shop.profile.district} Â· {shop.profile.city}
+                    {shop.profile.district} · {shop.profile.city}
                   </p>
                   <p className="mt-4 line-clamp-3 text-sm">
                     {shop.profile.description}
                   </p>
                   <span className="mt-5 block font-semibold text-emerald-800">
-                    Voir la boutique â†’
+                    Voir la boutique →
                   </span>
                 </Link>
               ))}
@@ -351,22 +351,22 @@ export function MarketplaceCatalog({
             {!matchingShops.length && (
               <div className="space-y-4 rounded-xl border bg-white p-6">
                 <p>{shops.length
-                  ? "Aucune boutique ne correspond Ã  ces critÃ¨res."
-                  : "Les premiÃ¨res boutiques seront affichÃ©es aprÃ¨s validation."}</p>
+                  ? "Aucune boutique ne correspond à ces critères."
+                  : "Les premières boutiques seront affichées après validation."}</p>
                 {(category || search || city) && <button type="button" onClick={() => { setCategory(""); setSearch(""); setCity(""); }} className="rounded-full bg-emerald-800 px-5 py-3 font-semibold text-white">Voir toutes les boutiques</button>}
               </div>
             )}
           </section>
           </>}
           {source !== "partenaires" && <OfficialStore category={category} search={search} products={products} />}
-          {source === "partenaires" && <Link href="/products" className="block rounded-xl border border-emerald-200 bg-white p-4 text-sm font-semibold text-emerald-800">Vous souhaitez commander au panier ? Voir les produits DakarBoutik â†’</Link>}
+          {source === "partenaires" && <Link href="/products" className="block rounded-xl border border-emerald-200 bg-white p-4 text-sm font-semibold text-emerald-800">Vous souhaitez commander au panier ? Voir les produits DakarBoutik →</Link>}
           {source !== "dakarboutik" && <section id="nouveautes" className="scroll-mt-6">
             <h2 className="mb-2 text-2xl font-bold">
               Produits des boutiques partenaires
             </h2>
             <p className="mb-6 text-slate-600">
-              Les annonces les plus rÃ©centes. Confirmez le prix et la
-              disponibilitÃ© auprÃ¨s du vendeur.
+              Les annonces les plus récentes. Confirmez le prix et la
+              disponibilité auprès du vendeur.
             </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingListings.map((l) => (
@@ -381,9 +381,9 @@ export function MarketplaceCatalog({
             {!matchingListings.length && (
               <div className="rounded-2xl border border-yellow-300 bg-white p-6" role="status">
                 <Store aria-hidden="true" className="mb-3 h-8 w-8 text-emerald-700" />
-                <h3 className="text-lg font-semibold">{listings.length ? "Aucun produit pour ces critÃ¨res" : "Les premiÃ¨res nouveautÃ©s arrivent bientÃ´t"}</h3>
-                <p className="mt-2 text-sm text-slate-600">{listings.length ? "Essayez une autre catÃ©gorie ou effacez vos filtres." : "Les produits des boutiques seront prÃ©sentÃ©s ici aprÃ¨s validation. Vous Ãªtes commerÃ§ant ? Faites dÃ©couvrir votre sÃ©lection."}</p>
-                {!listings.length && <Link href="/commercant" className="mt-4 inline-flex rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950">Inscrire ma boutique â†’</Link>}
+                <h3 className="text-lg font-semibold">{listings.length ? "Aucun produit pour ces critères" : "Les premières nouveautés arrivent bientôt"}</h3>
+                <p className="mt-2 text-sm text-slate-600">{listings.length ? "Essayez une autre catégorie ou effacez vos filtres." : "Les produits des boutiques seront présentés ici après validation. Vous êtes commerçant ? Faites découvrir votre sélection."}</p>
+                {!listings.length && <Link href="/commercant" className="mt-4 inline-flex rounded-full bg-yellow-300 px-5 py-3 text-sm font-semibold text-emerald-950">Inscrire ma boutique →</Link>}
               </div>
             )}
           </section>}
@@ -394,9 +394,9 @@ export function MarketplaceCatalog({
             remise du produit et les conditions de vente se conviennent
             directement avec le vendeur.
             <div className="mt-4 flex flex-wrap gap-4 font-semibold text-emerald-800">
-              <a href="/mentions-legales" className="underline underline-offset-4">Mentions lÃ©gales</a>
-              <a href="/conditions-generales" className="underline underline-offset-4">Conditions gÃ©nÃ©rales</a>
-              <a href="/politique-de-confidentialite" className="underline underline-offset-4">Politique de confidentialitÃ©</a>
+              <a href="/mentions-legales" className="underline underline-offset-4">Mentions légales</a>
+              <a href="/conditions-generales" className="underline underline-offset-4">Conditions générales</a>
+              <a href="/politique-de-confidentialite" className="underline underline-offset-4">Politique de confidentialité</a>
             </div>
           </footer>
         </div>
@@ -407,7 +407,7 @@ export function MarketplaceCatalog({
         .marketplace-lively form { box-shadow: 0 12px 30px -20px #065f4660; }
         .marketplace-lively article,
         .marketplace-lively section > .grid > a,
-        .marketplace-lively section[aria-label="Parcourir par catÃ©gorie"] button {
+        .marketplace-lively section[aria-label="Parcourir par catégorie"] button {
           transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
         }
         .marketplace-lively article { border-top: 4px solid #34d399; }
@@ -418,7 +418,7 @@ export function MarketplaceCatalog({
         @media (hover: hover) {
           .marketplace-lively article:hover,
           .marketplace-lively section > .grid > a:hover,
-          .marketplace-lively section[aria-label="Parcourir par catÃ©gorie"] button:hover {
+          .marketplace-lively section[aria-label="Parcourir par catégorie"] button:hover {
             transform: translateY(-4px);
             box-shadow: 0 14px 30px -18px #065f4680;
           }

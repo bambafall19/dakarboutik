@@ -61,7 +61,7 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
       const password = String(data.get("password") || "");
       if (!register && emailLogin) {
         const result = await authClient.signIn.email({ email: String(data.get("email") || "").trim(), password });
-        if (result.error) throw Error("E-mail ou mot de passe incorrect, ou connexion indisponible. RÃ©essayez.");
+        if (result.error) throw Error("E-mail ou mot de passe incorrect, ou connexion indisponible. Réessayez.");
       } else {
         const response = await fetch("/api/auth/session", {
           method: "POST", headers: { "content-type": "application/json" },
@@ -71,7 +71,7 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
         if (!response.ok) throw Error(result.error || "Connexion impossible.");
       }
       await refresh();
-      setMessage(register ? "Compte crÃ©Ã©. PrÃ©sentez maintenant votre boutique." : "Connexion effectuÃ©e.");
+      setMessage(register ? "Compte créé. Présentez maintenant votre boutique." : "Connexion effectuée.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Connexion impossible.");
     } finally { setBusy(false); }
@@ -80,36 +80,36 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
     setRegister(next); setMessage(""); setShowPassword(false);
   }
   return <section className="mx-auto max-w-md">
-    <p className="mb-5 text-center text-slate-700">PrÃ©sentez vos produits et recevez les demandes de vos clients.</p>
+    <p className="mb-5 text-center text-slate-700">Présentez vos produits et recevez les demandes de vos clients.</p>
     <div className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-sm sm:p-7">
-      <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-emerald-50 p-1" aria-label="AccÃ¨s commerÃ§ant">
+      <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-emerald-50 p-1" aria-label="Accès commerçant">
         <button type="button" disabled={busy} aria-pressed={!register} onClick={() => changeMode(false)} className={`rounded-lg px-2 py-3 text-sm font-semibold ${!register ? "bg-emerald-800 text-white" : "text-emerald-900"}`}>Se connecter</button>
-        <button type="button" disabled={busy} aria-pressed={register} onClick={() => changeMode(true)} className={`rounded-lg px-2 py-3 text-sm font-semibold ${register ? "bg-emerald-800 text-white" : "text-emerald-900"}`}>CrÃ©er mon compte</button>
+        <button type="button" disabled={busy} aria-pressed={register} onClick={() => changeMode(true)} className={`rounded-lg px-2 py-3 text-sm font-semibold ${register ? "bg-emerald-800 text-white" : "text-emerald-900"}`}>Créer mon compte</button>
       </div>
       <h2 className="mb-5 text-xl font-bold">{register ? "Bienvenue chez DakarBoutik" : "Retrouvez votre boutique"}</h2>
       <form key={`${register}-${emailLogin}`} onSubmit={submit} className="space-y-4" aria-busy={busy}>
         <fieldset disabled={busy} className="space-y-4">
           {register && <label className="block text-sm">Votre nom<input className={field} name="name" autoComplete="name" required maxLength={100} /></label>}
-          {(!emailLogin || register) && <label className="block text-sm">NumÃ©ro de tÃ©lÃ©phone<input className={field} name="phone" type="tel" autoComplete="username" inputMode="tel" placeholder="77 123 45 67" required maxLength={25} aria-describedby="phone-help" /><span id="phone-help" className="mt-1 block text-xs text-slate-500">SÃ©nÃ©gal : 9 chiffres. Autre pays : ajoutez lâ€™indicatif (+â€¦).</span></label>}
+          {(!emailLogin || register) && <label className="block text-sm">Numéro de téléphone<input className={field} name="phone" type="tel" autoComplete="username" inputMode="tel" placeholder="77 123 45 67" required maxLength={25} aria-describedby="phone-help" /><span id="phone-help" className="mt-1 block text-xs text-slate-500">Sénégal : 9 chiffres. Autre pays : ajoutez l’indicatif (+…).</span></label>}
           {(emailLogin && !register) && <label className="block text-sm">E-mail de votre compte<input className={field} name="email" type="email" autoComplete="username" required /></label>}
           <label className="block text-sm">Mot de passe
             <div className="relative"><input className={`${field} pr-24`} name="password" type={showPassword ? "text" : "password"} autoComplete={register ? "new-password" : "current-password"} required minLength={register ? 6 : undefined} maxLength={72} aria-describedby={register ? "password-help" : undefined} />
               <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"} className="absolute inset-y-0 right-2 px-2 text-sm font-medium text-emerald-800">{showPassword ? "Masquer" : "Afficher"}</button>
             </div>
-            {register && <span id="password-help" className="mt-1 block text-xs text-slate-500">6 caractÃ¨res minimum. Vous pouvez choisir un mot de passe plus long.</span>}
+            {register && <span id="password-help" className="mt-1 block text-xs text-slate-500">6 caractères minimum. Vous pouvez choisir un mot de passe plus long.</span>}
           </label>
-          {register && <details className="text-sm"><summary className="cursor-pointer py-2 text-emerald-800">Ajouter un e-mail (facultatif)</summary><label className="block">E-mail de contact<input className={field} name="email" type="email" autoComplete="email" maxLength={254} /></label><p className="mt-1 text-xs text-slate-500">Pour vous contacter. Votre connexion reste par tÃ©lÃ©phone.</p></details>}
-          <button disabled={busy} className="w-full rounded-xl bg-emerald-800 px-4 py-3 font-semibold text-white disabled:opacity-60">{busy ? "Veuillez patienterâ€¦" : register ? "CrÃ©er mon compte" : "Se connecter"}</button>
+          {register && <details className="text-sm"><summary className="cursor-pointer py-2 text-emerald-800">Ajouter un e-mail (facultatif)</summary><label className="block">E-mail de contact<input className={field} name="email" type="email" autoComplete="email" maxLength={254} /></label><p className="mt-1 text-xs text-slate-500">Pour vous contacter. Votre connexion reste par téléphone.</p></details>}
+          <button disabled={busy} className="w-full rounded-xl bg-emerald-800 px-4 py-3 font-semibold text-white disabled:opacity-60">{busy ? "Veuillez patienter…" : register ? "Créer mon compte" : "Se connecter"}</button>
         </fieldset>
         {message && <p role="alert" className="rounded-lg bg-amber-50 p-3 text-sm text-slate-800">{message}</p>}
       </form>
-      {!register && <button disabled={busy} type="button" onClick={() => { setEmailLogin(!emailLogin); setMessage(""); setShowPassword(false); }} className="mt-4 w-full py-2 text-sm text-emerald-800 underline">{emailLogin ? "Me connecter avec mon tÃ©lÃ©phone" : "Jâ€™ai dÃ©jÃ  un compte avec mon e-mail"}</button>}
+      {!register && <button disabled={busy} type="button" onClick={() => { setEmailLogin(!emailLogin); setMessage(""); setShowPassword(false); }} className="mt-4 w-full py-2 text-sm text-emerald-800 underline">{emailLogin ? "Me connecter avec mon téléphone" : "J’ai déjà un compte avec mon e-mail"}</button>}
       <div className="mt-5 border-t pt-4 text-sm">
-        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221776384676?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." target="_blank" rel="noopener noreferrer">Mot de passe oubliÃ© ? Aide WhatsApp â†—</a>
-        <p className="mt-2 text-xs text-slate-500">Notre Ã©quipe vÃ©rifiera votre demande. Ne communiquez jamais votre mot de passe.</p>
+        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221776384676?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." target="_blank" rel="noopener noreferrer">Mot de passe oublié ? Aide WhatsApp ↗</a>
+        <p className="mt-2 text-xs text-slate-500">Notre équipe vérifiera votre demande. Ne communiquez jamais votre mot de passe.</p>
       </div>
     </div>
-    {register && <p className="mt-4 text-center text-sm text-slate-600">1. CrÃ©ez votre compte Â· 2. PrÃ©sentez votre boutique Â· 3. Attendez sa validation</p>}
+    {register && <p className="mt-4 text-center text-sm text-slate-600">1. Créez votre compte · 2. Présentez votre boutique · 3. Attendez sa validation</p>}
   </section>;
 }
 export function MarketplaceDashboard({ admin = false, inscription = false }: { admin?: boolean; inscription?: boolean }) {
@@ -175,7 +175,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
       const result = await r.json();
       if (!r.ok) throw Error(result.error || "Enregistrement impossible.");
       await reload();
-      setMessage("Modification enregistrÃ©e.");
+      setMessage("Modification enregistrée.");
       return true;
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Erreur.");
@@ -189,7 +189,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
     setBusy(true);
     try {
       const response = await fetch("/api/auth/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "logout" }) });
-      if (!response.ok) throw Error("DÃ©connexion impossible.");
+      if (!response.ok) throw Error("Déconnexion impossible.");
       setShops([]);
       setListings([]);
       setEditing(null);
@@ -197,7 +197,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
       setMessage("");
       await refresh();
     } catch {
-      setMessage("DÃ©connexion impossible. RÃ©essayez.");
+      setMessage("Déconnexion impossible. Réessayez.");
     } finally {
       setBusy(false);
     }
@@ -215,14 +215,14 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
       >
         <div className="container space-y-5 py-6 sm:py-10">
           <h1 className="text-3xl font-bold">
-            {admin ? "Validation et publicitÃ©s" : user ? "Mon tableau de bord" : "Mon espace boutique"}
+            {admin ? "Validation et publicités" : user ? "Mon tableau de bord" : "Mon espace boutique"}
           </h1>
           <div className="flex flex-wrap items-center gap-4">
             {user && (
               <>
                 <span className="text-sm">{user.phone || user.email}</span>
                 <button className="underline" disabled={busy} onClick={logout}>
-                  Se dÃ©connecter
+                  Se déconnecter
                 </button>
               </>
             )}
@@ -233,7 +233,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
               try {
                 const response = await fetch("/api/auth/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "change-phone-password", oldPassword: data.get("oldPassword"), newPassword: data.get("newPassword") }) });
                 const result = await response.json(); if (!response.ok) throw Error(result.error || "Modification impossible.");
-                form.reset(); setMessage("Mot de passe modifiÃ©. Les anciennes sessions ont Ã©tÃ© fermÃ©es.");
+                form.reset(); setMessage("Mot de passe modifié. Les anciennes sessions ont été fermées.");
               } catch (error) { setMessage(error instanceof Error ? error.message : "Modification impossible."); }
               finally { setBusy(false); }
             }}>
@@ -246,19 +246,19 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
             {message}
           </p>
           {loading ? (
-            <p>Chargementâ€¦</p>
+            <p>Chargement…</p>
           ) : !user ? (
             <AuthForm inscription={inscription} />
           ) : admin && !user.isAdmin ? (
-            <p>AccÃ¨s rÃ©servÃ© Ã  lâ€™administrateur.</p>
+            <p>Accès réservé à l’administrateur.</p>
           ) : !ready ? (
             <p>
-              Le tableau de bord nâ€™est pas disponible.{" "}
+              Le tableau de bord n’est pas disponible.{" "}
               <button
                 className="underline"
                 onClick={() => reload().catch((e) => setMessage(e.message))}
               >
-                RÃ©essayer
+                Réessayer
               </button>
             </p>
           ) : admin ? (
@@ -288,8 +288,8 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   <h3 className="text-xl font-bold">{s.profile.name}</h3>
                   <p>{s.profile.description}</p>
                   <p>
-                    {s.profile.category} Â· {s.profile.address}, {s.profile.city}{" "}
-                    Â· WhatsApp {s.profile.whatsapp}
+                    {s.profile.category} · {s.profile.address}, {s.profile.city}{" "}
+                    · WhatsApp {s.profile.whatsapp}
                   </p>
                   <p>Horaires : {s.profile.hours}</p>
                   {s.profile.image && (
@@ -299,7 +299,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Voir lâ€™image soumise
+                      Voir l’image soumise
                     </a>
                   )}
                   <label className="block">
@@ -319,7 +319,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   <Input
                     name="until"
                     type="date"
-                    label="SponsorisÃ© jusquâ€™au (laisser vide pour dÃ©sactiver)"
+                    label="Sponsorisé jusqu’au (laisser vide pour désactiver)"
                     value={
                       s.sponsored_until
                         ? new Date(s.sponsored_until).toISOString().slice(0, 10)
@@ -341,16 +341,16 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   className="space-y-3 rounded-xl border bg-white p-5"
                 >
                   <h3 className="text-lg font-bold">
-                    {l.details.title} â€”{" "}
+                    {l.details.title} —{" "}
                     {shops.find((s) => s.id === l.shop_id)?.profile.name}
                   </h3>
                   <p>{l.details.description}</p>
                   {isProductUrl(l.details.productUrl) && (
-                    <a href={l.details.productUrl} target="_blank" rel="noopener noreferrer" className="block underline">VÃ©rifier la fiche produit externe â†—</a>
+                    <a href={l.details.productUrl} target="_blank" rel="noopener noreferrer" className="block underline">Vérifier la fiche produit externe ↗</a>
                   )}
                   <p>
-                    {l.details.price} FCFA Â·{" "}
-                    {availabilityLabels[l.details.availability]} Â·{" "}
+                    {l.details.price} FCFA ·{" "}
+                    {availabilityLabels[l.details.availability]} ·{" "}
                     {statusLabels[l.status]}
                   </p>
                   {l.details.image && (
@@ -394,7 +394,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
           ) : (
             <>
               <nav aria-label="Mon tableau de bord" className="sticky top-0 z-20 grid grid-cols-2 gap-2 rounded-2xl border border-white bg-white/95 p-2 shadow-sm backdrop-blur sm:grid-cols-4">
-                {([{ id: "overview", label: "Vue dâ€™ensemble", icon: LayoutDashboard }, { id: "products", label: "Mes produits", icon: Package }, { id: "editor", label: editing ? "Modifier le produit" : "Ajouter un produit", icon: PlusCircle }, { id: "shop", label: "Ma boutique", icon: Store }] as const).map(item => <button type="button" key={item.id} aria-pressed={panel === item.id} aria-controls="merchant-workspace" disabled={busy || (item.id === "editor" && (!shop || shop.status === "suspended"))} onClick={() => navigate(item.id)} className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-semibold transition-colors disabled:opacity-40 sm:text-sm ${panel === item.id ? "bg-emerald-800 text-white shadow-sm" : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-900"}`}><item.icon size={18} className="shrink-0" aria-hidden="true" /><span>{item.label}</span></button>)}
+                {([{ id: "overview", label: "Vue d’ensemble", icon: LayoutDashboard }, { id: "products", label: "Mes produits", icon: Package }, { id: "editor", label: editing ? "Modifier le produit" : "Ajouter un produit", icon: PlusCircle }, { id: "shop", label: "Ma boutique", icon: Store }] as const).map(item => <button type="button" key={item.id} aria-pressed={panel === item.id} aria-controls="merchant-workspace" disabled={busy || (item.id === "editor" && (!shop || shop.status === "suspended"))} onClick={() => navigate(item.id)} className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-semibold transition-colors disabled:opacity-40 sm:text-sm ${panel === item.id ? "bg-emerald-800 text-white shadow-sm" : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-900"}`}><item.icon size={18} className="shrink-0" aria-hidden="true" /><span>{item.label}</span></button>)}
               </nav>
               <div id="merchant-workspace" className="scroll-mt-36 space-y-5">
               <div hidden={panel !== "overview"} className="space-y-5">
@@ -414,9 +414,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   });
                 }}
               >
-                <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre vitrine</p><h2 className="mt-2 text-2xl font-bold">PrÃ©sentation de ma boutique</h2><p className="mt-2 text-sm text-slate-500">Une photo, une adresse prÃ©cise et des horaires Ã  jour aident vos clients Ã  vous trouver. Les champs marquÃ©s * sont obligatoires.</p></div>
+                <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre vitrine</p><h2 className="mt-2 text-2xl font-bold">Présentation de ma boutique</h2><p className="mt-2 text-sm text-slate-500">Une photo, une adresse précise et des horaires à jour aident vos clients à vous trouver. Les champs marqués * sont obligatoires.</p></div>
                 <div className="grid gap-5 md:grid-cols-2">
-                  <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 Â· IdentitÃ© de la boutique</h3>
+                  <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 · Identité de la boutique</h3>
                   <Input
                     name="name"
                     label="Nom de la boutique"
@@ -425,11 +425,11 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   />
                   <Input
                     name="category"
-                    label="CatÃ©gorie"
+                    label="Catégorie"
                     value={shop?.profile.category}
                     required
                   />
-                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900 md:col-span-2">02 Â· Adresse et contact</h3>
+                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900 md:col-span-2">02 · Adresse et contact</h3>
                   <Input
                     name="city"
                     label="Ville"
@@ -455,14 +455,14 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   />
                   <Input
                     name="hours"
-                    label="Horaires dâ€™ouverture"
+                    label="Horaires d’ouverture"
                     value={shop?.profile.hours}
                   />
-                  <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">03 Â· Votre image et votre prÃ©sentation</h3>
+                  <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">03 · Votre image et votre présentation</h3>
                   <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/30 p-4 md:col-span-2"><PhotoField label="Logo ou photo de la boutique (facultatif)" value={shop?.profile.image} disabled={busy} onBusy={setPhotoBusy} /></div>
                 </div>
                 <label className="block">
-                  PrÃ©sentation
+                  Présentation
                   <textarea
                     name="description"
                     className={field}
@@ -475,7 +475,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                   disabled={busy}
                   className="rounded-full bg-emerald-800 px-5 py-3 text-white"
                 >
-                  {busy ? "Enregistrementâ€¦" : "Enregistrer ma prÃ©sentation"}
+                  {busy ? "Enregistrement…" : "Enregistrer ma présentation"}
                 </button>
               </form>
               </div>
@@ -495,11 +495,11 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                       <option value="new">Ajouter un produit</option>
                       
                       {listings.length > 0 && <optgroup label="Modifier un produit existant">
-                        {listings.map(l => <option key={l.id} value={l.id}>{l.details.title} â€” {l.details.price.toLocaleString("fr-FR")} FCFA</option>)}
+                        {listings.map(l => <option key={l.id} value={l.id}>{l.details.title} — {l.details.price.toLocaleString("fr-FR")} FCFA</option>)}
                       </optgroup>}
                     </select>
                   </label>
-                  <p className="text-sm text-slate-600">Choisissez un produit pour retrouver ses informations, son prix et sa photo. Un changement de sÃ©lection remplace le formulaire en cours.</p>
+                  <p className="text-sm text-slate-600">Choisissez un produit pour retrouver ses informations, son prix et sa photo. Un changement de sélection remplace le formulaire en cours.</p>
                 </section>
               )}
               {shop && shop.status !== "suspended" && productMode !== "stock" && (
@@ -524,9 +524,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                     }
                   }}
                 >
-                  <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre catalogue</p><h2 className="mt-2 text-2xl font-bold">{editing ? "Modifier le produit" : "Ajouter un produit"}</h2><p className="mt-2 text-sm text-slate-500">Renseignez les informations, ajoutez une photo, puis soumettez la fiche Ã  validation.</p></div>
+                  <div className="border-b border-slate-100 pb-5"><p className="text-xs font-bold uppercase tracking-widest text-emerald-700">Votre catalogue</p><h2 className="mt-2 text-2xl font-bold">{editing ? "Modifier le produit" : "Ajouter un produit"}</h2><p className="mt-2 text-sm text-slate-500">Renseignez les informations, ajoutez une photo, puis soumettez la fiche à validation.</p></div>
                   <div className="grid gap-5 md:grid-cols-2">
-                    <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 Â· Informations du produit</h3>
+                    <h3 className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900 md:col-span-2">01 · Informations du produit</h3>
                     <Input
                       name="title"
                       label="Nom du produit"
@@ -542,18 +542,18 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                     />
                     <Input
                       name="category"
-                      label="CatÃ©gorie"
+                      label="Catégorie"
                       value={editing?.details.category || shop.profile.category}
                       required
                     />
-                    <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">02 Â· Photo et fiche externe</h3>
+                    <h3 className="rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 md:col-span-2">02 · Photo et fiche externe</h3>
                     <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/30 p-4"><PhotoField label="Photo du produit" value={editing?.details.image} disabled={busy} onBusy={setPhotoBusy} /></div>
                     <div className="space-y-2 rounded-2xl bg-slate-50 p-4">
                       <Input name="productUrl" type="url" label="Lien de la fiche produit sur un autre site (facultatif)" value={editing?.details.productUrl} />
                       <p className="text-xs text-slate-600">Collez une adresse HTTPS. Ce lien ouvre la fiche externe ; renseignez ici le prix, la description et la photo.</p>
                     </div>
                   </div>
-                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900">03 Â· Description et disponibilitÃ©</h3>
+                  <h3 className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-900">03 · Description et disponibilité</h3>
                   <label className="block">
                     Description
                     <textarea
@@ -567,7 +567,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                     />
                   </label>
                   <label className="block">
-                    DisponibilitÃ©
+                    Disponibilité
                     <select
                       name="availability"
                       className={field}
@@ -586,7 +586,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                     disabled={busy}
                     className="rounded-full bg-emerald-800 px-5 py-3 text-white"
                   >
-                    {busy ? "Enregistrementâ€¦" : editing ? "Enregistrer les modifications" : "Soumettre le produit"}
+                    {busy ? "Enregistrement…" : editing ? "Enregistrer les modifications" : "Soumettre le produit"}
                   </button>
                   {editing && (
                     <button

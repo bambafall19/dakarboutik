@@ -1,33 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { CategoryIcons, Icons } from './icons';
+import { Logo } from './logo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import type { Category, SiteSettings } from '@/lib/types';
-import { ScrollArea } from './ui/scroll-area';
-import { Button } from './ui/button';
 import { SheetTitle } from './ui/sheet';
-import {
-  X,
-  Heart,
-  Info,
-  Mail,
-  Sparkles,
-  Phone,
-  MessageCircle,
-  MapPin,
-  Headset,
-  HelpCircle,
-  Tag,
-  Facebook,
-  Instagram,
-  Music2,
-  Send,
-  Award,
-} from 'lucide-react';
-import { Separator } from './ui/separator';
+import { X, Heart, Home, Store, ShoppingBag, Search, ArrowRight, UserRound, Sparkles, Tag, MessageCircle, Phone, Mail } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
-import { SnowToggleButton } from './snow-toggle-button';
 import { normalizePhoneNumber } from '@/lib/order-channels';
 
 interface MobileNavProps {
@@ -36,309 +17,79 @@ interface MobileNavProps {
   onLinkClick: () => void;
 }
 
-const shopShortcuts = [
-  { name: 'Promotions', href: '/products?on_sale=true', icon: Tag },
-  { name: 'Nouveautés', href: '/products?sortBy=newest', icon: Sparkles },
-  { name: 'Best-sellers', href: '/products?bestseller=true', icon: Award },
+const links = [
+  { href: '/', label: 'Accueil', icon: Home },
+  { href: '/products', label: 'Produits DakarBoutik', icon: ShoppingBag },
+  { href: '/boutiques', label: 'Boutiques partenaires', icon: Store },
+  { href: '/commercant', label: 'Mon espace commerçant', icon: UserRound },
 ];
-
-const supportLinks = [
-  { name: 'À propos', href: '/a-propos', icon: Info },
-  { name: 'Contact', href: '/contact', icon: Mail },
-  { name: 'Garantie & SAV', href: '/sav', icon: Headset },
-  { name: 'FAQ', href: '/faq', icon: HelpCircle },
-];
-
-const legalLinks = [
-  { name: 'Conditions générales', href: '/conditions-generales' },
-  { name: 'Politique de confidentialité', href: '/politique-de-confidentialite' },
-];
+const row = 'flex min-h-11 items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
 
 export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
-  const whatsappNumber = settings?.whatsappNumber?.replace(/\s/g, '');
-  const supportPhone = settings?.supportPhone || settings?.phone;
-  const phoneHref = supportPhone
-    ? `tel:${normalizePhoneNumber(supportPhone) ?? supportPhone}`
-    : undefined;
-  const mailHref = settings?.supportEmail ? `mailto:${settings.supportEmail}` : undefined;
-
-  const renderCategoryLinks = (categories: Category[], level = 0) => {
-    return categories.map((cat) => {
-      const Icon = CategoryIcons[cat.slug] || Icons.chevronRight;
-      const hasSubCategories = cat.subCategories && cat.subCategories.length > 0;
-
-      if (hasSubCategories) {
-        return (
-          <AccordionItem key={cat.id} value={cat.slug} className="border-b-0">
-            <AccordionTrigger className="py-3 text-base font-medium hover:no-underline px-4">
-                <span className="flex items-center gap-4">
-                    <Icon className="h-5 w-5" />
-                    {cat.name}
-                </span>
-            </AccordionTrigger>
-            <AccordionContent className="pl-6 border-l ml-6">
-                <div className="flex flex-col">
-                    {renderCategoryLinks(cat.subCategories!, level + 1)}
-                </div>
-            </AccordionContent>
-          </AccordionItem>
-        );
-      }
-
-      return (
-        <Link
-          key={cat.id}
-          href={`/products?category=${cat.slug}`}
-          className="flex items-center gap-4 py-3 text-base px-4"
-          onClick={onLinkClick}
-          style={{ paddingLeft: level > 0 ? `calc(${level} * 1.5rem + 1rem)` : '1rem' }}
-        >
-          <Icon className="h-5 w-5" />
-          <span className={level > 0 ? 'font-normal text-sm' : 'font-medium'}>{cat.name}</span>
-        </Link>
-      );
-    });
-  };
+  const pathname = usePathname();
+  const whatsapp = normalizePhoneNumber(settings?.whatsappNumber || '')?.replace(/\D/g, '');
+  const phone = normalizePhoneNumber(settings?.supportPhone || settings?.phone || '');
+  const categories = (entries: Category[], trail = '') => entries.map(cat => {
+    const Icon = CategoryIcons[cat.slug] || Icons.chevronRight;
+    const href = `/products?category=${encodeURIComponent(cat.slug)}`;
+    return cat.subCategories?.length ? (
+      <AccordionItem key={cat.id} value={`${trail}${cat.id}`} className="border-b-0">
+        <AccordionTrigger className={`${row} w-full text-left hover:no-underline`}>
+          <span className="flex min-w-0 items-center gap-3"><Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />{cat.name}</span>
+        </AccordionTrigger>
+        <AccordionContent className="ml-5 border-l border-primary/15 pl-2 pb-1">
+          <Link className={`${row} text-primary`} href={href} onClick={onLinkClick}>Tout voir dans cette catégorie <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" /></Link>
+          <Accordion type="multiple">{categories(cat.subCategories, `${trail}${cat.id}-`)}</Accordion>
+        </AccordionContent>
+      </AccordionItem>
+    ) : <Link key={cat.id} href={href} onClick={onLinkClick} className={row}><Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /><span>{cat.name}</span></Link>;
+  });
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="sticky top-0 z-10 border-b bg-nav p-4 text-nav-foreground">
-        <SheetTitle className="sr-only">Menu Principal</SheetTitle>
-        <div className='flex justify-between items-center'>
-          <Link href="/" onClick={onLinkClick} className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 font-headline text-base font-extrabold text-primary-foreground ring-2 ring-accent/60">
-              D
-            </span>
-            <span className="font-headline text-lg font-extrabold tracking-tight">
-              Dakar<span className="text-accent">Boutik</span>
-            </span>
-          </Link>
-           <Button variant="ghost" size="icon" onClick={onLinkClick} className="text-nav-foreground hover:bg-white/10">
-            <X className="h-6 w-6" />
-          </Button>
+    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+      <div className="shrink-0 border-b bg-gradient-to-br from-emerald-50 to-amber-50 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] text-slate-900">
+        <div className="flex items-center justify-between gap-3">
+          <Logo onClick={onLinkClick} />
+          <SheetTitle className="flex-1 text-base text-slate-900">Bienvenue !<span className="mt-1 block text-xs font-normal text-slate-600">Vos boutiques, à portée de main</span></SheetTitle>
+          <button type="button" aria-label="Fermer le menu" onClick={onLinkClick} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-white text-emerald-900 focus-visible:outline focus-visible:outline-2"><X className="h-5 w-5" aria-hidden="true" /></button>
         </div>
+        <form action="/boutiques" onSubmit={onLinkClick} role="search" aria-label="Rechercher depuis le menu" className="mt-2 flex items-center rounded-xl border border-emerald-200 bg-white">
+          <input name="source" value="tous" type="hidden" />
+          <input name="q" type="search" aria-label="Produit ou boutique" placeholder="Un produit, une boutique…" className="min-w-0 flex-1 rounded-l-xl bg-transparent px-3 py-3 text-base outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-600" />
+          <button aria-label="Rechercher" className="flex h-11 w-11 shrink-0 items-center justify-center text-emerald-800"><Search className="h-5 w-5" aria-hidden="true" /></button>
+        </form>
       </div>
-
-      <ScrollArea className="flex-1">
-        {/* Raccourcis boutique */}
-        <div className="grid grid-cols-3 gap-2 p-4">
-          {shopShortcuts.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={onLinkClick}
-              className="flex flex-col items-center gap-2 rounded-2xl border border-border/70 bg-card px-2 py-3 text-center transition active:scale-95"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/12 text-accent">
-                <item.icon className="h-4 w-4" />
-              </span>
-              <span className="text-[11px] font-semibold leading-tight text-foreground">{item.name}</span>
-            </Link>
-          ))}
-        </div>
-
-        <nav aria-label="Navigation DakarBoutik" className="flex flex-col p-4">
-          <Link href="/commercant?inscription=1" onClick={onLinkClick} className="mb-2 rounded-xl bg-primary px-3 py-3 text-center text-base font-bold text-primary-foreground">Inscrire ma boutique</Link>
-          {[
-            ['/', 'Accueil'], ['/products', 'Produits DakarBoutik'],
-            ['/boutiques', 'Boutiques partenaires'], ['/products?on_sale=true', 'Promotions'],
-            ['/commercant', 'Espace commerçant'],
-          ].map(([href, label]) => <Link key={href} href={href} onClick={onLinkClick} className="rounded-xl px-3 py-3 text-base font-semibold hover:bg-primary/10">{label}</Link>)}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+        <nav aria-label="Navigation mobile" className="space-y-1">
+          {links.map(({ href, label, icon: Icon }) => {
+            const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+            return <Link key={href} href={href} onClick={onLinkClick} aria-current={active ? 'page' : undefined} className={`${row} ${active ? 'bg-primary/10 text-primary' : ''}`}><Icon className="h-5 w-5 shrink-0" aria-hidden="true" /><span className="flex-1">{label}</span>{active && <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />}</Link>;
+          })}
         </nav>
-        <div className="px-4">
-          <Separator />
+        <div className="my-3 grid grid-cols-2 gap-2">
+          <Link href="/products?on_sale=true" onClick={onLinkClick} className={`${row} justify-center bg-amber-50 text-amber-950`}><Tag className="h-4 w-4" aria-hidden="true" />Promotions</Link>
+          <Link href="/products?sortBy=newest" onClick={onLinkClick} className={`${row} justify-center bg-emerald-50 text-emerald-950`}><Sparkles className="h-4 w-4" aria-hidden="true" />Nouveautés</Link>
         </div>
-        <Accordion type="multiple" className="flex flex-col py-4">
-          {renderCategoryLinks(items)}
+        <Accordion type="multiple" className="border-y">
+          <AccordionItem value="categories" className="border-b-0">
+            <AccordionTrigger className="min-h-12 px-3 text-sm font-bold hover:no-underline">Explorer les catégories</AccordionTrigger>
+            <AccordionContent><Accordion type="multiple">{categories(items)}</Accordion>{!items.length && <Link className={row} href="/products" onClick={onLinkClick}>Voir tous les produits</Link>}</AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="help" className="border-b-0">
+            <AccordionTrigger className="min-h-12 px-3 text-sm font-bold hover:no-underline">Aide et informations</AccordionTrigger>
+            <AccordionContent>{[['/contact','Contact et commandes'],['/sav','Garantie et SAV'],['/faq','Questions fréquentes'],['/a-propos','À propos'],['/mentions-legales','Mentions légales'],['/conditions-generales','Conditions générales'],['/politique-de-confidentialite','Confidentialité']].map(([href,label]) => <Link key={href} href={href} onClick={onLinkClick} className={row}>{label}</Link>)}</AccordionContent>
+          </AccordionItem>
         </Accordion>
-        <div className="px-4">
-          <Separator />
+        <Link href="/favoris" onClick={onLinkClick} className={`${row} mt-2`}><Heart className="h-5 w-5" aria-hidden="true" />Mes favoris</Link>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className={`${row} justify-center bg-emerald-50 text-emerald-900`}><MessageCircle className="h-4 w-4" aria-hidden="true" />WhatsApp</a>}
+          {phone && <a href={`tel:${phone}`} className={`${row} justify-center border`}><Phone className="h-4 w-4" aria-hidden="true" />Appeler</a>}
+          {settings?.supportEmail && <a href={`mailto:${settings.supportEmail}`} className={`${row} col-span-2 min-w-0 text-xs`}><Mail className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="break-all">{settings.supportEmail}</span></a>}
         </div>
-        <nav className="flex flex-col gap-1 p-4">
-            <Link
-                href="/favoris"
-                className="flex items-center gap-4 py-3 text-base font-medium"
-                onClick={onLinkClick}
-            >
-                <Heart className="h-5 w-5" />
-                Mes favoris
-            </Link>
-        </nav>
-
-        {/* Besoin d'aide */}
-        <div className="px-4">
-          <Separator />
-        </div>
-        <nav className="flex flex-col gap-1 p-4">
-          <p className="pb-1 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            Besoin d&apos;aide
-          </p>
-          {supportLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="flex items-center gap-4 py-3 text-base font-medium"
-              onClick={onLinkClick}
-            >
-              <link.icon className="h-5 w-5" />
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Contact direct */}
-        <div className="px-4">
-          <Separator />
-        </div>
-        <div className="p-4">
-          <p className="pb-3 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            Nous contacter
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {whatsappNumber && (
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-3 py-3 text-sm font-semibold text-white transition active:scale-95"
-              >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
-              </a>
-            )}
-            {phoneHref && (
-              <a
-                href={phoneHref}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-3 py-3 text-sm font-semibold text-primary transition active:scale-95"
-              >
-                <Phone className="h-4 w-4" />
-                Appeler
-              </a>
-            )}
-            {mailHref && (
-              <a
-                href={mailHref}
-                className="col-span-2 flex items-center justify-center gap-2 rounded-2xl border border-border bg-card px-3 py-3 text-sm font-semibold transition active:scale-95"
-              >
-                <Mail className="h-4 w-4" />
-                {settings?.supportEmail}
-              </a>
-            )}
-          </div>
-
-          {settings?.address && (
-            <p className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
-              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
-              <span>{settings.address}</span>
-            </p>
-          )}
-        </div>
-
-        {/* Newsletter */}
-        <div className="px-4">
-          <Separator />
-        </div>
-        <div className="p-4">
-          <p className="font-headline text-sm font-bold">Rejoignez la communauté</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Offres exclusives et nouveautés, livrées dans votre boîte mail.
-          </p>
-          {whatsappNumber ? (
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-                'Bonjour DakarBoutik, je souhaite recevoir vos offres et nouveautés.'
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-accent px-4 text-sm font-semibold text-accent-foreground transition active:scale-[0.98]"
-            >
-              <MessageCircle className="h-4 w-4" />
-              Recevoir les offres sur WhatsApp
-            </a>
-          ) : (
-            <Button
-              type="button"
-              className="mt-3 h-12 w-full rounded-full font-semibold"
-              onClick={onLinkClick}
-            >
-              <Send className="mr-2 h-4 w-4" />
-              S&apos;inscrire aux offres
-            </Button>
-          )}
-        </div>
-
-        {/* Réseaux sociaux */}
-        <div className="px-4">
-          <Separator />
-        </div>
-        <div className="p-4">
-          <div className="flex items-center gap-3">
-            {settings?.facebookUrl ? (
-              <a
-                href={settings.facebookUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition active:scale-95"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-            ) : null}
-            {settings?.instagramUrl ? (
-              <a
-                href={settings.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition active:scale-95"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-            ) : null}
-            {settings?.tiktokUrl ? (
-              <a
-                href={settings.tiktokUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition active:scale-95"
-              >
-                <Music2 className="h-4 w-4" />
-              </a>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Mentions légales */}
-        <div className="px-4">
-          <Separator />
-        </div>
-        <nav className="flex flex-col gap-1 p-4">
-          {legalLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="py-1.5 text-xs text-muted-foreground transition active:scale-[0.99]"
-              onClick={onLinkClick}
-            >
-              {link.name}
-            </Link>
-          ))}
-          <p className="pt-2 text-[11px] text-muted-foreground/80">
-            © {new Date().getFullYear()} {settings?.siteName || 'DakarBoutik'}. Entreprise fièrement
-            sénégalaise.
-          </p>
-        </nav>
-      </ScrollArea>
-
-      <div className="p-4 border-t mt-auto bg-background">
-        <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Contrôles</span>
-            <div className="flex items-center">
-              <SnowToggleButton />
-              <ThemeToggle />
-            </div>
-        </div>
+        <div className="mt-2 flex items-center justify-between px-3 text-xs text-muted-foreground"><span>Apparence</span><ThemeToggle /></div>
+      </div>
+      <div className="shrink-0 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <Link href="/commercant?inscription=1" onClick={onLinkClick} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-3 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"><Store className="h-5 w-5" aria-hidden="true" />Inscrire ma boutique<ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
       </div>
     </div>
   );

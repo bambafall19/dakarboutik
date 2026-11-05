@@ -46,6 +46,7 @@ export function Header({
             variant="ghost"
             size="icon"
             onClick={onMobileMenuClick}
+            aria-label="Ouvrir le menu"
             className="h-10 w-10 shrink-0 rounded-full lg:hidden"
           >
             <Menu className="h-5 w-5" />

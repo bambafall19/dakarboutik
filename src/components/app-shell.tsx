@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="w-full max-w-sm flex flex-col p-0">
+        <SheetContent side="left" className="w-[calc(100%-1rem)] max-w-sm flex flex-col gap-0 p-0 [&>button]:hidden motion-reduce:animate-none motion-reduce:transition-none">
             <SheetDescription className="sr-only">
               Menu principal : raccourcis boutique, catégories, support et informations légales.
             </SheetDescription>

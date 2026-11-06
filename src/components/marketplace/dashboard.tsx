@@ -105,7 +105,7 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
       </form>
       {!register && <button disabled={busy} type="button" onClick={() => { setEmailLogin(!emailLogin); setMessage(""); setShowPassword(false); }} className="mt-4 w-full py-2 text-sm text-emerald-800 underline">{emailLogin ? "Me connecter avec mon téléphone" : "J’ai déjà un compte avec mon e-mail"}</button>}
       <div className="mt-5 border-t pt-4 text-sm">
-        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221776384676?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." target="_blank" rel="noopener noreferrer">Mot de passe oublié ? Aide WhatsApp ↗</a>
+        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221771203536?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." target="_blank" rel="noopener noreferrer">Mot de passe oublié ? Aide WhatsApp ↗</a>
         <p className="mt-2 text-xs text-slate-500">Notre équipe vérifiera votre demande. Ne communiquez jamais votre mot de passe.</p>
       </div>
     </div>

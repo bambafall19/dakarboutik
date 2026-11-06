@@ -12,7 +12,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     "Nouveaux Arrivages : Découvrez notre dernière collection d'ordinateurs portables.",
   announcementMessage2: '',
   announcementMessage3: '',
-  whatsappNumber: '221776384676',
+  whatsappNumber: '221771203536',
   supportPhone: '77 638 46 76',
   supportEmail: 'contact@exemple.com',
   deliveryInfo:

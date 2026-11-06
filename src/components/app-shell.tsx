@@ -41,8 +41,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname.startsWith('/admin');
   const isLogin = pathname === '/login';
 
-  if (isAdmin || isLogin || pathname.startsWith('/boutiques') || pathname.startsWith('/commercant')) {
+  if (isAdmin || isLogin) {
     return <>{children}</>;
+  }
+  if (pathname.startsWith('/boutiques') || pathname.startsWith('/commercant')) {
+    return <>{children}<WhatsAppButton /></>;
   }
   
   const handleSearchClick = () => {

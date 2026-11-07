@@ -12,7 +12,7 @@ export function ProductInfoSidebar() {
         {
             icon: Truck,
             title: "Livraison",
-            content: settings?.deliveryInfo
+            content: "Consultez l’estimation selon votre destination sur cette fiche. Les frais sont recalculés au panier ; confirmez le délai avec notre équipe."
         },
         {
             icon: RotateCw,

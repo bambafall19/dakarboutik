@@ -23,6 +23,7 @@ import { Award, Flame, Heart, Truck, ShieldCheck, Sparkles, PackageCheck } from 
 import { cn } from '@/lib/utils';
 import { isRecentlyAdded } from '@/lib/product-freshness';
 import { useSiteSettings } from '@/hooks/use-site-data';
+import { getShippingQuote, type DeliveryMethod } from '@/lib/shipping';
 
 
 interface ProductDetailsProps {
@@ -39,7 +40,8 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const { addToCart } = useCart();
   const { reviews: realReviews, loading: reviewsLoading } = useReviews(product.id);
   const { isProductInWishlist, toggleWishlist } = useWishlist();
-  const { settings } = useSiteSettings();
+  const { settings, loading: settingsLoading, error: settingsError } = useSiteSettings();
+  const [deliveryRegion, setDeliveryRegion] = useState<DeliveryMethod | ''>('');
   const isInWishlist = isProductInWishlist(product.id);
 
   // Use real reviews or an empty array.
@@ -127,7 +129,9 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
   const savings = hasDiscount ? product.price - product.salePrice! : 0;
   const isRecent = isRecentlyAdded(product.createdAt);
   const showNewBadge = product.isNew || isRecent;
-  const deliveryCost = settings?.shippingCostDakar ?? 0;
+  const deliverySubtotal = (hasDiscount ? product.salePrice! : product.price) * quantity;
+  const deliveryQuote = deliveryRegion && !settingsLoading && !settingsError
+    ? getShippingQuote(settings, deliveryRegion, deliverySubtotal) : null;
 
   const images = product.images ?? [];
   const hasImages = images.length > 0;
@@ -231,17 +235,6 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
               </div>
             )}
 
-            {deliveryCost > 0 && (
-              <div className="flex items-center gap-3 rounded-2xl border border-primary/15 bg-gradient-to-r from-primary/8 to-accent/8 px-4 py-3.5 text-sm text-primary">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                  <Truck className="h-4.5 w-4.5" />
-                </span>
-                <p>
-                  <span className="font-semibold">Livraison à Dakar dès {formatCfa(deliveryCost)} FCFA</span>
-                  <span className="ml-1 text-primary/75">— retrait en main propre possible à Dakar.</span>
-                </p>
-              </div>
-            )}
           </div>
         </div>
 
@@ -316,9 +309,21 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
               )}
               <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                Produit authentique · Paiement à la livraison
+                Vendu par DakarBoutik · Paiement à la livraison
               </p>
             </div>
+
+            <section className="space-y-3 rounded-2xl border border-primary/20 bg-primary/5 p-4" aria-labelledby="delivery-estimate-title">
+              <h2 id="delivery-estimate-title" className="flex items-center gap-2 font-semibold"><Truck className="h-4 w-4" aria-hidden="true" />Estimer la livraison</h2>
+              <label htmlFor="product-delivery-region" className="block text-sm">Où souhaitez-vous être livré ?</label>
+              <select id="product-delivery-region" value={deliveryRegion} onChange={e => setDeliveryRegion(e.target.value as DeliveryMethod | '')} className="min-h-11 w-full rounded-xl border bg-background p-3 text-base">
+                <option value="">Choisir une destination</option><option value="dakar">Dakar</option><option value="hors-dakar">Hors Dakar</option>
+              </select>
+              <div aria-live="polite" aria-atomic="true" className="text-sm">
+                {deliveryQuote ? <><p>Livraison : <strong>{deliveryQuote.shippingCost === 0 ? 'Gratuite' : `${formatCfa(deliveryQuote.shippingCost)} FCFA`}</strong></p><p className="mt-1">Total estimé pour {quantity} article{quantity > 1 ? 's' : ''} : <strong>{formatCfa(deliverySubtotal + deliveryQuote.shippingCost)} FCFA</strong></p></> : <p>{settingsError ? 'Les frais ne sont pas disponibles pour le moment. Vérifiez-les au panier.' : settingsLoading ? 'Chargement des frais de livraison…' : 'Choisissez votre destination pour afficher les frais et le total estimé.'}</p>}
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">Estimation pour ce produit et la quantité sélectionnée, hors autres articles du panier. Le total sera recalculé à la commande. Le délai est à confirmer avec notre équipe.</p>
+            </section>
 
             {product.description && (
               <div className="line-clamp-4 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
@@ -402,7 +407,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                 </Button>
               </div>
 
-              <OrderChannels items={channelItems} layout="column" />
+              <OrderChannels items={channelItems} deliveryMethod={deliveryRegion || undefined} layout="column" />
             </div>
           </div>
         </div>

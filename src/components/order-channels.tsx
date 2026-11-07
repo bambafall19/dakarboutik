@@ -14,6 +14,8 @@ import {
 } from '@/lib/order-channels';
 import type { DeliveryMethod } from '@/lib/shipping';
 import { useToast } from '@/hooks/use-toast';
+import { usePathname } from 'next/navigation';
+import { recordEngagement } from '@/lib/engagement-client';
 
 type OrderChannelsProps = {
   items: OrderChannelItem[];
@@ -42,6 +44,7 @@ export function OrderChannels({
 }: OrderChannelsProps) {
   const { settings } = useSiteSettings();
   const { toast } = useToast();
+  const pathname = usePathname();
 
   const whatsappUrl = useMemo(() => {
     const number = getWhatsAppNumber(settings);
@@ -64,6 +67,9 @@ export function OrderChannels({
         description: "Le numéro WhatsApp n'a pas été configuré par l'administrateur.",
       });
       return;
+    }
+    if (!/^\/(admin|commercant|login|register|signup|suivi|checkout|api|auth|order-confirmation)(\/|$)/.test(pathname)) {
+      recordEngagement('whatsapp_click', pathname === '/' ? 'home' : pathname.startsWith('/products') ? 'catalog' : pathname.startsWith('/boutiques') ? 'shops' : 'other');
     }
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };

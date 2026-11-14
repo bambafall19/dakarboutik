@@ -1,11 +1,29 @@
  'use client';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { internalTestEnabled, setInternalTestEnabled } from '@/lib/engagement-client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 type Stats={orderCount?:number;totals:{kind:string;total:number}[];daily:{day:string;kind:string;total:number}[];campaigns:{id:string;title:string;views:number;clicks:number}[]};
 const labels:Record<string,string>={ad_view:'Affichages publicitaires',ad_click:'Clics publicitaires',whatsapp_click:'Clics WhatsApp',shop_view:'Consultations de boutiques',checkout_open:'Accès au panier'};
 export default function StatistiquesPage(){
  const [days,setDays]=useState('30');const [data,setData]=useState<Stats>();const [error,setError]=useState('');const [loading,setLoading]=useState(true);
+ const [internalTest, setInternalTest] = useState(false);
+ const [testModeError, setTestModeError] = useState(false);
+ useEffect(() => {
+   const sync = () => setInternalTest(internalTestEnabled());
+   sync();
+   window.addEventListener('pageshow', sync);
+   return () => window.removeEventListener('pageshow', sync);
+ }, []);
+ const toggleInternalTest = () => {
+   try {
+     setInternalTestEnabled(!internalTest);
+     setInternalTest(internalTestEnabled());
+     setTestModeError(false);
+   } catch {
+     setTestModeError(true);
+   }
+ };
  const refresh=useCallback(async()=>{setLoading(true);setError('');try{const r=await fetch('/api/engagement/stats?days='+days);const body=await r.json();if(!r.ok)throw new Error(body.error);setData(body);}catch(e){setError(e instanceof Error?e.message:'Chargement impossible.');}finally{setLoading(false);}},[days]);
  useEffect(()=>{void refresh();},[refresh]);
  const chart=Array.from({length:Number(days)},(_,i)=>{const d=new Date();d.setUTCDate(d.getUTCDate()-Number(days)+1+i);const day=d.toISOString().slice(0,10);const rows=data?.daily.filter(r=>r.day===day)||[];return{day:day.slice(5),views:rows.find(r=>r.kind==='ad_view')?.total||0,clicks:rows.find(r=>r.kind==='ad_click')?.total||0};});
@@ -17,6 +35,18 @@ export default function StatistiquesPage(){
   <h1 className="text-3xl font-bold">Visites et publicités</h1>
   <section className="rounded-2xl border bg-gradient-to-r from-emerald-50 to-amber-50 p-6 text-slate-900"><h2 className="text-xl font-bold">Qui visite votre site ?</h2><p className="my-3 max-w-3xl">Retrouvez les visiteurs, pages vues, pays, provenances et appareils dans Vercel Analytics. Les chiffres commencent après l’activation ; les anciennes visites ne peuvent pas être reconstituées.</p><a className="inline-block rounded-xl bg-emerald-800 px-5 py-3 font-semibold text-white" href="https://vercel.com/dakarboutikks-projects/dakarboutik/analytics" target="_blank" rel="noopener noreferrer">Ouvrir les visites dans Vercel ↗</a><p className="mt-3 text-xs">Connexion au compte Vercel requise. Historique inclus : 30 jours.</p></section>
   <div className="flex flex-wrap items-end justify-between gap-4"><label className="font-semibold">Résultats mesurés sur le site<select value={days} onChange={e=>setDays(e.target.value)} className="ml-3 rounded-xl border bg-background p-3"><option value="7">7 jours</option><option value="30">30 jours</option><option value="90">90 jours</option></select></label><div className="flex flex-wrap gap-3"><button onClick={refresh} disabled={loading} className="rounded-xl border px-4 py-3">{loading?'Chargement…':'Actualiser'}</button><Link href="/admin/publicites" className="rounded-xl border px-4 py-3 font-semibold">Gérer les publicités →</Link></div></div>
+  <section className="rounded-2xl border bg-card p-5" aria-labelledby="internal-test-title">
+    <h2 id="internal-test-title" className="font-semibold">Test interne</h2>
+    <p className="mt-1 text-sm text-muted-foreground">Les accès au panier effectués avec ce mode actif sont exclus des statistiques. Utilisez cet onglet pour tester, puis désactivez le mode ici.</p>
+    <div className="mt-3 flex flex-wrap items-center gap-4">
+      <button type="button" role="switch" aria-checked={internalTest} onClick={toggleInternalTest} className="rounded-xl border px-4 py-2">
+        Mode test interne
+      </button>
+      <span role="status">{internalTest ? 'Activé' : 'Désactivé'}</span>
+      {internalTest && <Link href="/" className="font-semibold underline">Ouvrir la boutique pour tester →</Link>}
+    </div>
+    {testModeError && <p role="alert" className="mt-2 text-sm">Impossible de modifier le mode test. Vérifiez que le navigateur autorise le stockage de session.</p>}
+  </section>
   {error&&<p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">{error}</p>}
   {data&&!error&&<><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{Object.entries(labels).map(([kind,label])=><div key={kind} className="rounded-2xl border bg-card p-5"><p className="text-sm text-muted-foreground">{label}</p><p className="mt-3 text-3xl font-bold">{(data.totals.find(r=>r.kind===kind)?.total||0).toLocaleString('fr-FR')}</p></div>)}
     {data.orderCount !== undefined && (

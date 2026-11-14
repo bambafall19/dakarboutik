@@ -15,6 +15,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api-client";
+import { getWhatsAppNumber } from "@/lib/order-channels";
+import { Icons } from "./icons";
 import {
   DELIVERY_ZONES,
   getZonesByRegion,
@@ -89,6 +91,13 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   const { state, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
   const { settings } = useSiteSettings();
+  const [whatsAppFirst, setWhatsAppFirst] = React.useState(false);
+  const [savedDraft, setSavedDraft] = React.useState<{ id: string; url: string }>();
+  const saving = React.useRef(false);
+  const whatsAppNumber = getWhatsAppNumber(settings);
+  React.useEffect(() => {
+    setWhatsAppFirst(new URLSearchParams(window.location.search).get("channel") === "whatsapp");
+  }, []);
   const paymentMethodsImage = findImage('payment-methods');
 
   const form = useForm<FormValues>({
@@ -129,7 +138,11 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     }
   }, [selectedZone, form]);
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues, event?: React.BaseSyntheticEvent) {
+    if (saving.current || savedDraft) return;
+    const viaWhatsApp = (event?.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "whatsapp";
+    if (viaWhatsApp && !whatsAppNumber) return;
+    saving.current = true;
     const testOrder = new URLSearchParams(window.location.search).get('test') === '1';
     const shippingCost = getShippingQuote(settings, DELIVERY_ZONES.find(z => z.id === values.zoneId)?.region ?? "dakar", totalPrice).shippingCost;
     const grandTotal = totalPrice + shippingCost;
@@ -145,8 +158,9 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         selectedVariants: item.selectedVariants || [],
       }));
 
-      const saved = await api.post<{ id: string; confirmationEmail?: string }>('/api/orders', {
+      const saved = await api.post<{ id: string; confirmationEmail?: string; whatsappUrl?: string }>('/api/orders', {
         testOrder,
+        channel: viaWhatsApp ? "whatsapp" : undefined,
         customerInfo: {
           name: values.name,
           email: values.email,
@@ -167,6 +181,11 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       });
 
       const orderId = saved.id;
+      if (viaWhatsApp && saved.whatsappUrl) {
+        setSavedDraft({ id: orderId, url: saved.whatsappUrl });
+        window.location.assign(saved.whatsappUrl);
+        return;
+      }
       if (testOrder) {
         toast({
           title: 'Commande de test enregistrée',
@@ -194,7 +213,22 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         title: "Erreur de commande",
         description: err.message || "Impossible de passer la commande. Veuillez réessayer.",
       });
+    } finally {
+      saving.current = false;
     }
+  }
+
+  if (savedDraft) {
+    return (
+      <Card className="space-y-4 p-5">
+        <p>Commande à confirmer. Référence <strong className="break-all">{savedDraft.id}</strong></p>
+        <Button asChild><a href={savedDraft.url}>Ouvrir le brouillon WhatsApp</a></Button>
+        <Button variant="outline" onClick={() => {
+          clearCart();
+          router.push("/products");
+        }}>Retour à la boutique</Button>
+      </Card>
+    );
   }
 
   return (
@@ -417,6 +451,16 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         {/* ── Submit ──────────────────────────────────────────────────────── */}
         <div className="space-y-4">
           <h2 className="font-headline text-xl font-bold">Finalisation</h2>
+          {whatsAppNumber && (
+            <>
+              <p className="text-sm text-muted-foreground">La commande est enregistrée avant l’ouverture du brouillon WhatsApp. Envoyez le message dans WhatsApp pour nous contacter.</p>
+              <Button type="submit" value="whatsapp" size="lg" variant={whatsAppFirst ? "default" : "outline"}
+                disabled={form.formState.isSubmitting} className="w-full rounded-full">
+                <Icons.whatsapp className="mr-2 h-5 w-5" />
+                Enregistrer et ouvrir WhatsApp
+              </Button>
+            </>
+          )}
           <Button
             type="submit"
             size="lg"

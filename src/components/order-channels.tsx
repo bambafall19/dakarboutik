@@ -14,7 +14,7 @@ import {
 } from '@/lib/order-channels';
 import type { DeliveryMethod } from '@/lib/shipping';
 import { useToast } from '@/hooks/use-toast';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { recordEngagement } from '@/lib/engagement-client';
 
 type OrderChannelsProps = {
@@ -27,6 +27,9 @@ type OrderChannelsProps = {
   whatsappLabel?: string;
   phoneLabel?: string;
   showPhone?: boolean;
+  showWhatsApp?: boolean;
+  onWhatsAppCheckout?: () => void;
+  disableWhatsApp?: boolean;
   layout?: 'row' | 'column';
 };
 
@@ -40,11 +43,15 @@ export function OrderChannels({
   whatsappLabel = 'Commander sur WhatsApp',
   phoneLabel = 'Appeler pour commander',
   showPhone = true,
+  showWhatsApp = true,
+  onWhatsAppCheckout,
+  disableWhatsApp = false,
   layout = 'row',
 }: OrderChannelsProps) {
   const { settings } = useSiteSettings();
   const { toast } = useToast();
   const pathname = usePathname();
+  const router = useRouter();
 
   const whatsappUrl = useMemo(() => {
     const number = getWhatsAppNumber(settings);
@@ -71,17 +78,23 @@ export function OrderChannels({
     if (!/^\/(admin|commercant|login|register|signup|suivi|checkout|api|auth|order-confirmation)(\/|$)/.test(pathname)) {
       recordEngagement('whatsapp_click', pathname === '/' ? 'home' : pathname.startsWith('/products') ? 'catalog' : pathname.startsWith('/boutiques') ? 'shops' : 'other');
     }
+    if (onWhatsAppCheckout) {
+      onWhatsAppCheckout();
+      router.push('/checkout?channel=whatsapp');
+      return;
+    }
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <div className={className}>
       <div className={layout === 'column' ? 'flex flex-col gap-3' : 'flex flex-col gap-3 sm:flex-row'}>
-        {whatsappUrl && (
+        {showWhatsApp && whatsappUrl && (
           <Button
             type="button"
             size={size}
             onClick={handleWhatsApp}
+            disabled={disableWhatsApp}
             className={`h-12 flex-1 rounded-full bg-[#25D366] text-white hover:bg-[#1eb955] ${buttonClassName ?? ''}`}
           >
             <Icons.whatsapp className="mr-2 h-5 w-5" />

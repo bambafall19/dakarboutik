@@ -6,16 +6,19 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { SheetClose, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from './icons';
 import { Price } from './price';
 import { OrderChannels } from './order-channels';
 import { useMemo } from 'react';
+import { useSiteSettings } from '@/hooks/use-site-data';
+import { getWhatsAppNumber } from '@/lib/order-channels';
 
 export function CartDrawer() {
   const { state, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
 
+  const { settings } = useSiteSettings();
   const channelItems = useMemo(
     () =>
       state.items.map((item) => ({
@@ -102,10 +105,17 @@ export function CartDrawer() {
                 <Link href="/checkout">Passer la commande</Link>
               </Button>
               <Link href="/livraison" className="text-sm font-semibold underline underline-offset-4">Livraison &amp; délais</Link>
+              {getWhatsAppNumber(settings) && <SheetClose asChild>
+                <Button asChild size="sm" className="w-full rounded-full">
+                  <Link href="/checkout?channel=whatsapp">
+                    <Icons.whatsapp className="mr-2 h-5 w-5" />Commander via WhatsApp
+                  </Link>
+                </Button>
+              </SheetClose>}
               <OrderChannels
                 items={channelItems}
                 size="sm"
-                whatsappLabel="Commander via WhatsApp"
+                showWhatsApp={false}
                 phoneLabel="Commander par téléphone"
                 buttonClassName="h-10 text-sm"
               />

@@ -142,6 +142,7 @@ export async function POST(req: NextRequest) {
   }
   const whatsappUrl = whatsAppNumber ? buildWhatsAppUrl(whatsAppNumber, [
     `*Référence :* ${orderId}`,
+    `Suivre la commande : https://dakarboutik.net/suivi/${encodeURIComponent(orderId)}`,
     buildOrderMessage({
       items: totals.sanitizedItems.map(item => ({
         title: item.product.title,

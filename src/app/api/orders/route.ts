@@ -172,33 +172,44 @@ export async function PUT(req: NextRequest) {
     const row = await queryOne(
       `with locked_order as materialized (
          select * from orders where id = $1 for update
-       ), charge as (
-         select items from locked_order
+       ), movement as (
+         select items, -1 as direction from locked_order
          where $2 = 'paid' and status <> 'paid' and archived_at is null
            and order_id not like 'DKB-TEST-%'
            -- Cette vente a déjà été déduite manuellement.
            and id <> 'DKB-ed0b3331-f078-4f65-a05c-92164ad0a6f0'
            and not (items @> '[{"stockDeducted":true}]'::jsonb)
+         union all
+         select items, 1 as direction from locked_order
+         where $2 = 'cancelled' and status = 'paid'
+           and items @> '[{"stockDeducted":true}]'::jsonb
+           -- Le stock de cette ancienne commande de test a été rétabli à la main.
+           and id <> 'DKB-ac973be7-868c-4de9-b949-2814ec099bb7'
        ), requested as (
-         select item->'product'->>'id' as id, sum((item->>'quantity')::integer) as quantity
-         from charge cross join lateral jsonb_array_elements(items) as lines(item)
-         group by 1
+         select item->'product'->>'id' as id, sum((item->>'quantity')::integer) as quantity, direction
+         from movement cross join lateral jsonb_array_elements(items) as lines(item)
+         group by 1, direction
        ), locked_products as materialized (
-         select p.id, p.stock, r.quantity from products p join requested r on r.id = p.id
+         select p.id, p.stock, r.quantity, r.direction from products p join requested r on r.id = p.id
          order by p.id for update of p
        ), allowed as (
-         select not exists (select 1 from charge) or (
+         select not exists (select 1 from movement) or (
            exists (select 1 from requested)
            and (select count(*) from locked_products) = (select count(*) from requested)
-           and not exists (select 1 from locked_products where quantity is null or quantity <= 0 or stock < quantity)
+           and not exists (select 1 from locked_products
+             where quantity is null or quantity <= 0 or (direction = -1 and stock < quantity))
          ) as ok
-       ), deducted as (
-         update products p set stock = p.stock - l.quantity::integer
-         from locked_products l, allowed a where p.id = l.id and a.ok returning p.id
+       ), moved as (
+         update products p set stock = p.stock + l.direction * l.quantity::integer
+         from locked_products l, allowed a where p.id = l.id and a.ok returning l.direction
        ), saved as (
          update orders o set status = $2,
-           items = case when exists (select 1 from deducted)
-             then jsonb_set(l.items, '{0,stockDeducted}', 'true'::jsonb) else l.items end
+           items = case
+             when exists (select 1 from moved where direction = -1)
+               then jsonb_set(l.items, '{0,stockDeducted}', 'true'::jsonb)
+             when exists (select 1 from moved where direction = 1)
+               then l.items #- '{0,stockDeducted}'
+             else l.items end
          from locked_order l, allowed a where o.id = l.id and a.ok returning o.*, l.status as previous_status
        ), tracked as (
          update public_orders p set status = s.status,

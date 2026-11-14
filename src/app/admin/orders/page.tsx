@@ -42,10 +42,12 @@ export default function OrdersPage() {
 }
 
 function OrdersView() {
-  const days = useSearchParams().get('statsDays');
+  const searchParams = useSearchParams();
+  const days = searchParams.get('statsDays');
   const statsDays = days === '7' || days === '30' || days === '90' ? Number(days) : null;
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<OrderFilter>('all');
+  const [selectedStatus, setStatusFilter] = useState<OrderFilter | null>(null);
+  const statusFilter = selectedStatus ?? (searchParams.get('status') === 'pending' ? 'pending' : 'all');
   const { toast } = useToast();
 
 

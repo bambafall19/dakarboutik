@@ -130,6 +130,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
   }, [selectedZone, form]);
 
   async function onSubmit(values: FormValues) {
+    const testOrder = new URLSearchParams(window.location.search).get('test') === '1';
     const shippingCost = getShippingQuote(settings, DELIVERY_ZONES.find(z => z.id === values.zoneId)?.region ?? "dakar", totalPrice).shippingCost;
     const grandTotal = totalPrice + shippingCost;
     const createdAt = new Date().toISOString();
@@ -144,7 +145,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         selectedVariants: item.selectedVariants || [],
       }));
 
-      const saved = await api.post<{ id: string }>('/api/orders', {
+      const saved = await api.post<{ id: string; confirmationEmail?: string }>('/api/orders', {
+        testOrder,
         customerInfo: {
           name: values.name,
           email: values.email,
@@ -165,6 +167,13 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       });
 
       const orderId = saved.id;
+      if (testOrder) {
+        toast({
+          title: 'Commande de test enregistrée',
+          description: `${orderId} — aucun paiement ni livraison. ${saved.confirmationEmail === 'accepted' ? 'E-mail accepté par le service d’envoi.' : 'E-mail non envoyé.'}`,
+        });
+        return;
+      }
       toast({
         title: "Commande passée !",
         description: "Vous serez redirigé vers la page de confirmation.",

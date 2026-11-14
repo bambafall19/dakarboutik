@@ -113,7 +113,7 @@ export function ListingCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Demander la disponibilité sur WhatsApp
+            Contacter le vendeur
           </a>
         )}
       </div>
@@ -140,7 +140,9 @@ function OfficialStore({ category, search, products }: { category: string; searc
         <h3 className="mt-3 line-clamp-2 font-semibold">{p.title}</h3>
         <p className="mt-2 font-bold text-emerald-800">{(p.salePrice && p.salePrice > 0 && p.salePrice < p.price ? p.salePrice : p.price).toLocaleString("fr-FR")} FCFA</p>
         <p className="mt-1 text-xs text-slate-600">{p.stock > 0 ? "En stock" : "Indisponible"}</p>
-        <span className="mt-3 block text-sm font-semibold">Voir le produit et commander →</span>
+        <span className="mt-3 inline-flex rounded-full bg-emerald-800 px-4 py-3 text-sm font-semibold text-white">
+          {p.stock > 0 ? "Acheter sur DakarBoutik" : "Voir le produit"}
+        </span>
       </Link>)}
     </div>}
   </section>;

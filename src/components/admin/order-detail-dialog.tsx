@@ -160,7 +160,7 @@ export function OrderDetailDialog({ order, open, onOpenChange, onUpdated }: Orde
             />
           </DialogTitle>
           <DialogDescription>
-            Détails de la commande passée le {new Date(order.createdAt).toLocaleString('fr-SN')}.
+            Détails de la commande passée le {new Date(order.createdAt).toLocaleString('fr-SN', { timeZone: 'Africa/Dakar' })}.
           </DialogDescription>
         </DialogHeader>
         

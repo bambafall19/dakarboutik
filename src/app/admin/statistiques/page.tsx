@@ -9,6 +9,10 @@ export default function StatistiquesPage(){
  const refresh=useCallback(async()=>{setLoading(true);setError('');try{const r=await fetch('/api/engagement/stats?days='+days);const body=await r.json();if(!r.ok)throw new Error(body.error);setData(body);}catch(e){setError(e instanceof Error?e.message:'Chargement impossible.');}finally{setLoading(false);}},[days]);
  useEffect(()=>{void refresh();},[refresh]);
  const chart=Array.from({length:Number(days)},(_,i)=>{const d=new Date();d.setUTCDate(d.getUTCDate()-Number(days)+1+i);const day=d.toISOString().slice(0,10);const rows=data?.daily.filter(r=>r.day===day)||[];return{day:day.slice(5),views:rows.find(r=>r.kind==='ad_view')?.total||0,clicks:rows.find(r=>r.kind==='ad_click')?.total||0};});
+ const checkoutAccesses = data?.totals.find(row => row.kind === 'checkout_open')?.total ?? 0;
+ const conversionRate = checkoutAccesses > 0 && data?.orderCount !== undefined
+   ? (data.orderCount / checkoutAccesses).toLocaleString('fr-FR', { style: 'percent', maximumFractionDigits: 2 })
+   : null;
  return <div className="mx-auto max-w-6xl space-y-6 py-6">
   <h1 className="text-3xl font-bold">Visites et publicités</h1>
   <section className="rounded-2xl border bg-gradient-to-r from-emerald-50 to-amber-50 p-6 text-slate-900"><h2 className="text-xl font-bold">Qui visite votre site ?</h2><p className="my-3 max-w-3xl">Retrouvez les visiteurs, pages vues, pays, provenances et appareils dans Vercel Analytics. Les chiffres commencent après l’activation ; les anciennes visites ne peuvent pas être reconstituées.</p><a className="inline-block rounded-xl bg-emerald-800 px-5 py-3 font-semibold text-white" href="https://vercel.com/dakarboutikks-projects/dakarboutik/analytics" target="_blank" rel="noopener noreferrer">Ouvrir les visites dans Vercel ↗</a><p className="mt-3 text-xs">Connexion au compte Vercel requise. Historique inclus : 30 jours.</p></section>
@@ -19,6 +23,13 @@ export default function StatistiquesPage(){
       <div className="rounded-2xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">Commandes passées hors tests</p>
         <p className="mt-3 text-3xl font-bold">{data.orderCount.toLocaleString('fr-FR')}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Taux de conversion du panier{' '}
+          <strong className="text-foreground">{conversionRate ?? '—'}</strong>
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {conversionRate === null ? 'Aucun accès au panier sur cette période.' : 'Commandes hors tests divisées par les accès au panier de la période.'}
+        </p>
         <Link href={`/admin/orders?statsDays=${days}`} className="mt-3 inline-block font-semibold underline">Voir les commandes →</Link>
       </div>
     )}

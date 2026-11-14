@@ -26,7 +26,7 @@ const footerLinks = {
   ],
   'Commandes & livraison': [
     { name: 'Suivi de commande', href: '/suivi' },
-    { name: 'Livraison & délais', href: '/sav' },
+    { name: 'Livraison & délais', href: '/livraison' },
     { name: 'Modes de paiement', href: '/faq' },
   ],
   Support: [

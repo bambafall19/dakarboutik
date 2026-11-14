@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
   const input = await readPublicForm(req, 'order', 15, 262144);
   if (input.response) return input.response;
   const parsed = z.object({
+    testOrder: z.boolean().optional(),
     orderId: z.string().regex(/^[A-Za-z0-9_-]{4,48}$/).optional(),
     customerInfo: z.object({ name: z.string().trim().min(1).max(120),
       phone: z.string().trim().min(7).max(30), email: z.union([z.string().email().max(254), z.literal('')]).default(''),
@@ -51,7 +52,13 @@ export async function POST(req: NextRequest) {
   }).safeParse(input.body);
   if (!parsed.success) return NextResponse.json({ error: 'Vérifiez les coordonnées et les quantités de votre commande.' }, { status: 400 });
   const b = parsed.data;
-  const orderId = `DKB-${randomUUID()}`;
+  const isTest = b.testOrder === true;
+  const testEmail = process.env.ORDER_TEST_EMAIL?.trim().toLowerCase();
+  if (isTest && (!(await getSession())?.isAdmin || !testEmail || b.customerInfo.email.toLowerCase() !== testEmail || b.paymentMethod !== 'cod')) {
+    return NextResponse.json({ error: 'Commande de test non autorisée.' }, { status: 403 });
+  }
+  const status = isTest ? 'cancelled' : 'pending';
+  const orderId = `${isTest ? 'DKB-TEST' : 'DKB'}-${randomUUID()}`;
   const createdAt = new Date().toISOString();
   const deliveryMethod: DeliveryMethod = b.deliveryMethod === 'hors-dakar' ? 'hors-dakar' : 'dakar';
   const items = b.items as CartItem[];
@@ -79,8 +86,8 @@ export async function POST(req: NextRequest) {
        insert into public_orders (id,order_id,status,created_at,status_history,public_notes)
        select id,order_id,status,created_at,jsonb_build_array(jsonb_build_object('status',status,'date',created_at)),'[]'::jsonb from saved`,
       [orderId, orderId, JSON.stringify(b.customerInfo ?? {}), JSON.stringify(totals.sanitizedItems), totals.totalPrice,
-       totals.shippingCost, totals.grandTotal, 'pending', createdAt, deliveryMethod,
-       b.paymentMethod ?? null, null, JSON.stringify([])]
+       isTest ? 0 : totals.shippingCost, isTest ? 0 : totals.grandTotal, status, createdAt, deliveryMethod,
+       b.paymentMethod ?? null, isTest ? 'TEST INTERNE — aucun paiement ni livraison.' : null, JSON.stringify([])]
     );
   } catch (err: any) {
     if (err?.code === '23505') {
@@ -92,7 +99,36 @@ export async function POST(req: NextRequest) {
     throw err;
   }
 
-  return NextResponse.json({ id: orderId });
+  const key = process.env.RESEND_API_KEY;
+  const from = process.env.ORDER_EMAIL_FROM;
+  const email = b.customerInfo.email;
+  let confirmationEmail = 'skipped';
+  if (email && key && from) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Idempotency-Key': `order-confirmation/${orderId}`,
+        },
+        signal: AbortSignal.timeout(5000),
+        body: JSON.stringify({
+          from,
+          to: [email],
+          subject: `${isTest ? '[TEST] ' : ''}DakarBoutik — Commande ${orderId}`,
+          text: isTest
+            ? `Commande de test ${orderId} enregistrée. Aucun paiement ni livraison.`
+            : `DakarBoutik a bien reçu votre commande ${orderId}. Montant total : ${totals.grandTotal.toLocaleString('fr-FR')} FCFA.\nSuivez votre commande sur https://dakarboutik.net/suivi avec cette référence.`,
+        }),
+      });
+      confirmationEmail = response.ok ? 'accepted' : 'failed';
+    } catch {
+      confirmationEmail = 'failed';
+    }
+    if (confirmationEmail === 'failed') console.error('Order confirmation email failed', orderId);
+  }
+  return NextResponse.json({ id: orderId, confirmationEmail });
 }
 
 export async function PUT(req: NextRequest) {

@@ -120,7 +120,7 @@ function OrdersView() {
       return [
         order.orderId,
         statusLabels[order.status],
-        new Date(order.createdAt).toLocaleDateString('fr-SN'),
+        new Date(order.createdAt).toLocaleDateString('fr-SN', { timeZone: 'Africa/Dakar' }),
         order.customerInfo.name,
         order.customerInfo.email,
         order.customerInfo.phone,

@@ -13,6 +13,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { OrderChannels } from '@/components/order-channels';
 
+const trackingTimeZone = 'Africa/Dakar';
+
 const timelineIcons: Record<string, React.ElementType> = {
   pending: Package,
   paid: CheckCircle,
@@ -93,12 +95,12 @@ function OrderTracker() {
       <CardHeader>
         <CardTitle>Suivi de la commande {order.orderId}</CardTitle>
         <CardDescription>
-          Commande passée le {new Date(order.createdAt).toLocaleDateString('fr-SN')}.
+          Commande passée le {new Date(order.createdAt).toLocaleDateString('fr-SN', { timeZone: trackingTimeZone })} (heure de Dakar).
           {timelineEvents[0] ? (
             <>
               {' '}
               Dernière mise à jour:{' '}
-              {new Date(timelineEvents[0].date).toLocaleString('fr-SN')}
+              {new Date(timelineEvents[0].date).toLocaleString('fr-SN', { timeZone: trackingTimeZone })}
             </>
           ) : null}
         </CardDescription>
@@ -126,7 +128,7 @@ function OrderTracker() {
                             <h3 className={cn("font-semibold", isCurrent && "text-primary")}>
                                 {event.type === 'status' ? event.content : 'Message de la boutique'}
                             </h3>
-                            <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleString('fr-SN', { dateStyle: 'long', timeStyle: 'short' })}</p>
+                            <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleString('fr-SN', { timeZone: trackingTimeZone, dateStyle: 'long', timeStyle: 'short' })}</p>
                             {event.type === 'note' && (
                                 <p className="mt-2 text-sm text-foreground bg-accent/50 p-3 rounded-md">{event.content}</p>
                             )}

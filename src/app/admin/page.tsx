@@ -144,6 +144,19 @@ export default function AdminDashboardPage() {
               <h1 className="font-headline text-2xl font-extrabold">Tableau de bord</h1>
               <p className="text-sm text-muted-foreground">Vue d&apos;ensemble de votre activité.</p>
             </div>
+            <Card className="rounded-2xl border-border/70">
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Commandes à traiter</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="font-headline text-2xl font-extrabold">
+                        {orders?.filter(order => order.status === 'pending' && !order.archivedAt).length ?? 0}
+                    </p>
+                    <Link href="/admin/orders?status=pending" className="text-sm font-semibold text-primary underline underline-offset-4">
+                        Voir les commandes à confirmer
+                    </Link>
+                </CardContent>
+            </Card>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card className="overflow-hidden rounded-2xl border-border/70">
                     <div className="h-1.5 w-full bg-gradient-to-r from-primary to-emerald-400" />

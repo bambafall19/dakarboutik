@@ -5,6 +5,7 @@ import { CheckoutForm } from "@/components/checkout-form";
 import { OrderSummary } from "@/components/order-summary";
 import { OrderChannels } from "@/components/order-channels";
 import { useCart } from "@/hooks/use-cart";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
                   className="mt-4"
                 />
               </div>
+              <p className="mb-4"><Link href="/livraison" className="text-sm font-semibold underline underline-offset-4">Livraison &amp; délais</Link></p>
               <CheckoutForm onDeliveryMethodChange={setDeliveryMethod} />
             </div>
             <div className="mt-0 lg:mt-16">

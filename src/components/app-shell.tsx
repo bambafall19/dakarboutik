@@ -14,6 +14,7 @@ import { CookieConsentBanner } from './cookie-consent-banner';
 import { useSnow } from '@/hooks/use-snow';
 import Snowfall from './snowfall';
 import { MaintenanceBanner } from './maintenance-banner';
+import { internalTestEnabled } from '@/lib/engagement-client';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -30,6 +31,23 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
 }
 
 
+function InternalTestBanner({ pathname }: { pathname: string }) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setActive(internalTestEnabled());
+    sync();
+    window.addEventListener('pageshow', sync);
+    return () => window.removeEventListener('pageshow', sync);
+  }, [pathname]);
+
+  return active ? (
+    <p role="status" className="border-b border-amber-300 bg-amber-100 px-4 py-2 text-center text-sm font-semibold text-amber-950">
+      Test interne actif
+    </p>
+  ) : null;
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { settings, loading: settingsLoading } = useSiteSettings();
   const { categories, loading: categoriesLoading } = useCategories();
@@ -44,7 +62,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isAdmin || isLogin) {
     return <>{children}</>;
   }
-  if (pathname.startsWith('/boutiques') || pathname.startsWith('/commercant')) {
+  if (pathname.startsWith('/boutiques')) {
+    return <><InternalTestBanner pathname={pathname} />{children}<WhatsAppButton /></>;
+  }
+  if (pathname.startsWith('/commercant')) {
     return <>{children}<WhatsAppButton /></>;
   }
   
@@ -56,6 +77,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <Suspense>
       <div className="min-h-screen w-full">
         {isSnowing && <Snowfall />}
+        <InternalTestBanner pathname={pathname} />
         <MaintenanceBanner settings={settings} />
         <a
           href="#main-content"

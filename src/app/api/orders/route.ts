@@ -165,21 +165,62 @@ export async function PUT(req: NextRequest) {
   const b = await req.json();
   if (!b.id) return NextResponse.json({ error: 'id requis' }, { status: 400 });
 
+  if (b.status !== undefined) {
+    const status = z.enum(['pending', 'paid', 'shipped', 'delivered', 'cancelled']).safeParse(b.status);
+    if (!status.success) return NextResponse.json({ error: 'Statut invalide.' }, { status: 400 });
+
+    const row = await queryOne(
+      `with locked_order as materialized (
+         select * from orders where id = $1 for update
+       ), charge as (
+         select items from locked_order
+         where $2 = 'paid' and status <> 'paid' and archived_at is null
+           and order_id not like 'DKB-TEST-%'
+           -- Cette vente a déjà été déduite manuellement.
+           and id <> 'DKB-ed0b3331-f078-4f65-a05c-92164ad0a6f0'
+           and not (items @> '[{"stockDeducted":true}]'::jsonb)
+       ), requested as (
+         select item->'product'->>'id' as id, sum((item->>'quantity')::integer) as quantity
+         from charge cross join lateral jsonb_array_elements(items) as lines(item)
+         group by 1
+       ), locked_products as materialized (
+         select p.id, p.stock, r.quantity from products p join requested r on r.id = p.id
+         order by p.id for update of p
+       ), allowed as (
+         select not exists (select 1 from charge) or (
+           exists (select 1 from requested)
+           and (select count(*) from locked_products) = (select count(*) from requested)
+           and not exists (select 1 from locked_products where quantity is null or quantity <= 0 or stock < quantity)
+         ) as ok
+       ), deducted as (
+         update products p set stock = p.stock - l.quantity::integer
+         from locked_products l, allowed a where p.id = l.id and a.ok returning p.id
+       ), saved as (
+         update orders o set status = $2,
+           items = case when exists (select 1 from deducted)
+             then jsonb_set(l.items, '{0,stockDeducted}', 'true'::jsonb) else l.items end
+         from locked_order l, allowed a where o.id = l.id and a.ok returning o.*, l.status as previous_status
+       ), tracked as (
+         update public_orders p set status = s.status,
+           status_history = p.status_history || jsonb_build_array(jsonb_build_object('status', s.status, 'date', $3::text))
+         from saved s where p.id = s.id and s.status <> s.previous_status
+       )
+       select (select row_to_json(saved) from saved) as saved,
+              exists (select 1 from locked_order) as found`,
+      [b.id, status.data, new Date().toISOString()]
+    );
+    if (!row?.found) return NextResponse.json({ error: 'Commande introuvable.' }, { status: 404 });
+    if (!row.saved) return NextResponse.json({ error: 'Stock insuffisant ou produit introuvable. Le statut de la commande est inchangé.' }, { status: 409 });
+    return NextResponse.json(toOrder(row.saved));
+  }
+
   const fields: string[] = [];
   const values: any[] = [];
   let i = 1;
-  if (b.status !== undefined) { fields.push(`status=$${i++}`); values.push(b.status); }
   if (b.adminNotes !== undefined) { fields.push(`admin_notes=$${i++}`); values.push(b.adminNotes); }
   if (b.publicNotes !== undefined) { fields.push(`public_notes=$${i++}`); values.push(JSON.stringify(b.publicNotes)); }
   values.push(b.id);
-  await query(`update orders set ${fields.join(', ')} where id=$${i}`, values);
-
-  if (b.status !== undefined) {
-    await queryOne(
-      `update public_orders set status=$2, status_history=status_history || $3::jsonb where id=$1 returning id`,
-      [b.id, b.status, JSON.stringify([{ status: b.status, date: new Date().toISOString() }])]
-    );
-  }
+  if (fields.length) await query(`update orders set ${fields.join(', ')} where id=$${i}`, values);
   if (b.publicNote) {
     await queryOne(
       `update public_orders set public_notes=public_notes || $2::jsonb where id=$1 returning id`,

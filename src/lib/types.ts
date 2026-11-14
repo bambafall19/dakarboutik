@@ -148,6 +148,7 @@ export type Order = {
     createdAt: string; // ISO date string
     deliveryMethod: 'dakar' | 'hors-dakar';
     paymentMethod: 'cod' | 'mobile_money';
+    archivedAt?: string;
     adminNotes?: string;
     publicNotes?: PublicNote[];
 };

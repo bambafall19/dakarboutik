@@ -2,6 +2,8 @@
 'use client';
 
 import * as React from 'react';
+import { api } from '@/lib/api-client';
+import { useToast } from '@/hooks/use-toast';
 import { MoreHorizontal } from 'lucide-react';
 import {
   Table,
@@ -26,6 +28,22 @@ import { StatusSelector } from './status-selector';
 
 export function OrderList({ orders, onRefresh }: { orders: Order[]; onRefresh?: () => void }) {
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+
+  const { toast } = useToast();
+  const [updatingOrder, setUpdatingOrder] = React.useState<string | null>(null);
+
+  async function changeArchive(order: Order) {
+    setUpdatingOrder(order.id);
+    try {
+      await api.patch('/api/orders', { id: order.id, archived: !order.archivedAt });
+      await onRefresh?.();
+      toast({ title: order.archivedAt ? 'Commande restaurée' : 'Commande archivée' });
+    } catch {
+      toast({ variant: 'destructive', title: 'Impossible de modifier l’archivage' });
+    } finally {
+      setUpdatingOrder(null);
+    }
+  }
 
   if (orders.length === 0) {
     return (
@@ -81,6 +99,9 @@ export function OrderList({ orders, onRefresh }: { orders: Order[]; onRefresh?: 
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => setSelectedOrder(order)}>
                           Voir les détails
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled={updatingOrder !== null} onSelect={() => void changeArchive(order)}>
+                          {order.archivedAt ? 'Restaurer' : 'Archiver'}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

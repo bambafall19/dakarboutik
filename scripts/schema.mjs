@@ -198,6 +198,7 @@ const statements = [
   `create index if not exists loyalty_user_idx on loyalty_points (user_id)`,
 
   // Extend orders with zone_id for granular delivery
+  `alter table orders add column if not exists archived_at timestamptz`,
   `alter table orders add column if not exists zone_id text`,
   `alter table orders add column if not exists vendor_id text`,
   `alter table public_orders add column if not exists zone_id text`,

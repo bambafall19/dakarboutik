@@ -23,15 +23,20 @@ function toOrder(r: any): Order {
     createdAt: r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at),
     deliveryMethod: r.delivery_method,
     paymentMethod: r.payment_method,
+    archivedAt: r.archived_at ? new Date(r.archived_at).toISOString() : undefined,
     adminNotes: r.admin_notes ?? undefined,
     publicNotes: r.public_notes ?? [],
   };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await getSession();
   if (!session?.isAdmin) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 });
-  const rows = await query('select * from orders order by created_at desc');
+  const includeArchived = req.nextUrl.searchParams.get('includeArchived') === 'true';
+  const rows = await query(
+    'select * from orders where ($1::boolean or archived_at is null) order by created_at desc',
+    [includeArchived]
+  );
   return NextResponse.json(rows.map(toOrder));
 }
 
@@ -164,6 +169,23 @@ export async function PUT(req: NextRequest) {
   }
   const row = await queryOne('select * from orders where id=$1', [b.id]);
   return NextResponse.json(row ? toOrder(row) : null);
+}
+
+export async function PATCH(req: NextRequest) {
+  const session = await getSession();
+  if (!session?.isAdmin) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 });
+  const parsed = z.object({ id: z.string().min(1).max(200), archived: z.boolean() })
+    .safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'Demande invalide.' }, { status: 400 });
+  const { id, archived } = parsed.data;
+  const row = await queryOne(
+    `update orders
+     set archived_at = case when $2::boolean then coalesce(archived_at, now()) else null end
+     where id = $1 returning *`,
+    [id, archived]
+  );
+  if (!row) return NextResponse.json({ error: 'Commande introuvable.' }, { status: 404 });
+  return NextResponse.json(toOrder(row));
 }
 
 export async function DELETE(req: NextRequest) {

@@ -1,5 +1,5 @@
-import { BoutiqueManager } from '@/components/admin/boutique-manager';
+import { MarketplaceDashboard } from "@/components/marketplace/dashboard";
 
 export default function AdminBoutiquesPage() {
-  return <BoutiqueManager />;
+  return <MarketplaceDashboard admin />;
 }

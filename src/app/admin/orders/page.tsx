@@ -5,7 +5,8 @@ import { OrderList } from '@/components/admin/order-list';
 import { AdminError } from '@/components/admin/admin-error';
 import { Loader2, Search, Download } from 'lucide-react';
 import type { Order, OrderStatus } from '@/lib/types';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,6 +38,12 @@ import { exportCsv } from '@/lib/export-csv';
 type OrderFilter = OrderStatus | 'all' | 'archived';
 
 export default function OrdersPage() {
+  return <Suspense fallback={<p role="status">Chargement des commandes…</p>}><OrdersView /></Suspense>;
+}
+
+function OrdersView() {
+  const days = useSearchParams().get('statsDays');
+  const statsDays = days === '7' || days === '30' || days === '90' ? Number(days) : null;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderFilter>('all');
   const { toast } = useToast();
@@ -47,7 +54,20 @@ export default function OrdersPage() {
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
 
-    let filtered = orders.filter(order => Boolean(order.archivedAt) === (statusFilter === 'archived'));
+    let filtered = orders;
+    if (statsDays !== null) {
+      const start = new Date();
+      // Dakar is UTC year-round. Use calendar days, as in the statistics API.
+      start.setUTCHours(0, 0, 0, 0);
+      start.setUTCDate(start.getUTCDate() - statsDays + 1);
+      filtered = filtered.filter(order =>
+        !order.orderId.startsWith('DKB-TEST-') && Date.parse(order.createdAt) >= start.getTime()
+      );
+    }
+
+    if (statusFilter === 'archived' || statsDays === null || statusFilter !== 'all') {
+      filtered = filtered.filter(order => Boolean(order.archivedAt) === (statusFilter === 'archived'));
+    }
 
     if (statusFilter !== 'all' && statusFilter !== 'archived') {
       filtered = filtered.filter(order => order.status === statusFilter);
@@ -64,7 +84,7 @@ export default function OrdersPage() {
     }
 
     return filtered;
-  }, [orders, statusFilter, searchTerm]);
+  }, [orders, statusFilter, searchTerm, statsDays]);
 
   const allStatuses: OrderFilter[] = ['all', 'pending', 'paid', 'shipped', 'delivered', 'cancelled', 'archived'];
   
@@ -174,7 +194,8 @@ export default function OrdersPage() {
                     <CardHeader className="px-6">
                     <CardTitle className="font-headline font-bold">Commandes</CardTitle>
                     <CardDescription>
-                        {statusFilter === 'all' ? 'Toutes les commandes non archivées' : statusFilter === 'archived' ? 'Commandes archivées' : `Commandes avec le statut : ${statusLabels[statusFilter]}`}
+                        {statsDays !== null && <>Commandes hors tests · {statsDays} jours<br /></>}
+                        {statusFilter === 'all' ? (statsDays === null ? 'Toutes les commandes non archivées' : 'Tous les statuts, archives comprises') : statusFilter === 'archived' ? 'Commandes archivées' : `Commandes avec le statut : ${statusLabels[statusFilter]}`}
                     </CardDescription>
                     </CardHeader>
                     <CardContent>

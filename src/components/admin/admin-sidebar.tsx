@@ -84,9 +84,9 @@ export function AdminSidebarContent({ onNavigate }: { onNavigate?: () => void })
   return (
     <div className="flex h-full max-h-screen flex-col bg-nav text-nav-foreground">
       <div className="flex h-16 items-center gap-2.5 border-b border-white/10 px-6">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-600 font-headline text-base font-extrabold text-primary-foreground ring-2 ring-accent/60">
-          D
-        </span>
+        <Link href="/admin" onClick={onNavigate} aria-label="DakarBoutik — tableau de bord" className="shrink-0 rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
+          <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={44} height={44} className="h-11 w-11 object-contain" />
+        </Link>
         <div className="leading-tight">
           <span className="block font-headline text-sm font-extrabold">
             Dakar<span className="text-accent">Boutik</span>

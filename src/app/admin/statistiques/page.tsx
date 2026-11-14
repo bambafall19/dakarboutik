@@ -19,7 +19,7 @@ export default function StatistiquesPage(){
       <div className="rounded-2xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">Commandes passées hors tests</p>
         <p className="mt-3 text-3xl font-bold">{data.orderCount.toLocaleString('fr-FR')}</p>
-        <Link href="/admin/orders" className="mt-3 inline-block font-semibold underline">Voir les commandes →</Link>
+        <Link href={`/admin/orders?statsDays=${days}`} className="mt-3 inline-block font-semibold underline">Voir les commandes →</Link>
       </div>
     )}
   </div>

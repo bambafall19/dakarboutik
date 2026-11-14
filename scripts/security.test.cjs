@@ -9,7 +9,7 @@ function load(file, deps) {
   return m.exports;
 }
 const totals = load('src/lib/order-totals.ts', {
-  './db': { query: async () => [{ id: 'p', price: 100, stock: 5, status: 'active' }] },
+  './db': { query: async () => [{ id: 'p', title: 'Produit de test', price: 100, stock: 5, status: 'active' }] },
   './site-settings-server': { getSiteSettings: async () => ({}) },
   './shipping': { getShippingQuote: () => ({ shippingCost: 0, isFreeShipping: true }) },
 });
@@ -46,20 +46,37 @@ const orderRoute = load('src/app/api/orders/route.ts', {
   '@/lib/auth': { getSession: async () => null },
   '@/lib/public-form-guard': { readPublicForm: async req => ({body: await req.json()}) },
   '@/lib/order-totals': totals,
+  '@/lib/site-settings-server': { getSiteSettings: async () => ({ whatsappNumber: '+221771203536' }) },
+  '@/lib/order-channels': load('src/lib/order-channels.ts', { './shipping': {} }),
 });
 test('Order route rejects bad input and atomically saves server prices and an unpredictable ID', async () => {
   const req = body => new NextRequest('https://shop.test/api/orders',{method:'POST',headers:{origin:'https://shop.test'},body:JSON.stringify(body)});
   assert.equal((await orderRoute.POST(req({}))).status,400);
-  const result = await orderRoute.POST(req({orderId:'chosen-id',customerInfo:{name:'Test',phone:'771234567',email:'',address:'Dakar'},deliveryMethod:'dakar',paymentMethod:'cod',items:[{product:{id:'p',price:1},quantity:2}]}));
+  const result = await orderRoute.POST(req({channel:'whatsapp',orderId:'chosen-id',customerInfo:{name:'Test',phone:'771234567',email:'',address:'Dakar'},deliveryMethod:'dakar',paymentMethod:'cod',items:[{product:{id:'p',price:1},quantity:2}]}));
   const body = await result.json();
   assert.match(body.id,/^DKB-[0-9a-f-]{36}$/);
   assert.notEqual(body.id,'chosen-id');
+  const draft = new URL(body.whatsappUrl);
+  assert.equal(draft.origin, 'https://wa.me');
+  assert.equal(draft.pathname, '/221771203536');
+  const message = draft.searchParams.get('text');
+  assert.ok(message.includes(body.id));
+  assert.match(message, /Produit de test/);
+  assert.match(message, /Prix unitaire :\* 100 FCFA/);
+  assert.match(message, /Quantité :\* 2/);
+  assert.match(message, /Total :\* 200 FCFA/);
+  assert.ok(!message.includes('�'));
   assert.equal(postCalls.length,1);
   assert.equal(postCalls[0].params[4],200);
+  assert.equal(postCalls[0].params[7],'pending');
   const { PGlite } = require('@electric-sql/pglite');
   const db = new PGlite();
   await db.exec(`CREATE TABLE orders(id text primary key,order_id text,customer_info jsonb,items jsonb,total_price numeric,shipping_cost numeric,grand_total numeric,status text,created_at timestamptz,delivery_method text,payment_method text,admin_notes text,public_notes jsonb); CREATE TABLE public_orders(id text primary key,order_id text,status text,created_at timestamptz,status_history jsonb,public_notes jsonb);`);
   await db.query(postCalls[0].sql,postCalls[0].params);
+  const adminOrders = await db.query('SELECT order_id, status, grand_total FROM orders');
+  assert.equal(adminOrders.rows[0].order_id, body.id);
+  assert.equal(adminOrders.rows[0].status, 'pending');
+  assert.equal(Number(adminOrders.rows[0].grand_total), 200);
   const rows = await db.query('SELECT status_history FROM public_orders');
   assert.equal(rows.rows[0].status_history[0].status,'pending');
   await db.close();

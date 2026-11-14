@@ -23,7 +23,7 @@ export const statusColors: Record<OrderStatus, string> = {
 };
   
 export const statusLabels: Record<OrderStatus, string> = {
-      pending: 'En attente',
+      pending: 'À confirmer',
       paid: 'Payée',
       shipped: 'Expédiée',
       delivered: 'Livrée',

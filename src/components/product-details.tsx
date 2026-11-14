@@ -408,7 +408,13 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                 </Button>
               </div>
 
-              <OrderChannels items={channelItems} deliveryMethod={deliveryRegion || undefined} layout="column" />
+              <OrderChannels
+                items={channelItems}
+                deliveryMethod={deliveryRegion || undefined}
+                layout="column"
+                onWhatsAppCheckout={handleAddToCart}
+                disableWhatsApp={currentStock === 0}
+              />
             </div>
           </div>
         </div>

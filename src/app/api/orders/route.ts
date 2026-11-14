@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query, queryOne } from '@/lib/db';
 import { getSession } from '@/lib/auth';
+import { buildOrderMessage, buildWhatsAppUrl, DELIVERY_LABELS, getWhatsAppNumber } from '@/lib/order-channels';
+import { getSiteSettings } from '@/lib/site-settings-server';
 import { computeOrderTotals } from '@/lib/order-totals';
 import { readPublicForm } from '@/lib/public-form-guard';
 import { z } from 'zod';
@@ -45,6 +47,7 @@ export async function POST(req: NextRequest) {
   if (input.response) return input.response;
   const parsed = z.object({
     testOrder: z.boolean().optional(),
+    channel: z.literal("whatsapp").optional(),
     orderId: z.string().regex(/^[A-Za-z0-9_-]{4,48}$/).optional(),
     customerInfo: z.object({ name: z.string().trim().min(1).max(120),
       phone: z.string().trim().min(7).max(30), email: z.union([z.string().email().max(254), z.literal('')]).default(''),
@@ -61,6 +64,10 @@ export async function POST(req: NextRequest) {
   const testEmail = process.env.ORDER_TEST_EMAIL?.trim().toLowerCase();
   if (isTest && (!(await getSession())?.isAdmin || !testEmail || b.customerInfo.email.toLowerCase() !== testEmail || b.paymentMethod !== 'cod')) {
     return NextResponse.json({ error: 'Commande de test non autorisée.' }, { status: 403 });
+  }
+  const whatsAppNumber = b.channel === 'whatsapp' ? getWhatsAppNumber(await getSiteSettings()) : null;
+  if (b.channel === 'whatsapp' && !whatsAppNumber) {
+    return NextResponse.json({ error: 'La commande par WhatsApp est indisponible.' }, { status: 400 });
   }
   const status = isTest ? 'cancelled' : 'pending';
   const orderId = `${isTest ? 'DKB-TEST' : 'DKB'}-${randomUUID()}`;
@@ -108,7 +115,7 @@ export async function POST(req: NextRequest) {
   const from = process.env.ORDER_EMAIL_FROM;
   const email = b.customerInfo.email;
   let confirmationEmail = 'skipped';
-  if (email && key && from) {
+  if (email && key && from && b.channel !== 'whatsapp') {
     try {
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -133,7 +140,22 @@ export async function POST(req: NextRequest) {
     }
     if (confirmationEmail === 'failed') console.error('Order confirmation email failed', orderId);
   }
-  return NextResponse.json({ id: orderId, confirmationEmail });
+  const whatsappUrl = whatsAppNumber ? buildWhatsAppUrl(whatsAppNumber, [
+    `*Référence :* ${orderId}`,
+    buildOrderMessage({
+      items: totals.sanitizedItems.map(item => ({
+        title: item.product.title,
+        quantity: item.quantity,
+        unitPrice: item.product.price,
+        options: item.selectedVariants?.map(variant => variant.value).join(', '),
+      })),
+      subtotal: totals.totalPrice,
+      deliveryLabel: DELIVERY_LABELS[deliveryMethod],
+      shippingCost: isTest ? undefined : totals.shippingCost,
+      total: isTest ? undefined : totals.grandTotal,
+    }),
+  ].join('\n\n')) : undefined;
+  return NextResponse.json({ id: orderId, confirmationEmail, whatsappUrl });
 }
 
 export async function PUT(req: NextRequest) {

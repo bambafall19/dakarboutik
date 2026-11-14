@@ -71,17 +71,16 @@ export default function CheckoutPage() {
               <h1 className="text-3xl font-bold mb-6">Finaliser ma commande</h1>
               <div className="mb-6 rounded-2xl border border-border/70 bg-secondary/40 p-4">
                 <h2 className="font-headline text-base font-bold">
-                  Préférez commander par WhatsApp ou par téléphone ?
+                  Besoin d’aide pour commander ?
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Votre panier est résumé dans le message, notre équipe confirme la livraison avec
-                  vous.
+                  Renseignez vos coordonnées pour enregistrer votre commande et obtenir une référence.
                 </p>
                 <OrderChannels
                   items={channelItems}
                   deliveryMethod={deliveryMethod}
                   size="default"
-                  whatsappLabel="Commander sur WhatsApp"
+                  showWhatsApp={false}
                   phoneLabel="Appeler pour commander"
                   className="mt-4"
                 />

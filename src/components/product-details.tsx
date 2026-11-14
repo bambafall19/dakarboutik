@@ -323,6 +323,7 @@ export function ProductDetails({ product, relatedProducts, categoryPath }: Produ
                 {deliveryQuote ? <><p>Livraison : <strong>{deliveryQuote.shippingCost === 0 ? 'Gratuite' : `${formatCfa(deliveryQuote.shippingCost)} FCFA`}</strong></p><p className="mt-1">Total estimé pour {quantity} article{quantity > 1 ? 's' : ''} : <strong>{formatCfa(deliverySubtotal + deliveryQuote.shippingCost)} FCFA</strong></p></> : <p>{settingsError ? 'Les frais ne sont pas disponibles pour le moment. Vérifiez-les au panier.' : settingsLoading ? 'Chargement des frais de livraison…' : 'Choisissez votre destination pour afficher les frais et le total estimé.'}</p>}
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground">Estimation pour ce produit et la quantité sélectionnée, hors autres articles du panier. Le total sera recalculé à la commande. Le délai est à confirmer avec notre équipe.</p>
+              <Link href="/livraison" className="text-sm font-semibold underline underline-offset-4">Livraison &amp; délais</Link>
             </section>
 
             {product.description && (

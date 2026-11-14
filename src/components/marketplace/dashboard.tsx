@@ -122,6 +122,11 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
   const [photoBusy, setPhotoBusy] = useState(false);
   const busy = saving || photoBusy;
   const [editing, setEditing] = useState<Listing | null>(null);
+  const [selectedShopId, setSelectedShopId] = useState("");
+  const [adminEditorOpen, setAdminEditorOpen] = useState(false);
+  const [confirmation, setConfirmation] = useState<{ listing: Listing; action: "suspend" | "delete" } | null>(null);
+  const selectedShop = shops.find((item) => item.id === selectedShopId);
+  const visibleListings = selectedShopId ? listings.filter((item) => item.shop_id === selectedShopId) : listings;
   const [productMode, setProductMode] = useState<"new" | "stock">("new");
   const [formKey, setFormKey] = useState(0);
   const [panel, setPanel] = useState<MerchantPanel>("overview");
@@ -335,7 +340,62 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                 </form>
               ))}
               <h2 className="text-2xl font-bold">Annonces</h2>
-              {listings.map((l) => (
+              <section className="space-y-4 rounded-xl border bg-white p-5" aria-label="Gestion des produits partenaires">
+                <label className="block">
+                  Choisir une boutique
+                  <select className={field} value={selectedShopId} disabled={busy} onChange={(event) => {
+                    setSelectedShopId(event.target.value);
+                    setAdminEditorOpen(false);
+                    setEditing(null);
+                    setConfirmation(null);
+                  }}>
+                    <option value="">Toutes les boutiques</option>
+                    {shops.map((item) => <option key={item.id} value={item.id}>{item.profile.name}</option>)}
+                  </select>
+                </label>
+                <button type="button" className="rounded-lg border px-4 py-2 disabled:opacity-50" disabled={!selectedShop || busy} onClick={() => {
+                  setEditing(null);
+                  setFormKey((key) => key + 1);
+                  setAdminEditorOpen(true);
+                  setConfirmation(null);
+                }}>Ajouter un produit</button>
+                {adminEditorOpen && selectedShop && (
+                  <form key={formKey} id="admin-listing-editor" className="space-y-3" onSubmit={async (event) => {
+                    event.preventDefault();
+                    if (busy) return;
+                    const details = Object.fromEntries(new FormData(event.currentTarget));
+                    if (await save({ action: "admin-save-listing", shopId: selectedShop.id, id: editing?.id, details })) {
+                      setAdminEditorOpen(false);
+                      setEditing(null);
+                    }
+                  }}>
+                    <h3 className="font-bold">{editing ? "Modifier le produit" : "Nouveau produit"} · {selectedShop.profile.name}</h3>
+                    {!editing && <p className="text-sm">Le produit sera en attente. Utilisez « Publier » pour le mettre en ligne.</p>}
+                    <Input name="title" label="Nom du produit" value={editing?.details.title} required />
+                    <Input name="price" label="Prix en FCFA" type="number" value={editing?.details.price} required />
+                    <Input name="category" label="Catégorie" value={editing?.details.category || selectedShop.profile.category} required />
+                    <Input name="image" label="Lien HTTPS de la photo (facultatif)" type="url" value={editing?.details.image} />
+                    <Input name="productUrl" label="Lien externe du produit (facultatif)" type="url" value={editing?.details.productUrl} />
+                    <label className="block">
+                      Description
+                      <textarea className={field} name="description" rows={4} minLength={10} maxLength={2500} defaultValue={editing?.details.description} required />
+                    </label>
+                    <label className="block">
+                      Disponibilité
+                      <select className={field} name="availability" defaultValue={editing?.details.availability ?? "available"}>
+                        {Object.entries(availabilityLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                      </select>
+                    </label>
+                    <button disabled={busy} className="rounded-lg bg-emerald-800 px-4 py-2 text-white">Enregistrer le produit</button>
+                    <button type="button" disabled={busy} className="ml-3 underline" onClick={() => {
+                      setAdminEditorOpen(false);
+                      setEditing(null);
+                    }}>Annuler</button>
+                  </form>
+                )}
+              </section>
+              {!visibleListings.length && <p>Aucune annonce pour cette sélection.</p>}
+              {visibleListings.map((l) => (
                 <article
                   key={l.id}
                   className="space-y-3 rounded-xl border bg-white p-5"
@@ -364,20 +424,33 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                     </a>
                   )}
                   <div className="flex flex-wrap gap-3">
+                    <button type="button" disabled={busy} className="rounded-lg border px-4 py-2" onClick={() => {
+                      setSelectedShopId(l.shop_id);
+                      setEditing(l);
+                      setFormKey((key) => key + 1);
+                      setAdminEditorOpen(true);
+                      setConfirmation(null);
+                      requestAnimationFrame(() => document.getElementById("admin-listing-editor")?.scrollIntoView({ block: "start" }));
+                    }}>Modifier</button>
+                    <button type="button" disabled={busy} className="rounded-lg border border-rose-200 px-4 py-2 text-rose-800" onClick={() => setConfirmation({ listing: l, action: "delete" })}>Supprimer</button>
                     {(["approved", "suspended", "pending"] as const).map(
                       (status) => (
                         <button
                           key={status}
                           disabled={busy}
                           className="rounded-lg border px-4 py-2"
-                          onClick={() =>
-                            save({
+                          onClick={() => {
+                            if (status === "suspended") {
+                              setConfirmation({ listing: l, action: "suspend" });
+                              return;
+                            }
+                            void save({
                               action: "moderate",
                               kind: "listing",
                               id: l.id,
                               status,
-                            })
-                          }
+                            });
+                          }}
                         >
                           {status === "approved"
                             ? "Publier"
@@ -388,6 +461,29 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                       ),
                     )}
                   </div>
+                  {confirmation?.listing.id === l.id && (
+                    <div className="space-y-2 rounded-lg border bg-amber-50 p-3" role="group" aria-label="Confirmation">
+                      <p>{confirmation.action === "delete"
+                        ? `Supprimer définitivement « ${l.details.title} » ?`
+                        : `Suspendre « ${l.details.title} » et retirer sa fiche du site public ?`}</p>
+                      <div className="flex flex-wrap gap-3">
+                        <button type="button" disabled={busy} className="rounded-lg bg-rose-800 px-4 py-2 text-white" onClick={async () => {
+                          const deleting = confirmation.action === "delete";
+                          const success = await save(deleting
+                            ? { action: "admin-delete-listing", id: l.id, shopId: l.shop_id }
+                            : { action: "moderate", kind: "listing", id: l.id, status: "suspended" });
+                          if (success) {
+                            setConfirmation(null);
+                            if (deleting && editing?.id === l.id) {
+                              setAdminEditorOpen(false);
+                              setEditing(null);
+                            }
+                          }
+                        }}>{confirmation.action === "delete" ? "Confirmer la suppression" : "Confirmer la suspension"}</button>
+                        <button type="button" disabled={busy} className="underline" onClick={() => setConfirmation(null)}>Annuler</button>
+                      </div>
+                    </div>
+                  )}
                 </article>
               ))}
             </>

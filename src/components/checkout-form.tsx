@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import React from "react";
+import Link from "next/link";
 import Image from 'next/image';
 
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,7 @@ import type { DeliveryZone } from "@/lib/types";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères." }),
-  email: z.string().email({ message: "Veuillez entrer une adresse e-mail valide." }),
+  email: z.union([z.string().email({ message: "Veuillez entrer une adresse e-mail valide." }), z.literal("")]),
   phone: z.string().min(9, { message: "Le numéro de téléphone est requis." }),
   address: z.string().min(5, { message: "L'adresse est requise." }),
   city: z.string().min(2, { message: "La ville est requise." }),
@@ -140,7 +141,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
 
   async function onSubmit(values: FormValues, event?: React.BaseSyntheticEvent) {
     if (saving.current || savedDraft) return;
-    const viaWhatsApp = (event?.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "whatsapp";
+    const viaWhatsApp = whatsAppFirst || (event?.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "whatsapp";
     if (viaWhatsApp && !whatsAppNumber) return;
     saving.current = true;
     const testOrder = new URLSearchParams(window.location.search).get('test') === '1';
@@ -183,7 +184,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
       const orderId = saved.id;
       if (viaWhatsApp && saved.whatsappUrl) {
         setSavedDraft({ id: orderId, url: saved.whatsappUrl });
-        window.location.assign(saved.whatsappUrl);
+
         return;
       }
       if (testOrder) {
@@ -222,7 +223,8 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
     return (
       <Card className="space-y-4 p-5">
         <p>Commande à confirmer. Référence <strong className="break-all">{savedDraft.id}</strong></p>
-        <Button asChild><a href={savedDraft.url}>Ouvrir le brouillon WhatsApp</a></Button>
+        <Button asChild className="w-full"><Link href={`/suivi/${encodeURIComponent(savedDraft.id)}`}>Suivre ma commande</Link></Button>
+        <Button asChild variant="outline" className="w-full"><a href={savedDraft.url} target="_blank" rel="noopener noreferrer">Ouvrir WhatsApp</a></Button>
         <Button variant="outline" onClick={() => {
           clearCart();
           router.push("/products");
@@ -233,7 +235,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={whatsAppFirst ? "space-y-4" : "space-y-8"}>
         {/* ── Contact ─────────────────────────────────────────────────────── */}
         <div className="space-y-4">
           <h2 className="font-headline text-xl font-bold">Informations de contact</h2>
@@ -244,26 +246,26 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               <FormItem>
                 <FormLabel>Nom complet</FormLabel>
                 <FormControl>
-                  <Input placeholder="Prénom Nom" {...field} />
+                  <Input autoComplete="name" placeholder="Prénom Nom" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
+            {!whatsAppFirst && <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email (facultatif)</FormLabel>
                   <FormControl>
                     <Input placeholder="vous@exemple.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            />}
             <FormField
               control={form.control}
               name="phone"
@@ -271,7 +273,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                 <FormItem>
                   <FormLabel>Téléphone</FormLabel>
                   <FormControl>
-                    <Input placeholder="77 123 45 67" {...field} />
+                    <Input type="tel" autoComplete="tel" placeholder="77 123 45 67" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -296,7 +298,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               </FormItem>
             )}
           />
-          <FormField
+          {!whatsAppFirst && <FormField
             control={form.control}
             name="city"
             render={({ field }) => (
@@ -308,7 +310,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          />}
         </div>
 
         {/* ── Zone de livraison ───────────────────────────────────────────── */}
@@ -321,6 +323,16 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
+                  {whatsAppFirst ? (
+                    <select {...field} aria-label="Zone de livraison" className="h-11 w-full rounded-md border bg-background px-3 text-base">
+                      <optgroup label="Dakar et banlieue">
+                        {dakarZones.map(zone => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
+                      </optgroup>
+                      <optgroup label="Hors Dakar">
+                        {horsZones.map(zone => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
+                      </optgroup>
+                    </select>
+                  ) : (
                   <RadioGroup
                     onValueChange={field.onChange}
                     value={field.value}
@@ -352,6 +364,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
                       </div>
                     </div>
                   </RadioGroup>
+                  )}
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -388,7 +401,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
         </div>
 
         {/* ── Méthode de paiement ────────────────────────────────────────── */}
-        <div className="space-y-4">
+        {!whatsAppFirst && <div className="space-y-4">
           <h2 className="font-headline text-xl font-bold">Méthode de paiement</h2>
           <FormField
             control={form.control}
@@ -446,22 +459,22 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               </p>
             </div>
           )}
-        </div>
+        </div>}
 
         {/* ── Submit ──────────────────────────────────────────────────────── */}
         <div className="space-y-4">
           <h2 className="font-headline text-xl font-bold">Finalisation</h2>
           {whatsAppNumber && (
             <>
-              <p className="text-sm text-muted-foreground">La commande est enregistrée avant l’ouverture du brouillon WhatsApp. Envoyez le message dans WhatsApp pour nous contacter.</p>
+              <p className="text-sm text-muted-foreground">Après enregistrement, retrouvez votre référence et le lien de suivi.</p>
               <Button type="submit" value="whatsapp" size="lg" variant={whatsAppFirst ? "default" : "outline"}
                 disabled={form.formState.isSubmitting} className="w-full rounded-full">
                 <Icons.whatsapp className="mr-2 h-5 w-5" />
-                Enregistrer et ouvrir WhatsApp
+                Enregistrer la commande WhatsApp
               </Button>
             </>
           )}
-          <Button
+          {!whatsAppFirst && <Button
             type="submit"
             size="lg"
             className="w-full rounded-full"
@@ -472,7 +485,7 @@ export function CheckoutForm({ onDeliveryMethodChange }: CheckoutFormProps) {
               : paymentMethod === 'cod'
               ? 'Confirmer la commande'
               : `Passer la commande et Payer via ${PAYMENT_METHODS.find(p => p.id === paymentMethod)?.label}`}
-          </Button>
+          </Button>}
         </div>
       </form>
     </Form>

@@ -82,7 +82,7 @@ export function OrderList({ orders, onRefresh }: { orders: Order[]; onRefresh?: 
                     <div className="text-xs text-muted-foreground">{order.customerInfo.email}</div>
                   </TableCell>
                   <TableCell>
-                    {new Date(order.createdAt).toLocaleDateString('fr-SN')}
+                    {new Date(order.createdAt).toLocaleDateString('fr-SN', { timeZone: 'Africa/Dakar' })}
                   </TableCell>
                    <TableCell className="text-right">
                     <Price price={order.grandTotal} currency="FCA" />

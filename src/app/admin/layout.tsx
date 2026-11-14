@@ -175,7 +175,7 @@ export default function AdminLayout({
           <header className="flex h-16 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur md:px-6">
             <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Ouvrir le menu">
+                <Button variant="ghost" size="icon" className="shrink-0 lg:hidden" aria-label="Ouvrir le menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -184,11 +184,14 @@ export default function AdminLayout({
                 <AdminSidebarContent onNavigate={() => setMobileNavOpen(false)} />
               </SheetContent>
             </Sheet>
-            <div className="hidden sm:block">
+            <Link href="/admin" aria-label="DakarBoutik — tableau de bord" className="shrink-0 rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary lg:hidden">
+              <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={40} height={40} className="h-10 w-10 object-contain" />
+            </Link>
+            <div className="hidden shrink-0 sm:block">
               <h1 className="font-headline text-sm font-extrabold">Administration</h1>
               <p className="text-[11px] text-muted-foreground">Gérez votre boutique</p>
             </div>
-            <form onSubmit={handleSearch} className="relative ml-auto w-full max-w-xs">
+            <form onSubmit={handleSearch} className="relative ml-auto w-full min-w-0 max-w-xs">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"

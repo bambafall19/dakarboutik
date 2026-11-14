@@ -14,7 +14,7 @@ import { CookieConsentBanner } from './cookie-consent-banner';
 import { useSnow } from '@/hooks/use-snow';
 import Snowfall from './snowfall';
 import { MaintenanceBanner } from './maintenance-banner';
-import { internalTestEnabled } from '@/lib/engagement-client';
+import { internalTestEnabled, setInternalTestEnabled } from '@/lib/engagement-client';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -33,6 +33,7 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
 
 function InternalTestBanner({ pathname }: { pathname: string }) {
   const [active, setActive] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const sync = () => setActive(internalTestEnabled());
@@ -41,10 +42,28 @@ function InternalTestBanner({ pathname }: { pathname: string }) {
     return () => window.removeEventListener('pageshow', sync);
   }, [pathname]);
 
+  function deactivate() {
+    try {
+      setInternalTestEnabled(false);
+      setActive(false);
+    } catch {
+      setError(true);
+    }
+  }
+
   return active ? (
-    <p role="status" className="border-b border-amber-300 bg-amber-100 px-4 py-2 text-center text-sm font-semibold text-amber-950">
-      Test interne actif
-    </p>
+    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b border-amber-300 bg-amber-100 px-4 py-1 text-sm font-semibold text-amber-950">
+      <span role="status">Test interne actif</span>
+      <button
+        type="button"
+        onClick={deactivate}
+        aria-label="Désactiver le mode Test interne"
+        className="min-h-11 rounded-md border border-amber-700 bg-white px-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        Désactiver
+      </button>
+      {error && <p role="alert" className="w-full text-center">Impossible de désactiver le mode Test interne.</p>}
+    </div>
   ) : null;
 }
 

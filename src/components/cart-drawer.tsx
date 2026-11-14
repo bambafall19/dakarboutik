@@ -98,6 +98,7 @@ export function CartDrawer() {
               <Button asChild size="lg" className="w-full rounded-full">
                 <Link href="/checkout">Passer la commande</Link>
               </Button>
+              <Link href="/livraison" className="text-sm font-semibold underline underline-offset-4">Livraison &amp; délais</Link>
               <OrderChannels
                 items={channelItems}
                 size="sm"

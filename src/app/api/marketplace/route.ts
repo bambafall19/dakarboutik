@@ -39,6 +39,36 @@ export async function POST(req: NextRequest) {
   if (!body || typeof body !== "object" || Array.isArray(body))
     return NextResponse.json({ error: "Requête invalide." }, { status: 400 });
   try {
+    if (body.action === "admin-save-listing" || body.action === "admin-delete-listing") {
+      if (!session.isAdmin)
+        return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
+
+      const shopId = z.string().uuid().parse(body.shopId);
+      const id = z.string().uuid();
+      let row;
+      if (body.action === "admin-delete-listing") {
+        row = await queryOne(
+          "delete from marketplace_listings where id=$1 and shop_id=$2 returning id",
+          [id.parse(body.id), shopId],
+        );
+      } else {
+        const details = JSON.stringify(listingSchema.parse(body.details));
+        const listingId = id.optional().parse(body.id);
+        row = listingId
+          ? await queryOne(
+              "update marketplace_listings set details=$1::jsonb,updated_at=now() where id=$2 and shop_id=$3 returning id",
+              [details, listingId, shopId],
+            )
+          : await queryOne(
+              `insert into marketplace_listings(id,shop_id,details)
+               select $1,id,$3::jsonb from marketplace_shops where id=$2 returning id`,
+              [crypto.randomUUID(), shopId, details],
+            );
+      }
+      if (!row)
+        return NextResponse.json({ error: "Boutique ou annonce introuvable." }, { status: 404 });
+      return NextResponse.json({ ok: true });
+    }
     if (body.action === "shop") {
       const profile = shopSchema.parse(body.profile);
       const row = await queryOne(

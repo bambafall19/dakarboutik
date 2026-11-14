@@ -70,7 +70,7 @@ export function buildPhoneUrl(number: string): string {
 
 export function buildOrderMessage(payload: OrderChannelPayload): string {
   const { items, subtotal } = payload;
-  const lines: string[] = ['*NOUVELLE COMMANDE DAKARBOUTIK* 📦', ''];
+  const lines: string[] = ['*NOUVELLE COMMANDE DAKARBOUTIK*', ''];
 
   if (items.length === 1) {
     const item = items[0];
@@ -78,37 +78,37 @@ export function buildOrderMessage(payload: OrderChannelPayload): string {
     if (item.options) {
       lines.push(`*Options :* ${item.options}`);
     }
-    lines.push(`💰 *Prix unitaire :* ${formatFcfa(item.unitPrice)}`);
-    lines.push(`🔢 *Quantité :* ${item.quantity}`);
-    lines.push(`💵 *Total :* ${formatFcfa(item.unitPrice * item.quantity)}`);
+    lines.push(`*Prix unitaire :* ${formatFcfa(item.unitPrice)}`);
+    lines.push(`*Quantité :* ${item.quantity}`);
+    lines.push(`*Total :* ${formatFcfa(item.unitPrice * item.quantity)}`);
   } else {
     items.forEach((item, index) => {
       lines.push(`*${index + 1}. ${item.title}*`);
       if (item.options) {
         lines.push(`*Options :* ${item.options}`);
       }
-      lines.push(`💰 *Prix unitaire :* ${formatFcfa(item.unitPrice)}`);
-      lines.push(`🔢 *Quantité :* ${item.quantity}`);
-      lines.push(`💵 *Total ligne :* ${formatFcfa(item.unitPrice * item.quantity)}`);
+      lines.push(`*Prix unitaire :* ${formatFcfa(item.unitPrice)}`);
+      lines.push(`*Quantité :* ${item.quantity}`);
+      lines.push(`*Total ligne :* ${formatFcfa(item.unitPrice * item.quantity)}`);
       lines.push('');
     });
-    lines.push(`🧾 *Sous-total :* ${formatFcfa(subtotal)}`);
+    lines.push(`*Sous-total :* ${formatFcfa(subtotal)}`);
   }
 
   if (payload.shippingCost !== undefined) {
     const label = payload.deliveryLabel ?? (payload.deliveryMethod ? DELIVERY_LABELS[payload.deliveryMethod] : '');
     const shipping = payload.shippingCost === 0 ? 'Offerte' : formatFcfa(payload.shippingCost);
-    lines.push(`🚚 *Livraison${label ? ` (${label})` : ''} :* ${shipping}`);
-    lines.push(`💵 *Total à payer :* ${formatFcfa(payload.total ?? subtotal + payload.shippingCost)}`);
+    lines.push(`*Livraison${label ? ` (${label})` : ''} :* ${shipping}`);
+    lines.push(`*Total à payer :* ${formatFcfa(payload.total ?? subtotal + payload.shippingCost)}`);
   }
 
   lines.push('');
-  lines.push('👤 *Mes informations (à compléter) :*');
+  lines.push('*Mes informations (à compléter) :*');
   lines.push('Nom : ');
   lines.push('Téléphone : ');
   lines.push('Adresse : ');
   lines.push('');
-  lines.push('💳 Paiement à la livraison');
+  lines.push('Paiement à la livraison');
 
   return lines.join('\n');
 }

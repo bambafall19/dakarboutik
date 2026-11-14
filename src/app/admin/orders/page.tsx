@@ -34,21 +34,22 @@ import { useToast } from '@/hooks/use-toast';
 import { useApiData } from '@/hooks/use-api-data';
 import { exportCsv } from '@/lib/export-csv';
 
+type OrderFilter = OrderStatus | 'all' | 'archived';
+
 export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<OrderFilter>('all');
   const { toast } = useToast();
 
 
-  const { data: orders, loading, error, refetch } = useApiData<Order[]>('/api/orders');
+  const { data: orders, loading, error, refetch } = useApiData<Order[]>('/api/orders?includeArchived=true');
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
 
-    let filtered = orders;
+    let filtered = orders.filter(order => Boolean(order.archivedAt) === (statusFilter === 'archived'));
 
-    // Filter by status
-    if (statusFilter !== 'all') {
+    if (statusFilter !== 'all' && statusFilter !== 'archived') {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
     
@@ -65,7 +66,7 @@ export default function OrdersPage() {
     return filtered;
   }, [orders, statusFilter, searchTerm]);
 
-  const allStatuses: (OrderStatus | 'all')[] = ['all', 'pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+  const allStatuses: OrderFilter[] = ['all', 'pending', 'paid', 'shipped', 'delivered', 'cancelled', 'archived'];
   
   const exportToCsv = () => {
     if (!filteredOrders || filteredOrders.length === 0) {
@@ -140,13 +141,13 @@ export default function OrdersPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-       <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as OrderStatus | 'all')}>
+       <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as OrderFilter)}>
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               <div className="-mx-1 overflow-x-auto px-1 pb-1">
                 <TabsList className="w-max">
                   {allStatuses.map(status => (
                     <TabsTrigger key={status} value={status} className="capitalize text-xs md:text-sm">
-                      {status === 'all' ? 'Toutes' : statusLabels[status as OrderStatus]}
+                      {status === 'all' ? 'Toutes' : status === 'archived' ? 'Archives' : statusLabels[status]}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -173,7 +174,7 @@ export default function OrdersPage() {
                     <CardHeader className="px-6">
                     <CardTitle className="font-headline font-bold">Commandes</CardTitle>
                     <CardDescription>
-                        {statusFilter === 'all' ? 'Toutes les commandes' : `Commandes avec le statut : ${statusLabels[statusFilter]}`}
+                        {statusFilter === 'all' ? 'Toutes les commandes non archivées' : statusFilter === 'archived' ? 'Commandes archivées' : `Commandes avec le statut : ${statusLabels[statusFilter]}`}
                     </CardDescription>
                     </CardHeader>
                     <CardContent>

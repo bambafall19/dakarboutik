@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { authClient } from "@/lib/auth/client";
 import { MarketplaceNav } from "./catalog";
+import { BillingPanel } from "./billing-panel";
 import { PhotoField } from "./photo-field";
 import { MerchantOverview, DashboardCharts, ProductInventory, type MerchantPanel } from "./dashboard-panels";
 import { LayoutDashboard, Store, Package, PlusCircle } from "lucide-react";
@@ -112,7 +113,7 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
     {register && <p className="mt-4 text-center text-sm text-slate-600">1. Créez votre compte · 2. Présentez votre boutique · 3. Attendez sa validation</p>}
   </section>;
 }
-export function MarketplaceDashboard({ admin = false, inscription = false }: { admin?: boolean; inscription?: boolean }) {
+export function MarketplaceDashboard({ admin = false, inscription = false, initialPlan = "", initialVisibility = "" }: { admin?: boolean; inscription?: boolean; initialPlan?: string; initialVisibility?: string }) {
   const { user, loading, refresh } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
@@ -253,7 +254,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
           {loading ? (
             <p>Chargement…</p>
           ) : !user ? (
-            <AuthForm inscription={inscription} />
+            <><div className="mb-5 text-center"><a href="/forfaits" className="font-semibold text-emerald-800 underline">Découvrir les forfaits boutiques et la publicité →</a><p className="mt-2 text-sm text-slate-600">La création du compte n’entraîne aucun paiement.</p></div><AuthForm inscription={inscription} /></>
           ) : admin && !user.isAdmin ? (
             <p>Accès réservé à l’administrateur.</p>
           ) : !ready ? (
@@ -268,6 +269,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
             </p>
           ) : admin ? (
             <>
+              <BillingPanel admin />
               <DashboardCharts listings={listings} />
               <h2 className="text-2xl font-bold">Boutiques</h2>
               {shops.length === 0 && <p>Aucune boutique inscrite.</p>}
@@ -495,6 +497,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
               <div id="merchant-workspace" className="scroll-mt-36 space-y-5">
               <div hidden={panel !== "overview"} className="space-y-5">
                 <MerchantOverview shop={shop} listings={listings} onNavigate={navigate} />
+                <BillingPanel shopExists={!!shop} initialPlan={initialPlan} initialVisibility={initialVisibility} />
                 <DashboardCharts listings={listings} />
               </div>
               <div hidden={panel !== "shop"}>
@@ -589,7 +592,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false }: { a
                         setFormKey(k => k + 1);
                       }}>
                       <option value="new">Ajouter un produit</option>
-                      
+
                       {listings.length > 0 && <optgroup label="Modifier un produit existant">
                         {listings.map(l => <option key={l.id} value={l.id}>{l.details.title} — {l.details.price.toLocaleString("fr-FR")} FCFA</option>)}
                       </optgroup>}

@@ -81,13 +81,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isAdmin || isLogin) {
     return <>{children}</>;
   }
-  if (pathname.startsWith('/boutiques')) {
+  if (pathname.startsWith('/boutiques') || pathname === '/forfaits') {
     return <><InternalTestBanner pathname={pathname} />{children}<WhatsAppButton /></>;
   }
   if (pathname.startsWith('/commercant')) {
     return <>{children}<WhatsAppButton /></>;
   }
-  
+
   const handleSearchClick = () => {
     setIsSearchSheetOpen(true);
   }
@@ -124,8 +124,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <CookieConsentBanner />
         <ClientOnly>
           <div className="md:hidden">
-            <MobileBottomNav 
-              onMenuClick={() => setIsMobileMenuOpen(true)} 
+            <MobileBottomNav
+              onMenuClick={() => setIsMobileMenuOpen(true)}
             />
           </div>
         </ClientOnly>

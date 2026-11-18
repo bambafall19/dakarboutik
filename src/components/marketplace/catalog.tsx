@@ -57,6 +57,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
           </Link>
           <Link href="/boutiques#publicite">À la une</Link>
           <Link href="/suivi">Anciennes commandes</Link>
+          <Link href="/forfaits">Forfaits et publicité</Link>
           <Link href="/commercant">Espace commerçant</Link>
         </div>
       </nav>

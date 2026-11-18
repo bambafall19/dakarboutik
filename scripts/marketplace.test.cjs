@@ -61,6 +61,9 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
       "@/lib/auth": { getSession: async () => session },
       "@/lib/marketplace-model": model,
       "server-only": {},
+      "@/lib/merchant-plans": {billingEnabled:()=>false},
+      "./merchant-plans": {billingEnabled:()=>false},
+      "@/lib/merchant-billing-server": {saveBillableListing:()=>{throw Error("Billing disabled");}},
     };
     const api = load("src/app/api/marketplace/route.ts", dependencies);
     const catalog = load("src/lib/marketplace-server.ts", dependencies);

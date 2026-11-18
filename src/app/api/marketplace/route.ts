@@ -3,6 +3,8 @@ import { getSession } from "@/lib/auth";
 import { query, queryOne } from "@/lib/db";
 import { shopSchema, listingSchema } from "@/lib/marketplace-model";
 import { z } from "zod";
+import { billingEnabled } from "@/lib/merchant-plans";
+import { saveBillableListing } from "@/lib/merchant-billing-server";
 
 export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
@@ -52,8 +54,17 @@ export async function POST(req: NextRequest) {
           [id.parse(body.id), shopId],
         );
       } else {
-        const details = JSON.stringify(listingSchema.parse(body.details));
+        const parsedDetails = listingSchema.parse(body.details);
+        const details = JSON.stringify(parsedDetails);
         const listingId = id.optional().parse(body.id);
+        if (billingEnabled()) {
+          const shop = await queryOne("select id from marketplace_shops where id=$1",[shopId]);
+          if(!shop) return NextResponse.json({error:"Boutique introuvable."},{status:404});
+          const current = listingId ? await queryOne("select status from marketplace_listings where id=$1 and shop_id=$2",[listingId,shopId]) : null;
+          if(listingId&&!current) return NextResponse.json({error:"Annonce introuvable."},{status:404});
+          const error=await saveBillableListing(listingId||crypto.randomUUID(),shopId,parsedDetails,current?.status||"pending",!listingId);
+          return NextResponse.json(error?{error}:{ok:true},{status:error?409:200});
+        }
         row = listingId
           ? await queryOne(
               "update marketplace_listings set details=$1::jsonb,updated_at=now() where id=$2 and shop_id=$3 returning id",
@@ -92,6 +103,11 @@ export async function POST(req: NextRequest) {
           },
           { status: 403 },
         );
+      if (billingEnabled()) {
+        const id=body.id?z.string().uuid().parse(body.id):crypto.randomUUID();
+        const error=await saveBillableListing(id,shop.id,details,"pending",!body.id);
+        return NextResponse.json(error?{error}:{ok:true},{status:error?409:200});
+      }
       if (body.id) {
         const id = z.string().uuid().parse(body.id);
         const row = await queryOne(
@@ -138,6 +154,12 @@ export async function POST(req: NextRequest) {
           sponsoredUntil: z.union([z.string().datetime(), z.null()]).optional(),
         })
         .parse(body);
+      if(billingEnabled()&&input.kind==="listing") {
+        const listing=await queryOne("select shop_id from marketplace_listings where id=$1",[input.id]);
+        if(!listing) return NextResponse.json({error:"Annonce introuvable."},{status:404});
+        const error=await saveBillableListing(input.id,listing.shop_id,null,input.status,false);
+        return NextResponse.json(error?{error}:{ok:true},{status:error?409:200});
+      }
       const row =
         input.kind === "shop"
           ? await queryOne(

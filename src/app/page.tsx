@@ -16,6 +16,7 @@ import {
   rankActiveShops,
 } from "@/lib/marketplace-discovery";
 import styles from "./home.module.css";
+import { HomePartnerSelection } from "@/components/marketplace/home-selection";
 
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
@@ -28,19 +29,22 @@ export default async function HomePage() {
   const now = Date.now();
   return (
     <div className={styles.home}>
-      <section className={styles.hero} aria-labelledby="home-title">
+      <section
+        className={`${styles.hero} ${latest.length ? styles.heroWithProducts : ""}`}
+        aria-labelledby="home-title"
+      >
         <div>
           <span className={styles.eyebrow}>
             Le marché des boutiques au Sénégal
           </span>
           <h1 id="home-title">
-            Trouvez votre produit.
+            Vos envies.
             <br />
-            <span>Rencontrez sa boutique.</span>
+            <span>Nos boutiques.</span>
           </h1>
           <p>
-            Mode, alimentation, maison, informatique et bien plus. Découvrez les
-            produits des commerçants et contactez directement le vendeur.
+            Découvrez les produits des commerçants près de chez vous. Comparez
+            les offres et contactez directement votre boutique.
           </p>
           <form
             action="/boutiques#recherche"
@@ -81,6 +85,12 @@ export default async function HomePage() {
             publiés
           </p>
         </div>
+        <HomePartnerSelection
+          items={latest.flatMap((listing) => {
+            const shop = shopMap.get(listing.shop_id);
+            return shop ? [{ listing, shop }] : [];
+          })}
+        />
       </section>
       <section className={styles.section} aria-labelledby="categories-title">
         <div className={styles.heading}>

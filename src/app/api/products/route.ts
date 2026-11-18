@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getSession } from '@/lib/auth';
 import type { Product } from '@/lib/types';
+import { OFFICIAL_CATALOG_ENABLED } from '@/lib/catalog-mode';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const session = await getSession();
   const isAdmin = !!session?.isAdmin;
+  if (!OFFICIAL_CATALOG_ENABLED && !isAdmin) return NextResponse.json(searchParams.has('slug') ? null : [], { headers: { 'Cache-Control': 'no-store' } });
 
   // La boutique associée à un produit est une information interne :
   // elle n'est jamais exposée aux visiteurs.

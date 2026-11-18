@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import type { DeliveryMethod } from '@/lib/shipping';
 import type { CartItem, Order } from '@/lib/types';
+import { OFFICIAL_CATALOG_ENABLED } from '@/lib/catalog-mode';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!OFFICIAL_CATALOG_ENABLED) return NextResponse.json({ error: 'Les ventes directes DakarBoutik sont fermées. Contactez une boutique partenaire.' }, { status: 409 });
   const input = await readPublicForm(req, 'order', 15, 262144);
   if (input.response) return input.response;
   const parsed = z.object({

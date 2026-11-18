@@ -20,9 +20,9 @@ export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
   const navItems = [
     { href: '/', label: 'Accueil', icon: Icons.home, isActive: pathname === '/' },
     { onClick: onMenuClick, label: 'Catégories', icon: LayoutGrid },
-    { href: '/favoris', label: 'Favoris', icon: Heart, isActive: pathname.startsWith('/favoris'), isWishlist: true },
+    { href: '/boutiques', label: 'Boutiques', icon: Store, isActive: pathname.startsWith('/boutiques'), isWishlist: false },
     { href: '/commercant?inscription=1', label: 'Inscrire ma boutique', icon: Store, isActive: pathname.startsWith('/commercant') },
-    { href: '/checkout', label: 'Panier', icon: Icons.shoppingBag, isCart: true, isActive: pathname.startsWith('/checkout') },
+    { href: '/boutiques#recherche', label: 'Produits', icon: Icons.shoppingBag, isCart: false, isActive: false },
   ];
 
   return (
@@ -45,7 +45,7 @@ export function MobileBottomNav({ onMenuClick }: MobileBottomNavProps) {
                             <item.icon className="h-5 w-5 flex-shrink-0" />
                         </div>
                         <span className={cn(
-                            "text-[10px] font-semibold leading-tight text-center px-1",
+                            "text-xs font-semibold leading-tight text-center px-1",
                             isActive ? "text-primary" : "text-muted-foreground"
                         )}>
                             {item.label}

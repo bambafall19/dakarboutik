@@ -18,11 +18,11 @@ import { normalizePhoneNumber } from '@/lib/order-channels';
 
 const footerLinks = {
   Boutique: [
-    { name: 'Solaire & énergie', href: '/products?category=solaire' },
-    { name: 'Téléphones & accessoires', href: '/products?category=telephones' },
-    { name: 'Informatique & électronique', href: '/products?category=tech-complete' },
-    { name: 'Maison & électroménager', href: '/products?category=maison-complete' },
-    { name: 'Promotions', href: '/products?on_sale=true' },
+    { name: 'Solaire & énergie', href: '/boutiques?category=Solaire#recherche' },
+    { name: 'Téléphones & accessoires', href: '/boutiques?category=Téléphones#recherche' },
+    { name: 'Informatique & électronique', href: '/boutiques?category=Informatique#recherche' },
+    { name: 'Maison & électroménager', href: '/boutiques?category=Maison#recherche' },
+    { name: 'À la une', href: '/boutiques#publicite' },
   ],
   'Commandes & livraison': [
     { name: 'Suivi de commande', href: '/suivi' },
@@ -59,12 +59,12 @@ export function Footer({ settings }: FooterProps) {
               Découvrez nos <span className="text-accent">nouveautés</span>
             </h3>
             <p className="mt-1 text-sm text-nav-foreground/70">
-              Les derniers produits DakarBoutik et les boutiques partenaires, à découvrir en un clic.
+              Les nouveautés des commerçants partenaires, à découvrir près de chez vous.
             </p>
           </div>
           <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 rounded-full bg-accent px-6 text-accent-foreground hover:bg-accent/90">
-              <Link href="/products?sortBy=newest">Voir les nouveautés <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link>
+              <Link href="/boutiques#produits-resultats">Voir les nouveautés <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link>
             </Button>
             <Link href="/boutiques" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/30 px-6 text-sm font-semibold transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">Explorer les boutiques</Link>
           </div>
@@ -79,8 +79,7 @@ export function Footer({ settings }: FooterProps) {
               <Logo imageUrl={settings?.logoUrl} loading={!isClient} inverted />
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-nav-foreground/70">
-              Votre destination 100% sénégalaise pour l&apos;électronique de qualité, livrée
-              partout à Dakar et au Sénégal.
+              Le marché des boutiques partenaires au Sénégal. Découvrez leurs produits et contactez directement le vendeur.
             </p>
             <div className="mt-6 space-y-3">
               {isClient ? (

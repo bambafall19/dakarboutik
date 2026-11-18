@@ -1,100 +1,12 @@
-
-"use client";
-
-import { CheckoutForm } from "@/components/checkout-form";
-import { OrderSummary } from "@/components/order-summary";
-import { OrderChannels } from "@/components/order-channels";
-import { useCart } from "@/hooks/use-cart";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function CheckoutPage() {
-  const { totalItems, state, isHydrated } = useCart();
-  const router = useRouter();
-  const [deliveryMethod, setDeliveryMethod] = useState<'dakar' | 'hors-dakar'>('dakar');
-
-  const channelItems = useMemo(
-    () =>
-      state.items.map((item) => ({
-        title: item.product.title,
-        quantity: item.quantity,
-        unitPrice: item.product.salePrice ?? item.product.price,
-        options: item.selectedVariants?.map((variant) => variant.value).join(', ') || undefined,
-      })),
-    [state.items]
-  );
-
-  useEffect(() => {
-    // On attend l'hydratation du panier avant de conclure qu'il est vide.
-    if (isHydrated && totalItems === 0) {
-      router.replace('/products');
-    }
-  }, [isHydrated, totalItems, router]);
-
-  if (!isHydrated) {
-    return (
-      <div className="container py-20 text-center text-muted-foreground">
-        Chargement de votre panier...
-      </div>
-    );
-  }
-
-  if (totalItems === 0) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold">Votre panier est vide</h1>
-        <p className="text-muted-foreground">Vous serez redirigé vers la boutique.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="container">
-      <Card>
-        <CardContent className="pt-6">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Accueil</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Commande</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h1 className="text-3xl font-bold mb-6">Finaliser ma commande</h1>
-              <div className="mb-6 rounded-2xl border border-border/70 bg-secondary/40 p-4">
-                <h2 className="font-headline text-base font-bold">
-                  Besoin d’aide pour commander ?
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Renseignez vos coordonnées pour enregistrer votre commande et obtenir une référence.
-                </p>
-                <OrderChannels
-                  items={channelItems}
-                  deliveryMethod={deliveryMethod}
-                  size="default"
-                  showWhatsApp={false}
-                  phoneLabel="Appeler pour commander"
-                  className="mt-4"
-                />
-              </div>
-              <p className="mb-4"><Link href="/livraison" className="text-sm font-semibold underline underline-offset-4">Livraison &amp; délais</Link></p>
-              <CheckoutForm onDeliveryMethodChange={setDeliveryMethod} />
-            </div>
-            <div className="mt-0 lg:mt-16">
-              <OrderSummary deliveryMethod={deliveryMethod} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <section className="container space-y-5 py-12">
+      <h1 className="text-3xl font-bold">Retrouvez les produits des boutiques partenaires</h1>
+      <p>Les nouvelles commandes directes DakarBoutik sont fermées. Contactez le commerçant depuis sa fiche pour convenir du prix, du paiement et de la livraison.</p>
+      <Link className="inline-flex rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground" href="/boutiques">Explorer les produits</Link>
+      <p>Vous avez déjà passé une commande ? <Link className="underline" href="/suivi">Consulter son suivi</Link></p>
+    </section>
   );
 }
-

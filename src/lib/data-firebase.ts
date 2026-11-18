@@ -1,4 +1,5 @@
 import 'server-only';
+import { OFFICIAL_CATALOG_ENABLED } from './catalog-mode';
 import { query } from './db';
 import type { Banner, Category, Product, Vendor } from './types';
 import { getBanners as getStaticBanners } from './data';
@@ -47,11 +48,13 @@ function toVendor(r: any): Vendor {
 }
 
 export async function getProducts(): Promise<Product[]> {
+  if (!OFFICIAL_CATALOG_ENABLED) return [];
   const rows = await query("select * from products where status = 'active' order by created_at desc");
   return rows.map(toProduct);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  if (!OFFICIAL_CATALOG_ENABLED) return null;
   const rows = await query("select * from products where slug = $1 and status = 'active' limit 1", [slug]);
   return rows[0] ? toProduct(rows[0]) : null;
 }

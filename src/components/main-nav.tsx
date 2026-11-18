@@ -29,9 +29,9 @@ export function MainNav({ items }: MainNavProps) {
       <NavigationMenuList className="gap-0.5 rounded-full border border-border/60 bg-background/85 px-1.5 py-1 shadow-sm shadow-black/5 backdrop-blur-xl">
         {[
           ['/', 'Accueil'],
-          ['/products', 'Produits DakarBoutik'],
+          ['/boutiques#recherche', 'Rechercher un produit'],
           ['/boutiques', 'Boutiques partenaires'],
-          ['/products?on_sale=true', 'Promotions'],
+          ['/boutiques#publicite', 'À la une'],
           ['/commercant', 'Espace commerçant'],
         ].map(([href, label]) => <NavigationMenuItem key={href}>
           <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), pillClass)}>

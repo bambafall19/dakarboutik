@@ -32,11 +32,7 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
     return <Skeleton className="h-9" />;
   }
 
-  const announcements = [
-    settings?.announcementMessage1,
-    settings?.announcementMessage2,
-    settings?.announcementMessage3,
-  ].filter(Boolean) as string[];
+  const announcements = ['Découvrez les produits des boutiques partenaires au Sénégal.'];
 
   if (announcements.length === 0) {
     announcements.push('Livraison offerte à Dakar dès 25 000 FCFA');
@@ -82,12 +78,12 @@ export function AnnouncementBar({ settings, loading }: AnnouncementBarProps) {
 
           return (
             <Link
-              href={href}
-              target={whatsappNumber ? '_blank' : undefined}
-              rel={whatsappNumber ? 'noopener noreferrer' : undefined}
+              href="/commercant?inscription=1"
+
+
               className="group hidden shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold text-nav-foreground/80 transition hover:border-accent/40 hover:text-accent sm:flex"
             >
-              Commander sur WhatsApp
+              Inscrire ma boutique
               <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
             </Link>
           );

@@ -42,6 +42,7 @@ test('Public forms fail closed on exhausted quota', async () => {
 });
 const postCalls = [];
 const orderRoute = load('src/app/api/orders/route.ts', {
+  '@/lib/catalog-mode': { OFFICIAL_CATALOG_ENABLED: true },
   '@/lib/db': { query: async (sql, params) => { postCalls.push({sql, params}); return []; }, queryOne: async () => null },
   '@/lib/auth': { getSession: async () => null },
   '@/lib/public-form-guard': { readPublicForm: async req => ({body: await req.json()}) },

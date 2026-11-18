@@ -1,170 +1,181 @@
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Search } from "lucide-react";
+import {
+  MARKETPLACE_CATEGORIES,
+  matchesPartnerSearch,
+  partnerSearchUrl,
+} from "@/lib/marketplace-discovery";
+import {
+  availabilityLabels,
+  type Shop,
+  type Listing,
+} from "@/lib/marketplace-model";
 
-'use client';
-
-import { useState, useEffect, useMemo, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Icons } from './icons';
-import { useRecentProducts } from '@/hooks/use-recent-products';
-import { ProductCard } from './product-card';
-import { ScrollArea } from './ui/scroll-area';
-import { useCategories, useProducts } from '@/hooks/use-site-data';
-import Link from 'next/link';
-import { useDebounce } from '@/hooks/use-debounce';
-import { SearchX } from 'lucide-react';
-import Image from 'next/image';
-import { findImage } from '@/lib/placeholder-images';
-import { Card } from './ui/card';
-
-interface SearchSheetProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
-
-const categoryImages: { [key: string]: string } = {
-    'telephonie': 'product-phone-1a',
-    'informatique': 'product-laptop-1a',
-    'audio': 'product-headphones-1a',
-    'accessoires': 'product-cable-1a',
+type SearchSheetProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
-
-function SearchSheetContent({ open, onOpenChange }: SearchSheetProps) {
-    const router = useRouter();
-    const [query, setQuery] = useState('');
-    const debouncedQuery = useDebounce(query, 300);
-
-    const { recentProducts } = useRecentProducts();
-    const { categories } = useCategories();
-    const { products } = useProducts();
-
-    const suggestedSlugs = ['telephonie', 'informatique', 'audio', 'accessoires'];
-    const suggestedCategories = categories.filter(c => suggestedSlugs.includes(c.slug));
-    
-    const searchResults = useMemo(() => {
-        if (debouncedQuery.length < 2) return [];
-        return products.filter(p => 
-            p.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-            p.description.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-            (p.brand && p.brand.toLowerCase().includes(debouncedQuery.toLowerCase()))
-        ).slice(0, 10); // Limit results for performance
-    }, [debouncedQuery, products]);
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (query.trim()) {
-            router.push(`/boutiques?q=${encodeURIComponent(query.trim())}&source=tous#recherche`);
+export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [data, setData] = useState<{ shops: Shop[]; listings: Listing[] }>({
+    shops: [],
+    listings: [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+      return;
+    }
+    const controller = new AbortController();
+    setLoading(true);
+    setError(false);
+    fetch("/api/marketplace/catalog", { signal: controller.signal })
+      .then(async (r) => {
+        if (!r.ok) throw Error();
+        return r.json();
+      })
+      .then((value) => {
+        if (!Array.isArray(value.shops) || !Array.isArray(value.listings))
+          throw Error();
+        setData(value);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setError(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
+  }, [open]);
+  const shopMap = new Map(data.shops.map((shop) => [shop.id, shop]));
+  const results =
+    query.trim().length < 2
+      ? []
+      : data.listings
+          .filter((listing) => {
+            const shop = shopMap.get(listing.shop_id);
+            return shop && matchesPartnerSearch(listing, shop, query);
+          })
+          .slice(0, 6);
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[85dvh] overflow-y-auto p-5 sm:max-w-2xl">
+        <DialogTitle>Rechercher chez les partenaires</DialogTitle>
+        <DialogDescription>
+          Un produit, une boutique ou une ville. Les vendeurs vous répondent
+          directement.
+        </DialogDescription>
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            router.push(partnerSearchUrl(query));
             onOpenChange(false);
-        }
-    };
-
-    useEffect(() => {
-        if (!open) {
-            setQuery('');
-        }
-    }, [open]);
-
-    const showSuggestions = query.length < 2;
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="p-0 gap-0 top-20 translate-y-0 sm:max-w-2xl">
-                 <DialogTitle className="sr-only">Panneau de recherche</DialogTitle>
-                 <DialogDescription className="sr-only">
-                     Recherchez un produit par nom, catégorie ou marque.
-                 </DialogDescription>
-                <div className="flex items-center gap-2 border-b p-4">
-                    <form onSubmit={handleSearch} className="flex-1 relative">
-                        <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Rechercher un produit..."
-                            className="w-full bg-muted pl-10 h-11 text-base"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            autoFocus
-                        />
-                    </form>
-                </div>
-                <Link href={`/boutiques?q=${encodeURIComponent(query.trim())}&source=tous#recherche`} onClick={() => onOpenChange(false)} className="mx-4 rounded-xl bg-primary px-4 py-3 text-center font-semibold text-primary-foreground">Rechercher chez DakarBoutik et les partenaires →</Link>
-                <ScrollArea className="max-h-[calc(100vh-14rem)]">
-                    <div className="p-6 space-y-8">
-                        {showSuggestions ? (
-                            <>
-                                {recentProducts.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold mb-4">Récemment consultés</h3>
-                                        <div className="grid grid-cols-1 gap-4">
-                                            {recentProducts.slice(0,2).map(product => (
-                                                <ProductCard key={product.id} product={product} variant="horizontal" />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {suggestedCategories.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold mb-4">Suggestions de catégories</h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {suggestedCategories.map(category => {
-                                                const imageId = categoryImages[category.slug] || 'product-phone-1a';
-                                                const image = findImage(imageId);
-                                                return (
-                                                    <Link key={category.id} href={`/products?category=${category.slug}`} onClick={() => onOpenChange(false)} className="group">
-                                                        <Card className="overflow-hidden">
-                                                            <div className="relative aspect-video w-full">
-                                                                <Image
-                                                                    src={image.imageUrl}
-                                                                    alt={category.name}
-                                                                    fill
-                                                                    sizes="(max-width: 640px) 100vw, 33vw"
-                                                                    className="object-cover group-hover:scale-105 transition-transform"
-                                                                />
-                                                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">
-                                                                    <h4 className="font-semibold text-sm text-white text-center">{category.name}</h4>
-                                                                </div>
-                                                            </div>
-                                                        </Card>
-                                                    </Link>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div>
-                                {searchResults.length > 0 ? (
-                                    <>
-                                        <h3 className="font-semibold mb-4">Suggestions DakarBoutik</h3>
-                                        <div className="grid grid-cols-1 gap-4">
-                                            {searchResults.map(product => (
-                                                 <ProductCard key={product.id} product={product} variant="horizontal" />
-                                            ))}
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center py-10 text-center">
-                                        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-accent/10 ring-1 ring-primary/10">
-                                            <SearchX className="h-7 w-7 text-primary/60" />
-                                        </span>
-                                        <p className="mt-4 text-sm font-medium">Aucune suggestion DakarBoutik</p>
-                                        <p className="mt-1 text-xs text-muted-foreground">Aucun résultat pour &quot;{debouncedQuery}&quot;</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </ScrollArea>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-export function SearchSheet(props: SearchSheetProps) {
-    // Wrap with Suspense because useSearchParams is used in parent components
-    return (
-        <Suspense fallback={null}>
-            <SearchSheetContent {...props} />
-        </Suspense>
-    )
+          }}
+        >
+          <label htmlFor="partner-quick-search" className="sr-only">
+            Produit ou boutique
+          </label>
+          <input
+            id="partner-quick-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            maxLength={150}
+            placeholder="Téléphone, parfum, ordinateur…"
+            autoFocus
+            className="min-w-0 flex-1 rounded-xl border p-3 text-base"
+          />
+          <button
+            aria-label="Rechercher les produits"
+            className="rounded-xl bg-primary px-4 text-primary-foreground"
+          >
+            <Search aria-hidden="true" size={20} />
+          </button>
+        </form>
+        {query.trim().length < 2 ? (
+          <div className="flex flex-wrap gap-2">
+            {MARKETPLACE_CATEGORIES.map((name) => (
+              <Link
+                key={name}
+                href={partnerSearchUrl("", name)}
+                onClick={() => onOpenChange(false)}
+                className="rounded-full border px-4 py-3 text-sm font-semibold"
+              >
+                {name}
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div aria-live="polite" className="space-y-3">
+            {loading ? (
+              <p>Chargement des produits…</p>
+            ) : error ? (
+              <p>
+                Les suggestions sont indisponibles. Lancez la recherche pour
+                ouvrir le catalogue.
+              </p>
+            ) : results.length ? (
+              results.map((listing) => {
+                const shop = shopMap.get(listing.shop_id)!;
+                return (
+                  <Link
+                    key={listing.id}
+                    href={`/boutiques/${shop.id}#produit-${listing.id}`}
+                    onClick={() => onOpenChange(false)}
+                    className="flex min-w-0 items-center gap-3 rounded-xl border p-3"
+                  >
+                    {listing.details.image && (
+                      <img
+                        src={listing.details.image}
+                        alt=""
+                        width={60}
+                        height={60}
+                        className="h-16 w-16 shrink-0 object-contain"
+                      />
+                    )}
+                    <span className="min-w-0">
+                      <strong className="block break-words">
+                        {listing.details.title}
+                      </strong>
+                      <span className="block text-sm">
+                        {shop.profile.name} · {shop.profile.city}
+                      </span>
+                      <span className="block text-sm font-semibold text-primary">
+                        {listing.details.price.toLocaleString("fr-FR")} FCFA ·{" "}
+                        {availabilityLabels[listing.details.availability]}
+                      </span>
+                    </span>
+                  </Link>
+                );
+              })
+            ) : (
+              <p>
+                Aucun produit pour ces mots. Essayez une recherche plus simple.
+              </p>
+            )}
+          </div>
+        )}
+        <Link
+          href={partnerSearchUrl(query)}
+          onClick={() => onOpenChange(false)}
+          className="rounded-xl bg-primary px-4 py-3 text-center font-semibold text-primary-foreground"
+        >
+          Voir tous les résultats
+        </Link>
+      </DialogContent>
+    </Dialog>
+  );
 }

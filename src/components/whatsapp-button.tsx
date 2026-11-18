@@ -9,11 +9,11 @@ import { buildWhatsAppUrl, getWhatsAppNumber } from '@/lib/order-channels';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 
 const topics = [
-  { label: 'Trouver un produit', text: 'Recherchez dans le catalogue DakarBoutik. Les prix et disponibilités sont indiqués sur les fiches produits.', href: '/products', action: 'Voir les produits' },
+  { label: 'Trouver un produit', text: 'Recherchez parmi les produits des boutiques partenaires, puis confirmez le prix et la disponibilité avec le vendeur.', href: '/boutiques', action: 'Voir les produits' },
   { label: 'Boutiques partenaires', text: 'Chaque commerçant gère ses produits. Ouvrez sa boutique pour le contacter et confirmer le stock, la livraison et le paiement.', href: '/boutiques', action: 'Explorer les boutiques' },
   { label: 'Suivre une commande', text: 'Munissez-vous de votre référence de commande. Pour un achat directement auprès d’un partenaire, contactez ce commerçant.', href: '/suivi', action: 'Suivre ma commande' },
   { label: 'Inscrire ma boutique', text: 'Créez votre compte commerçant, présentez votre boutique et ajoutez vos produits. La publication est soumise à validation.', href: '/commercant?inscription=1', action: 'Créer mon espace' },
-  { label: 'Livraison et paiement', text: 'Les frais et délais dépendent de votre localité et du vendeur. Confirmez les modalités avec l’équipe avant de commander.', href: '/faq', action: 'Consulter les informations' },
+  { label: 'Livraison et paiement', text: 'Les frais et délais dépendent de votre localité et du vendeur. Confirmez les modalités avec le commerçant avant de commander.', href: '/faq', action: 'Consulter les informations' },
   { label: 'Garantie et SAV', text: 'Consultez les conditions applicables à votre produit. Préparez votre référence de commande pour faciliter votre demande.', href: '/sav', action: 'Consulter le SAV' },
 ];
 
@@ -40,7 +40,7 @@ export function WhatsAppButton() {
         <div aria-live="polite" aria-atomic="true">
           {topic && <div className="rounded-xl bg-muted p-4"><p className="text-sm leading-relaxed">{topic.text}</p><Link href={topic.href} onClick={() => setOpen(false)} className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold text-emerald-800 underline">{topic.action}<ArrowRight className="h-4 w-4" aria-hidden="true" /></Link></div>}
         </div>
-        <form action="/products" role="search" className="space-y-2">
+        <form action="/boutiques" role="search" className="space-y-2">
           <label htmlFor="assistant-product" className="text-sm font-medium">Quel produit recherchez-vous ?</label>
           <div className="flex gap-2"><input id="assistant-product" name="q" type="search" required maxLength={120} placeholder="Batterie, ordinateur, téléphone…" className="min-w-0 flex-1 rounded-lg border bg-background px-3 py-2 text-base" /><button type="submit" aria-label="Rechercher un produit" className="min-h-11 rounded-lg bg-emerald-700 px-3 text-white"><Search className="h-5 w-5" /></button></div>
         </form>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Trophy, CalendarDays, ArrowUpRight } from "lucide-react";
 import { isSponsored, type Shop } from "@/lib/marketplace-model";
 
-export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: number }) {
+export function MarketplaceSpotlight({ shops, now, showNews = false }: { shops: Shop[]; now: number; showNews?: boolean }) {
   const sponsored = shops.filter((shop) => isSponsored(shop, now)).slice(0, 3);
   const ended = now >= Date.parse("2026-11-14T00:00:00Z");
   const started = now >= Date.parse("2026-10-31T00:00:00Z");
@@ -39,7 +39,7 @@ export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: numbe
         </div>
       </section>
 
-      <section id="actualites" aria-labelledby="news-title" className="relative isolate scroll-mt-6 overflow-hidden rounded-3xl border-t-8 border-yellow-400 bg-gradient-to-br from-emerald-700 via-emerald-800 to-teal-900 text-white shadow-xl">
+      {showNews && <section id="actualites" aria-labelledby="news-title" className="relative isolate scroll-mt-6 overflow-hidden rounded-3xl border-t-8 border-yellow-400 bg-gradient-to-br from-emerald-700 via-emerald-800 to-teal-900 text-white shadow-xl">
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 -z-10 h-64 w-64 rounded-full border-[30px] border-yellow-300/15" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-16 left-1/3 -z-10 h-48 w-48 rounded-full bg-rose-400/10" />
         <div className="grid gap-6 p-6 md:grid-cols-[1fr_2fr] md:p-8">
@@ -60,7 +60,7 @@ export function MarketplaceSpotlight({ shops, now }: { shops: Shop[]; now: numbe
             <p className="mt-5 text-xs leading-relaxed text-emerald-200">Source : CIO · Informations vérifiées le 2 novembre 2026. Rubrique indépendante, sans affiliation officielle aux Jeux. Les résultats ne sont pas actualisés en direct sur DakarBoutik.</p>
           </div>
         </div>
-      </section>
+      </section>}
     </div>
   );
 }

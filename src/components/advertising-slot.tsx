@@ -1,6 +1,7 @@
  'use client';
 import { useEffect, useRef, useState } from 'react';
 import { type Campaign, campaignLive, safeAdUrl } from '@/lib/advertising';
+import { OFFICIAL_CATALOG_ENABLED } from '@/lib/catalog-mode';
 import { recordEngagement } from '@/lib/engagement-client';
 function AdCard({campaign:c}:{campaign:Campaign}) {
  const ref=useRef<HTMLAnchorElement>(null);
@@ -34,7 +35,7 @@ export function AdvertisingSlot({placement,category=''}:{placement:Campaign['pla
   return ()=>{controller.abort();clearInterval(timer);};
  },[]);
  const day=new Date().toISOString().slice(0,10);
- const visible=campaigns.filter(c=>c.placement===placement&&campaignLive(c,day)&&(!c.category||c.category===category)).slice(0,2);
+ const visible=campaigns.filter(c=> (OFFICIAL_CATALOG_ENABLED || !(/^https:\/\/dakarboutik.net\/products(?:[/?#]|$)|^\/products(?:[/?#]|$)/.test(c.targetUrl))) &&c.placement===placement&&campaignLive(c,day)&&(!c.category||c.category===category)).slice(0,2);
  if(!visible.length) return null;
  return <section aria-label="Publicités" className="my-5 grid gap-4 md:grid-cols-2">{visible.map(c=><AdCard key={c.id} campaign={c}/>)}</section>;
 }

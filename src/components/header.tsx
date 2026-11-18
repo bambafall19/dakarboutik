@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { OFFICIAL_CATALOG_ENABLED } from '@/lib/catalog-mode';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -10,7 +11,7 @@ import { Icons } from '@/components/icons';
 import type { SiteSettings, Category } from '@/lib/types';
 import { MainNav } from './main-nav';
 import { AnnouncementBar } from './announcement-bar';
-import { Heart, Search, Menu } from 'lucide-react';
+import { Heart, Search, Menu, Store } from 'lucide-react';
 import { Price } from './price';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ThemeToggle } from './theme-toggle';
@@ -58,10 +59,11 @@ export function Header({
           <button
             type="button"
             onClick={onSearchClick}
+            aria-label="Rechercher un produit ou une boutique"
             className="group relative hidden h-10 flex-1 items-center gap-3 rounded-full border border-transparent bg-secondary/70 px-4 text-left text-sm text-muted-foreground transition hover:border-primary/30 hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
           >
             <Search className="h-[18px] w-[18px] shrink-0 text-primary transition group-hover:scale-110" />
-            <span className="flex-1 truncate">Rechercher un produit, une marque...</span>
+            <span className="flex-1 truncate">Rechercher un produit ou une boutique...</span>
             <kbd className="hidden items-center gap-0.5 rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground lg:flex">
               ⌘K
             </kbd>
@@ -73,6 +75,7 @@ export function Header({
               variant="ghost"
               size="icon"
               onClick={onSearchClick}
+            aria-label="Rechercher un produit ou une boutique"
               className="h-10 w-10 rounded-full md:hidden"
             >
               <Search className="h-5 w-5" />
@@ -84,9 +87,9 @@ export function Header({
               size="icon"
               className="relative hidden h-10 w-10 rounded-full sm:flex"
             >
-              <Link href="/favoris" aria-label="Favoris">
-                <Heart className="h-5 w-5" />
-                {wishlistTotal > 0 && (
+              <Link href="/boutiques" aria-label="Boutiques partenaires">
+                <Store className="h-5 w-5" />
+                {OFFICIAL_CATALOG_ENABLED && wishlistTotal > 0 && (
                   <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
                     {wishlistTotal}
                   </span>
@@ -94,7 +97,7 @@ export function Header({
               </Link>
             </Button>
 
-            <Sheet>
+            {OFFICIAL_CATALOG_ENABLED && <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="secondary"
@@ -116,7 +119,7 @@ export function Header({
               <SheetContent className="flex flex-col">
                 <CartDrawer />
               </SheetContent>
-            </Sheet>
+            </Sheet>}
 
             <div className="hidden items-center sm:flex">
               <ThemeToggle />

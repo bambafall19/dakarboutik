@@ -98,6 +98,9 @@ export function matchesMarketplaceCategory(product: { title: string; category: s
   if (label === key) return true;
   const title = normalizeMarketplaceText(product.title);
   const words: Record<string, string[]> = {
+    informatique: ["informatique", "ordinateur", "portable", "laptop", "dell", "lenovo", "hp", "ssd", "clavier", "souris", "ecran", "imprimante"],
+    'auto et moto': ["auto", "automobile", "voiture", "moto", "pneu", "pieces auto"],
+    loisirs: ["loisirs", "sport", "jouet", "jeux", "livre", "velo"],
     solaire: ["solaire", "solaires", "onduleur", "onduleurs", "inverseur", "batterie lithium", "batteries lithium", "photovoltaique"],
     telephones: ["telephone", "telephones", "telephonie", "smartphone", "smartphones", "iphone", "galaxy", "tecno", "infinix", "redmi", "coque", "chargeur"],
     mode: ["mode", "vetement", "vetements", "chaussures", "sac", "bijoux", "montre"],

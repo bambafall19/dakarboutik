@@ -190,6 +190,34 @@ export default async function HomePage() {
         </div>
       </section>
       <section
+        className={`${styles.section} ${styles.poster}`}
+        aria-labelledby="discover-poster-title"
+      >
+        <Link
+          href="/boutiques"
+          className={styles.posterImageLink}
+          aria-label="Découvrir les produits des boutiques partenaires"
+        >
+          <img
+            src="/images/dakarboutik-partenaires-affiche.png"
+            alt="DakarBoutik — Vos produits. Vos boutiques. À portée de clic. Découvrez les produits et contactez directement les boutiques partenaires."
+            width={1024}
+            height={1024}
+            loading="lazy"
+          />
+        </Link>
+        <div>
+          <h2 id="discover-poster-title">Vos boutiques, à portée de clic</h2>
+          <p>
+            Découvrez les produits des commerçants partenaires et échangez
+            directement avec la boutique qui vous intéresse.
+          </p>
+          <Link className={styles.primary} href="/boutiques">
+            Explorer les produits partenaires
+          </Link>
+        </div>
+      </section>
+      <section
         className={styles.reassurance}
         aria-label="Comment acheter auprès des partenaires"
       >

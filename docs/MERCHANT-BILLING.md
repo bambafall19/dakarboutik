@@ -14,6 +14,8 @@ Tarifs acceptés : Essentiel, 10 produits pour 2 000 FCFA ; Commerce, 30 produit
 
 ## Ouverture différée
 
+La publication de la page d’offres se fait en mode préparation, avec `MARKETPLACE_BILLING_ENABLED=false` en Production. Aucune migration des abonnements n’est nécessaire tant que ce mode est conservé. Les tables d’abonnement restent réservées à la future ouverture payante.
+
 `MARKETPLACE_BILLING_ENABLED` est absent ou `false` par défaut. Les offres sont alors marquées « en préparation », aucune demande ni facturation n’est ouverte et aucun quota payant n’est appliqué. Les nouvelles tables ne sont pas consultées dans ce mode. Ne pas activer cette variable avant la migration et la validation des modalités commerciales.
 
 1. Choisir une branche de base Neon et un déploiement Preview. Appliquer `scripts/merchant-billing.sql` dans la console SQL de cette base (script complet, fonctions comprises). La migration est additive et réexécutable ; elle ne supprime ni produits ni commandes.
@@ -25,3 +27,7 @@ Tarifs acceptés : Essentiel, 10 produits pour 2 000 FCFA ; Commerce, 30 produit
 Tests : `node --test scripts/merchant-billing.test.cjs scripts/marketplace.test.cjs scripts/partner-market.test.cjs scripts/security.test.cjs` et `node node_modules/typescript/lib/tsc.js --noEmit`.
 
 Limites : devis publicitaire et encaissement manuels, aucun reçu fiscal/PDF automatique, pas de passerelle Wave/Orange Money, pas de rappel d’expiration automatique. Les droits SQL sont ceux du compte applicatif existant, les accès HTTP sont contrôlés par session/administrateur et propriétaire.
+
+## Correctif Next.js associé
+
+Next.js et `eslint-config-next` sont fixés à 16.4.6 dans le manifeste et le verrou npm. Les avis GHSA-mfr8-8qww-v76h et GHSA-vc7v-qv4w-wrv8 indiquent une correction à partir de 16.4.5. Le contrôle npm ne signale plus d’avis pour Next.js après cette mise à jour. Cela ne constitue pas une correction de toutes les autres dépendances : l’audit complet conserve des alertes distinctes, notamment sur `better-auth` et `proxy-addr`, à examiner séparément avant l’ouverture des paiements.

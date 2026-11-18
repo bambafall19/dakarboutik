@@ -35,7 +35,7 @@ export default async function HomePage() {
       >
         <div>
           <span className={styles.eyebrow}>
-            Le marché des boutiques au Sénégal
+            ✨ Les meilleures trouvailles du Sénégal, à portée de clic.
           </span>
           <h1 id="home-title">
             Vos envies.

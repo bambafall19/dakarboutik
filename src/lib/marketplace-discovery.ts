@@ -17,6 +17,15 @@ export const MARKETPLACE_CATEGORIES = [
   "Loisirs",
 ] as const;
 
+export function catalogueCategories(labels: string[]) {
+  const names = new Map<string, string>();
+  for (const label of [...MARKETPLACE_CATEGORIES, ...labels]) {
+    const key = normalizeMarketplaceText(label);
+    if (key && !names.has(key)) names.set(key, label.trim());
+  }
+  return [...names.values()].sort((a, b) => a.localeCompare(b, "fr"));
+}
+
 export function matchesPartnerSearch(
   listing: Listing,
   shop: Shop,

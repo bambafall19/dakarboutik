@@ -148,3 +148,14 @@ test("Partner discovery matches accents and reordered words, and ranks only publ
     ],
   );
 });
+
+test('Catalogue categories merge case, accents and whitespace without changing custom categories', () => {
+ const model=load('src/lib/marketplace-model.ts');
+ const discovery=load('src/lib/marketplace-discovery.ts',{'./marketplace-model':model});
+ const categories=discovery.catalogueCategories(['SOLAIRE',' solaire ','BEAUTE','Beauté','Parfum','parfum','']);
+ assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='solaire').length,1);
+ assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='beaute').length,1);
+ assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='parfum').length,1);
+ assert.ok(categories.includes('Solaire'));
+ assert.ok(categories.includes('Parfum'));
+});

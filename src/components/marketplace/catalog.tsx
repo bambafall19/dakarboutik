@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import {
-  MARKETPLACE_CATEGORIES,
+  catalogueCategories,
   matchesPartnerSearch,
   partnerCategoryMatches,
   rankActiveShops,
@@ -108,14 +108,18 @@ export function ListingCard({
         <span className="text-sm font-semibold text-emerald-800">
           {availabilityLabels[p.availability]}
         </span>
-        <h3 className="text-lg font-bold">
+        <h3
+          className={`${compact ? "line-clamp-2 min-h-14" : ""} text-lg font-bold`}
+        >
           <Link href={partnerProductUrl(listing)} className="hover:underline">
             {p.title}
           </Link>
         </h3>
-        <p className="font-bold">{p.price.toLocaleString("fr-FR")} FCFA</p>
+        <p className="text-xl font-bold text-emerald-800">
+          {p.price.toLocaleString("fr-FR")} FCFA
+        </p>
         <p
-          className={`${compact ? "line-clamp-3" : "whitespace-pre-line"} text-sm text-slate-600`}
+          className={`${compact ? "line-clamp-2" : "whitespace-pre-line"} text-sm text-slate-600`}
         >
           {p.description}
         </p>
@@ -191,12 +195,15 @@ export function MarketplaceCatalog({
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState<ProductSort>("newest");
   const bounds = priceBounds(minPrice, maxPrice);
-  const categories = Array.from(
-    new Set<string>([
-      ...MARKETPLACE_CATEGORIES,
-      ...listings.map((l) => l.details.category),
-    ]),
-  ).sort((a, b) => a.localeCompare(b, "fr"));
+  const categories = catalogueCategories(
+    listings.map((l) => l.details.category),
+  );
+  const quickCategories = categories
+    .map((name) => ({
+      name,
+      count: listings.filter((l) => partnerCategoryMatches(l, name)).length,
+    }))
+    .filter((item) => item.count > 0);
   const shopMap = new Map(shops.map((shop) => [shop.id, shop]));
   const matchingListings = priceAndSort(
     listings.filter((listing) => {
@@ -252,6 +259,33 @@ export function MarketplaceCatalog({
           </div>
         </section>
         <div className="container space-y-8 py-6">
+          <nav
+            aria-label="Rayons des boutiques partenaires"
+            className="flex flex-wrap gap-2"
+          >
+            <button
+              type="button"
+              aria-pressed={!category}
+              onClick={() => setCategory("")}
+              className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold ${!category ? "border-emerald-800 bg-emerald-800 text-white" : "border-emerald-200 bg-white text-emerald-900"}`}
+            >
+              Tous les rayons
+            </button>
+            {quickCategories.map((item) => (
+              <button
+                key={item.name}
+                type="button"
+                aria-pressed={
+                  normalizeMarketplaceText(category) ===
+                  normalizeMarketplaceText(item.name)
+                }
+                onClick={() => setCategory(item.name)}
+                className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold ${normalizeMarketplaceText(category) === normalizeMarketplaceText(item.name) ? "border-emerald-800 bg-emerald-800 text-white" : "border-emerald-200 bg-white text-emerald-900"}`}
+              >
+                {item.name} <span className="ml-1 text-xs">({item.count})</span>
+              </button>
+            ))}
+          </nav>
           <form
             id="recherche"
             role="search"
@@ -360,11 +394,70 @@ export function MarketplaceCatalog({
                 Effacer les filtres
               </button>
             )}
+            <a
+              href="#produits-resultats"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-800 px-4 py-3 font-semibold text-white md:col-span-3"
+            >
+              Voir les {matchingListings.length} produit
+              {matchingListings.length > 1 ? "s" : ""}
+            </a>
           </form>
+          {hasFilters && (
+            <div aria-label="Filtres actifs" className="flex flex-wrap gap-2">
+              {[
+                search.trim()
+                  ? {
+                      label: "Recherche : " + search.trim(),
+                      clear: () => setSearch(""),
+                    }
+                  : null,
+                city
+                  ? { label: "Ville : " + city, clear: () => setCity("") }
+                  : null,
+                category
+                  ? {
+                      label: "Catégorie : " + category,
+                      clear: () => setCategory(""),
+                    }
+                  : null,
+                minPrice
+                  ? {
+                      label: "Minimum : " + minPrice + " FCFA",
+                      clear: () => setMinPrice(""),
+                    }
+                  : null,
+                maxPrice
+                  ? {
+                      label: "Maximum : " + maxPrice + " FCFA",
+                      clear: () => setMaxPrice(""),
+                    }
+                  : null,
+                availableOnly
+                  ? {
+                      label: "Disponibles maintenant",
+                      clear: () => setAvailableOnly(false),
+                    }
+                  : null,
+              ]
+                .filter((item) => item !== null)
+                .map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={item.clear}
+                    aria-label={"Retirer le filtre " + item.label}
+                    className="min-h-11 max-w-full break-words rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-left text-sm text-emerald-900"
+                  >
+                    {item.label} <span aria-hidden="true">×</span>
+                  </button>
+                ))}
+            </div>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p role="status">
-              {matchingListings.length} produit(s) · {matchingShops.length}{" "}
-              boutique(s)
+              {matchingListings.length} produit
+              {matchingListings.length > 1 ? "s" : ""} · {matchingShops.length}{" "}
+              boutique{matchingShops.length > 1 ? "s" : ""}
             </p>
             <button
               type="button"

@@ -1,4 +1,6 @@
 "use client";
+import { partnerProductUrl } from "@/lib/partner-products";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -133,7 +135,7 @@ export function SearchSheet({ open, onOpenChange }: SearchSheetProps) {
                 return (
                   <Link
                     key={listing.id}
-                    href={`/boutiques/${shop.id}#produit-${listing.id}`}
+                    href={partnerProductUrl(listing)}
                     onClick={() => onOpenChange(false)}
                     className="flex min-w-0 items-center gap-3 rounded-xl border p-3"
                   >

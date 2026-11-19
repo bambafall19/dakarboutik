@@ -9,6 +9,12 @@ import {
   partnerCategoryMatches,
   rankActiveShops,
 } from "@/lib/marketplace-discovery";
+import {
+  partnerProductUrl,
+  priceBounds,
+  priceAndSort,
+  type ProductSort,
+} from "@/lib/partner-products";
 import { Store } from "lucide-react";
 
 import {
@@ -79,24 +85,34 @@ export function ListingCard({
       id={`produit-${listing.id}`}
       className="scroll-mt-6 min-w-0 break-words overflow-hidden rounded-2xl border bg-white text-slate-900"
     >
-      {p.image ? (
-        <img
-          className="h-52 w-full object-contain bg-slate-50"
-          src={p.image}
-          alt={p.title}
-          loading="lazy"
-          referrerPolicy="no-referrer"
-        />
-      ) : (
-        <div className="flex h-52 items-center justify-center bg-emerald-50 text-emerald-800">
-          Photo à venir
-        </div>
-      )}
+      <Link
+        href={partnerProductUrl(listing)}
+        aria-label={`Voir la fiche de ${p.title}`}
+        className="block"
+      >
+        {p.image ? (
+          <img
+            className="h-52 w-full object-contain bg-slate-50"
+            src={p.image}
+            alt={p.title}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="flex h-52 items-center justify-center bg-emerald-50 text-emerald-800">
+            Photo à venir
+          </div>
+        )}
+      </Link>
       <div className="space-y-3 p-5">
         <span className="text-sm font-semibold text-emerald-800">
           {availabilityLabels[p.availability]}
         </span>
-        <h3 className="text-lg font-bold">{p.title}</h3>
+        <h3 className="text-lg font-bold">
+          <Link href={partnerProductUrl(listing)} className="hover:underline">
+            {p.title}
+          </Link>
+        </h3>
         <p className="font-bold">{p.price.toLocaleString("fr-FR")} FCFA</p>
         <p
           className={`${compact ? "line-clamp-3" : "whitespace-pre-line"} text-sm text-slate-600`}
@@ -125,6 +141,12 @@ export function ListingCard({
             timeZone: "Africa/Dakar",
           })}
         </p>
+        <Link
+          href={partnerProductUrl(listing)}
+          className="flex min-h-11 items-center justify-center rounded-xl border px-4 py-3 text-sm font-semibold text-emerald-800"
+        >
+          Voir la fiche produit
+        </Link>
         <Link
           className="flex items-center justify-center gap-2 rounded-xl border border-emerald-700 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
           href={`/boutiques/${shop.id}`}
@@ -165,6 +187,10 @@ export function MarketplaceCatalog({
   const [city, setCity] = useState("");
   const [category, setCategory] = useState(initialCategory);
   const [availableOnly, setAvailableOnly] = useState(false);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sort, setSort] = useState<ProductSort>("newest");
+  const bounds = priceBounds(minPrice, maxPrice);
   const categories = Array.from(
     new Set<string>([
       ...MARKETPLACE_CATEGORIES,
@@ -172,20 +198,32 @@ export function MarketplaceCatalog({
     ]),
   ).sort((a, b) => a.localeCompare(b, "fr"));
   const shopMap = new Map(shops.map((shop) => [shop.id, shop]));
-  const matchingListings = listings.filter((listing) => {
-    const shop = shopMap.get(listing.shop_id);
-    return (
-      shop &&
-      (!city ||
-        normalizeMarketplaceText(shop.profile.city) ===
-          normalizeMarketplaceText(city)) &&
-      partnerCategoryMatches(listing, category) &&
-      matchesPartnerSearch(listing, shop, search) &&
-      (!availableOnly || listing.details.availability === "available")
-    );
-  });
+  const matchingListings = priceAndSort(
+    listings.filter((listing) => {
+      const shop = shopMap.get(listing.shop_id);
+      return (
+        shop &&
+        (!city ||
+          normalizeMarketplaceText(shop.profile.city) ===
+            normalizeMarketplaceText(city)) &&
+        partnerCategoryMatches(listing, category) &&
+        matchesPartnerSearch(listing, shop, search) &&
+        (!availableOnly || listing.details.availability === "available")
+      );
+    }),
+    minPrice,
+    maxPrice,
+    sort,
+  );
   const matchingShopIds = new Set(matchingListings.map((l) => l.shop_id));
-  const hasFilters = !!(search.trim() || city || category || availableOnly);
+  const hasFilters = !!(
+    search.trim() ||
+    city ||
+    category ||
+    availableOnly ||
+    minPrice ||
+    maxPrice
+  );
   const matchingShops = rankActiveShops(shops, listings).filter(
     ({ shop }) => !hasFilters || matchingShopIds.has(shop.id),
   );
@@ -194,6 +232,9 @@ export function MarketplaceCatalog({
     setCity("");
     setCategory("");
     setAvailableOnly(false);
+    setMinPrice("");
+    setMaxPrice("");
+    setSort("newest");
   };
   return (
     <>
@@ -257,6 +298,50 @@ export function MarketplaceCatalog({
                 ))}
               </select>
             </label>
+            <label className="font-semibold">
+              Prix minimum (FCFA)
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="numeric"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                placeholder="Sans minimum"
+                className="mt-2 w-full rounded-xl border p-3 text-base font-normal"
+              />
+            </label>
+            <label className="font-semibold">
+              Prix maximum (FCFA)
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="numeric"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="Sans maximum"
+                className="mt-2 w-full rounded-xl border p-3 text-base font-normal"
+              />
+            </label>
+            <label className="font-semibold">
+              Trier par
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as ProductSort)}
+                className="mt-2 w-full rounded-xl border bg-white p-3 text-base font-normal"
+              >
+                <option value="newest">Les plus récents</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+              </select>
+            </label>
+            {!bounds.valid && (
+              <p role="alert" className="text-red-700 md:col-span-3">
+                Saisissez des prix entiers positifs ou nuls, avec un maximum
+                supérieur ou égal au minimum.
+              </p>
+            )}
             <label className="flex min-h-11 items-center gap-3 md:col-span-2">
               <input
                 type="checkbox"
@@ -266,7 +351,7 @@ export function MarketplaceCatalog({
               />
               Disponibles maintenant uniquement
             </label>
-            {hasFilters && (
+            {(hasFilters || sort !== "newest") && (
               <button
                 type="button"
                 onClick={clear}

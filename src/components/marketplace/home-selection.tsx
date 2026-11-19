@@ -1,4 +1,6 @@
 "use client";
+import { partnerProductUrl } from "@/lib/partner-products";
+
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
@@ -19,7 +21,7 @@ export function HomePartnerSelection({
   const position = index % items.length;
   const { listing, shop } = items[position];
   const p = listing.details;
-  const href = `/boutiques/${shop.id}#produit-${listing.id}`;
+  const href = partnerProductUrl(listing);
   return (
     <section
       aria-label="La sélection des boutiques partenaires"

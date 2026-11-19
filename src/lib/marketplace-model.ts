@@ -91,9 +91,10 @@ export function normalizeMarketplaceText(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim().replace(/\s+/g, " ");
 }
 
-export function matchesMarketplaceCategory(product: { title: string; category: string }, category: string) {
+export function matchesMarketplaceCategory(product: { title: string; category: string }, category: string): boolean {
   const key = normalizeMarketplaceText(category);
   if (!key) return true;
+  if (key === "mode & beaute" || key === "mode et beaute") return matchesMarketplaceCategory(product, "Mode") || matchesMarketplaceCategory(product, "Beauté");
   const label = normalizeMarketplaceText(product.category).replace(/[-_]/g, " ");
   if (label === key) return true;
   const title = normalizeMarketplaceText(product.title);
@@ -104,7 +105,8 @@ export function matchesMarketplaceCategory(product: { title: string; category: s
     solaire: ["solaire", "solaires", "onduleur", "onduleurs", "inverseur", "batterie lithium", "batteries lithium", "photovoltaique"],
     telephones: ["telephone", "telephones", "telephonie", "smartphone", "smartphones", "iphone", "galaxy", "tecno", "infinix", "redmi", "coque", "chargeur"],
     mode: ["mode", "vetement", "vetements", "chaussures", "sac", "bijoux", "montre"],
-    beaute: ["beaute", "cosmetique", "parfum", "soins", "maquillage"],
+    beaute: ["beaute", "cosmetique", "soins", "maquillage"],
+    parfumerie: ["parfum", "parfums", "parfumerie", "fragrance", "fragrances", "eau de toilette", "eau de parfum"],
     maison: ["maison", "meubles", "jardin", "refrigerateur", "linge", "cuisine"],
     alimentation: ["alimentation", "alimentaire", "epicerie", "boissons"],
   };

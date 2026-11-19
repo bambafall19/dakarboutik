@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Logo } from "@/components/logo";
 import {
   catalogueCategories,
+  canonicalCategory,
   matchesPartnerSearch,
   partnerCategoryMatches,
   rankActiveShops,
@@ -189,7 +190,7 @@ export function MarketplaceCatalog({
   const [refreshing, startRefresh] = useTransition();
   const [search, setSearch] = useState(initialSearch);
   const [city, setCity] = useState("");
-  const [category, setCategory] = useState(initialCategory);
+  const [category, setCategory] = useState(canonicalCategory(initialCategory));
   const [availableOnly, setAvailableOnly] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");

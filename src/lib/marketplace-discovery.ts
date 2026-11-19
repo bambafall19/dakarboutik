@@ -6,10 +6,10 @@ import {
 } from "./marketplace-model";
 
 export const MARKETPLACE_CATEGORIES = [
-  "Mode",
+  "Mode & Beauté",
   "Téléphones",
   "Informatique",
-  "Beauté",
+  "Parfumerie",
   "Maison",
   "Alimentation",
   "Solaire",
@@ -17,11 +17,19 @@ export const MARKETPLACE_CATEGORIES = [
   "Loisirs",
 ] as const;
 
+export function canonicalCategory(label: string) {
+  const key = normalizeMarketplaceText(label);
+  if (['mode', 'beaute', 'mode & beaute', 'mode et beaute'].includes(key)) return 'Mode & Beauté';
+  if (['parfum', 'parfums', 'parfumerie'].includes(key)) return 'Parfumerie';
+  return label.trim();
+}
+
 export function catalogueCategories(labels: string[]) {
   const names = new Map<string, string>();
   for (const label of [...MARKETPLACE_CATEGORIES, ...labels]) {
-    const key = normalizeMarketplaceText(label);
-    if (key && !names.has(key)) names.set(key, label.trim());
+    const name = canonicalCategory(label);
+    const key = normalizeMarketplaceText(name);
+    if (key && !names.has(key)) names.set(key, name);
   }
   return [...names.values()].sort((a, b) => a.localeCompare(b, "fr"));
 }

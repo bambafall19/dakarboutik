@@ -154,8 +154,20 @@ test('Catalogue categories merge case, accents and whitespace without changing c
  const discovery=load('src/lib/marketplace-discovery.ts',{'./marketplace-model':model});
  const categories=discovery.catalogueCategories(['SOLAIRE',' solaire ','BEAUTE','Beauté','Parfum','parfum','']);
  assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='solaire').length,1);
- assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='beaute').length,1);
- assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='parfum').length,1);
+ assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='mode & beaute').length,1);
+ assert.equal(categories.filter(x=>model.normalizeMarketplaceText(x)==='parfumerie').length,1);
  assert.ok(categories.includes('Solaire'));
- assert.ok(categories.includes('Parfum'));
+ assert.ok(categories.includes('Parfumerie'));
 });
+
+ test('Mode and beauty merge while legacy perfume listings appear in Parfumerie',()=>{
+ const model=load('src/lib/marketplace-model.ts');
+ const discovery=load('src/lib/marketplace-discovery.ts',{'./marketplace-model':model});
+ for(const category of ['Mode','Beauté','MODE & BEAUTE'])assert.equal(discovery.canonicalCategory(category),'Mode & Beauté');
+ for(const category of ['Parfum','PARFUMS','Parfumerie'])assert.equal(discovery.canonicalCategory(category),'Parfumerie');
+ assert.equal(model.matchesMarketplaceCategory({title:'Robe coton',category:'Mode'},'Mode & Beauté'),true);
+ assert.equal(model.matchesMarketplaceCategory({title:'Crème hydratante',category:'Beauté'},'Mode & Beauté'),true);
+ assert.equal(model.matchesMarketplaceCategory({title:'Loris',category:'Parfum'},'Parfumerie'),true);
+ assert.equal(model.matchesMarketplaceCategory({title:'Loris',category:'Parfum'},'Mode & Beauté'),false);
+ assert.equal(model.matchesMarketplaceCategory({title:'Ordinateur',category:'Informatique'},'Parfumerie'),false);
+ });

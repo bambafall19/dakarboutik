@@ -1,71 +1,396 @@
- 'use client';
-import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { internalTestEnabled, setInternalTestEnabled } from '@/lib/engagement-client';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-type Stats={orderCount?:number;totals:{kind:string;total:number}[];daily:{day:string;kind:string;total:number}[];campaigns:{id:string;title:string;views:number;clicks:number}[]};
-const labels:Record<string,string>={ad_view:'Affichages publicitaires',ad_click:'Clics publicitaires',whatsapp_click:'Clics WhatsApp',shop_view:'Consultations de boutiques',checkout_open:'Accès au panier'};
-export default function StatistiquesPage(){
- const [days,setDays]=useState('30');const [data,setData]=useState<Stats>();const [error,setError]=useState('');const [loading,setLoading]=useState(true);
- const [internalTest, setInternalTest] = useState(false);
- const [testModeError, setTestModeError] = useState(false);
- useEffect(() => {
-   const sync = () => setInternalTest(internalTestEnabled());
-   sync();
-   window.addEventListener('pageshow', sync);
-   return () => window.removeEventListener('pageshow', sync);
- }, []);
- const toggleInternalTest = () => {
-   try {
-     setInternalTestEnabled(!internalTest);
-     setInternalTest(internalTestEnabled());
-     setTestModeError(false);
-   } catch {
-     setTestModeError(true);
-   }
- };
- const refresh=useCallback(async()=>{setLoading(true);setError('');try{const r=await fetch('/api/engagement/stats?days='+days);const body=await r.json();if(!r.ok)throw new Error(body.error);setData(body);}catch(e){setError(e instanceof Error?e.message:'Chargement impossible.');}finally{setLoading(false);}},[days]);
- useEffect(()=>{void refresh();},[refresh]);
- const chart=Array.from({length:Number(days)},(_,i)=>{const d=new Date();d.setUTCDate(d.getUTCDate()-Number(days)+1+i);const day=d.toISOString().slice(0,10);const rows=data?.daily.filter(r=>r.day===day)||[];return{day:day.slice(5),views:rows.find(r=>r.kind==='ad_view')?.total||0,clicks:rows.find(r=>r.kind==='ad_click')?.total||0};});
- const checkoutAccesses = data?.totals.find(row => row.kind === 'checkout_open')?.total ?? 0;
- const conversionRate = checkoutAccesses > 0 && data?.orderCount !== undefined
-   ? (data.orderCount / checkoutAccesses).toLocaleString('fr-FR', { style: 'percent', maximumFractionDigits: 2 })
-   : null;
- return <div className="mx-auto max-w-6xl space-y-6 py-6">
-  <h1 className="text-3xl font-bold">Visites et publicités</h1>
-  <section className="rounded-2xl border bg-gradient-to-r from-emerald-50 to-amber-50 p-6 text-slate-900"><h2 className="text-xl font-bold">Qui visite votre site ?</h2><p className="my-3 max-w-3xl">Retrouvez les visiteurs, pages vues, pays, provenances et appareils dans Vercel Analytics. Les chiffres commencent après l’activation ; les anciennes visites ne peuvent pas être reconstituées.</p><a className="inline-block rounded-xl bg-emerald-800 px-5 py-3 font-semibold text-white" href="https://vercel.com/dakarboutikks-projects/dakarboutik/analytics" target="_blank" rel="noopener noreferrer">Ouvrir les visites dans Vercel ↗</a><p className="mt-3 text-xs">Connexion au compte Vercel requise. Historique inclus : 30 jours.</p></section>
-  <div className="flex flex-wrap items-end justify-between gap-4"><label className="font-semibold">Résultats mesurés sur le site<select value={days} onChange={e=>setDays(e.target.value)} className="ml-3 rounded-xl border bg-background p-3"><option value="7">7 jours</option><option value="30">30 jours</option><option value="90">90 jours</option></select></label><div className="flex flex-wrap gap-3"><button onClick={refresh} disabled={loading} className="rounded-xl border px-4 py-3">{loading?'Chargement…':'Actualiser'}</button><Link href="/admin/publicites" className="rounded-xl border px-4 py-3 font-semibold">Gérer les publicités →</Link></div></div>
-  <section className="rounded-2xl border bg-card p-5" aria-labelledby="internal-test-title">
-    <h2 id="internal-test-title" className="font-semibold">Test interne</h2>
-    <p className="mt-1 text-sm text-muted-foreground">Les accès au panier effectués avec ce mode actif sont exclus des statistiques. Utilisez cet onglet pour tester, puis désactivez le mode ici.</p>
-    <div className="mt-3 flex flex-wrap items-center gap-4">
-      <button type="button" role="switch" aria-checked={internalTest} onClick={toggleInternalTest} className="rounded-xl border px-4 py-2">
-        Mode test interne
-      </button>
-      <span role="status">{internalTest ? 'Activé' : 'Désactivé'}</span>
-      {internalTest && <Link href="/" className="font-semibold underline">Ouvrir la boutique pour tester →</Link>}
-    </div>
-    {testModeError && <p role="alert" className="mt-2 text-sm">Impossible de modifier le mode test. Vérifiez que le navigateur autorise le stockage de session.</p>}
-  </section>
-  {error&&<p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">{error}</p>}
-  {data&&!error&&<><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{Object.entries(labels).map(([kind,label])=><div key={kind} className="rounded-2xl border bg-card p-5"><p className="text-sm text-muted-foreground">{label}</p><p className="mt-3 text-3xl font-bold">{(data.totals.find(r=>r.kind===kind)?.total||0).toLocaleString('fr-FR')}</p></div>)}
-    {data.orderCount !== undefined && (
-      <div className="rounded-2xl border bg-card p-5">
-        <p className="text-sm text-muted-foreground">Commandes passées hors tests</p>
-        <p className="mt-3 text-3xl font-bold">{data.orderCount.toLocaleString('fr-FR')}</p>
+"use client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  internalTestEnabled,
+  setInternalTestEnabled,
+} from "@/lib/engagement-client";
+import {
+  engagementTimeline,
+  type EngagementStats,
+} from "@/lib/partner-statistics";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+
+export default function StatistiquesPage() {
+  const [days, setDays] = useState("30");
+  const [data, setData] = useState<EngagementStats>();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const requestId = useRef(0);
+  const [internalTest, setInternalTest] = useState(false);
+  const [testModeError, setTestModeError] = useState(false);
+  useEffect(() => {
+    const sync = () => setInternalTest(internalTestEnabled());
+    sync();
+    window.addEventListener("pageshow", sync);
+    return () => window.removeEventListener("pageshow", sync);
+  }, []);
+  const refresh = useCallback(async () => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch("/api/engagement/stats?days=" + days, {
+        cache: "no-store",
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Chargement impossible.");
+      if (id === requestId.current) setData(body);
+    } catch (e) {
+      if (id === requestId.current)
+        setError(e instanceof Error ? e.message : "Chargement impossible.");
+    } finally {
+      if (id === requestId.current) setLoading(false);
+    }
+  }, [days]);
+  useEffect(() => {
+    void refresh();
+    return () => {
+      requestId.current++;
+    };
+  }, [refresh]);
+  const toggleInternalTest = () => {
+    try {
+      setInternalTestEnabled(!internalTest);
+      setInternalTest(internalTestEnabled());
+      setTestModeError(false);
+    } catch {
+      setTestModeError(true);
+    }
+  };
+  const chart = engagementTimeline(data?.daily ?? [], Number(days));
+  const total = (kind: string) =>
+    (data?.totals.find((r) => r.kind === kind)?.total ?? 0).toLocaleString(
+      "fr-FR",
+    );
+  return (
+    <div className="mx-auto max-w-6xl space-y-6 py-6">
+      <header>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">
+          Statistiques des boutiques partenaires
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Taux de conversion du panier{' '}
-          <strong className="text-foreground">{conversionRate ?? '—'}</strong>
+          Suivez la visibilité des boutiques et les prises de contact sur le
+          site. Les ventes réalisées directement avec les commerçants ne sont
+          pas connues de DakarBoutik.
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {conversionRate === null ? 'Aucun accès au panier sur cette période.' : 'Commandes hors tests divisées par les accès au panier de la période.'}
-        </p>
-        <Link href={`/admin/orders?statsDays=${days}`} className="mt-3 inline-block font-semibold underline">Voir les commandes →</Link>
+      </header>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <label className="grid gap-2 text-sm font-semibold">
+          Période des statistiques
+          <select
+            value={days}
+            onChange={(e) => setDays(e.target.value)}
+            className="rounded-xl border bg-background p-3"
+          >
+            <option value="7">7 jours</option>
+            <option value="30">30 jours</option>
+            <option value="90">90 jours</option>
+          </select>
+        </label>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={refresh}
+            disabled={loading}
+            className="rounded-xl border px-4 py-3 disabled:opacity-50"
+          >
+            {loading ? "Chargement…" : "Actualiser"}
+          </button>
+          <Link
+            href="/admin/boutiques"
+            className="rounded-xl border px-4 py-3 font-semibold"
+          >
+            Gérer les boutiques →
+          </Link>
+        </div>
       </div>
-    )}
-  </div>
-  <section className="rounded-2xl border bg-card p-5"><h2 className="mb-4 text-xl font-bold">Évolution des publicités</h2><div role="img" aria-label="Évolution quotidienne des affichages et clics publicitaires" className="h-72"><ResponsiveContainer width="100%" height="100%"><BarChart data={chart}><CartesianGrid strokeDasharray="3 3"/><XAxis dataKey="day"/><YAxis allowDecimals={false}/><Tooltip/><Legend/><Bar dataKey="views" name="Affichages" fill="#0b8060"/><Bar dataKey="clicks" name="Clics" fill="#dca817"/></BarChart></ResponsiveContainer></div></section>
-  <section className="overflow-x-auto rounded-2xl border bg-card p-5"><h2 className="mb-4 text-xl font-bold">Résultats par campagne</h2><table className="w-full text-left text-sm"><thead><tr><th className="p-3">Publicité</th><th className="p-3">Affichages</th><th className="p-3">Clics</th><th className="p-3">Taux de clic</th></tr></thead><tbody>{data.campaigns.map(c=><tr key={c.id} className="border-t"><td className="p-3">{c.title}</td><td className="p-3">{c.views}</td><td className="p-3">{c.clicks}</td><td className="p-3">{c.views?((c.clicks/c.views)*100).toFixed(1)+' %':'—'}</td></tr>)}</tbody></table>{!data.campaigns.length&&<p className="py-4">Les résultats apparaîtront après la création et la diffusion de vos publicités.</p>}</section></>}
-  <p className="text-sm leading-relaxed text-muted-foreground">Un affichage correspond à une annonce visible à au moins 50 % pendant une seconde, une fois par chargement de page. Les clics sont des interactions, pas des visiteurs uniques ni des ventes. WhatsApp ne nous confirme pas l’envoi du message. Les bloqueurs, les préférences de confidentialité et les tests peuvent affecter ces compteurs. Statistiques disponibles sur 90 jours ; les événements plus anciens sont purgés lors des nouvelles mesures, sans nom, téléphone, e-mail ni identifiant de visiteur dans les événements.</p>
- </div>;
+      {loading && (
+        <p role="status">Chargement des résultats sur {days} jours…</p>
+      )}
+      {error && (
+        <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">
+          {error}
+        </p>
+      )}
+      {data && !error && !loading && (
+        <>
+          <section
+            aria-labelledby="partner-contacts-title"
+            className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 text-slate-900 sm:p-6"
+          >
+            <h2 id="partner-contacts-title" className="text-xl font-bold">
+              Consultations et contacts · {days} jours
+            </h2>
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <div className="rounded-xl border bg-white p-5">
+                <h3 className="text-sm font-semibold text-emerald-900">
+                  Consultations de boutiques
+                </h3>
+                <p className="mt-3 text-4xl font-extrabold text-emerald-800">
+                  {total("shop_view")}
+                </p>
+                <p className="mt-2 text-xs text-slate-600">
+                  Ouvertures des pages boutiques partenaires ; une personne peut
+                  consulter plusieurs fois.
+                </p>
+              </div>
+              <div className="rounded-xl border bg-white p-5">
+                <h3 className="text-sm font-semibold text-emerald-900">
+                  Clics WhatsApp sur le site
+                </h3>
+                <p className="mt-3 text-4xl font-extrabold text-emerald-800">
+                  {total("whatsapp_click")}
+                </p>
+                <p className="mt-2 text-xs text-slate-600">
+                  Intentions de contact, sans confirmation d’envoi du message ni
+                  de vente.
+                </p>
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed">
+              Les clics WhatsApp sont mesurés globalement et peuvent inclure
+              l’assistance et l’ancien catalogue. Les données actuelles ne
+              permettent pas de les attribuer précisément à chaque boutique.
+            </p>
+          </section>
+          <section
+            aria-labelledby="contact-chart-title"
+            className="min-w-0 rounded-2xl border bg-card p-5"
+          >
+            <h2 id="contact-chart-title" className="mb-4 text-lg font-bold">
+              Évolution des consultations et contacts
+            </h2>
+            <div
+              role="img"
+              aria-label="Évolution quotidienne des consultations de boutiques et clics WhatsApp"
+              className="h-72 min-w-0"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chart}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis allowDecimals={false} width={32} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar
+                    dataKey="shops"
+                    name="Consultations boutiques"
+                    fill="#0b8060"
+                  />
+                  <Bar
+                    dataKey="whatsapp"
+                    name="Clics WhatsApp"
+                    fill="#b7791f"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Journées à l’heure de Dakar. Il s’agit d’interactions, pas de
+              visiteurs uniques ou de ventes confirmées.
+            </p>
+          </section>
+          <section
+            aria-labelledby="ads-title"
+            className="space-y-4 rounded-2xl border bg-card p-5"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 id="ads-title" className="text-lg font-bold">
+                Résultats publicitaires
+              </h2>
+              <Link
+                href="/admin/publicites"
+                className="text-sm font-semibold text-primary underline"
+              >
+                Gérer les publicités →
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Affichages publicitaires
+                </p>
+                <p className="mt-1 text-2xl font-bold">{total("ad_view")}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Clics publicitaires
+                </p>
+                <p className="mt-1 text-2xl font-bold">{total("ad_click")}</p>
+              </div>
+            </div>
+            <details>
+              <summary className="cursor-pointer py-2 font-semibold">
+                Évolution quotidienne des publicités
+              </summary>
+              <div
+                role="img"
+                aria-label="Évolution quotidienne des affichages et clics publicitaires"
+                className="mt-3 h-72"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chart}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis allowDecimals={false} width={32} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="views" name="Affichages" fill="#0b8060" />
+                    <Bar dataKey="clicks" name="Clics" fill="#b7791f" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </details>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <caption className="py-3 text-left font-semibold">
+                  Résultats par campagne · {days} jours
+                </caption>
+                <thead>
+                  <tr>
+                    <th className="p-2">Publicité</th>
+                    <th className="p-2">Affichages</th>
+                    <th className="p-2">Clics</th>
+                    <th className="p-2">Taux de clic</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.campaigns.map((c) => (
+                    <tr key={c.id} className="border-t">
+                      <td className="min-w-40 p-2">{c.title}</td>
+                      <td className="p-2">{c.views}</td>
+                      <td className="p-2">{c.clicks}</td>
+                      <td className="p-2">
+                        {c.views
+                          ? ((c.clicks / c.views) * 100).toFixed(1) + " %"
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {!data.campaigns.length && (
+              <p className="text-sm text-muted-foreground">
+                Aucune campagne mesurée sur cette période.
+              </p>
+            )}
+          </section>
+          <details className="rounded-2xl border border-dashed bg-card p-5">
+            <summary className="cursor-pointer font-bold">
+              Anciennes commandes DakarBoutik · historique séparé
+            </summary>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Ces chiffres concernent l’ancien panier DakarBoutik. Ils ne
+              représentent pas les commandes ou ventes des boutiques
+              partenaires.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-medium">Anciens accès au panier</h3>
+                <p className="mt-2 text-2xl font-bold">
+                  {total("checkout_open")}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium">
+                  Anciennes commandes enregistrées hors tests
+                </h3>
+                <p className="mt-2 text-2xl font-bold">
+                  {data.orderCount?.toLocaleString("fr-FR") ?? "—"}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Période sélectionnée : {days} jours. Tous les statuts, commandes
+              annulées et archives comprises ; ce total n’est pas un nombre de
+              ventes finalisées. Les commandes identifiées comme tests internes
+              sont exclues.
+            </p>
+            <Link
+              href={"/admin/orders?statsDays=" + days}
+              className="mt-4 inline-block font-semibold text-primary underline"
+            >
+              Voir les anciennes commandes →
+            </Link>
+          </details>
+        </>
+      )}
+      <details className="rounded-2xl border bg-card p-5">
+        <summary className="cursor-pointer font-semibold">
+          Visiteurs, pays et provenances · Vercel Analytics
+        </summary>
+        <p className="my-3 text-sm">
+          Les visiteurs, pages vues, pays, provenances et appareils sont
+          disponibles dans Vercel Analytics après activation. Les anciennes
+          visites ne peuvent pas être reconstituées.
+        </p>
+        <a
+          className="inline-block rounded-xl border px-4 py-3 text-sm font-semibold"
+          href="https://vercel.com/dakarboutikks-projects/dakarboutik/analytics"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ouvrir les visites dans Vercel ↗
+        </a>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Compte Vercel requis. Historique inclus : 30 jours, indépendant du
+          sélecteur ci-dessus.
+        </p>
+      </details>
+      <section
+        className="rounded-2xl border bg-card p-5"
+        aria-labelledby="internal-test-title"
+      >
+        <h2 id="internal-test-title" className="font-semibold">
+          Tests du panier historique
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ce mode exclut uniquement les accès au panier effectués dans cet
+          onglet. Il ne filtre pas les consultations de boutiques ni les clics
+          WhatsApp.
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={internalTest}
+            onClick={toggleInternalTest}
+            className="rounded-xl border px-4 py-2"
+          >
+            Mode test interne
+          </button>
+          <span role="status">{internalTest ? "Activé" : "Désactivé"}</span>
+          {internalTest && (
+            <Link href="/" className="font-semibold underline">
+              Ouvrir le site pour tester →
+            </Link>
+          )}
+        </div>
+        {testModeError && (
+          <p role="alert" className="mt-2 text-sm">
+            Impossible de modifier le mode test. Vérifiez le stockage de session
+            du navigateur.
+          </p>
+        )}
+      </section>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Un affichage publicitaire correspond à une annonce visible à au moins 50
+        % pendant une seconde, une fois par chargement de page. Les bloqueurs,
+        les préférences de confidentialité et les tests peuvent affecter les
+        compteurs. Conservation des événements : 90 jours, sans nom, téléphone,
+        e-mail ni identifiant de visiteur. Aucune estimation des ventes
+        partenaires n’est calculée à partir des clics.
+      </p>
+    </div>
+  );
 }

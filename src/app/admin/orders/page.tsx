@@ -34,6 +34,7 @@ import { statusLabels } from '@/components/admin/status-selector';
 import { useToast } from '@/hooks/use-toast';
 import { useApiData } from '@/hooks/use-api-data';
 import { exportCsv } from '@/lib/export-csv';
+import { isInternalOrder } from '@/lib/admin-partners';
 
 type OrderFilter = OrderStatus | 'all' | 'archived';
 
@@ -63,7 +64,7 @@ function OrdersView() {
       start.setUTCHours(0, 0, 0, 0);
       start.setUTCDate(start.getUTCDate() - statsDays + 1);
       filtered = filtered.filter(order =>
-        !order.orderId.startsWith('DKB-TEST-') && Date.parse(order.createdAt) >= start.getTime()
+        !isInternalOrder(order) && Date.parse(order.createdAt) >= start.getTime()
       );
     }
 
@@ -74,11 +75,11 @@ function OrdersView() {
     if (statusFilter !== 'all' && statusFilter !== 'archived') {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
-    
+
     // Filter by search term
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         order.orderId.toLowerCase().includes(lowercasedTerm) ||
         order.customerInfo.name.toLowerCase().includes(lowercasedTerm) ||
         order.customerInfo.email.toLowerCase().includes(lowercasedTerm)
@@ -89,7 +90,7 @@ function OrdersView() {
   }, [orders, statusFilter, searchTerm, statsDays]);
 
   const allStatuses: OrderFilter[] = ['all', 'pending', 'paid', 'shipped', 'delivered', 'cancelled', 'archived'];
-  
+
   const exportToCsv = () => {
     if (!filteredOrders || filteredOrders.length === 0) {
       toast({
@@ -137,7 +138,7 @@ function OrdersView() {
     const date = new Date().toISOString().split('T')[0];
     exportCsv(`commandes-dakarboutik-${date}.csv`, headers, rows);
   };
-  
+
   if (loading) {
       return (
           <div className="flex h-full min-h-[60vh] items-center justify-center">
@@ -196,7 +197,7 @@ function OrdersView() {
                     <CardHeader className="px-6">
                     <CardTitle className="font-headline font-bold">Commandes</CardTitle>
                     <CardDescription>
-                        {statsDays !== null && <>Commandes hors tests · {statsDays} jours<br /></>}
+                        {statsDays !== null && <>Anciennes commandes DakarBoutik hors tests · {statsDays} jours<br /></>}
                         {statusFilter === 'all' ? (statsDays === null ? 'Toutes les commandes non archivées' : 'Tous les statuts, archives comprises') : statusFilter === 'archived' ? 'Commandes archivées' : `Commandes avec le statut : ${statusLabels[statusFilter]}`}
                     </CardDescription>
                     </CardHeader>

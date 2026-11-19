@@ -194,7 +194,7 @@ export default function AdminLayout({
     return (
       <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
         <AdminSidebar />
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <header className="flex h-16 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur md:px-6">
             <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
               <SheetTrigger asChild>

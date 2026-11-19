@@ -1,4 +1,4 @@
-import { MarketplaceDashboard } from "@/components/marketplace/dashboard";
+import { redirect } from "next/navigation";
 export default function Page() {
-  return <MarketplaceDashboard admin />;
+  redirect("/admin/boutiques");
 }

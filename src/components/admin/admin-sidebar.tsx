@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -17,14 +17,14 @@ import {
   Plus,
   Store,
   type LucideIcon,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
+} from "@/components/ui/accordion";
 
 type MenuItem = {
   href?: string;
@@ -36,27 +36,55 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/publicites', label: 'Espaces publicitaires', icon: ImageIcon },
-  { href: '/admin/banners', label: 'Bannières', icon: ImageIcon },
   {
-    label: 'Produits',
-    icon: Package,
+    href: "/admin",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+    exact: true,
+  },
+  { href: "/admin/boutiques", label: "Boutiques et produits", icon: Store },
+  { href: "/admin/statistiques", label: "Statistiques", icon: LineChart },
+  {
+    label: "Publicité et visibilité",
+    icon: ImageIcon,
     subItems: [
-      { href: '/admin/products', label: 'Tous les produits', icon: Boxes },
-      { href: '/admin/add-product', label: 'Ajouter un produit', icon: Plus },
-      { href: '/admin/categories', label: 'Catégories', icon: Tags },
+      {
+        href: "/admin/publicites",
+        label: "Espaces publicitaires",
+        icon: ImageIcon,
+      },
+      { href: "/admin/banners", label: "Bannières", icon: ImageIcon },
     ],
   },
-  { href: '/admin/boutiques', label: 'Boutiques', icon: Store },
-  { href: '/admin/marketplace', label: 'Commerçants et publicités', icon: Store },
-  { href: '/admin/orders', label: 'Commandes', icon: ShoppingCart },
-  { href: '/admin/messages', label: 'Messages', icon: Mail },
-  { href: '/admin/faq', label: 'FAQ', icon: HelpCircle },
-  { href: '/admin/reviews', label: 'Avis clients', icon: MessageSquare },
-  { href: '/admin/media', label: 'Médiathèque', icon: ImageIcon },
-  { href: '/admin/statistiques', label: 'Statistiques', icon: LineChart },
-  { href: '/admin/settings', label: 'Réglages', icon: Settings },
+  {
+    label: "Contenus et messages",
+    icon: Mail,
+    subItems: [
+      { href: "/admin/messages", label: "Messages", icon: Mail },
+      { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
+      { href: "/admin/reviews", label: "Avis clients", icon: MessageSquare },
+      { href: "/admin/media", label: "Médiathèque", icon: ImageIcon },
+    ],
+  },
+  {
+    label: "Catalogue historique",
+    icon: Package,
+    subItems: [
+      {
+        href: "/admin/orders",
+        label: "Anciennes commandes",
+        icon: ShoppingCart,
+      },
+      { href: "/admin/products", label: "Anciens produits", icon: Boxes },
+      {
+        href: "/admin/add-product",
+        label: "Ajouter un ancien produit",
+        icon: Plus,
+      },
+      { href: "/admin/categories", label: "Anciennes catégories", icon: Tags },
+    ],
+  },
+  { href: "/admin/settings", label: "Réglages", icon: Settings },
 ];
 
 function isLinkActive(item: MenuItem, pathname: string) {
@@ -65,33 +93,50 @@ function isLinkActive(item: MenuItem, pathname: string) {
   if (item.subItems) {
     return (
       item.subItems.some((sub) => pathname.startsWith(sub.href)) ||
-      pathname.startsWith('/admin/edit-product')
+      pathname.startsWith("/admin/edit-product")
     );
   }
   return false;
 }
 
-export function AdminSidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+export function AdminSidebarContent({
+  onNavigate,
+}: {
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
 
   const defaultActiveAccordion = menuItems.find(
     (item) =>
       item.subItems &&
       (item.subItems.some((sub) => pathname.startsWith(sub.href)) ||
-        pathname.startsWith('/admin/edit-product'))
+        pathname.startsWith("/admin/edit-product")),
   )?.label;
 
   return (
     <div className="flex h-full max-h-screen flex-col bg-nav text-nav-foreground">
       <div className="flex h-16 items-center gap-2.5 border-b border-white/10 px-6">
-        <Link href="/admin" onClick={onNavigate} aria-label="DakarBoutik — tableau de bord" className="shrink-0 rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
-          <img src="/dakarboutik-logo-tricolore.png" alt="DakarBoutik" width={44} height={44} className="h-11 w-11 object-contain" />
+        <Link
+          href="/admin"
+          onClick={onNavigate}
+          aria-label="DakarBoutik — tableau de bord"
+          className="shrink-0 rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+        >
+          <img
+            src="/dakarboutik-logo-tricolore.png"
+            alt="DakarBoutik"
+            width={44}
+            height={44}
+            className="h-11 w-11 object-contain"
+          />
         </Link>
         <div className="leading-tight">
           <span className="block font-headline text-sm font-extrabold">
             Dakar<span className="text-accent">Boutik</span>
           </span>
-          <span className="text-[11px] text-nav-foreground/60">Espace Admin</span>
+          <span className="text-[11px] text-nav-foreground/60">
+            Espace Admin
+          </span>
         </div>
       </div>
 
@@ -99,15 +144,22 @@ export function AdminSidebarContent({ onNavigate }: { onNavigate?: () => void })
         <nav className="grid items-start gap-1 px-3 text-sm font-medium">
           <Accordion
             type="multiple"
-            defaultValue={defaultActiveAccordion ? [defaultActiveAccordion] : []}
+            defaultValue={
+              defaultActiveAccordion ? [defaultActiveAccordion] : []
+            }
           >
             {menuItems.map((item) =>
               item.subItems ? (
-                <AccordionItem key={item.label} value={item.label} className="border-b-0">
+                <AccordionItem
+                  key={item.label}
+                  value={item.label}
+                  className="border-b-0"
+                >
                   <AccordionTrigger
                     className={cn(
-                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground hover:no-underline',
-                      isLinkActive(item, pathname) && 'bg-white/10 text-nav-foreground'
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground hover:no-underline",
+                      isLinkActive(item, pathname) &&
+                        "bg-white/10 text-nav-foreground",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
@@ -121,8 +173,9 @@ export function AdminSidebarContent({ onNavigate }: { onNavigate?: () => void })
                           href={subItem.href}
                           onClick={onNavigate}
                           className={cn(
-                            'flex items-center gap-3 rounded-lg px-3 py-2 text-nav-foreground/60 transition-all hover:bg-white/5 hover:text-nav-foreground',
-                            pathname === subItem.href && 'bg-accent/15 text-accent'
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-nav-foreground/60 transition-all hover:bg-white/5 hover:text-nav-foreground",
+                            pathname.startsWith(subItem.href) &&
+                              "bg-accent/15 text-accent",
                           )}
                         >
                           <subItem.icon className="h-4 w-4" />
@@ -149,14 +202,15 @@ export function AdminSidebarContent({ onNavigate }: { onNavigate?: () => void })
                   href={item.href!}
                   onClick={onNavigate}
                   className={cn(
-                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground',
-                    isLinkActive(item, pathname) && 'bg-white/10 text-nav-foreground'
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground",
+                    isLinkActive(item, pathname) &&
+                      "bg-white/10 text-nav-foreground",
                   )}
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}
                 </Link>
-              )
+              ),
             )}
           </Accordion>
         </nav>

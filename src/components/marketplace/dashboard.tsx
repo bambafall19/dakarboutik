@@ -210,7 +210,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
   }
   return (
     <>
-      <MarketplaceNav compact />
+      {!admin && <MarketplaceNav compact />}
       <main
         className="min-h-screen bg-amber-50 text-slate-900"
         style={{
@@ -221,7 +221,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
       >
         <div className="container space-y-5 py-6 sm:py-10">
           <h1 className="text-3xl font-bold">
-            {admin ? "Validation et publicités" : user ? "Mon tableau de bord" : "Mon espace boutique"}
+            {admin ? "Boutiques et produits partenaires" : user ? "Mon tableau de bord" : "Mon espace boutique"}
           </h1>
           <div className="flex flex-wrap items-center gap-4">
             {user && (
@@ -269,9 +269,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
             </p>
           ) : admin ? (
             <>
-              <BillingPanel admin />
+              <div id="forfaits" className="scroll-mt-6"><BillingPanel admin /></div>
               <DashboardCharts listings={listings} />
-              <h2 className="text-2xl font-bold">Boutiques</h2>
+              <h2 id="boutiques" className="scroll-mt-6 text-2xl font-bold">Boutiques</h2>
               {shops.length === 0 && <p>Aucune boutique inscrite.</p>}
               {shops.map((s) => (
                 <form
@@ -341,7 +341,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                   </button>
                 </form>
               ))}
-              <h2 className="text-2xl font-bold">Annonces</h2>
+              <h2 id="produits" className="scroll-mt-6 text-2xl font-bold">Produits partenaires</h2>
               <section className="space-y-4 rounded-xl border bg-white p-5" aria-label="Gestion des produits partenaires">
                 <label className="block">
                   Choisir une boutique

@@ -67,7 +67,35 @@ export default function StatistiquesPage() {
       setTestModeError(true);
     }
   };
-  const chart = engagementTimeline(data?.daily ?? [], Number(days));
+  const chart = engagementTimeline(
+    [
+      ...(data?.partnerDaily ?? []),
+      ...(data?.daily.filter((r) => r.kind.startsWith("ad_")) ?? []),
+    ],
+    Number(days),
+  );
+  const partnerTotal = (kind: string) =>
+    !data?.attributionReady
+      ? "—"
+      : (
+          data?.partnerTotals?.find((r) => r.kind === kind)?.total ?? 0
+        ).toLocaleString("fr-FR");
+  const source = (audience: string) =>
+    data?.contactSources?.find((r) => r.audience === audience);
+  const [activating, setActivating] = useState(false);
+  const activate = async () => {
+    setActivating(true);
+    try {
+      const r = await fetch("/api/engagement/setup", { method: "POST" });
+      const b = await r.json();
+      if (!r.ok) throw Error(b.error);
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Activation impossible.");
+    } finally {
+      setActivating(false);
+    }
+  };
   const total = (kind: string) =>
     (data?.totals.find((r) => r.kind === kind)?.total ?? 0).toLocaleString(
       "fr-FR",
@@ -136,7 +164,7 @@ export default function StatistiquesPage() {
                   Consultations de boutiques
                 </h3>
                 <p className="mt-3 text-4xl font-extrabold text-emerald-800">
-                  {total("shop_view")}
+                  {partnerTotal("shop_view")}
                 </p>
                 <p className="mt-2 text-xs text-slate-600">
                   Ouvertures des pages boutiques partenaires ; une personne peut
@@ -145,10 +173,10 @@ export default function StatistiquesPage() {
               </div>
               <div className="rounded-xl border bg-white p-5">
                 <h3 className="text-sm font-semibold text-emerald-900">
-                  Clics WhatsApp sur le site
+                  Clics WhatsApp vers les partenaires
                 </h3>
                 <p className="mt-3 text-4xl font-extrabold text-emerald-800">
-                  {total("whatsapp_click")}
+                  {partnerTotal("whatsapp_click")}
                 </p>
                 <p className="mt-2 text-xs text-slate-600">
                   Intentions de contact, sans confirmation d’envoi du message ni
@@ -157,11 +185,125 @@ export default function StatistiquesPage() {
               </div>
             </div>
             <p className="mt-4 text-sm leading-relaxed">
-              Les clics WhatsApp sont mesurés globalement et peuvent inclure
-              l’assistance et l’ancien catalogue. Les données actuelles ne
-              permettent pas de les attribuer précisément à chaque boutique.
+              Seules les interactions attribuées aux boutiques sont comptées
+              ici. Le suivi détaillé commence après son activation ; les
+              anciennes interactions ne sont pas réattribuées.
             </p>
           </section>
+          {!data.attributionReady && (
+            <section className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-slate-900">
+              <h2 className="font-bold">
+                Activer les statistiques par boutique
+              </h2>
+              <p className="mt-2 text-sm">
+                Le suivi détaillé n’est pas encore actif. L’historique global
+                est conservé ; les nouveaux contacts pourront être attribués
+                après activation.
+              </p>
+              <button
+                disabled={activating}
+                onClick={activate}
+                className="mt-4 rounded-xl bg-emerald-800 px-4 py-3 font-semibold text-white disabled:opacity-50"
+              >
+                {activating ? "Activation…" : "Activer le suivi par boutique"}
+              </button>
+            </section>
+          )}
+          <section
+            aria-labelledby="per-shop-title"
+            className="rounded-2xl border bg-card p-5"
+          >
+            <h2 id="per-shop-title" className="text-lg font-bold">
+              Consultations et contacts par boutique · {days} jours
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Contacts depuis l’accueil, la recherche, les fiches produits et la
+              page boutique. Un clic n’est pas une vente.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {data.shops?.map((shop) => (
+                <article
+                  key={shop.id}
+                  className="min-w-0 rounded-xl border p-4"
+                >
+                  <h3 className="break-words font-bold">{shop.name}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {shop.status === "approved"
+                      ? "Publiée"
+                      : shop.status === "suspended"
+                        ? "Suspendue"
+                        : shop.status === "removed"
+                          ? "Retirée"
+                          : "En attente"}
+                  </p>
+                  <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <dt>Consultations</dt>
+                      <dd className="mt-1 text-2xl font-bold">
+                        {shop.views.toLocaleString("fr-FR")}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Clics WhatsApp</dt>
+                      <dd className="mt-1 text-2xl font-bold">
+                        {shop.clicks.toLocaleString("fr-FR")}
+                      </dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+            </div>
+            {data.attributionReady && !data.shops?.length && (
+              <p className="mt-3 text-sm">
+                Aucune boutique ni interaction sur cette période.
+              </p>
+            )}
+          </section>
+          <details className="rounded-2xl border border-dashed bg-card p-5">
+            <summary className="cursor-pointer font-bold">
+              Autres contacts et historique non attribué
+            </summary>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              {[
+                ["support", "Assistance DakarBoutik"],
+                ["legacy", "Ancien catalogue DakarBoutik"],
+                ["unattributed", "Historique non attribué"],
+              ].map(([key, label]) => (
+                <div key={key}>
+                  <h3 className="text-sm font-semibold">{label}</h3>
+                  <p className="mt-2 text-2xl font-bold">
+                    {(
+                      source(key)?.clicks ??
+                      (key === "unattributed" && !data.attributionReady
+                        ? Number(
+                            data.totals.find((r) => r.kind === "whatsapp_click")
+                              ?.total || 0,
+                          )
+                        : 0)
+                    ).toLocaleString("fr-FR")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    clics WhatsApp
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              {(
+                source("unattributed")?.views ??
+                (!data.attributionReady
+                  ? Number(
+                      data.totals.find((r) => r.kind === "shop_view")?.total ||
+                        0,
+                    )
+                  : 0)
+              ).toLocaleString("fr-FR")}{" "}
+              consultations historiques sans attribution. Les anciennes données
+              ne permettent pas de distinguer précisément les vendeurs et
+              l’assistance. Elles restent séparées des nouveaux compteurs
+              partenaires.
+            </p>
+          </details>
           <section
             aria-labelledby="contact-chart-title"
             className="min-w-0 rounded-2xl border bg-card p-5"

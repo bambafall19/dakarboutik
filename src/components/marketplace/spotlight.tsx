@@ -34,7 +34,7 @@ export function MarketplaceSpotlight({ shops, now, showNews = false }: { shops: 
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-950">Votre publicité ici</p>
             <h3 className="mt-3 text-xl font-bold">Donnez plus de visibilité à votre boutique</h3>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-700">Présentez vos nouveautés et vos produits disponibles aux visiteurs de DakarBoutik. Contactez-nous pour connaître les emplacements, les périodes et les tarifs.</p>
-            <a href={advertisingUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-full bg-emerald-900 px-5 py-3 text-sm font-semibold text-white">Demander une mise en avant ↗</a>
+            <a href={advertisingUrl} data-engagement-audience="support" target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-full bg-emerald-900 px-5 py-3 text-sm font-semibold text-white">Demander une mise en avant ↗</a>
           </div>
         </div>
       </section>

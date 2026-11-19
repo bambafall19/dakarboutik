@@ -90,6 +90,8 @@ export function HomePartnerSelection({
           </Link>
           <a
             href={contactUrl(shop, listing)}
+            data-engagement-audience="partner"
+            data-shop-id={shop.id}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 py-3 text-sm font-semibold text-emerald-900"

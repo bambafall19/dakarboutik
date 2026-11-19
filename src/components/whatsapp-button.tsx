@@ -140,6 +140,7 @@ export function WhatsAppButton() {
         {whatsappUrl ? (
           <a
             href={whatsappUrl}
+            data-engagement-audience="support"
             target="_blank"
             rel="noopener noreferrer"
             className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-3 py-3 font-semibold text-white hover:bg-emerald-800"

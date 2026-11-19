@@ -84,7 +84,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
         </Accordion>
         <Link href="/boutiques" onClick={onLinkClick} className={`${row} mt-2`}><Heart className="h-5 w-5" aria-hidden="true" />Toutes les boutiques</Link>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className={`${row} justify-center bg-emerald-50 text-emerald-900`}><MessageCircle className="h-4 w-4" aria-hidden="true" />WhatsApp</a>}
+          {whatsapp && <a href={`https://wa.me/${whatsapp}`} data-engagement-audience="support" target="_blank" rel="noopener noreferrer" className={`${row} justify-center bg-emerald-50 text-emerald-900`}><MessageCircle className="h-4 w-4" aria-hidden="true" />WhatsApp</a>}
           {phone && <a href={`tel:${phone}`} className={`${row} justify-center border`}><Phone className="h-4 w-4" aria-hidden="true" />Appeler</a>}
           {settings?.supportEmail && <a href={`mailto:${settings.supportEmail}`} className={`${row} col-span-2 min-w-0 text-xs`}><Mail className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="break-all">{settings.supportEmail}</span></a>}
         </div>

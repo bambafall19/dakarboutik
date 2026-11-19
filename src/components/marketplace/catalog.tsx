@@ -163,6 +163,8 @@ export function ListingCard({
           <a
             className="inline-flex rounded-full bg-emerald-800 px-4 py-3 text-sm font-semibold text-white"
             href={contactUrl(shop, listing)}
+            data-engagement-audience="partner"
+            data-shop-id={shop.id}
             target="_blank"
             rel="noopener noreferrer"
           >

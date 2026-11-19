@@ -108,7 +108,7 @@ export function Footer({ settings }: FooterProps) {
                   )}
                   {settings?.whatsappNumber && (
                     <a
-                      href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`}
+                      href={`https://wa.me/${settings.whatsappNumber.replace(/\s/g, '')}`} data-engagement-audience="support"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex items-center gap-3 text-sm text-nav-foreground/70 transition hover:text-accent"

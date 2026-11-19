@@ -1,5 +1,16 @@
 export type EngagementStats = {
   days: number;
+  attributionReady?: boolean;
+  shops?: {
+    id: string;
+    name: string;
+    status: string;
+    views: number;
+    clicks: number;
+  }[];
+  partnerTotals?: { kind: string; total: number }[];
+  partnerDaily?: { day: string; kind: string; total: number }[];
+  contactSources?: { audience: string; views: number; clicks: number }[];
   orderCount?: number;
   totals: { kind: string; total: number }[];
   daily: { day: string; kind: string; total: number }[];

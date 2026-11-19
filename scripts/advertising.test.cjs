@@ -5,7 +5,9 @@ const assert=require('node:assert/strict');
 const {PGlite}=require('@electric-sql/pglite');
 const {NextRequest}=require('next/server');
 function load(file,deps={}) {const m={exports:{}};new Function('require','module','exports',ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText)(name=>deps[name]||require(name),m,m.exports);return m.exports;}
-const model=load('src/lib/advertising.ts');
+const attribution=load('src/lib/engagement-attribution.ts');
+const helpers=load('src/lib/partner-statistics.ts');
+const model=load('src/lib/advertising.ts',{'./engagement-attribution':attribution});
 const base={title:'Batterie solaire',imageUrl:'/api/media/file/photo',targetUrl:'/products/batterie',placement:'home',active:true,startsOn:'2026-11-04',endsOn:'2026-11-05'};
 test('Campaigns reject unsafe URLs and impossible or reversed dates',()=>{
  for(const url of ['javascript:alert(1)','//evil.test','/\\evil.test','http://evil.test','data:image/svg+xml,test','https://user:password@example.com']) assert.equal(model.campaignSchema.safeParse({...base,targetUrl:url}).success,false,url);
@@ -26,9 +28,9 @@ test('Events exclude personal payloads and require a campaign only for advertisi
  assert.equal(model.eventSchema.safeParse({...e,campaignId:crypto.randomUUID()}).success,false);
 });
 test('Campaign API protects administration and preserves data when deactivated',async()=>{
- const db=new PGlite();await db.exec(fs.readFileSync('scripts/advertising.sql','utf8'));
+ const db=new PGlite();await db.exec(fs.readFileSync('scripts/advertising.sql','utf8'));await db.exec(fs.readFileSync('scripts/marketplace.sql','utf8'));await db.exec("create table orders(order_id text, customer_info jsonb, created_at timestamptz)");
  let admin=false;
- const deps={'@/lib/db':{query:async(sql,p)=>(await db.query(sql,p)).rows},'@/lib/auth':{getSession:async()=>({isAdmin:admin})},'@/lib/advertising':model,'@/lib/public-form-guard':{readPublicForm:async req=>({body:await req.json()})}};
+ const deps={'@/lib/db':{query:async(sql,p)=>(await db.query(sql,p)).rows},'@/lib/auth':{getSession:async()=>({isAdmin:admin})},'@/lib/advertising':model,'@/lib/engagement-attribution-server':{attributionReady:async()=>false},'@/lib/public-form-guard':{readPublicForm:async req=>({body:await req.json()})}};
  const api=load('src/app/api/advertising/route.ts',deps);
  const req=(data,origin='https://shop.test')=>new NextRequest('https://shop.test/api/advertising',{method:'POST',headers:{origin},body:JSON.stringify(data)});
  assert.equal((await api.GET(new NextRequest('https://shop.test/api/advertising?admin=1'))).status,403);
@@ -42,21 +44,21 @@ test('Campaign API protects administration and preserves data when deactivated',
  await db.close();
 });
 test('SQL counts a unique event once, rejects inactive or wrong-slot campaigns, and reports exact totals',async()=>{
- const db=new PGlite();await db.exec(fs.readFileSync('scripts/advertising.sql','utf8'));
+ const db=new PGlite();await db.exec(fs.readFileSync('scripts/advertising.sql','utf8'));await db.exec(fs.readFileSync('scripts/marketplace.sql','utf8'));await db.exec("create table orders(order_id text, customer_info jsonb, created_at timestamptz)");
  const cid=crypto.randomUUID();
  await db.query("insert into advertising_campaigns(id,title,image_url,target_url,placement,active) values($1,'Test','/photo','/products','home',true)",[cid]);
- const deps={'@/lib/db':{query:async(sql,p)=>(await db.query(sql,p)).rows},'@/lib/advertising':model,'@/lib/public-form-guard':{readPublicForm:async req=>({body:await req.json()})}};
+ const deps={'@/lib/db':{query:async(sql,p)=>(await db.query(sql,p)).rows},'@/lib/advertising':model,'@/lib/engagement-attribution-server':{attributionReady:async()=>false},'@/lib/public-form-guard':{readPublicForm:async req=>({body:await req.json()})}};
  const route=load('src/app/api/engagement/route.ts',deps);
  const event={id:crypto.randomUUID(),kind:'ad_view',placement:'home',campaignId:cid};
  const post=e=>route.POST(new NextRequest('https://shop.test/api/engagement',{method:'POST',body:JSON.stringify(e)}));
  await post(event);await post(event);await post({...event,id:crypto.randomUUID(),placement:'shops'});
  await post({...event,id:crypto.randomUUID(),campaignId:crypto.randomUUID()});
- const stats=load('src/app/api/engagement/stats/route.ts',{'@/lib/db':deps['@/lib/db'],'@/lib/auth':{getSession:async()=>({isAdmin:true})}});
+ const stats=load('src/app/api/engagement/stats/route.ts',{'@/lib/partner-statistics':helpers,'@/lib/engagement-attribution-server':{attributionReady:async()=>false},'@/lib/db':deps['@/lib/db'],'@/lib/auth':{getSession:async()=>({isAdmin:true})}});
  const summary=await(await stats.GET(new NextRequest('https://shop.test/api/engagement/stats?days=30'))).json();
  assert.equal(summary.campaigns[0].views,1);assert.equal(summary.totals[0].total,1);
  await db.query('update advertising_campaigns set active=false where id=$1',[cid]);await post({...event,id:crypto.randomUUID()});
  assert.equal((await db.query('select count(*)::int as n from engagement_events')).rows[0].n,1);
- const denied=load('src/app/api/engagement/stats/route.ts',{'@/lib/auth':{getSession:async()=>null},'@/lib/db':deps['@/lib/db']});
+ const denied=load('src/app/api/engagement/stats/route.ts',{'@/lib/partner-statistics':helpers,'@/lib/engagement-attribution-server':{attributionReady:async()=>false},'@/lib/auth':{getSession:async()=>null},'@/lib/db':deps['@/lib/db']});
  assert.equal((await denied.GET(new NextRequest('https://shop.test/api/engagement/stats'))).status,403);
  await db.close();
 });

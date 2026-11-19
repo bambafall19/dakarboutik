@@ -16,7 +16,11 @@ import { statusLabels, type Shop, type Listing } from "@/lib/marketplace-model";
 import type { Order } from "@/lib/types";
 
 type Catalogue = { shops: Shop[]; listings: Listing[] };
-type Stats = { totals: { kind: string; total: number }[] };
+type Stats = {
+  totals: { kind: string; total: number }[];
+  partnerTotals?: { kind: string; total: number }[];
+  attributionReady?: boolean;
+};
 const manage = "/admin/boutiques";
 const linkClass = "font-semibold text-primary underline underline-offset-4";
 
@@ -52,7 +56,9 @@ export default function AdminDashboardPage() {
     (o) => o.status === "pending" && !o.archivedAt && !isInternalOrder(o),
   ).length;
   const count = (kind: string) =>
-    stats.data?.totals.find((r) => r.kind === kind)?.total ?? 0;
+    (kind === "ad_view" ? stats.data?.totals : stats.data?.partnerTotals)?.find(
+      (r) => r.kind === kind,
+    )?.total ?? 0;
   const cards = [
     {
       label: "Boutiques publiées",
@@ -133,22 +139,25 @@ export default function AdminDashboardPage() {
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             {[
-              ["whatsapp_click", "Clics WhatsApp"],
+              ["whatsapp_click", "Clics WhatsApp partenaires"],
               ["shop_view", "Consultations de boutiques"],
               ["ad_view", "Affichages publicitaires"],
             ].map(([kind, label]) => (
               <div key={kind}>
                 <p className="text-sm text-muted-foreground">{label}</p>
                 <p className="mt-1 text-2xl font-bold">
-                  {count(kind).toLocaleString("fr-FR")}
+                  {stats.data?.attributionReady === false && kind !== "ad_view"
+                    ? "À activer"
+                    : count(kind).toLocaleString("fr-FR")}
                 </p>
               </div>
             ))}
           </div>
         )}
         <p className="mt-4 text-xs text-muted-foreground">
-          Interactions mesurées sur le site, toutes boutiques confondues. Un
-          clic WhatsApp ne confirme ni l’envoi d’un message ni une vente.
+          Interactions attribuées aux partenaires, toutes boutiques confondues.
+          Publicités : tous les emplacements. Un clic WhatsApp ne confirme ni
+          l’envoi d’un message ni une vente.
         </p>
         <Link
           href="/admin/statistiques"

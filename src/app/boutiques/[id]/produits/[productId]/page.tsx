@@ -83,6 +83,7 @@ export default async function ProductPage({
             {p.availability !== "sold_out" ? (
               <a
                 href={contactUrl(shop, listing)}
+            data-engagement-audience="partner" data-shop-id={shop.id}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-800 px-5 py-3 font-semibold text-white"

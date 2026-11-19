@@ -42,6 +42,7 @@ export default async function Page({
             <a
               className="rounded-full bg-white px-5 py-3 font-semibold text-emerald-950"
               href={contactUrl(shop)}
+            data-engagement-audience="partner" data-shop-id={shop.id}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -92,6 +92,9 @@ export default async function HomePage() {
           })}
         />
       </section>
+      <div className={styles.section}>
+        <AdvertisingSlot placement="home" />
+      </div>
       <section
         className={`${styles.section} ${styles.poster}`}
         aria-labelledby="discover-poster-title"
@@ -248,7 +251,6 @@ export default async function HomePage() {
         </div>
       </section>
       <div className={styles.section}>
-        <AdvertisingSlot placement="home" />
         <MarketplaceSpotlight shops={shops} now={now} />
       </div>
       <section

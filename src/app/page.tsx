@@ -19,7 +19,6 @@ import {
   rankActiveShops,
 } from "@/lib/marketplace-discovery";
 import styles from "./home.module.css";
-import { HomePartnerSelection } from "@/components/marketplace/home-selection";
 
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
@@ -57,6 +56,7 @@ export default async function HomePage() {
   ];
   return (
     <div className={styles.home}>
+      <h1 className="sr-only">DakarBoutik — Vos envies. Nos boutiques.</h1>
       <section
         className={`${styles.section} ${styles.topCategories}`}
         aria-labelledby="categories-title"
@@ -113,67 +113,6 @@ export default async function HomePage() {
         </details>
       </section>
 
-      <section
-        className={`${styles.hero} ${styles.heroWithProducts}`}
-        aria-labelledby="home-title"
-      >
-        <div>
-          <h1 id="home-title">
-            Vos envies. <span>Nos boutiques.</span>
-          </h1>
-          <span className={styles.eyebrow}>
-            ✨ Les meilleures trouvailles du Sénégal, à portée de clic.
-          </span>
-          <p>
-            Découvrez les produits des commerçants près de chez vous. Comparez
-            les offres et contactez directement votre boutique.
-          </p>
-          <form
-            action="/boutiques#recherche"
-            className={styles.search}
-            role="search"
-          >
-            <label htmlFor="home-search" className="sr-only">
-              Quel produit cherchez-vous ?
-            </label>
-            <Search size={22} aria-hidden="true" />
-            <input
-              id="home-search"
-              name="q"
-              placeholder="Un ordinateur, un parfum, un kit solaire…"
-              type="search"
-              maxLength={150}
-            />
-            <button
-              type="submit"
-              aria-label="Rechercher les produits des boutiques"
-            >
-              <Search size={22} />
-            </button>
-          </form>
-          <div className={styles.actions}>
-            <Link className={styles.primary} href="/boutiques">
-              Explorer les produits
-            </Link>
-            <Link
-              className={styles.secondary}
-              href="/boutiques#boutiques-resultats"
-            >
-              Trouver une boutique
-            </Link>
-          </div>
-          <p className={styles.note}>
-            {shops.length} boutiques partenaires · {listings.length} produits
-            publiés
-          </p>
-        </div>
-        <HomePartnerSelection
-          items={latest.flatMap((listing) => {
-            const shop = shopMap.get(listing.shop_id);
-            return shop ? [{ listing, shop }] : [];
-          })}
-        />
-      </section>
       <div className={styles.section}>
         <AdvertisingSlot placement="home" />
       </div>

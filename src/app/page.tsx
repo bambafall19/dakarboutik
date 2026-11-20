@@ -5,6 +5,11 @@ import {
   MapPin,
   MessageCircle,
   ShieldCheck,
+  Sun,
+  Laptop,
+  SprayCan,
+  ArrowUpRight,
+  Tags,
 } from "lucide-react";
 import { AdvertisingSlot } from "@/components/advertising-slot";
 import { ListingCard } from "@/components/marketplace/catalog";
@@ -12,6 +17,7 @@ import { MarketplaceSpotlight } from "@/components/marketplace/spotlight";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import {
   MARKETPLACE_CATEGORIES,
+  partnerCategoryMatches,
   partnerSearchUrl,
   rankActiveShops,
 } from "@/lib/marketplace-discovery";
@@ -27,6 +33,34 @@ export default async function HomePage() {
     .filter((listing) => listing.details.availability !== "sold_out")
     .slice(0, 8);
   const now = Date.now();
+  const affordable = listings
+    .filter(
+      (l) =>
+        l.details.availability !== "sold_out" &&
+        l.details.price > 0 &&
+        l.details.price <= 5000,
+    )
+    .slice(0, 4);
+  const rays = [
+    {
+      name: "Solaire",
+      Icon: Sun,
+      caption: "De l’énergie pour vos projets",
+      tone: styles.sunny,
+    },
+    {
+      name: "Informatique",
+      Icon: Laptop,
+      caption: "Équipez vos bonnes idées",
+      tone: styles.tech,
+    },
+    {
+      name: "Parfumerie",
+      Icon: SprayCan,
+      caption: "Trouvez votre nouvelle senteur",
+      tone: styles.scent,
+    },
+  ];
   return (
     <div className={styles.home}>
       <section
@@ -56,7 +90,7 @@ export default async function HomePage() {
             <input
               id="home-search"
               name="q"
-              placeholder="Un téléphone, du riz, des chaussures…"
+              placeholder="Un ordinateur, un parfum, un kit solaire…"
               type="search"
               maxLength={150}
             />
@@ -125,14 +159,73 @@ export default async function HomePage() {
         <div className={styles.heading}>
           <h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2>
         </div>
-        <div className={styles.marketCategories}>
-          {MARKETPLACE_CATEGORIES.map((name) => (
-            <Link key={name} href={partnerSearchUrl("", name)}>
-              {name}
-            </Link>
-          ))}
+        <div className={styles.discoveryGrid}>
+          {rays.map(({ name, Icon, caption, tone }) => {
+            const count = listings.filter((l) =>
+              partnerCategoryMatches(l, name),
+            ).length;
+            return (
+              <Link
+                key={name}
+                className={`${styles.discoveryCard} ${tone}`}
+                href={partnerSearchUrl("", name)}
+              >
+                <span className={styles.discoveryIcon}>
+                  <Icon size={36} aria-hidden="true" />
+                </span>
+                <strong>
+                  {name}
+                  <ArrowUpRight size={20} aria-hidden="true" />
+                </strong>
+                <span>{caption}</span>
+                <small>
+                  {count} produit{count > 1 ? "s" : ""} à découvrir
+                </small>
+              </Link>
+            );
+          })}
         </div>
+        <details className={styles.moreCategories}>
+          <summary>Tous les rayons</summary>
+          <div className={styles.marketCategories}>
+            {MARKETPLACE_CATEGORIES.map((name) => (
+              <Link key={name} href={partnerSearchUrl("", name)}>
+                {name}
+              </Link>
+            ))}
+          </div>
+        </details>
       </section>
+      {affordable.length > 0 && (
+        <section
+          className={`${styles.section} ${styles.affordable}`}
+          aria-labelledby="affordable-title"
+        >
+          <div className={styles.heading}>
+            <div>
+              <span className={styles.eyebrow}>
+                <Tags size={16} aria-hidden="true" /> Des envies, des petits
+                prix
+              </span>
+              <h2 id="affordable-title">À découvrir à 5 000 FCFA ou moins</h2>
+            </div>
+            <Link href="/boutiques?maxPrice=5000#recherche">
+              Tous les petits prix →
+            </Link>
+          </div>
+          <div className={styles.partnerProducts}>
+            {affordable.map((listing) => (
+              <ListingCard
+                idPrefix="petit-prix"
+                key={listing.id}
+                listing={listing}
+                shop={shopMap.get(listing.shop_id)!}
+                compact
+              />
+            ))}
+          </div>
+        </section>
+      )}
       <section className={styles.section} aria-labelledby="latest-title">
         <div className={styles.heading}>
           <div>

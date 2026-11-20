@@ -78,15 +78,17 @@ export function ListingCard({
   listing,
   shop,
   compact = false,
+  idPrefix = "produit",
 }: {
   listing: Listing;
   shop: Shop;
   compact?: boolean;
+  idPrefix?: string;
 }) {
   const p = listing.details;
   return (
     <article
-      id={`produit-${listing.id}`}
+      id={`${idPrefix}-${listing.id}`}
       className="scroll-mt-6 min-w-0 break-words overflow-hidden rounded-2xl border bg-white text-slate-900"
     >
       <Link
@@ -193,12 +195,14 @@ export function MarketplaceCatalog({
   spotlight,
   initialSearch = "",
   initialCategory = "",
+  initialMaxPrice = "",
 }: {
   shops: Shop[];
   listings: Listing[];
   spotlight?: ReactNode;
   initialSearch?: string;
   initialCategory?: string;
+  initialMaxPrice?: string;
 }) {
   const router = useRouter();
   const [refreshing, startRefresh] = useTransition();
@@ -207,7 +211,7 @@ export function MarketplaceCatalog({
   const [category, setCategory] = useState(canonicalCategory(initialCategory));
   const [availableOnly, setAvailableOnly] = useState(false);
   const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
   const [sort, setSort] = useState<ProductSort>("newest");
   const bounds = priceBounds(minPrice, maxPrice);
   const categories = catalogueCategories(

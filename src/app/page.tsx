@@ -95,9 +95,14 @@ export default async function HomePage() {
         </button>
       </form>
       <section className={styles.brandHero} aria-labelledby="welcome-title">
+        <div className={styles.heroSparkles} aria-hidden="true">
+          <span>✦</span>
+          <span>✧</span>
+          <span>✦</span>
+        </div>
         <div className={styles.brandHeroCopy}>
           <span className={styles.brandEyebrow}>
-            DakarBoutik · Vos commerçants, près de vous
+            ✨ DakarBoutik · Vos commerçants, près de vous
           </span>
           <h1 id="welcome-title">
             Vos envies.
@@ -111,6 +116,9 @@ export default async function HomePage() {
           <Link href="/boutiques" className={styles.goldButton}>
             Explorer les produits <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
+          <span className={styles.heroActivity}>
+            {shops.length} boutiques · {listings.length} produits à découvrir
+          </span>
         </div>
         <ReferenceArtwork
           rect="620 300 404 350"

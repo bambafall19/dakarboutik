@@ -4,7 +4,9 @@ import {
   ProductTools,
 } from "@/components/marketplace/product-actions";
 import { notFound } from "next/navigation";
-import { MarketplaceNav, ListingCard } from "@/components/marketplace/catalog";
+import { MarketplaceNav } from "@/components/marketplace/catalog";
+import brand from "@/components/marketplace/brand.module.css";
+import { HomeProductCard } from "@/components/marketplace/home-product-card";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import { availabilityLabels, isProductUrl } from "@/lib/marketplace-model";
 
@@ -24,7 +26,7 @@ export default async function ProductPage({
     .filter((l) => l.shop_id === id && l.id !== productId)
     .slice(0, 3);
   return (
-    <>
+    <div className={brand.page}>
       <MarketplaceNav compact />
       <main className="container space-y-8 py-6 text-slate-900">
         <nav aria-label="Fil d’Ariane" className="flex flex-wrap gap-2 text-sm">
@@ -36,8 +38,10 @@ export default async function ProductPage({
             {shop.profile.name}
           </Link>
         </nav>
-        <article className="grid min-w-0 gap-6 rounded-2xl border bg-white p-4 md:grid-cols-2 md:p-8">
-          <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+        <article
+          className={`${brand.productDetail} grid min-w-0 gap-6 rounded-2xl border bg-white p-4 md:grid-cols-2 md:p-8`}
+        >
+          <div className={`${brand.productPhoto} min-w-0 rounded-xl p-3`}>
             {p.image ? (
               <a
                 href={p.image}
@@ -56,12 +60,12 @@ export default async function ProductPage({
               <p className="p-12 text-center">Photo à venir</p>
             )}
           </div>
-          <div className="min-w-0 space-y-5 break-words">
+          <div className={`${brand.productInfo} min-w-0 space-y-5 break-words`}>
             <p className="font-semibold text-emerald-800">
               {p.category} · {availabilityLabels[p.availability]}
             </p>
             <h1 className="text-2xl font-bold md:text-3xl">{p.title}</h1>
-            <p className="text-2xl font-bold text-emerald-800">
+            <p className={brand.price}>
               {p.price.toLocaleString("fr-FR")} FCFA
             </p>
             <p>
@@ -95,7 +99,7 @@ export default async function ProductPage({
             </p>
           </div>
           <section
-            className="min-w-0 space-y-3 md:col-span-2"
+            className={`${brand.description} min-w-0 space-y-3 md:col-span-2`}
             aria-labelledby="product-description"
           >
             <h2 id="product-description" className="text-xl font-bold">
@@ -117,7 +121,7 @@ export default async function ProductPage({
           </section>
         </article>
         <section
-          className="space-y-3 rounded-2xl border p-5"
+          className={`${brand.seller} space-y-3 rounded-2xl border p-5`}
           aria-labelledby="seller-title"
         >
           <h2 id="seller-title" className="text-xl font-bold">
@@ -142,14 +146,14 @@ export default async function ProductPage({
             <h2 id="other-products" className="mb-4 text-2xl font-bold">
               Dans la même boutique
             </h2>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={brand.productGrid}>
               {others.map((l) => (
-                <ListingCard key={l.id} listing={l} shop={shop} compact />
+                <HomeProductCard key={l.id} listing={l} shop={shop} />
               ))}
             </div>
           </section>
         )}
       </main>
-    </>
+    </div>
   );
 }

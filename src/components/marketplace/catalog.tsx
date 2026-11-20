@@ -18,7 +18,9 @@ import {
   type ProductSort,
 } from "@/lib/partner-products";
 import { ProductTools } from "./product-actions";
-import { Store } from "lucide-react";
+import { Store, SlidersHorizontal } from "lucide-react";
+import brand from "./brand.module.css";
+import { HomeProductCard } from "./home-product-card";
 
 import {
   availabilityLabels,
@@ -32,15 +34,20 @@ import {
 export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <header className="border-b-4 border-yellow-400 bg-white text-slate-900">
+    <header className={brand.header}>
       <nav
         className="container flex flex-wrap items-center justify-between gap-4 py-2"
         aria-label="Navigation DakarBoutik"
       >
-        <Logo />
+        <div className={brand.identity}>
+          <Logo />
+          <span>
+            DakarBoutik<small>Vos envies. Nos boutiques.</small>
+          </span>
+        </div>
         <Link
           href="/commercant?inscription=1"
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className={`${brand.navSignup} inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
         >
           Inscrire ma boutique
         </Link>
@@ -57,7 +64,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
         )}
         <div
           id="marketplace-menu"
-          className={`${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}
+          className={`${brand.navLinks} ${compact && !menuOpen ? "hidden md:flex" : "flex"} flex-wrap gap-5 text-sm`}
         >
           <Link href="/">Accueil</Link>
           <Link href="/boutiques#recherche">Rechercher un produit</Link>
@@ -69,6 +76,15 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
           <Link href="/suivi">Anciennes commandes</Link>
           <Link href="/forfaits">Forfaits et publicité</Link>
           <Link href="/commercant">Espace commerçant</Link>
+          <button
+            type="button"
+            className="min-h-11 text-left font-semibold text-emerald-800"
+            onClick={() =>
+              window.dispatchEvent(new Event("dakarboutik:open-help"))
+            }
+          >
+            On vous guide ?
+          </button>
         </div>
       </nav>
     </header>
@@ -207,6 +223,7 @@ export function MarketplaceCatalog({
   const router = useRouter();
   const [refreshing, startRefresh] = useTransition();
   const [search, setSearch] = useState(initialSearch);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [city, setCity] = useState("");
   const [category, setCategory] = useState(canonicalCategory(initialCategory));
   const [availableOnly, setAvailableOnly] = useState(false);
@@ -265,8 +282,8 @@ export function MarketplaceCatalog({
   return (
     <>
       <MarketplaceNav compact />
-      <main className="min-h-screen bg-emerald-50/40 pb-12 text-slate-900">
-        <section className="border-b border-emerald-100 bg-gradient-to-br from-emerald-50 to-yellow-50">
+      <main className={brand.page}>
+        <section className={brand.intro}>
           <div className="container space-y-3 py-6">
             <h1 className="text-3xl font-bold">
               Les produits des boutiques partenaires
@@ -305,12 +322,22 @@ export function MarketplaceCatalog({
               </button>
             ))}
           </nav>
+          <button
+            type="button"
+            className={brand.filterToggle}
+            aria-expanded={filtersOpen}
+            aria-controls="recherche"
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            <SlidersHorizontal size={18} aria-hidden="true" />
+            {filtersOpen ? "Masquer les filtres" : "Prix, ville et tri"}
+          </button>
           <form
             id="recherche"
             role="search"
             aria-label="Rechercher un produit partenaire"
             onSubmit={(e) => e.preventDefault()}
-            className="grid gap-4 rounded-2xl border bg-white p-5 md:grid-cols-3"
+            className={`${brand.filters} ${filtersOpen ? brand.filtersOpen : ""} grid gap-4 rounded-2xl border bg-white p-5 md:grid-cols-3`}
           >
             <label className="font-semibold">
               Quel produit cherchez-vous ?
@@ -493,10 +520,9 @@ export function MarketplaceCatalog({
                 ? `Produits pour « ${search.trim()} »`
                 : "À découvrir chez les commerçants"}
             </h2>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={brand.productGrid}>
               {matchingListings.map((listing) => (
-                <ListingCard
-                  compact
+                <HomeProductCard
                   key={listing.id}
                   listing={listing}
                   shop={shopMap.get(listing.shop_id)!}

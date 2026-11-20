@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { MessageCircle, Search, ArrowRight } from "lucide-react";
 import { Icons } from "./icons";
@@ -52,6 +52,19 @@ export function WhatsAppButton() {
   const number = getWhatsAppNumber(settings);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const show = () => {
+      returnFocus.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      setSelected(null);
+      setOpen(true);
+    };
+    window.addEventListener("dakarboutik:open-help", show);
+    return () => window.removeEventListener("dakarboutik:open-help", show);
+  }, []);
   const topic = selected === null ? null : topics[selected];
   const whatsappUrl = number
     ? buildWhatsAppUrl(
@@ -70,14 +83,23 @@ export function WhatsAppButton() {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-3 z-40 flex min-h-11 items-center gap-1.5 rounded-full border border-emerald-200 bg-white px-3 py-2 text-xs font-semibold text-emerald-800 shadow-sm md:right-4 md:min-h-12 md:gap-2 md:border-transparent md:bg-emerald-700 md:px-4 md:py-3 md:text-base md:text-white md:shadow-lg hover:bg-emerald-50 md:hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 md:bottom-6"
+          className="relative mx-auto mb-24 mt-6 md:fixed md:mb-0 md:mt-0 z-40 flex min-h-11 items-center gap-1.5 rounded-full border border-emerald-200 bg-white px-3 py-2 text-xs font-semibold text-emerald-800 shadow-sm md:right-4 md:min-h-12 md:gap-2 md:border-transparent md:bg-emerald-700 md:px-4 md:py-3 md:text-base md:text-white md:shadow-lg hover:bg-emerald-50 md:hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 md:bottom-6"
           aria-label="On vous guide ? Ouvrir l’aide DakarBoutik"
         >
           <MessageCircle className="h-4 w-4 md:h-6 md:w-6" aria-hidden="true" />
           On vous guide ?
         </button>
       </DialogTrigger>
-      <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-2xl p-5 motion-reduce:animate-none">
+      <DialogContent
+        onCloseAutoFocus={(event) => {
+          if (returnFocus.current?.isConnected) {
+            event.preventDefault();
+            returnFocus.current.focus({ preventScroll: true });
+          }
+          returnFocus.current = null;
+        }}
+        className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-2xl p-5 motion-reduce:animate-none"
+      >
         <DialogTitle className="pr-5 text-xl text-emerald-800">
           On vous guide ?
         </DialogTitle>

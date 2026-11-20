@@ -72,6 +72,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           <Link href="/boutiques#publicite" onClick={onLinkClick} className={`${row} justify-center bg-amber-50 text-amber-950`}><Tag className="h-4 w-4" aria-hidden="true" />À la une</Link>
           <Link href="/boutiques#produits-resultats" onClick={onLinkClick} className={`${row} justify-center bg-emerald-50 text-emerald-950`}><Sparkles className="h-4 w-4" aria-hidden="true" />Nouveautés</Link>
         </div>
+        <button type="button" className={`${row} w-full border border-amber-200 bg-amber-50 text-emerald-900 mb-3`} onClick={() => { onLinkClick(); setTimeout(() => window.dispatchEvent(new Event("dakarboutik:open-help")), 150); }}><MessageCircle className="h-5 w-5" aria-hidden="true" />On vous guide ?</button>
         <Accordion type="multiple" className="border-y">
           <AccordionItem value="categories" className="border-b-0">
             <AccordionTrigger className="min-h-12 px-3 text-sm font-bold hover:no-underline">Explorer les catégories</AccordionTrigger>

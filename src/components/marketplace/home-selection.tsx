@@ -1,4 +1,5 @@
 "use client";
+import { scentOptions } from "@/lib/partner-options";
 import { partnerProductUrl } from "@/lib/partner-products";
 
 import { useState } from "react";
@@ -89,14 +90,22 @@ export function HomePartnerSelection({
             Découvrir le produit
           </Link>
           <a
-            href={contactUrl(shop, listing)}
-            data-engagement-audience="partner"
-            data-shop-id={shop.id}
+            href={
+              scentOptions(listing).length
+                ? `${partnerProductUrl(listing)}#choix-senteur`
+                : contactUrl(shop, listing)
+            }
+            data-engagement-audience={
+              scentOptions(listing).length ? undefined : "partner"
+            }
+            data-shop-id={scentOptions(listing).length ? undefined : shop.id}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 py-3 text-sm font-semibold text-emerald-900"
           >
-            Contacter le vendeur
+            {scentOptions(listing).length
+              ? "Choisir ma senteur"
+              : "Contacter le vendeur"}
           </a>
         </div>
       </div>

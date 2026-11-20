@@ -81,7 +81,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isAdmin || isLogin) {
     return <>{children}</>;
   }
-  if (pathname.startsWith('/boutiques') || pathname === '/forfaits') {
+  if (pathname.startsWith('/boutiques') || pathname === '/forfaits' || pathname === '/favoris') {
     return <><InternalTestBanner pathname={pathname} />{children}<WhatsAppButton /></>;
   }
   if (pathname.startsWith('/commercant')) {

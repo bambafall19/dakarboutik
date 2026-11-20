@@ -23,9 +23,13 @@ type Data = {
 export function BillingPanel({
   admin = false,
   shopExists = false,
+  publishedCount = 0,
+  usedCount = 0,
   initialPlan = "",
   initialVisibility = "",
 }: {
+  publishedCount?: number;
+  usedCount?: number;
   admin?: boolean;
   shopExists?: boolean;
   initialPlan?: string;
@@ -141,6 +145,44 @@ export function BillingPanel({
           {message}
         </p>
       )}
+      {!admin && shopExists && (
+        <div className="space-y-3 rounded-2xl bg-emerald-50 p-4">
+          <p className="font-bold">
+            {publishedCount} produit(s) publié(s) · {usedCount} fiche(s)
+            publiée(s) ou en validation
+          </p>
+          {!data?.enabled && (
+            <>
+              <label className="block text-sm">
+                Simuler mon forfait
+                <select
+                  className={control}
+                  value={planId}
+                  onChange={(e) => setPlanId(e.target.value)}
+                >
+                  {MERCHANT_PLANS.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} · {p.limit} produits
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p>
+                {Math.max(0, selected.limit - usedCount)} place(s) restante(s)
+                dans cette simulation
+                {usedCount > selected.limit
+                  ? " · catalogue au-dessus de cette capacité"
+                  : ""}
+                .
+              </p>
+              <p className="text-sm">
+                Simulation uniquement : aucun forfait activé, aucune limite
+                payante appliquée.
+              </p>
+            </>
+          )}
+        </div>
+      )}
       {!data && !failed && <p>Chargement des forfaits…</p>}
       {failed && (
         <button
@@ -199,6 +241,17 @@ export function BillingPanel({
                   ? ` sur ${membership.product_limit}`
                   : " · accès actuel conservé"}
               </p>
+              {membership.state === "active" && (
+                <p className="mt-2 text-sm">
+                  {Math.max(0, membership.product_limit - membership.used)}{" "}
+                  place(s) restante(s)
+                  {membership.valid_until &&
+                  new Date(membership.valid_until).getTime() <= Date.now()
+                    ? " · forfait expiré"
+                    : ""}
+                  .
+                </p>
+              )}
               {membership.valid_until && (
                 <p className="mt-2 text-sm">
                   {new Date(membership.valid_until).getTime() > Date.now()

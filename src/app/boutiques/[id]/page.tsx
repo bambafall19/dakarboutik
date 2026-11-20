@@ -1,3 +1,4 @@
+import { ShopShare } from "@/components/marketplace/product-actions";
 import { notFound } from "next/navigation";
 import { MarketplaceNav, ListingCard } from "@/components/marketplace/catalog";
 import { publicMarketplace } from "@/lib/marketplace-server";
@@ -42,7 +43,8 @@ export default async function Page({
             <a
               className="rounded-full bg-white px-5 py-3 font-semibold text-emerald-950"
               href={contactUrl(shop)}
-            data-engagement-audience="partner" data-shop-id={shop.id}
+              data-engagement-audience="partner"
+              data-shop-id={shop.id}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -57,6 +59,7 @@ export default async function Page({
               Trouver la boutique
             </a>
           </div>
+          <ShopShare shop={shop} />
         </header>
         <h2 className="text-2xl font-bold">Produits et disponibilités</h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

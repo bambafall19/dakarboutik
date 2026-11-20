@@ -1,12 +1,12 @@
 import Link from "next/link";
+import {
+  ProductContact,
+  ProductTools,
+} from "@/components/marketplace/product-actions";
 import { notFound } from "next/navigation";
 import { MarketplaceNav, ListingCard } from "@/components/marketplace/catalog";
 import { publicMarketplace } from "@/lib/marketplace-server";
-import {
-  availabilityLabels,
-  contactUrl,
-  isProductUrl,
-} from "@/lib/marketplace-model";
+import { availabilityLabels, isProductUrl } from "@/lib/marketplace-model";
 
 export const dynamic = "force-dynamic";
 export default async function ProductPage({
@@ -80,16 +80,9 @@ export default async function ProductPage({
                 timeZone: "Africa/Dakar",
               })}
             </p>
+            <ProductTools listing={listing} />
             {p.availability !== "sold_out" ? (
-              <a
-                href={contactUrl(shop, listing)}
-            data-engagement-audience="partner" data-shop-id={shop.id}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-800 px-5 py-3 font-semibold text-white"
-              >
-                Contacter le vendeur
-              </a>
+              <ProductContact shop={shop} listing={listing} />
             ) : (
               <p className="font-semibold">
                 Ce produit est actuellement épuisé.

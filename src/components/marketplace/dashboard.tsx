@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { authClient } from "@/lib/auth/client";
 import { MarketplaceNav } from "./catalog";
+import { VisibilityRequest } from "./visibility-request";
 import { BillingPanel } from "./billing-panel";
 import { PhotoField } from "./photo-field";
 import { MerchantOverview, DashboardCharts, ProductInventory, type MerchantPanel } from "./dashboard-panels";
@@ -497,7 +498,8 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
               <div id="merchant-workspace" className="scroll-mt-36 space-y-5">
               <div hidden={panel !== "overview"} className="space-y-5">
                 <MerchantOverview shop={shop} listings={listings} onNavigate={navigate} />
-                <BillingPanel shopExists={!!shop} initialPlan={initialPlan} initialVisibility={initialVisibility} />
+                <BillingPanel shopExists={!!shop} initialPlan={initialPlan} initialVisibility={initialVisibility} publishedCount={listings.filter(l => l.status === "approved").length} usedCount={listings.filter(l => l.status !== "suspended").length} />
+                <VisibilityRequest shopExists={!!shop && shop.status !== "suspended"} />
                 <DashboardCharts listings={listings} />
               </div>
               <div hidden={panel !== "shop"}>

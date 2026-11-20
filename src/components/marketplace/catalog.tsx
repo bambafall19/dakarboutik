@@ -1,4 +1,5 @@
 "use client";
+import { scentOptions } from "@/lib/partner-options";
 import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import {
   priceAndSort,
   type ProductSort,
 } from "@/lib/partner-products";
+import { ProductTools } from "./product-actions";
 import { Store } from "lucide-react";
 
 import {
@@ -63,6 +65,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
             Boutiques partenaires
           </Link>
           <Link href="/boutiques#publicite">À la une</Link>
+          <Link href="/favoris">Mes favoris</Link>
           <Link href="/suivi">Anciennes commandes</Link>
           <Link href="/forfaits">Forfaits et publicité</Link>
           <Link href="/commercant">Espace commerçant</Link>
@@ -116,6 +119,7 @@ export function ListingCard({
             {p.title}
           </Link>
         </h3>
+        <ProductTools listing={listing} />
         <p className="text-xl font-bold text-emerald-800">
           {p.price.toLocaleString("fr-FR")} FCFA
         </p>
@@ -162,13 +166,21 @@ export function ListingCard({
         {p.availability !== "sold_out" && (
           <a
             className="inline-flex rounded-full bg-emerald-800 px-4 py-3 text-sm font-semibold text-white"
-            href={contactUrl(shop, listing)}
-            data-engagement-audience="partner"
-            data-shop-id={shop.id}
+            href={
+              scentOptions(listing).length
+                ? `${partnerProductUrl(listing)}#choix-senteur`
+                : contactUrl(shop, listing)
+            }
+            data-engagement-audience={
+              scentOptions(listing).length ? undefined : "partner"
+            }
+            data-shop-id={scentOptions(listing).length ? undefined : shop.id}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Contacter le vendeur
+            {scentOptions(listing).length
+              ? "Choisir ma senteur"
+              : "Contacter le vendeur"}
           </a>
         )}
       </div>

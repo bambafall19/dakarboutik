@@ -47,16 +47,19 @@ export default async function HomePage() {
       name: "Solaire",
       caption: "De l’énergie pour vos projets",
       tone: styles.sunny,
+      viewBox: "18 18 114 105",
     },
     {
       name: "Informatique",
       caption: "Équipez vos bonnes idées",
       tone: styles.tech,
+      viewBox: "134 18 110 105",
     },
     {
       name: "Parfumerie",
       caption: "Trouvez votre nouvelle senteur",
       tone: styles.scent,
+      viewBox: "245 18 110 105",
     },
   ];
   return (
@@ -80,21 +83,10 @@ export default async function HomePage() {
           <h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2>
         </div>
         <div className={styles.discoveryGrid}>
-          {rays.map(({ name, caption, tone }) => {
+          {rays.map(({ name, caption, tone, viewBox }) => {
             const count = listings.filter((l) =>
               partnerCategoryMatches(l, name),
             ).length;
-            const image =
-              listings.find(
-                (l) =>
-                  partnerCategoryMatches(l, name) &&
-                  l.details.image &&
-                  (name !== "Solaire" || /kit/i.test(l.details.title)) &&
-                  (name !== "Parfumerie" || /loris/i.test(l.details.title)),
-              )?.details.image ||
-              listings.find(
-                (l) => partnerCategoryMatches(l, name) && l.details.image,
-              )?.details.image;
             return (
               <Link
                 key={name}
@@ -102,7 +94,29 @@ export default async function HomePage() {
                 href={partnerSearchUrl("", name)}
               >
                 <span className={styles.discoveryPhoto}>
-                  {image && <img src={image} alt="" width={360} height={180} />}
+                  <svg
+                    viewBox={viewBox}
+                    className={styles.rayonArtwork}
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <defs>
+                      <clipPath id={`rayon-${name}`}>
+                        <rect
+                          x={viewBox.split(" ")[0]}
+                          y="18"
+                          width={viewBox.split(" ")[2]}
+                          height="105"
+                        />
+                      </clipPath>
+                    </defs>
+                    <image
+                      clipPath={`url(#rayon-${name})`}
+                      href="/images/dakarboutik-rayons-illustres.png"
+                      width="355"
+                      height="123"
+                    />
+                  </svg>
                 </span>
                 <strong>
                   {name}

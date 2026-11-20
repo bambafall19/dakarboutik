@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
                 sur {total}
               </p>
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
-                <Link href={manage + "#boutiques"} className={linkClass}>
+                <Link href={manage + "?shop=" + shop.id + "#produits"} className={linkClass}>
                   Gérer
                 </Link>
                 {shop.status === "approved" && (

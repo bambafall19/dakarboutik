@@ -57,6 +57,16 @@ export default async function HomePage() {
   return (
     <div className={styles.home}>
       <h1 className="sr-only">DakarBoutik — Vos envies. Nos boutiques.</h1>
+      <nav className={styles.rayonBar} aria-label="Tous les rayons">
+        <span className={styles.rayonLabel}>Tous les rayons</span>
+        <div className={styles.marketCategories}>
+          {MARKETPLACE_CATEGORIES.map((name) => (
+            <Link key={name} href={partnerSearchUrl("", name)}>
+              {name}
+            </Link>
+          ))}
+        </div>
+      </nav>
       <section
         className={`${styles.section} ${styles.topCategories}`}
         aria-labelledby="categories-title"
@@ -101,16 +111,6 @@ export default async function HomePage() {
             );
           })}
         </div>
-        <details className={styles.moreCategories}>
-          <summary>Tous les rayons</summary>
-          <div className={styles.marketCategories}>
-            {MARKETPLACE_CATEGORIES.map((name) => (
-              <Link key={name} href={partnerSearchUrl("", name)}>
-                {name}
-              </Link>
-            ))}
-          </div>
-        </details>
       </section>
 
       <div className={styles.section}>

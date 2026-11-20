@@ -80,7 +80,7 @@ export function HomePartnerSelection({
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
       }}
       aria-label="La sélection des boutiques partenaires"
-      className="min-w-0 overflow-hidden rounded-3xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-5"
+      className="min-w-0 overflow-hidden rounded-3xl border border-emerald-100 bg-white p-3 shadow-sm sm:p-4"
     >
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">
@@ -93,12 +93,12 @@ export function HomePartnerSelection({
       <div
         aria-live={paused || focused ? "polite" : "off"}
         aria-atomic="true"
-        className="mt-3 grid items-center gap-5 md:grid-cols-2 md:gap-8"
+        className="mt-2 grid items-center gap-3 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-5"
         key={listing.id}
       >
         <Link
           href={href}
-          className="block rounded-2xl bg-slate-50 p-3"
+          className="block rounded-xl bg-slate-50 p-2"
           aria-label={`Découvrir ${p.title} chez ${shop.profile.name}`}
         >
           {p.image ? (
@@ -107,11 +107,11 @@ export function HomePartnerSelection({
               alt={p.title}
               width={400}
               height={220}
-              className="h-44 w-full object-contain sm:h-56 md:h-72"
+              className="h-32 w-full object-contain sm:h-40 md:h-44"
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="flex h-44 items-center justify-center">
+            <div className="flex h-32 items-center justify-center">
               <ImageIcon
                 aria-label="Photo à venir"
                 className="h-12 w-12 text-emerald-200"
@@ -120,13 +120,13 @@ export function HomePartnerSelection({
           )}
         </Link>
         <div className="min-w-0">
-          <p className="mt-4 text-xs font-semibold text-emerald-700">
+          <p className="mt-1 text-xs font-semibold text-emerald-700">
             {availabilityLabels[p.availability]} · {shop.profile.city}
           </p>
-          <h2 className="mt-2 line-clamp-2 min-h-14 text-xl font-bold leading-7">
+          <h2 className="mt-1 line-clamp-2 text-lg font-bold leading-6">
             <Link href={href}>{p.title}</Link>
           </h2>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <Link
               className="min-w-0 break-words text-sm font-medium text-slate-600 underline"
               href={`/boutiques/${shop.id}`}
@@ -137,10 +137,10 @@ export function HomePartnerSelection({
               {p.price.toLocaleString("fr-FR")} FCFA
             </strong>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             <Link
               href={href}
-              className="inline-flex min-h-11 items-center rounded-xl bg-emerald-800 px-4 py-3 text-sm font-semibold text-white"
+              className="inline-flex min-h-11 items-center rounded-xl bg-emerald-800 px-3 py-2 text-sm font-semibold text-white"
             >
               Découvrir le produit
             </Link>
@@ -156,7 +156,7 @@ export function HomePartnerSelection({
               data-shop-id={scentOptions(listing).length ? undefined : shop.id}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 py-3 text-sm font-semibold text-emerald-900"
+              className="inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-3 py-2 text-sm font-semibold text-emerald-900"
             >
               {scentOptions(listing).length
                 ? "Choisir ma senteur"
@@ -166,7 +166,7 @@ export function HomePartnerSelection({
         </div>
       </div>
       {items.length > 1 && (
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 border-t border-emerald-100 pt-3">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3 border-t border-emerald-100 pt-2">
           <button
             type="button"
             onClick={() =>

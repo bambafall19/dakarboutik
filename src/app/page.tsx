@@ -134,11 +134,21 @@ export default async function HomePage() {
           />
         </Link>
         <div>
+          <span className={styles.posterBadge}>
+            <span aria-hidden="true">✦</span> Faites le plein de trouvailles
+          </span>
           <h2 id="discover-poster-title">Vos boutiques, à portée de clic</h2>
           <p>
-            Découvrez les produits des commerçants partenaires et échangez
-            directement avec la boutique qui vous intéresse.
+            Une envie ? Trouvez votre produit et échangez directement avec votre
+            boutique.
           </p>
+          <div className={styles.posterTags} aria-label="Explorer un rayon">
+            <Link href={partnerSearchUrl("", "Solaire")}>☀ Solaire</Link>
+            <Link href={partnerSearchUrl("", "Informatique")}>
+              Informatique
+            </Link>
+            <Link href={partnerSearchUrl("", "Parfumerie")}>Parfumerie ✧</Link>
+          </div>
           <Link className={styles.primary} href="/boutiques">
             Explorer les produits partenaires
           </Link>

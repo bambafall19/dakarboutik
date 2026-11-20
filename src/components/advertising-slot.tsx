@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { type Campaign, campaignLive, safeAdUrl } from "@/lib/advertising";
 import { OFFICIAL_CATALOG_ENABLED } from "@/lib/catalog-mode";
 import { recordEngagement } from "@/lib/engagement-client";
+import styles from "./advertising-slot.module.css";
 
 function AdCard({
   campaign: c,
@@ -49,7 +50,11 @@ function AdCard({
       href={c.targetUrl}
       rel="sponsored noopener"
       onClick={() => recordEngagement("ad_click", c.placement, c.id)}
-      className="group flex min-h-48 min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-emerald-50 p-4 text-slate-900 transition-shadow hover:shadow-md"
+      className={
+        c.placement === "home"
+          ? styles.banner
+          : "group flex min-h-48 min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-emerald-50 p-4 text-slate-900 transition-shadow hover:shadow-md"
+      }
     >
       <img
         src={c.imageUrl}
@@ -57,17 +62,33 @@ function AdCard({
         width={160}
         height={120}
         loading="lazy"
-        className="h-28 w-24 shrink-0 rounded-xl bg-white object-contain sm:h-40 sm:w-52"
+        className={
+          c.placement === "home"
+            ? styles.photo
+            : "h-28 w-24 shrink-0 rounded-xl bg-white object-contain sm:h-40 sm:w-52"
+        }
       />
-      <div className="min-w-0">
+      <div className={c.placement === "home" ? styles.copy : "min-w-0"}>
         <span className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
           Sponsorisé
         </span>
-        <h3 className="mt-2 break-words text-lg font-bold sm:text-xl">
+        <h3
+          className={
+            c.placement === "home"
+              ? styles.title
+              : "mt-2 break-words text-lg font-bold sm:text-xl"
+          }
+        >
           {c.title}
         </h3>
-        <span className="mt-3 block text-sm font-semibold text-emerald-800">
-          Découvrir →
+        <span
+          className={
+            c.placement === "home"
+              ? styles.cta
+              : "mt-3 block text-sm font-semibold text-emerald-800"
+          }
+        >
+          {c.placement === "home" ? "Découvrir la boutique →" : "Découvrir →"}
         </span>
       </div>
     </a>
@@ -190,6 +211,19 @@ export function AdvertisingSlot({
           >
             <ChevronLeft size={20} />
           </button>
+          <div className={styles.indicators} aria-label="Choisir une publicité">
+            {visible.map((campaign, i) => (
+              <button
+                key={campaign.id}
+                type="button"
+                aria-label={`Afficher la publicité ${i + 1} : ${campaign.title}`}
+                aria-current={i === position ? "true" : undefined}
+                onClick={() => setIndex(i)}
+              >
+                <span />
+              </button>
+            ))}
+          </div>
           {!reduced && (
             <button
               type="button"

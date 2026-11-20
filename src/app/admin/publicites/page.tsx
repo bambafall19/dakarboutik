@@ -30,7 +30,7 @@ export default function PublicitesPage() {
  const input='mt-2 w-full rounded-xl border bg-background px-3 py-3';
  return <div className="mx-auto max-w-6xl space-y-6 py-6">
   <div className="flex flex-wrap items-center justify-between gap-4"><div><h1 className="text-3xl font-bold">Espaces publicitaires</h1><p className="mt-2 text-muted-foreground">Créez une campagne, choisissez sa page et programmez sa diffusion.</p></div><Link href="/admin/statistiques" className="rounded-xl border px-4 py-3 font-semibold">Voir les résultats →</Link></div>
-  <p className="rounded-xl bg-amber-50 p-4 text-sm text-slate-800">Deux publicités au maximum par emplacement : les plus récentes parmi celles actives et dans leur période. Les dates incluent le dernier jour, à l’heure de Dakar. Toutes les annonces portent la mention « Sponsorisé ».</p>
+  <p className="rounded-xl bg-amber-50 p-4 text-sm text-slate-800">Les publicités actives et dans leur période défilent dans leur emplacement, de la plus récente à la plus ancienne. Les dates incluent le dernier jour, à l’heure de Dakar. Toutes les annonces portent la mention « Sponsorisé ».</p>
   {message&&<p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-900">{message}</p>}
   {error&&<p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">{error}</p>}
   <form onSubmit={save} className="space-y-5 rounded-2xl border bg-card p-5 sm:p-7">

@@ -1,0 +1,149 @@
+.banner {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  min-height: 280px;
+  gap: 2rem;
+  padding: 2rem 2.5rem;
+  overflow: hidden;
+  border: 1px solid #cde4d4;
+  border-radius: 24px;
+  background: linear-gradient(115deg, #e5f4df, #fff6d3 65%, #fce8df);
+  color: #153e2c;
+}
+.banner:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 400px;
+  height: 400px;
+  right: -90px;
+  top: -160px;
+  border-radius: 50%;
+  background: #ffffff80;
+}
+.photo {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #ffffffb3;
+  padding: 0.75rem;
+}
+.copy {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+.title {
+  font-size: clamp(1.25rem, 2.2vw, 1.9rem);
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0.75rem 0 1rem;
+  overflow-wrap: anywhere;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  background: #09613f;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.banner:focus-visible {
+  outline: 3px solid #b88600;
+  outline-offset: 4px;
+}
+.indicators {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+}
+.indicators button {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 44px;
+  border-radius: 12px;
+}
+.indicators span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #94b5a3;
+}
+.indicators button[aria-current="true"] span {
+  width: 24px;
+  background: #09613f;
+}
+.indicators button:focus-visible {
+  outline: 2px solid #b88600;
+  outline-offset: 1px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .banner {
+    animation: appear 0.35s ease-out;
+  }
+  .indicators span {
+    transition: width 0.2s;
+  }
+  .cta {
+    transition: background 0.2s;
+  }
+  .banner:hover .cta {
+    background: #06482e;
+  }
+  @keyframes appear {
+    from {
+      opacity: 0.6;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+@media (max-width: 600px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr) 110px;
+    gap: 0.75rem;
+    padding: 1rem;
+    min-height: 240px;
+    border-radius: 18px;
+  }
+  .photo {
+    height: 160px;
+    padding: 0.35rem;
+    border-radius: 12px;
+  }
+  .title {
+    font-size: 1.1rem;
+    line-height: 1.35;
+    margin: 0.5rem 0 0.75rem;
+  }
+  .cta {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 360px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr) 85px;
+  }
+  .photo {
+    height: 140px;
+  }
+}
+@media(max-width:600px){.indicators{order:4;flex-basis:100%;margin-top:-.5rem}}

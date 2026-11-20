@@ -30,18 +30,16 @@ export default async function HomePage() {
   return (
     <div className={styles.home}>
       <section
-        className={`${styles.hero} ${latest.length ? styles.heroWithProducts : ""}`}
+        className={`${styles.hero} ${styles.heroWithProducts}`}
         aria-labelledby="home-title"
       >
         <div>
+          <h1 id="home-title">
+            Vos envies. <span>Nos boutiques.</span>
+          </h1>
           <span className={styles.eyebrow}>
             ✨ Les meilleures trouvailles du Sénégal, à portée de clic.
           </span>
-          <h1 id="home-title">
-            Vos envies.
-            <br />
-            <span>Nos boutiques.</span>
-          </h1>
           <p>
             Découvrez les produits des commerçants près de chez vous. Comparez
             les offres et contactez directement votre boutique.

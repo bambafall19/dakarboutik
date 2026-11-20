@@ -5,9 +5,6 @@ import {
   MapPin,
   MessageCircle,
   ShieldCheck,
-  Sun,
-  Laptop,
-  SprayCan,
   ArrowUpRight,
   Tags,
 } from "lucide-react";
@@ -44,25 +41,78 @@ export default async function HomePage() {
   const rays = [
     {
       name: "Solaire",
-      Icon: Sun,
       caption: "De l’énergie pour vos projets",
       tone: styles.sunny,
     },
     {
       name: "Informatique",
-      Icon: Laptop,
       caption: "Équipez vos bonnes idées",
       tone: styles.tech,
     },
     {
       name: "Parfumerie",
-      Icon: SprayCan,
       caption: "Trouvez votre nouvelle senteur",
       tone: styles.scent,
     },
   ];
   return (
     <div className={styles.home}>
+      <section
+        className={`${styles.section} ${styles.topCategories}`}
+        aria-labelledby="categories-title"
+      >
+        <div className={styles.heading}>
+          <h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2>
+        </div>
+        <div className={styles.discoveryGrid}>
+          {rays.map(({ name, caption, tone }) => {
+            const count = listings.filter((l) =>
+              partnerCategoryMatches(l, name),
+            ).length;
+            const image =
+              listings.find(
+                (l) =>
+                  partnerCategoryMatches(l, name) &&
+                  l.details.image &&
+                  (name !== "Solaire" || /kit/i.test(l.details.title)) &&
+                  (name !== "Parfumerie" || /loris/i.test(l.details.title)),
+              )?.details.image ||
+              listings.find(
+                (l) => partnerCategoryMatches(l, name) && l.details.image,
+              )?.details.image;
+            return (
+              <Link
+                key={name}
+                className={`${styles.discoveryCard} ${tone}`}
+                href={partnerSearchUrl("", name)}
+              >
+                <span className={styles.discoveryPhoto}>
+                  {image && <img src={image} alt="" width={360} height={180} />}
+                </span>
+                <strong>
+                  {name}
+                  <ArrowUpRight size={20} aria-hidden="true" />
+                </strong>
+                <span>{caption}</span>
+                <small>
+                  {count} produit{count > 1 ? "s" : ""} à découvrir
+                </small>
+              </Link>
+            );
+          })}
+        </div>
+        <details className={styles.moreCategories}>
+          <summary>Tous les rayons</summary>
+          <div className={styles.marketCategories}>
+            {MARKETPLACE_CATEGORIES.map((name) => (
+              <Link key={name} href={partnerSearchUrl("", name)}>
+                {name}
+              </Link>
+            ))}
+          </div>
+        </details>
+      </section>
+
       <section
         className={`${styles.hero} ${styles.heroWithProducts}`}
         aria-labelledby="home-title"
@@ -154,47 +204,6 @@ export default async function HomePage() {
             Explorer les produits partenaires
           </Link>
         </div>
-      </section>
-      <section className={styles.section} aria-labelledby="categories-title">
-        <div className={styles.heading}>
-          <h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2>
-        </div>
-        <div className={styles.discoveryGrid}>
-          {rays.map(({ name, Icon, caption, tone }) => {
-            const count = listings.filter((l) =>
-              partnerCategoryMatches(l, name),
-            ).length;
-            return (
-              <Link
-                key={name}
-                className={`${styles.discoveryCard} ${tone}`}
-                href={partnerSearchUrl("", name)}
-              >
-                <span className={styles.discoveryIcon}>
-                  <Icon size={36} aria-hidden="true" />
-                </span>
-                <strong>
-                  {name}
-                  <ArrowUpRight size={20} aria-hidden="true" />
-                </strong>
-                <span>{caption}</span>
-                <small>
-                  {count} produit{count > 1 ? "s" : ""} à découvrir
-                </small>
-              </Link>
-            );
-          })}
-        </div>
-        <details className={styles.moreCategories}>
-          <summary>Tous les rayons</summary>
-          <div className={styles.marketCategories}>
-            {MARKETPLACE_CATEGORIES.map((name) => (
-              <Link key={name} href={partnerSearchUrl("", name)}>
-                {name}
-              </Link>
-            ))}
-          </div>
-        </details>
       </section>
       {affordable.length > 0 && (
         <section

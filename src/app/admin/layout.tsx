@@ -1,5 +1,6 @@
 "use client";
 
+import { ShopNotifications } from "@/components/admin/shop-notifications";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -253,6 +254,7 @@ export default function AdminLayout({
                 Voir la boutique
               </Link>
             </Button>
+            <ShopNotifications />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

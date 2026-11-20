@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { sendShopAlert } from "@/lib/shop-notifications";
+import { NextRequest, NextResponse, after } from "next/server";
 import { getSession } from "@/lib/auth";
 import { query, queryOne } from "@/lib/db";
 import { shopSchema, listingSchema } from "@/lib/marketplace-model";
@@ -82,11 +83,22 @@ export async function POST(req: NextRequest) {
     }
     if (body.action === "shop") {
       const profile = shopSchema.parse(body.profile);
-      const row = await queryOne(
-        `insert into marketplace_shops(id,owner_id,profile) values($1,$2,$3::jsonb)
-    on conflict(owner_id) do update set profile=excluded.profile, status=case when marketplace_shops.status='suspended' then 'suspended' else 'pending' end, updated_at=now() returning id`,
+      const row = await queryOne<{
+        id: string;
+        notification_id: string | null;
+      }>(
+        `with saved as (
+          insert into marketplace_shops(id,owner_id,profile) values($1,$2,$3::jsonb)
+          on conflict(owner_id) do update set profile=excluded.profile,status=case when marketplace_shops.status='suspended' then 'suspended' else 'pending' end,updated_at=now()
+          returning id,(xmax=0) as created
+        ), queued as (
+          insert into marketplace_shop_alerts(shop_id) select id from saved where created
+          on conflict(shop_id) do nothing returning shop_id
+        ) select saved.id,(select shop_id from queued) as notification_id from saved`,
         [crypto.randomUUID(), session.uid, JSON.stringify(profile)],
       );
+      if (row?.notification_id)
+        after(() => sendShopAlert(row.notification_id!));
       return NextResponse.json(row);
     }
     if (body.action === "listing") {

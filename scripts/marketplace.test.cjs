@@ -49,6 +49,7 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
     );
     await db.exec(migration);
     await db.exec(migration); // Reapplying the migration must preserve data/schema.
+    await db.exec(fs.readFileSync("scripts/shop-notifications.sql", "utf8"));
     let session = null;
     const adapter = {
       query: async (sql, values = []) => (await db.query(sql, values)).rows,
@@ -57,6 +58,8 @@ test("Merchant isolation, moderation, stock updates and public visibility", asyn
     };
     const model = load("src/lib/marketplace-model.ts", {});
     const dependencies = {
+      "next/server": { ...require("next/server"), after: () => {} },
+      "@/lib/shop-notifications": { sendShopAlert: async () => {} },
       "@/lib/db": adapter,
       "@/lib/auth": { getSession: async () => session },
       "@/lib/marketplace-model": model,

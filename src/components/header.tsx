@@ -53,7 +53,7 @@ export function Header({
             <Menu className="h-5 w-5" />
           </Button>
 
-          <Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} />
+          <div className="flex min-w-0 items-center gap-1"><Logo loading={loading} imageUrl={settings?.logoUrl} hideTextOnMobile={true} /><span className="text-lg font-extrabold tracking-tight text-emerald-900 md:text-xl">DakarBoutik<small className="block text-[9px] font-medium tracking-normal text-emerald-700">Vos envies. Nos boutiques.</small></span></div>
 
           {/* Center: Search */}
           <button

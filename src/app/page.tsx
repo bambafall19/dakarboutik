@@ -7,6 +7,8 @@ import {
   ShieldCheck,
   ArrowUpRight,
   Tags,
+  ShoppingBasket,
+  Gamepad2,
 } from "lucide-react";
 import { AdvertisingSlot } from "@/components/advertising-slot";
 import { HomeProductCard as ListingCard } from "@/components/marketplace/home-product-card";
@@ -19,6 +21,7 @@ import {
   rankActiveShops,
 } from "@/lib/marketplace-discovery";
 import styles from "./home.module.css";
+import { ReferenceArtwork } from "@/components/marketplace/reference-artwork";
 
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
@@ -42,35 +45,100 @@ export default async function HomePage() {
         !affordableIds.has(listing.id),
     )
     .slice(0, 8);
+  const categoryArt: Record<string, string> = {
+    "Mode & Beauté": "40 680 112 110",
+    Téléphones: "204 680 112 110",
+    Informatique: "370 680 112 110",
+    Parfumerie: "540 680 112 110",
+    Maison: "710 680 112 110",
+    "Auto et moto": "870 680 112 110",
+    Solaire: "16 945 328 190",
+  };
   const rays = [
     {
       name: "Solaire",
       caption: "De l’énergie pour vos projets",
       tone: styles.sunny,
-      viewBox: "18 18 114 105",
+      viewBox: "16 945 328 190",
     },
     {
       name: "Informatique",
       caption: "Équipez vos bonnes idées",
       tone: styles.tech,
-      viewBox: "134 18 110 105",
+      viewBox: "360 945 304 190",
     },
     {
       name: "Parfumerie",
       caption: "Trouvez votre nouvelle senteur",
       tone: styles.scent,
-      viewBox: "245 18 110 105",
+      viewBox: "678 945 330 190",
     },
   ];
   return (
     <div className={styles.home}>
-      <h1 className="sr-only">DakarBoutik — Vos envies. Nos boutiques.</h1>
+      <form
+        action="/boutiques#recherche"
+        role="search"
+        aria-label="Rechercher un produit"
+        className={styles.brandSearch}
+      >
+        <Search size={22} aria-hidden="true" />
+        <input
+          name="q"
+          type="search"
+          maxLength={150}
+          placeholder="Rechercher un produit…"
+          aria-label="Produit ou boutique"
+        />
+        <button type="submit" aria-label="Lancer la recherche">
+          <Search size={22} />
+        </button>
+      </form>
+      <section className={styles.brandHero} aria-labelledby="welcome-title">
+        <div className={styles.brandHeroCopy}>
+          <span className={styles.brandEyebrow}>
+            DakarBoutik · Vos commerçants, près de vous
+          </span>
+          <h1 id="welcome-title">
+            Vos envies.
+            <br />
+            <span>Nos boutiques.</span>
+          </h1>
+          <p>
+            Solaire, informatique, parfumerie… Découvrez les offres et contactez
+            votre vendeur.
+          </p>
+          <Link href="/boutiques" className={styles.goldButton}>
+            Explorer les produits <ArrowUpRight size={18} aria-hidden="true" />
+          </Link>
+        </div>
+        <ReferenceArtwork
+          rect="620 300 404 350"
+          id="brand-hero-art"
+          fill
+          className={styles.brandHeroArt}
+        />
+      </section>
       <nav className={styles.rayonBar} aria-label="Tous les rayons">
-        <span className={styles.rayonLabel}>Tous les rayons</span>
+        <span className={styles.rayonLabel}>
+          Explorez les rayons <span>Glissez pour découvrir →</span>
+        </span>
         <div className={styles.marketCategories}>
           {MARKETPLACE_CATEGORIES.map((name) => (
             <Link key={name} href={partnerSearchUrl("", name)}>
-              {name}
+              <span className={styles.roundCategory}>
+                {categoryArt[name] ? (
+                  <ReferenceArtwork
+                    rect={categoryArt[name]}
+                    id={`round-${name.replace(/[^a-zA-Z]/g, "")}`}
+                  />
+                ) : name === "Alimentation" ? (
+                  <ShoppingBasket size={32} aria-hidden="true" />
+                ) : (
+                  <Gamepad2 size={32} aria-hidden="true" />
+                )}
+              </span>
+              <span>{name}</span>
             </Link>
           ))}
         </div>
@@ -80,7 +148,8 @@ export default async function HomePage() {
         aria-labelledby="categories-title"
       >
         <div className={styles.heading}>
-          <h2 id="categories-title">Qu’est-ce qui vous ferait plaisir ?</h2>
+          <h2 id="categories-title">Nos catégories</h2>
+          <Link href="/boutiques#recherche">Voir tout →</Link>
         </div>
         <div className={styles.discoveryGrid}>
           {rays.map(({ name, caption, tone, viewBox }) => {
@@ -94,29 +163,11 @@ export default async function HomePage() {
                 href={partnerSearchUrl("", name)}
               >
                 <span className={styles.discoveryPhoto}>
-                  <svg
-                    viewBox={viewBox}
+                  <ReferenceArtwork
+                    rect={viewBox}
+                    id={`feature-${name}`}
                     className={styles.rayonArtwork}
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <defs>
-                      <clipPath id={`rayon-${name}`}>
-                        <rect
-                          x={viewBox.split(" ")[0]}
-                          y="18"
-                          width={viewBox.split(" ")[2]}
-                          height="105"
-                        />
-                      </clipPath>
-                    </defs>
-                    <image
-                      clipPath={`url(#rayon-${name})`}
-                      href="/images/dakarboutik-rayons-illustres.png"
-                      width="355"
-                      height="123"
-                    />
-                  </svg>
+                  />
                 </span>
                 <strong>
                   {name}
@@ -141,7 +192,7 @@ export default async function HomePage() {
             <span className={styles.eyebrow}>
               Les nouveautés des commerçants
             </span>
-            <h2 id="latest-title">Les nouveautés des boutiques</h2>
+            <h2 id="latest-title">Produits à découvrir</h2>
           </div>
           <Link href="/boutiques">Tous les produits</Link>
         </div>
@@ -246,44 +297,6 @@ export default async function HomePage() {
               </Link>
             </article>
           ))}
-        </div>
-      </section>
-      <section
-        className={`${styles.section} ${styles.poster}`}
-        aria-labelledby="discover-poster-title"
-      >
-        <Link
-          href="/boutiques"
-          className={styles.posterImageLink}
-          aria-label="Découvrir les produits des boutiques partenaires"
-        >
-          <img
-            src="/images/dakarboutik-partenaires-parfumerie.png"
-            alt="DakarBoutik — Vos produits. Vos boutiques. À portée de clic. Découvrez les produits et contactez directement les boutiques partenaires."
-            width={1024}
-            height={1024}
-            loading="lazy"
-          />
-        </Link>
-        <div>
-          <span className={styles.posterBadge}>
-            <span aria-hidden="true">✦</span> Faites le plein de trouvailles
-          </span>
-          <h2 id="discover-poster-title">Vos envies. Nos boutiques.</h2>
-          <p>
-            Une envie ? Trouvez votre produit et échangez directement avec votre
-            boutique.
-          </p>
-          <div className={styles.posterTags} aria-label="Explorer un rayon">
-            <Link href={partnerSearchUrl("", "Solaire")}>☀ Solaire</Link>
-            <Link href={partnerSearchUrl("", "Informatique")}>
-              Informatique
-            </Link>
-            <Link href={partnerSearchUrl("", "Parfumerie")}>Parfumerie ✧</Link>
-          </div>
-          <Link className={styles.primary} href="/boutiques">
-            Explorer les produits partenaires
-          </Link>
         </div>
       </section>
       <section

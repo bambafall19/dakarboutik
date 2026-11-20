@@ -105,7 +105,7 @@ export default async function HomePage() {
           aria-label="Découvrir les produits des boutiques partenaires"
         >
           <img
-            src="/images/dakarboutik-partenaires-affiche.png"
+            src="/images/dakarboutik-partenaires-parfumerie.png"
             alt="DakarBoutik — Vos produits. Vos boutiques. À portée de clic. Découvrez les produits et contactez directement les boutiques partenaires."
             width={1024}
             height={1024}

@@ -137,7 +137,7 @@ export default async function HomePage() {
           <span className={styles.posterBadge}>
             <span aria-hidden="true">✦</span> Faites le plein de trouvailles
           </span>
-          <h2 id="discover-poster-title">Vos boutiques, à portée de clic</h2>
+          <h2 id="discover-poster-title">Vos envies. Nos boutiques.</h2>
           <p>
             Une envie ? Trouvez votre produit et échangez directement avec votre
             boutique.

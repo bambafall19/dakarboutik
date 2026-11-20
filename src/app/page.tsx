@@ -9,7 +9,7 @@ import {
   Tags,
 } from "lucide-react";
 import { AdvertisingSlot } from "@/components/advertising-slot";
-import { ListingCard } from "@/components/marketplace/catalog";
+import { HomeProductCard as ListingCard } from "@/components/marketplace/home-product-card";
 import { MarketplaceSpotlight } from "@/components/marketplace/spotlight";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import {
@@ -25,9 +25,6 @@ export default async function HomePage() {
   const { shops, listings } = await publicMarketplace();
   const shopMap = new Map(shops.map((shop) => [shop.id, shop]));
   const activeShops = rankActiveShops(shops, listings).slice(0, 6);
-  const latest = listings
-    .filter((listing) => listing.details.availability !== "sold_out")
-    .slice(0, 8);
   const now = Date.now();
   const affordable = listings
     .filter(
@@ -37,6 +34,14 @@ export default async function HomePage() {
         l.details.price <= 5000,
     )
     .slice(0, 4);
+  const affordableIds = new Set(affordable.map((listing) => listing.id));
+  const latest = listings
+    .filter(
+      (listing) =>
+        listing.details.availability !== "sold_out" &&
+        !affordableIds.has(listing.id),
+    )
+    .slice(0, 8);
   const rays = [
     {
       name: "Solaire",
@@ -116,43 +121,39 @@ export default async function HomePage() {
       <div className={styles.section}>
         <AdvertisingSlot placement="home" />
       </div>
-      <section
-        className={`${styles.section} ${styles.poster}`}
-        aria-labelledby="discover-poster-title"
-      >
-        <Link
-          href="/boutiques"
-          className={styles.posterImageLink}
-          aria-label="Découvrir les produits des boutiques partenaires"
-        >
-          <img
-            src="/images/dakarboutik-partenaires-parfumerie.png"
-            alt="DakarBoutik — Vos produits. Vos boutiques. À portée de clic. Découvrez les produits et contactez directement les boutiques partenaires."
-            width={1024}
-            height={1024}
-            loading="lazy"
-          />
-        </Link>
-        <div>
-          <span className={styles.posterBadge}>
-            <span aria-hidden="true">✦</span> Faites le plein de trouvailles
-          </span>
-          <h2 id="discover-poster-title">Vos envies. Nos boutiques.</h2>
-          <p>
-            Une envie ? Trouvez votre produit et échangez directement avec votre
-            boutique.
-          </p>
-          <div className={styles.posterTags} aria-label="Explorer un rayon">
-            <Link href={partnerSearchUrl("", "Solaire")}>☀ Solaire</Link>
-            <Link href={partnerSearchUrl("", "Informatique")}>
-              Informatique
-            </Link>
-            <Link href={partnerSearchUrl("", "Parfumerie")}>Parfumerie ✧</Link>
+      <section className={styles.section} aria-labelledby="latest-title">
+        <div className={styles.heading}>
+          <div>
+            <span className={styles.eyebrow}>
+              Les nouveautés des commerçants
+            </span>
+            <h2 id="latest-title">Les nouveautés des boutiques</h2>
           </div>
-          <Link className={styles.primary} href="/boutiques">
-            Explorer les produits partenaires
-          </Link>
+          <Link href="/boutiques">Tous les produits</Link>
         </div>
+        {latest.length ? (
+          <div className={styles.partnerProducts}>
+            {latest.map((listing) => (
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                shop={shopMap.get(listing.shop_id)!}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.invitation}>
+            <Store size={36} />
+            <h3>Les premiers produits arrivent bientôt</h3>
+            <p>
+              Les annonces seront visibles après validation. Découvrez les
+              boutiques ou présentez la vôtre.
+            </p>
+            <Link className={styles.primary} href="/commercant?inscription=1">
+              Inscrire ma boutique
+            </Link>
+          </div>
+        )}
       </section>
       {affordable.length > 0 && (
         <section
@@ -178,47 +179,11 @@ export default async function HomePage() {
                 key={listing.id}
                 listing={listing}
                 shop={shopMap.get(listing.shop_id)!}
-                compact
               />
             ))}
           </div>
         </section>
       )}
-      <section className={styles.section} aria-labelledby="latest-title">
-        <div className={styles.heading}>
-          <div>
-            <span className={styles.eyebrow}>
-              Les nouveautés des commerçants
-            </span>
-            <h2 id="latest-title">À découvrir dans les boutiques</h2>
-          </div>
-          <Link href="/boutiques">Tous les produits</Link>
-        </div>
-        {latest.length ? (
-          <div className={styles.partnerProducts}>
-            {latest.map((listing) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                shop={shopMap.get(listing.shop_id)!}
-                compact
-              />
-            ))}
-          </div>
-        ) : (
-          <div className={styles.invitation}>
-            <Store size={36} />
-            <h3>Les premiers produits arrivent bientôt</h3>
-            <p>
-              Les annonces seront visibles après validation. Découvrez les
-              boutiques ou présentez la vôtre.
-            </p>
-            <Link className={styles.primary} href="/commercant?inscription=1">
-              Inscrire ma boutique
-            </Link>
-          </div>
-        )}
-      </section>
       <section className={styles.section} aria-labelledby="partners-title">
         <div className={styles.heading}>
           <div>
@@ -267,6 +232,44 @@ export default async function HomePage() {
               </Link>
             </article>
           ))}
+        </div>
+      </section>
+      <section
+        className={`${styles.section} ${styles.poster}`}
+        aria-labelledby="discover-poster-title"
+      >
+        <Link
+          href="/boutiques"
+          className={styles.posterImageLink}
+          aria-label="Découvrir les produits des boutiques partenaires"
+        >
+          <img
+            src="/images/dakarboutik-partenaires-parfumerie.png"
+            alt="DakarBoutik — Vos produits. Vos boutiques. À portée de clic. Découvrez les produits et contactez directement les boutiques partenaires."
+            width={1024}
+            height={1024}
+            loading="lazy"
+          />
+        </Link>
+        <div>
+          <span className={styles.posterBadge}>
+            <span aria-hidden="true">✦</span> Faites le plein de trouvailles
+          </span>
+          <h2 id="discover-poster-title">Vos envies. Nos boutiques.</h2>
+          <p>
+            Une envie ? Trouvez votre produit et échangez directement avec votre
+            boutique.
+          </p>
+          <div className={styles.posterTags} aria-label="Explorer un rayon">
+            <Link href={partnerSearchUrl("", "Solaire")}>☀ Solaire</Link>
+            <Link href={partnerSearchUrl("", "Informatique")}>
+              Informatique
+            </Link>
+            <Link href={partnerSearchUrl("", "Parfumerie")}>Parfumerie ✧</Link>
+          </div>
+          <Link className={styles.primary} href="/boutiques">
+            Explorer les produits partenaires
+          </Link>
         </div>
       </section>
       <section

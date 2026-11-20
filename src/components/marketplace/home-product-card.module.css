@@ -1,0 +1,133 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid #dce8e0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  scroll-margin-top: 180px;
+}
+.photo {
+  display: grid;
+  place-items: center;
+  background: #f6f8f6;
+  height: 150px;
+  flex-shrink: 0;
+}
+.photo img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  padding: 0.5rem;
+}
+.photo span {
+  font-size: 0.8rem;
+  color: #52665b;
+}
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  min-width: 0;
+}
+.availability {
+  font-size: 0.72rem;
+  color: #226546;
+  font-weight: 700;
+}
+.body h3 {
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+.price {
+  font-size: 1.05rem;
+  color: #116342;
+}
+.shop {
+  font-size: 0.75rem;
+  color: #5a6a61;
+  overflow-wrap: anywhere;
+}
+.details {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #21633f;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+.contact {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: #086445;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.card a:focus-visible {
+  outline: 3px solid #bd9000;
+  outline-offset: -3px;
+}
+@media (max-width: 600px) {
+  .photo {
+    height: 125px;
+  }
+  .body {
+    padding: 0.65rem;
+    gap: 0.4rem;
+  }
+  .body h3 {
+    font-size: 0.85rem;
+  }
+  .price {
+    font-size: 0.95rem;
+  }
+  .contact {
+    font-size: 0.75rem;
+  }
+  .shop {
+    font-size: 0.72rem;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card {
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px #164c3012;
+  }
+}
+.photo {
+  overflow: hidden;
+}
+.photo img {
+  height: 150px;
+  max-height: 150px;
+  min-height: 0;
+  display: block;
+}
+@media (max-width: 600px) {
+  .photo img {
+    height: 125px;
+    max-height: 125px;
+  }
+}

@@ -32,6 +32,11 @@ test('Future publications create one automatic ad; updates, visibility, manual p
  await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify({...details,price:4200,availability:'available'}),third]);
  const pausedRows=(await db.query('select id,active,title from advertising_campaigns where auto_product_id=$1',[third])).rows;
  assert.equal(pausedRows.length,1);assert.equal(pausedRows[0].id,pausedId);assert.equal(pausedRows[0].active,false);assert.ok(pausedRows[0].title.includes('4 200 FCFA'));
+ await db.query('update advertising_campaigns set active=true where id=$1',[pausedId]);
+ await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify({...details,price:4600,image:'https://test.shop/after-reactivation.jpg'}),third]);
+ const reactivated=(await db.query('select * from advertising_campaigns where auto_product_id=$1',[third])).rows;
+ assert.equal(reactivated.length,1);assert.equal(reactivated[0].id,pausedId);assert.equal(reactivated[0].active,true);assert.ok(reactivated[0].title.includes('4 600 FCFA'));assert.equal(reactivated[0].image_url,'https://test.shop/after-reactivation.jpg');assert.equal((await db.query('select manual_pause from advertising_product_automation where listing_id=$1',[third])).rows[0].manual_pause,false);
+
  }finally{await db.close();}
 });
 

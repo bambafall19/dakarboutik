@@ -37,6 +37,22 @@ test('Future publications create one automatic ad; updates, visibility, manual p
  const reactivated=(await db.query('select * from advertising_campaigns where auto_product_id=$1',[third])).rows;
  assert.equal(reactivated.length,1);assert.equal(reactivated[0].id,pausedId);assert.equal(reactivated[0].active,true);assert.ok(reactivated[0].title.includes('4 600 FCFA'));assert.equal(reactivated[0].image_url,'https://test.shop/after-reactivation.jpg');assert.equal((await db.query('select manual_pause from advertising_product_automation where listing_id=$1',[third])).rows[0].manual_pause,false);
 
+
+ // Archive and draft transitions preserve the campaign and its exact statistics.
+ await db.query("insert into engagement_events(id,campaign_id,kind,placement) values($1,$2,'ad_view','home'),($3,$2,'ad_click','home')",[crypto.randomUUID(),pausedId,crypto.randomUUID()]);
+ const historyBefore=(await db.query('select * from engagement_events where campaign_id=$1 order by id',[pausedId])).rows;
+ const campaignBefore=(await db.query('select * from advertising_campaigns where id=$1',[pausedId])).rows[0];
+ for (const status of ['suspended','pending']) {
+   await db.query('update marketplace_listings set status=$1 where id=$2',[status,third]);
+   const rows=(await db.query('select * from advertising_campaigns where auto_product_id=$1',[third])).rows;
+   assert.equal(rows.length,1);assert.equal(rows[0].id,pausedId);assert.equal(rows[0].active,false);
+   assert.equal(String(rows[0].created_at),String(campaignBefore.created_at));
+   assert.deepEqual((await db.query('select * from engagement_events where campaign_id=$1 order by id',[pausedId])).rows,historyBefore);
+   assert.equal((await db.query('select manual_pause from advertising_product_automation where listing_id=$1',[third])).rows[0].manual_pause,false);
+   await db.query("update marketplace_listings set status='approved' where id=$1",[third]);
+   assert.equal((await db.query('select active from advertising_campaigns where id=$1',[pausedId])).rows[0].active,true);
+ }
+
  }finally{await db.close();}
 });
 

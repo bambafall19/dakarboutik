@@ -187,6 +187,12 @@ export default function PublicitesPage() {
           Nouvelle publicité
         </button>
       </div>
+      <p className="rounded-xl border bg-emerald-50 p-3 text-sm text-emerald-950">
+        Après activation, les nouveaux produits publiés avec photo créent
+        automatiquement une publicité d’accueil. Les brouillons restent hors
+        diffusion. Les publicités automatiques suivent les campagnes
+        prioritaires, de la plus récente à la plus ancienne.
+      </p>
       <nav aria-label="Statuts des publicités" className="flex flex-wrap gap-2">
         {[["", "Toutes"], ...Object.entries(campaignStatusLabels)].map(
           ([key, label]) => (
@@ -274,6 +280,13 @@ export default function PublicitesPage() {
           <h2 className="text-lg font-bold">
             {form.id ? "Modifier la publicité" : "Nouvelle publicité"}
           </h2>
+          {form.autoProductId && (
+            <p className="text-sm text-slate-600">
+              Le titre, la photo et le prix suivent la fiche produit. Les dates
+              et l’ordre restent réglables ici. « Enregistrer en brouillon » met
+              la publicité en pause, même si le produit est modifié ensuite.
+            </p>
+          )}
           <fieldset
             disabled={busy || uploading}
             className="grid gap-4 sm:grid-cols-2"
@@ -488,6 +501,7 @@ export default function PublicitesPage() {
                       title: creative.title || "Titre de votre publicité",
                       imageUrl: creative.imageUrl,
                       placement: creative.placement || "home",
+                      targetUrl: creative.targetUrl,
                     }}
                   />
                 ) : (
@@ -521,6 +535,11 @@ export default function PublicitesPage() {
               />
               <div className="min-w-0 flex-1 basis-44">
                 <h3 className="break-words text-sm font-bold">{c.title}</h3>
+                {c.autoProductId && (
+                  <p className="mt-1 text-xs font-semibold text-emerald-800">
+                    Automatique · nouveau produit
+                  </p>
+                )}
                 <p className="mt-1 text-xs text-muted-foreground">
                   {placements[c.placement]}
                   {c.category ? " · " + adCategories[c.category] : ""} · Ordre{" "}

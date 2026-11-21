@@ -4,7 +4,9 @@ import styles from "./advertising-slot.module.css";
 export function AdCreative({
   campaign: c,
 }: {
-  campaign: Pick<Campaign, "title" | "imageUrl" | "placement">;
+  campaign: Pick<Campaign, "title" | "imageUrl" | "placement"> & {
+    targetUrl?: string;
+  };
 }) {
   return (
     <div className={styles.surface}>
@@ -35,7 +37,11 @@ export function AdCreative({
           <span
             className={c.placement === "home" ? styles.cta : styles.compactCta}
           >
-            {c.placement === "home" ? "Découvrir la boutique →" : "Découvrir →"}
+            {c.placement === "home"
+              ? c.targetUrl?.includes("/produits/")
+                ? "Découvrir le produit →"
+                : "Découvrir la boutique →"
+              : "Découvrir →"}
           </span>
         </div>
       </div>

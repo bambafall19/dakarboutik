@@ -5,6 +5,8 @@ import { authClient } from "@/lib/auth/client";
 import { MarketplaceNav } from "./catalog";
 import { VisibilityRequest } from "./visibility-request";
 import { BillingPanel } from "./billing-panel";
+import { AdminProductEditor } from "./admin-product-editor";
+import { AdminShopProfile } from "./admin-shop-profile";
 import { PhotoField } from "./photo-field";
 import { filterAdminInventory } from "@/lib/admin-inventory";
 import inventoryStyles from "./admin-inventory.module.css";
@@ -132,6 +134,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
   const [adminStatus, setAdminStatus] = useState("");
   const [archive, setArchive] = useState(false);
   const [adminEditorOpen, setAdminEditorOpen] = useState(false);
+  const [duplicateProduct, setDuplicateProduct] = useState(false);
   const [confirmation, setConfirmation] = useState<{ listing: Listing; action: "suspend" | "delete" } | null>(null);
   const selectedShop = shops.find((item) => item.id === selectedShopId);
   const scopedListings = selectedShopId ? listings.filter(item => item.shop_id === selectedShopId) : listings;
@@ -279,6 +282,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
             <>
               <p className="text-sm text-slate-600">Recherchez une fiche pour la modifier. La publication et les archives se gèrent dans les autres actions du produit.</p>
               <nav aria-label="Sections de gestion" className={inventoryStyles.tabs}><a href="#produits">Produits</a><a href="#boutiques">Publication des boutiques</a><a href="#forfaits">Forfaits</a></nav>
+              {selectedShop && <AdminShopProfile key={`${selectedShop.id}-${selectedShop.updated_at}`} shop={selectedShop} busy={busy} onBusy={setPhotoBusy} onSave={profile=>save({action:"admin-save-shop",shopId:selectedShop.id,profile})} />}
               <h2 id="produits" className="scroll-mt-6 text-lg font-bold">Produits partenaires</h2>
               <section className="space-y-4 rounded-xl border bg-white p-5" aria-label="Gestion des produits partenaires">
                 <div className={inventoryStyles.filters}>
@@ -303,43 +307,19 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                 {archive && <p className="text-sm text-slate-600">Les archives regroupent les produits suspendus. Ils sont conservés et peuvent être republiés.</p>}
                 <button type="button" className="rounded-lg border px-4 py-2 disabled:opacity-50" disabled={!selectedShop || busy} onClick={() => {
                   setEditing(null);
+                  setDuplicateProduct(false);
                   setFormKey((key) => key + 1);
                   setAdminEditorOpen(true);
                   setConfirmation(null);
                 }}>Ajouter un produit</button>
                 {adminEditorOpen && selectedShop && (
-                  <form key={formKey} id="admin-listing-editor" className="space-y-3" onSubmit={async (event) => {
-                    event.preventDefault();
-                    if (busy) return;
-                    const details = Object.fromEntries(new FormData(event.currentTarget));
-                    if (await save({ action: "admin-save-listing", shopId: selectedShop.id, id: editing?.id, details })) {
-                      setAdminEditorOpen(false);
-                      setEditing(null);
-                    }
-                  }}>
-                    <h3 className="font-bold">{editing ? "Modifier le produit" : "Nouveau produit"} · {selectedShop.profile.name}</h3>
-                    {!editing && <p className="text-sm">Le produit sera en attente. Utilisez « Publier » pour le mettre en ligne.</p>}
-                    <Input name="title" label="Nom du produit" value={editing?.details.title} required />
-                    <Input name="price" label="Prix en FCFA" type="number" value={editing?.details.price} required />
-                    <Input name="category" label="Catégorie" value={editing?.details.category || selectedShop.profile.category} required />
-                    <Input name="image" label="Lien HTTPS de la photo (facultatif)" type="url" value={editing?.details.image} />
-                    <Input name="productUrl" label="Lien externe du produit (facultatif)" type="url" value={editing?.details.productUrl} />
-                    <label className="block">
-                      Description
-                      <textarea className={field} name="description" rows={4} minLength={10} maxLength={2500} defaultValue={editing?.details.description} required />
-                    </label>
-                    <label className="block">
-                      Disponibilité
-                      <select className={field} name="availability" defaultValue={editing?.details.availability ?? "available"}>
-                        {Object.entries(availabilityLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </label>
-                    <button disabled={busy} className="rounded-lg bg-emerald-800 px-4 py-2 text-white">Enregistrer le produit</button>
-                    <button type="button" disabled={busy} className="ml-3 underline" onClick={() => {
-                      setAdminEditorOpen(false);
-                      setEditing(null);
-                    }}>Annuler</button>
-                  </form>
+                  <AdminProductEditor key={formKey} shop={selectedShop} listing={editing} duplicate={duplicateProduct} busy={busy} onBusy={setPhotoBusy} onCancel={()=>{setAdminEditorOpen(false);setEditing(null);setDuplicateProduct(false);}} onSave={async (details,status)=>{
+                    if(await save({action:"admin-save-listing",shopId:selectedShop.id,id:duplicateProduct?undefined:editing?.id,details,status})){
+                      setAdminEditorOpen(false);setEditing(null);setDuplicateProduct(false);
+                      setArchive(false);setAdminSearch("");setAdminCategory("");setAdminStatus("");
+                      setMessage(status==="approved"?"Produit enregistré et publié.":status==="pending"||!editing||duplicateProduct?"Brouillon enregistré en attente, non visible sur le site.":"Produit modifié. Son statut de publication est conservé.");
+                    }return false;
+                  }} />
                 )}
               </section>
               <p role="status">{visibleListings.length} produit(s) dans cette sélection</p>
@@ -355,6 +335,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                     <button type="button" disabled={busy} className="rounded-lg border px-4 py-2" onClick={() => {
                       setSelectedShopId(l.shop_id);
                       setEditing(l);
+                      setDuplicateProduct(false);
                       setFormKey((key) => key + 1);
                       setAdminEditorOpen(true);
                       setConfirmation(null);
@@ -362,6 +343,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                     }}>Modifier</button>
                   </div>
                   <details><summary>Description et autres actions</summary>
+                  <button type="button" disabled={busy} className="min-h-11 rounded-xl border px-4 py-2" onClick={()=>{setSelectedShopId(l.shop_id);setEditing(l);setDuplicateProduct(true);setFormKey(key=>key+1);setAdminEditorOpen(true);setConfirmation(null);requestAnimationFrame(()=>document.getElementById("admin-listing-editor")?.scrollIntoView({block:"start"}));}}>Dupliquer</button>
                   <p>{l.details.description}</p>
                   {isProductUrl(l.details.productUrl) && (
                     <a href={l.details.productUrl} target="_blank" rel="noopener noreferrer" className="block underline">Vérifier la fiche produit externe ↗</a>

@@ -42,6 +42,13 @@ export async function POST(req: NextRequest) {
   if (!body || typeof body !== "object" || Array.isArray(body))
     return NextResponse.json({ error: "Requête invalide." }, { status: 400 });
   try {
+    if (body.action === "admin-save-shop") {
+      if (!session.isAdmin) return NextResponse.json({error:"Accès refusé."},{status:403});
+      const shopId = z.string().uuid().parse(body.shopId);
+      const profile = shopSchema.parse(body.profile);
+      const row = await queryOne("update marketplace_shops set profile=$1::jsonb,updated_at=now() where id=$2 returning id", [JSON.stringify(profile),shopId]);
+      return NextResponse.json(row ? {ok:true} : {error:"Boutique introuvable."},{status:row ? 200 : 404});
+    }
     if (body.action === "admin-save-listing" || body.action === "admin-delete-listing") {
       if (!session.isAdmin)
         return NextResponse.json({ error: "Accès refusé." }, { status: 403 });
@@ -58,23 +65,28 @@ export async function POST(req: NextRequest) {
         const parsedDetails = listingSchema.parse(body.details);
         const details = JSON.stringify(parsedDetails);
         const listingId = id.optional().parse(body.id);
+        const desiredStatus = z.enum(["pending", "approved"]).optional().parse(body.status);
+        if (desiredStatus === "approved") {
+          const shop = await queryOne("select status from marketplace_shops where id=$1", [shopId]);
+          if (!shop || shop.status !== "approved") return NextResponse.json({error:"Publiez d’abord la boutique avant de publier ses produits."},{status:409});
+        }
         if (billingEnabled()) {
           const shop = await queryOne("select id from marketplace_shops where id=$1",[shopId]);
           if(!shop) return NextResponse.json({error:"Boutique introuvable."},{status:404});
           const current = listingId ? await queryOne("select status from marketplace_listings where id=$1 and shop_id=$2",[listingId,shopId]) : null;
           if(listingId&&!current) return NextResponse.json({error:"Annonce introuvable."},{status:404});
-          const error=await saveBillableListing(listingId||crypto.randomUUID(),shopId,parsedDetails,current?.status||"pending",!listingId);
+          const error=await saveBillableListing(listingId||crypto.randomUUID(),shopId,parsedDetails,desiredStatus||current?.status||"pending",!listingId);
           return NextResponse.json(error?{error}:{ok:true},{status:error?409:200});
         }
         row = listingId
           ? await queryOne(
-              "update marketplace_listings set details=$1::jsonb,updated_at=now() where id=$2 and shop_id=$3 returning id",
-              [details, listingId, shopId],
+              "update marketplace_listings set details=$1::jsonb,status=coalesce($4,status),updated_at=now() where id=$2 and shop_id=$3 returning id",
+              [details, listingId, shopId, desiredStatus ?? null],
             )
           : await queryOne(
-              `insert into marketplace_listings(id,shop_id,details)
-               select $1,id,$3::jsonb from marketplace_shops where id=$2 returning id`,
-              [crypto.randomUUID(), shopId, details],
+              `insert into marketplace_listings(id,shop_id,details,status)
+               select $1,id,$3::jsonb,$4 from marketplace_shops where id=$2 returning id`,
+              [crypto.randomUUID(), shopId, details, desiredStatus ?? "pending"],
             );
       }
       if (!row)

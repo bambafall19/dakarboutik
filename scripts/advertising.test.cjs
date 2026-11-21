@@ -20,6 +20,17 @@ test('Inactive, future and expired campaigns do not display; end date is inclusi
  assert.equal(model.campaignLive(base,'2026-11-03'),false);assert.equal(model.campaignLive(base,'2026-11-06'),false);
  assert.equal(model.campaignLive({...base,active:false},'2026-11-04'),false);
 });
+test('Four automatic statuses handle boundaries and manual priority is validated',()=>{
+ assert.equal(model.campaignStatus({...base,active:false},'2026-11-06'),'draft');
+ assert.equal(model.campaignStatus(base,'2026-11-03'),'scheduled');
+ assert.equal(model.campaignStatus(base,'2026-11-04'),'live');
+ assert.equal(model.campaignStatus(base,'2026-11-05'),'live');
+ assert.equal(model.campaignStatus(base,'2026-11-06'),'ended');
+ assert.equal(model.campaignStatus({...base,startsOn:'',endsOn:''},'2026-11-06'),'live');
+ for(const sortOrder of [0,-1,1.2,10000,'2'])assert.equal(model.campaignSchema.safeParse({...base,sortOrder}).success,false);
+ assert.equal(model.campaignSchema.safeParse({...base,sortOrder:1}).success,true);
+});
+
 test('Events exclude personal payloads and require a campaign only for advertising',()=>{
  const e={id:crypto.randomUUID(),kind:'whatsapp_click',placement:'home'};
  assert.equal(model.eventSchema.safeParse(e).success,true);
@@ -41,6 +52,24 @@ test('Campaign API protects administration and preserves data when deactivated',
  await api.POST(req({...saved,active:false}));
  assert.equal((await(await api.GET(new NextRequest('https://shop.test/api/advertising'))).json()).length,0);
  const adminRows=await(await api.GET(new NextRequest('https://shop.test/api/advertising?admin=1'))).json();assert.equal(adminRows[0].title,base.title);
+ const legacyResponse=await api.GET(new NextRequest('https://shop.test/api/advertising?admin=1'));assert.equal(legacyResponse.headers.get('X-Advertising-Ordering'),'migration-required');
+ assert.equal((await api.POST(req({...saved,sortOrder:1}))).status,409);
+ await db.query("insert into engagement_events(id,campaign_id,kind,placement) values($1,$2,'ad_view','home')",[crypto.randomUUID(),saved.id]);
+ const before=(await db.query('select * from advertising_campaigns where id=$1',[saved.id])).rows[0];
+ await db.exec(fs.readFileSync('scripts/advertising-order.sql','utf8'));await db.exec(fs.readFileSync('scripts/advertising-order.sql','utf8'));
+ const after=(await db.query('select * from advertising_campaigns where id=$1',[saved.id])).rows[0];assert.equal(String(after.created_at),String(before.created_at));assert.equal(after.active,before.active);assert.equal(after.title,before.title);
+ assert.equal((await api.GET(new NextRequest('https://shop.test/api/advertising?admin=1'))).headers.get('X-Advertising-Ordering'),'ready');
+ const second=await(await api.POST(req({...base,title:'Premier dans le carrousel',startsOn:'',endsOn:'',sortOrder:1}))).json();
+ assert.equal((await api.POST(req({...saved,active:true,sortOrder:2}))).status,200);
+ const ordered=await(await api.GET(new NextRequest('https://shop.test/api/advertising'))).json();assert.deepEqual(ordered.map(c=>c.id),[second.id,saved.id]);
+ assert.equal((await db.query('select sort_order from advertising_campaigns where id=$1',[saved.id])).rows[0].sort_order,2);
+ await db.exec(fs.readFileSync('scripts/advertising-order.sql','utf8'));
+ assert.equal((await db.query('select sort_order from advertising_campaigns where id=$1',[saved.id])).rows[0].sort_order,2);
+ assert.equal((await db.query('select count(*)::int as n from engagement_events')).rows[0].n,1);
+ // An older client can update details without resetting the chosen priority.
+ assert.equal((await api.POST(req({...saved,active:true,title:'Titre modifié sans changer le rang'}))).status,200);
+ assert.equal((await db.query('select sort_order from advertising_campaigns where id=$1',[saved.id])).rows[0].sort_order,2);
+
  await db.close();
 });
 test('SQL counts a unique event once, rejects inactive or wrong-slot campaigns, and reports exact totals',async()=>{

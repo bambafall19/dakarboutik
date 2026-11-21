@@ -62,12 +62,21 @@ export const campaignSchema = z
     startsOn: date.default(""),
     endsOn: date.default(""),
     active: z.boolean().default(false),
+    sortOrder: z.number().int().min(1).max(9999).optional(),
   })
   .refine(
     (v) => !v.startsOn || !v.endsOn || v.endsOn >= v.startsOn,
     "La fin doit être après le début.",
   );
 export type Campaign = z.infer<typeof campaignSchema> & { id: string };
+export const campaignStatusLabels = {draft:"Brouillon",scheduled:"Programmée",live:"En cours",ended:"Terminée"} as const;
+export type CampaignStatus = keyof typeof campaignStatusLabels;
+export function campaignStatus(c: Pick<Campaign,"active"|"startsOn"|"endsOn">, day: string): CampaignStatus {
+  if (!c.active) return "draft";
+  if (c.endsOn && c.endsOn < day) return "ended";
+  if (c.startsOn && c.startsOn > day) return "scheduled";
+  return "live";
+}
 export function campaignLive(c: Campaign, day: string) {
   return (
     c.active &&
@@ -90,6 +99,7 @@ export function toCampaign(r: Record<string, any>): Campaign {
     startsOn: day(r.starts_on),
     endsOn: day(r.ends_on),
     active: r.active,
+    sortOrder: r.sort_order == null ? undefined : Number(r.sort_order),
   };
 }
 export const eventSchema = z

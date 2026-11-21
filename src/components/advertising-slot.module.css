@@ -1,3 +1,4 @@
+.surface { container-type: inline-size; container-name: ad-banner; min-width: 0; }
 .banner {
   position: relative;
   isolation: isolate;
@@ -40,7 +41,7 @@
   min-width: 0;
 }
 .title {
-  font-size: clamp(1.25rem, 2.2vw, 1.9rem);
+  font-size: clamp(1.25rem, 2.2cqw, 1.9rem);
   line-height: 1.25;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -115,7 +116,7 @@
     }
   }
 }
-@media (max-width: 600px) {
+@container ad-banner (max-width: 600px) {
   .banner {
     grid-template-columns: minmax(0, 1fr) 110px;
     gap: 0.75rem;
@@ -138,7 +139,7 @@
     font-size: 0.8rem;
   }
 }
-@media (max-width: 360px) {
+@container ad-banner (max-width: 360px) {
   .banner {
     grid-template-columns: minmax(0, 1fr) 85px;
   }
@@ -147,3 +148,5 @@
   }
 }
 @media(max-width:600px){.indicators{order:4;flex-basis:100%;margin-top:-.5rem}}
+
+.compact{display:flex;align-items:center;gap:1rem;min-height:192px;border:1px solid #f0d69b;border-radius:16px;background:linear-gradient(to right,#fffbeb,#ecfdf5);padding:1rem;color:#153e2c;min-width:0}.compactPhoto{width:208px;height:160px;object-fit:contain;background:white;border-radius:12px;flex-shrink:0}.compactCopy{min-width:0}.compactTitle{font-size:1.25rem;font-weight:750;overflow-wrap:anywhere;margin-top:.5rem}.compactCta{display:block;font-size:.875rem;font-weight:650;margin-top:.75rem;color:#09613f}@container ad-banner (max-width:600px){.compactPhoto{width:96px;height:112px}.compactTitle{font-size:1.125rem}}

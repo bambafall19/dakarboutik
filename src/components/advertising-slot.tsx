@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { type Campaign, campaignLive, safeAdUrl } from "@/lib/advertising";
 import { OFFICIAL_CATALOG_ENABLED } from "@/lib/catalog-mode";
 import { recordEngagement } from "@/lib/engagement-client";
+import { AdCreative } from "./ad-creative";
 import styles from "./advertising-slot.module.css";
 
 function AdCard({
@@ -50,47 +51,9 @@ function AdCard({
       href={c.targetUrl}
       rel="sponsored noopener"
       onClick={() => recordEngagement("ad_click", c.placement, c.id)}
-      className={
-        c.placement === "home"
-          ? styles.banner
-          : "group flex min-h-48 min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-emerald-50 p-4 text-slate-900 transition-shadow hover:shadow-md"
-      }
+      className="block min-w-0 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-600"
     >
-      <img
-        src={c.imageUrl}
-        alt=""
-        width={160}
-        height={120}
-        loading="lazy"
-        className={
-          c.placement === "home"
-            ? styles.photo
-            : "h-28 w-24 shrink-0 rounded-xl bg-white object-contain sm:h-40 sm:w-52"
-        }
-      />
-      <div className={c.placement === "home" ? styles.copy : "min-w-0"}>
-        <span className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
-          Sponsorisé
-        </span>
-        <h3
-          className={
-            c.placement === "home"
-              ? styles.title
-              : "mt-2 break-words text-lg font-bold sm:text-xl"
-          }
-        >
-          {c.title}
-        </h3>
-        <span
-          className={
-            c.placement === "home"
-              ? styles.cta
-              : "mt-3 block text-sm font-semibold text-emerald-800"
-          }
-        >
-          {c.placement === "home" ? "Découvrir la boutique →" : "Découvrir →"}
-        </span>
-      </div>
+      <AdCreative campaign={c} />
     </a>
   );
 }

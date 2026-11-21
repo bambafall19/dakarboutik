@@ -32,13 +32,15 @@ type MenuItem = {
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  section?: string;
   subItems?: { href: string; label: string; icon: LucideIcon }[];
 };
 
 const menuItems: MenuItem[] = [
   {
     href: "/admin",
-    label: "Tableau de bord",
+    label: "Vue d’ensemble",
+    section: "Gestion quotidienne",
     icon: LayoutDashboard,
     exact: true,
   },
@@ -46,6 +48,7 @@ const menuItems: MenuItem[] = [
   { href: "/admin/statistiques", label: "Statistiques", icon: LineChart },
   {
     label: "Publicité et visibilité",
+    section: "Faire vivre le site",
     icon: ImageIcon,
     subItems: [
       {
@@ -68,6 +71,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: "Catalogue historique",
+    section: "Administration",
     icon: Package,
     subItems: [
       {
@@ -93,7 +97,7 @@ function isLinkActive(item: MenuItem, pathname: string) {
   if (item.subItems) {
     return (
       item.subItems.some((sub) => pathname.startsWith(sub.href)) ||
-      pathname.startsWith("/admin/edit-product")
+      (item.label === "Catalogue historique" && pathname.startsWith("/admin/edit-product"))
     );
   }
   return false;
@@ -110,7 +114,7 @@ export function AdminSidebarContent({
     (item) =>
       item.subItems &&
       (item.subItems.some((sub) => pathname.startsWith(sub.href)) ||
-        pathname.startsWith("/admin/edit-product")),
+        (item.label === "Catalogue historique" && pathname.startsWith("/admin/edit-product"))),
   )?.label;
 
   return (
@@ -148,8 +152,10 @@ export function AdminSidebarContent({
               defaultActiveAccordion ? [defaultActiveAccordion] : []
             }
           >
-            {menuItems.map((item) =>
-              item.subItems ? (
+            {menuItems.map((item) => (
+              <div key={item.label}>
+              {item.section && <p className="px-3 pb-2 pt-5 text-[10px] font-semibold uppercase tracking-widest text-nav-foreground/50">{item.section}</p>}
+              {item.subItems ? (
                 <AccordionItem
                   key={item.label}
                   value={item.label}
@@ -157,7 +163,7 @@ export function AdminSidebarContent({
                 >
                   <AccordionTrigger
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground hover:no-underline",
+                      "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground hover:no-underline",
                       isLinkActive(item, pathname) &&
                         "bg-white/10 text-nav-foreground",
                     )}
@@ -172,8 +178,9 @@ export function AdminSidebarContent({
                           key={subItem.label}
                           href={subItem.href}
                           onClick={onNavigate}
+                          aria-current={pathname.startsWith(subItem.href) ? "page" : undefined}
                           className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-nav-foreground/60 transition-all hover:bg-white/5 hover:text-nav-foreground",
+                            "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-nav-foreground/60 transition-all hover:bg-white/5 hover:text-nav-foreground",
                             pathname.startsWith(subItem.href) &&
                               "bg-accent/15 text-accent",
                           )}
@@ -201,6 +208,7 @@ export function AdminSidebarContent({
                   key={item.label}
                   href={item.href!}
                   onClick={onNavigate}
+                  aria-current={isLinkActive(item, pathname) ? "page" : undefined}
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-nav-foreground/70 transition-all hover:bg-white/10 hover:text-nav-foreground",
                     isLinkActive(item, pathname) &&
@@ -210,8 +218,9 @@ export function AdminSidebarContent({
                   <item.icon className="h-4 w-4" />
                   {item.label}
                 </Link>
-              ),
-            )}
+              )}
+              </div>
+            ))}
           </Accordion>
         </nav>
       </div>

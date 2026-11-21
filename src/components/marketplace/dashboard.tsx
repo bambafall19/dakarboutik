@@ -220,18 +220,18 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
     <>
       {!admin && <MarketplaceNav compact />}
       <main
-        className="min-h-screen bg-amber-50 text-slate-900"
-        style={{
+        className={admin ? "text-slate-900" : "min-h-screen bg-amber-50 text-slate-900"}
+        style={admin ? undefined : {
           backgroundImage: "radial-gradient(ellipse at 0% 0%, #a7f3d0 0%, transparent 48%), radial-gradient(ellipse at 100% 12%, #fde68a 0%, transparent 42%), radial-gradient(ellipse at 95% 90%, #fecaca 0%, transparent 38%), linear-gradient(145deg, #f0fdf4, #fffbeb 55%, #fff1f2)",
           backgroundSize: "100% 100vh",
           backgroundRepeat: "repeat-y",
         }}
       >
-        <div className="container space-y-5 py-6 sm:py-10">
-          <h1 className="text-3xl font-bold">
+        <div className={admin ? "mx-auto max-w-6xl space-y-4" : "container space-y-5 py-6 sm:py-10"}>
+          <h1 className={admin ? "text-2xl font-bold" : "text-3xl font-bold"}>
             {admin ? "Boutiques et produits partenaires" : user ? "Mon tableau de bord" : "Mon espace boutique"}
           </h1>
-          <div className="flex flex-wrap items-center gap-4">
+          {!admin && <div className="flex flex-wrap items-center gap-4">
             {user && (
               <>
                 <span className="text-sm">{user.phone || user.email}</span>
@@ -240,8 +240,8 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                 </button>
               </>
             )}
-          </div>
-          {user?.phone && <details className="max-w-md rounded-xl border bg-white p-4"><summary className="cursor-pointer text-sm font-medium">Modifier mon mot de passe</summary>
+          </div>}
+          {user?.phone && !admin && <details className="max-w-md rounded-xl border bg-white p-4"><summary className="cursor-pointer text-sm font-medium">Modifier mon mot de passe</summary>
             <form className="mt-4 space-y-3" onSubmit={async e => {
               e.preventDefault(); const form = e.currentTarget; const data = new FormData(form); setBusy(true); setMessage("");
               try {
@@ -277,7 +277,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
             </p>
           ) : admin ? (
             <>
-              <h2 id="produits" className="scroll-mt-6 text-2xl font-bold">Produits partenaires</h2>
+              <p className="text-sm text-slate-600">Recherchez une fiche pour la modifier. La publication et les archives se gèrent dans les autres actions du produit.</p>
+              <nav aria-label="Sections de gestion" className={inventoryStyles.tabs}><a href="#produits">Produits</a><a href="#boutiques">Publication des boutiques</a><a href="#forfaits">Forfaits</a></nav>
+              <h2 id="produits" className="scroll-mt-6 text-lg font-bold">Produits partenaires</h2>
               <section className="space-y-4 rounded-xl border bg-white p-5" aria-label="Gestion des produits partenaires">
                 <div className={inventoryStyles.filters}>
                 <label className="block">
@@ -440,8 +442,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
               <h2 id="boutiques" className="scroll-mt-6 text-2xl font-bold">Boutiques</h2>
               {shops.length === 0 && <p>Aucune boutique inscrite.</p>}
               {(selectedShopId ? shops.filter(shop => shop.id === selectedShopId) : shops).map((s) => (
+                <details key={`${s.id}-${s.updated_at}`} className={inventoryStyles.extras}>
+                <summary>{s.profile.name} <span className="ml-2 text-xs font-normal text-slate-500">{statusLabels[s.status]}</span></summary>
                 <form
-                  key={`${s.id}-${s.updated_at}`}
                   className="space-y-4 rounded-xl border bg-white p-5"
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -506,6 +509,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                     Appliquer
                   </button>
                 </form>
+                </details>
               ))}
             </>
           ) : (

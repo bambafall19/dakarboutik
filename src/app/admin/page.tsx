@@ -87,24 +87,35 @@ export default function AdminDashboardPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="font-headline text-2xl font-extrabold">
-            Tableau de bord partenaires
+            Vue d’ensemble
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Suivez vos boutiques, leurs produits et les demandes de contact.
+            Choisissez une tâche, puis suivez l’activité de vos partenaires.
           </p>
         </div>
         <Button variant="outline" onClick={refresh}>
           Actualiser
         </Button>
       </div>
+      <section aria-labelledby="tasks-title" className="space-y-3">
+        <h2 id="tasks-title" className="text-sm font-semibold text-muted-foreground">Que souhaitez-vous gérer ?</h2>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["Boutiques et produits", "Modifier une fiche, valider ou archiver", "/admin/boutiques"],
+            ["Publicité", "Programmer les annonces et bannières", "/admin/publicites"],
+            ["Messages et contenus", "Répondre et mettre à jour les informations", "/admin/messages"],
+            ["Statistiques", "Suivre les consultations et contacts", "/admin/statistiques"],
+          ].map(([title, description, href]) => <Link key={href} href={href} className="rounded-xl border bg-white p-4 transition-colors hover:border-primary/50 hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"><span className="block text-sm font-bold">{title} →</span><span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{description}</span></Link>)}
+        </div>
+      </section>
       <div className="grid gap-4 sm:grid-cols-3">
         {cards.map((c) => (
           <Card key={c.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 p-4 pb-2">
               <CardTitle className="text-sm">{c.label}</CardTitle>
               <c.icon className="h-5 w-5 shrink-0 text-primary" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0">
               <p className="text-3xl font-extrabold">{c.value}</p>
               <p className="mt-2 text-xs text-muted-foreground">{c.detail}</p>
               <Link
@@ -195,13 +206,11 @@ export default function AdminDashboardPage() {
           Gérer les boutiques et produits →
         </Link>
       </section>
-      <section
+      <details
         aria-labelledby="shops-title"
         className="rounded-2xl border bg-card p-5"
       >
-        <h2 id="shops-title" className="text-lg font-bold">
-          Vos boutiques partenaires
-        </h2>
+        <summary id="shops-title" className="cursor-pointer text-base font-bold">Vos boutiques partenaires · {overview.shops.length}</summary>
         <p className="mt-1 text-sm text-muted-foreground">
           Classement par nombre de produits visibles, sans estimation de ventes.
         </p>
@@ -229,48 +238,13 @@ export default function AdminDashboardPage() {
         {overview.shops.length === 0 && (
           <p className="mt-4">Aucune boutique inscrite.</p>
         )}
-      </section>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <section className="rounded-2xl border bg-card p-5">
-          <h2 className="text-lg font-bold">Publicité et forfaits</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Gérez les campagnes et retrouvez la préparation des forfaits dans
-            les boutiques.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm">
-            <Link href="/admin/publicites" className={linkClass}>
-              Gérer les publicités →
-            </Link>
-            <Link href={manage + "#forfaits"} className={linkClass}>
-              Voir les forfaits →
-            </Link>
-          </div>
-        </section>
-        <section className="rounded-2xl border bg-card p-5">
-          <h2 className="text-lg font-bold">Anciennes commandes DakarBoutik</h2>
-          {orders.error ? (
-            <p role="alert" className="mt-2 text-sm">
-              Le compteur des anciennes commandes est indisponible.
-            </p>
-          ) : orders.loading ? (
-            <p role="status">Chargement…</p>
-          ) : (
-            <p className="mt-2 text-sm">
-              {pendingOrders} commande(s) à confirmer, hors tests et archives.
-            </p>
-          )}
-          <p className="mt-2 text-xs text-muted-foreground">
-            Les échanges WhatsApp des partenaires ne créent pas de commande dans
-            cette liste.
-          </p>
-          <Link
-            href="/admin/orders"
-            className={"mt-4 inline-block text-sm " + linkClass}
-          >
-            Ouvrir les anciennes commandes →
-          </Link>
-        </section>
-      </div>
+      </details>
+      <details className="rounded-xl border bg-card p-4">
+        <summary className="cursor-pointer text-sm font-semibold">Ancien catalogue DakarBoutik</summary>
+        <p className="mt-3 text-sm text-muted-foreground">Les anciennes commandes sont séparées de l’activité des boutiques partenaires.</p>
+        {orders.error ? <p role="alert" className="mt-2 text-sm">Compteur indisponible.</p> : <p className="mt-2 text-sm">{orders.loading ? "Chargement…" : String(pendingOrders) + " commande(s) à confirmer, hors tests et archives."}</p>}
+        <Link href="/admin/orders" className={"mt-3 inline-block text-sm " + linkClass}>Consulter les anciennes commandes →</Link>
+      </details>
     </div>
   );
 }

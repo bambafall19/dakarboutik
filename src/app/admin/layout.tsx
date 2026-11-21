@@ -149,7 +149,7 @@ export default function AdminLayout({
   const router = useRouter();
   const { toast } = useToast();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+
 
   useEffect(() => {
     if (!loading && !user) {
@@ -193,7 +193,7 @@ export default function AdminLayout({
 
   if (user && isAdmin) {
     return (
-      <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
+      <div className="grid min-h-screen w-full lg:grid-cols-[248px_1fr]">
         <AdminSidebar />
         <div className="flex min-w-0 flex-col">
           <header className="flex h-16 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur md:px-6">
@@ -242,7 +242,7 @@ export default function AdminLayout({
               href="/admin/boutiques#produits"
               className="ml-auto rounded-xl border px-3 py-2 text-center text-xs font-semibold text-primary sm:text-sm"
             >
-              Gérer les produits partenaires
+              Produits partenaires
             </Link>
             <Button
               asChild
@@ -251,7 +251,7 @@ export default function AdminLayout({
               className="hidden rounded-full md:flex"
             >
               <Link href="/" target="_blank">
-                Voir la boutique
+                Voir le site
               </Link>
             </Button>
             <ShopNotifications />

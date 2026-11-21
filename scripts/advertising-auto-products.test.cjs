@@ -53,6 +53,24 @@ test('Future publications create one automatic ad; updates, visibility, manual p
    assert.equal((await db.query('select active from advertising_campaigns where id=$1',[pausedId])).rows[0].active,true);
  }
 
+
+ // Shop suspension pauses automatic campaigns without erasing history or manual choices.
+ const fourth=crypto.randomUUID();
+ await db.query("insert into marketplace_listings(id,shop_id,details,status) values($1,$2,$3::jsonb,'approved')",[fourth,shop,JSON.stringify(details)]);
+ const fourthAd=(await db.query('select id from advertising_campaigns where auto_product_id=$1',[fourth])).rows[0].id;
+ await db.query('update advertising_campaigns set active=false where id=$1',[fourthAd]);
+ await db.query("insert into engagement_events(id,campaign_id,kind,placement) values($1,$2,'ad_click','home')",[crypto.randomUUID(),fourthAd]);
+ const campaignsBeforeShop=(await db.query('select * from advertising_campaigns order by id')).rows;
+ const allHistoryBeforeShop=(await db.query('select * from engagement_events order by id')).rows;
+ await db.query("update marketplace_shops set status='suspended' where id=$1",[shop]);
+ for(const id of [pausedId,fourthAd]) assert.equal((await db.query('select active from advertising_campaigns where id=$1',[id])).rows[0].active,false);
+ assert.deepEqual((await db.query('select * from engagement_events order by id')).rows,allHistoryBeforeShop);
+ await db.query("update marketplace_shops set status='approved' where id=$1",[shop]);
+ assert.equal((await db.query('select active from advertising_campaigns where id=$1',[pausedId])).rows[0].active,true);
+ assert.equal((await db.query('select active from advertising_campaigns where id=$1',[fourthAd])).rows[0].active,false);
+ assert.deepEqual((await db.query('select * from advertising_campaigns order by id')).rows,campaignsBeforeShop);
+ assert.deepEqual((await db.query('select * from engagement_events order by id')).rows,allHistoryBeforeShop);
+
  }finally{await db.close();}
 });
 

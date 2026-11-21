@@ -25,6 +25,13 @@ test('Future publications create one automatic ad; updates, visibility, manual p
  const manual=crypto.randomUUID();await db.query("insert into advertising_campaigns(id,title,image_url,target_url,placement,active) values($1,'Manuelle','https://test.shop/manual.jpg',$2,'home',false)",[manual,`/boutiques/${shop}/produits/${second}`]);await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify(details),second]);assert.equal((await db.query('select count(*)::int n from advertising_campaigns')).rows[0].n,2);assert.equal((await db.query('select active from advertising_campaigns where id=$1',[manual])).rows[0].active,false);
  const third=crypto.randomUUID();await db.query("insert into marketplace_listings(id,shop_id,details,status) values($1,$2,$3::jsonb,'approved')",[third,shop,JSON.stringify({...details,image:''})]);await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify(details),third]);assert.equal((await db.query('select count(*)::int n from advertising_campaigns where auto_product_id=$1',[third])).rows[0].n,1);
  await db.query('update advertising_campaigns set active=false where auto_product_id=$1',[third]);await db.query("update marketplace_shops set status='suspended' where id=$1",[shop]);await db.query("update marketplace_shops set status='approved' where id=$1",[shop]);assert.equal((await db.query('select active from advertising_campaigns where auto_product_id=$1',[third])).rows[0].active,false);
+ const pausedId=(await db.query('select id from advertising_campaigns where auto_product_id=$1',[third])).rows[0].id;
+ await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify({...details,availability:'sold_out'}),third]);
+ await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify({...details,availability:'available'}),third]);
+ assert.equal((await db.query('select active from advertising_campaigns where id=$1',[pausedId])).rows[0].active,false);
+ await db.query('update marketplace_listings set details=$1::jsonb where id=$2',[JSON.stringify({...details,price:4200,availability:'available'}),third]);
+ const pausedRows=(await db.query('select id,active,title from advertising_campaigns where auto_product_id=$1',[third])).rows;
+ assert.equal(pausedRows.length,1);assert.equal(pausedRows[0].id,pausedId);assert.equal(pausedRows[0].active,false);assert.ok(pausedRows[0].title.includes('4 200 FCFA'));
  }finally{await db.close();}
 });
 

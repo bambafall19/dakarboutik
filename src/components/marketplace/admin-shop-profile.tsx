@@ -8,6 +8,7 @@ import {
   type ShopProfile,
 } from "@/lib/marketplace-model";
 import { campaignLive, type Campaign } from "@/lib/advertising";
+import { MerchantAccessAdmin } from './merchant-access-admin';
 const input = "mt-1 w-full min-w-0 rounded-xl border bg-white p-3 text-base";
 export function AdminShopProfile({
   shop,
@@ -110,6 +111,7 @@ export function AdminShopProfile({
       <p className="text-sm text-slate-600">
         Horaires : {shop.profile.hours || "À compléter"}
       </p>
+      <MerchantAccessAdmin key={`${shop.id}-${shop.profile.whatsapp}`} shop={shop} />
       <div className="flex flex-wrap gap-3 text-sm font-semibold text-emerald-800">
         <a href="#produits" className="underline">
           Produits

@@ -1,5 +1,28 @@
 Récupération des comptes téléphone — assistance DakarBoutik
 
+Parcours recommandé : admin > Boutiques et produits > choisir la boutique >
+Accès du commerçant par téléphone. Vérifier indépendamment l’identité du
+propriétaire ET son contrôle du numéro enregistré avant de cocher l’attestation.
+Générer le lien personnel, puis le transmettre uniquement à ce numéro via
+WhatsApp. Le commerçant ouvre le lien et choisit lui-même son mot de passe.
+Le lien expire après 30 minutes, ne sert qu’une fois et est invalidé par une
+nouvelle génération. Son ouverture ou son aperçu WhatsApp ne le consomme pas.
+Le secret est placé dans le fragment du lien et seul son condensat est stocké.
+Ne pas afficher ce lien dans un ticket, journal, capture publique ou chat.
+
+La génération ne change aucun compte. Lors de l’enregistrement du mot de passe,
+la boutique existante est rattachée au compte du numéro enregistré (créé si
+nécessaire) et seules les anciennes sessions de ce compte téléphone sont
+révoquées. Aucun mot de passe e-mail, produit, campagne ou historique de
+statistiques n’est modifié. Un numéro déjà lié à une autre boutique est refusé.
+Une modification du propriétaire, du numéro ou une suspension invalide le lien.
+Le commerçant se connecte ensuite sur /commercant avec son téléphone.
+
+Le bouton public « Mot de passe oublié ? » reste une demande d’assistance :
+aucun lien n’est délivré automatiquement sur simple déclaration d’un numéro.
+
+Ancienne procédure technique (secours pour un compte téléphone existant) :
+
 Le lien WhatsApp ouvre une demande, jamais une réinitialisation automatique.
 Vérifier le contrôle du numéro ET la propriété de la boutique à partir d’éléments déjà connus. Une capture ou un numéro simplement déclaré ne suffisent pas. Si le commerçant n’a plus accès au numéro, faire une vérification complémentaire avant toute modification.
 Ne jamais demander l’ancien mot de passe. Ne pas fusionner avec un compte e-mail sur la seule base d’une adresse déclarée.

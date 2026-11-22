@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { internalTestEnabled, measurementAllowed, recordEngagement } from "@/lib/engagement-client";
 import { contactAttribution } from "@/lib/engagement-attribution";
 const privatePath = (p: string) =>
-  /^\/(admin|commercant|login|register|signup|suivi|checkout|api|auth|order-confirmation)(\/|$)/.test(
+  /^\/(admin|commercant|acces-boutique|login|register|signup|suivi|checkout|api|auth|order-confirmation)(\/|$)/.test(
     p,
   );
 export function SiteAnalytics() {

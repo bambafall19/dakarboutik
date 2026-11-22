@@ -96,7 +96,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname.startsWith('/admin');
   const isLogin = pathname === '/login';
 
-  if (isAdmin || isLogin) {
+  if (isAdmin || isLogin || pathname === '/acces-boutique') {
     return <>{children}</>;
   }
   if (pathname.startsWith('/boutiques') || pathname === '/forfaits' || pathname === '/favoris') {

@@ -9,6 +9,8 @@ import brand from "@/components/marketplace/brand.module.css";
 import { HomeProductCard } from "@/components/marketplace/home-product-card";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import { availabilityLabels, isProductUrl } from "@/lib/marketplace-model";
+import { MarjiAssistant } from "@/components/marketplace/marji-assistant";
+import { MARJI_SHOP_ID } from "@/lib/marji-assistant";
 
 export const dynamic = "force-dynamic";
 export default async function ProductPage({
@@ -141,6 +143,7 @@ export default async function ProductPage({
             Voir tous les produits de cette boutique
           </Link>
         </section>
+        {shop.id === MARJI_SHOP_ID && <MarjiAssistant productId={listing.id} />}
         {others.length > 0 && (
           <section aria-labelledby="other-products">
             <h2 id="other-products" className="mb-4 text-2xl font-bold">

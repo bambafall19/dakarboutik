@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { MarketplaceNav, ListingCard } from "@/components/marketplace/catalog";
 import { publicMarketplace } from "@/lib/marketplace-server";
 import { contactUrl, isSponsored } from "@/lib/marketplace-model";
+import { MarjiAssistant } from "@/components/marketplace/marji-assistant";
+import { MARJI_SHOP_ID } from "@/lib/marji-assistant";
 export const dynamic = "force-dynamic";
 export default async function Page({
   params,
@@ -61,6 +63,7 @@ export default async function Page({
           </div>
           <ShopShare shop={shop} />
         </header>
+        {shop.id === MARJI_SHOP_ID && <MarjiAssistant />}
         <h2 className="text-2xl font-bold">Produits et disponibilités</h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {listings

@@ -76,6 +76,11 @@ export default async function HomePage() {
       viewBox: "678 945 330 190",
     },
   ];
+  const priorityCategories = rays.map(({ name }) => name);
+  const homeCategories = [
+    ...priorityCategories,
+    ...MARKETPLACE_CATEGORIES.filter((name) => !priorityCategories.includes(name)),
+  ];
   return (
     <div className={styles.home}>
       <form
@@ -143,7 +148,7 @@ export default async function HomePage() {
           Explorez les rayons <span>Glissez pour découvrir →</span>
         </span>
         <div className={styles.marketCategories}>
-          {MARKETPLACE_CATEGORIES.map((name) => (
+          {homeCategories.map((name) => (
             <Link key={name} href={partnerSearchUrl("", name)}>
               <span className={styles.roundCategory}>
                 {categoryArt[name] ? (

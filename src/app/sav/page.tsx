@@ -53,6 +53,11 @@ const options = [
 export default function SAVPage() {
   return (
     <div className="container py-8 md:py-12">
+      <aside className="mb-6 space-y-2 rounded-xl border bg-amber-50 p-4 text-slate-900">
+        <p className="font-semibold">Cette page concerne le SAV des anciennes commandes vendues par DakarBoutik.</p>
+        <p>Pour un achat auprès d’une boutique partenaire, contactez son vendeur pour connaître les conditions applicables à votre produit.</p>
+        <Link href="/acheter-chez-les-partenaires#garantie" className="inline-flex min-h-11 items-center font-semibold underline">Garantie et retours des achats partenaires →</Link>
+      </aside>
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -17,23 +17,27 @@ import { Logo } from './logo';
 import { normalizePhoneNumber } from '@/lib/order-channels';
 
 const footerLinks = {
-  Boutique: [
+  'Boutiques partenaires': [
     { name: 'Solaire & énergie', href: '/boutiques?category=Solaire#recherche' },
-    { name: 'Téléphones & accessoires', href: '/boutiques?category=Téléphones#recherche' },
-    { name: 'Informatique & électronique', href: '/boutiques?category=Informatique#recherche' },
-    { name: 'Maison & électroménager', href: '/boutiques?category=Maison#recherche' },
-    { name: 'À la une', href: '/boutiques#publicite' },
+    { name: 'Informatique', href: '/boutiques?category=Informatique#recherche' },
+    { name: 'Parfumerie', href: '/boutiques?category=Parfumerie#recherche' },
+    { name: 'Toutes les boutiques', href: '/boutiques#boutiques-resultats' },
   ],
-  'Commandes & livraison': [
-    { name: 'Suivi de commande', href: '/suivi' },
-    { name: 'Livraison & délais', href: '/livraison' },
-    { name: 'Modes de paiement', href: '/faq' },
+  'Acheter chez les partenaires': [
+    { name: 'Comment acheter ?', href: '/acheter-chez-les-partenaires' },
+    { name: 'Livraison avec le vendeur', href: '/acheter-chez-les-partenaires#livraison' },
+    { name: 'Paiement au vendeur', href: '/acheter-chez-les-partenaires#paiement' },
+    { name: 'Garantie et retours du vendeur', href: '/acheter-chez-les-partenaires#garantie' },
   ],
-  Support: [
+  'Anciennes commandes DakarBoutik': [
+    { name: 'Suivre une ancienne commande', href: '/suivi' },
+    { name: 'Livraison des anciennes commandes', href: '/livraison' },
+    { name: 'SAV des anciennes commandes', href: '/sav' },
+  ],
+  'Aide DakarBoutik': [
     { name: 'À propos', href: '/a-propos' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Garantie & SAV', href: '/sav' },
-    { name: 'FAQ', href: '/faq' },
+    { name: 'Contacter la plateforme', href: '/contact' },
+    { name: 'FAQ DakarBoutik', href: '/faq' },
   ],
 };
 
@@ -79,7 +83,7 @@ export function Footer({ settings }: FooterProps) {
               <Logo imageUrl={settings?.logoUrl} loading={!isClient} inverted />
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-nav-foreground/70">
-              Le marché des boutiques partenaires au Sénégal. Découvrez leurs produits et contactez directement le vendeur.
+              Le marché des boutiques partenaires au Sénégal. Découvrez leurs produits et contactez directement le vendeur. Chaque boutique confirme ses prix, la livraison, le paiement et ses conditions de vente.
             </p>
             <div className="mt-6 space-y-3">
               {isClient ? (

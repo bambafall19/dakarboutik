@@ -18,6 +18,11 @@ export default async function LivraisonPage() {
   return (
     <div className="container max-w-4xl space-y-8 py-8 md:py-12">
       <h1 className="font-headline text-3xl font-bold">Livraison &amp; délais</h1>
+      <aside className="space-y-2 rounded-xl border bg-amber-50 p-4 text-slate-900">
+        <p className="font-semibold">Informations pour les anciennes commandes vendues par DakarBoutik.</p>
+        <p>Pour un produit d’une boutique partenaire, les frais et le délai se confirment directement avec ce vendeur.</p>
+        <Link href="/acheter-chez-les-partenaires#livraison" className="inline-flex min-h-11 items-center font-semibold underline">Livraison des achats partenaires →</Link>
+      </aside>
       <p>Pour les commandes vendues par DakarBoutik, les frais sont calculés selon la région de livraison. Notre équipe confirme le délai selon le produit et l’adresse.</p>
       {regions.map(({ id, label }) => (
         <section key={id} aria-labelledby={id} className="space-y-3">

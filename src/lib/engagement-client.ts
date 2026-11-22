@@ -32,7 +32,7 @@ export function recordEngagement(
   campaignId?: string,
   attribution: Attribution = {},
 ) {
-  if (kind === "checkout_open" && internalTestEnabled()) return;
+  if (internalTestEnabled()) return;
   if (!measurementAllowed()) return;
   void fetch("/api/engagement", {
     method: "POST",

@@ -53,7 +53,7 @@ function InternalTestBanner({ pathname }: { pathname: string }) {
 
   return active ? (
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b border-amber-300 bg-amber-100 px-4 py-1 text-sm font-semibold text-amber-950">
-      <span role="status">Test interne actif</span>
+      <span role="status">Test interne actif · visites et clics exclus des statistiques dans cet onglet</span>
       <button
         type="button"
         onClick={deactivate}

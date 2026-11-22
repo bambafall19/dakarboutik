@@ -2,7 +2,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { measurementAllowed, recordEngagement } from "@/lib/engagement-client";
+import { internalTestEnabled, measurementAllowed, recordEngagement } from "@/lib/engagement-client";
 import { contactAttribution } from "@/lib/engagement-attribution";
 const privatePath = (p: string) =>
   /^\/(admin|commercant|login|register|signup|suivi|checkout|api|auth|order-confirmation)(\/|$)/.test(
@@ -53,7 +53,7 @@ export function SiteAnalytics() {
   return (
     <Analytics
       beforeSend={(event) => {
-        if (!measurementAllowed()) return null;
+        if (internalTestEnabled() || !measurementAllowed()) return null;
         const url = new URL(event.url);
         if (privatePath(url.pathname)) return null;
         url.search = "";

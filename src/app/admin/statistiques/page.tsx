@@ -494,12 +494,17 @@ export default function StatistiquesPage() {
         aria-labelledby="internal-test-title"
       >
         <h2 id="internal-test-title" className="font-semibold">
-          Tests du panier historique
+          Tests internes du site
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ce mode exclut uniquement les accès au panier effectués dans cet
-          onglet. Il ne filtre pas les consultations de boutiques ni les clics
-          WhatsApp.
+          Activez ce mode avant vos vérifications : les consultations de boutiques,
+          les clics WhatsApp (partenaires, assistance et ancien catalogue), les
+          affichages et clics publicitaires, les accès au panier et les visites
+          Vercel ne sont pas comptés dans cet onglet. Les liens restent utilisables.
+          Utilisez « Ouvrir le site pour tester » dans ce même onglet ; un autre
+          onglet, navigateur ou appareil doit être activé séparément. Aucun
+          événement déjà enregistré n’est supprimé. Désactivez le mode pour
+          reprendre la mesure des nouvelles actions.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-4">
           <button

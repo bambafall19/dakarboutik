@@ -149,7 +149,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="w-[calc(100%-1rem)] max-w-sm flex flex-col gap-0 p-0 [&>button]:hidden motion-reduce:animate-none motion-reduce:transition-none"
+        <SheetContent animated={false} side="left" className="w-[calc(100%-1rem)] max-w-sm flex flex-col gap-0 p-0 [&>button]:hidden motion-reduce:animate-none motion-reduce:transition-none"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             // The sheet is unmounted here: its focus trap and pointer lock are released.

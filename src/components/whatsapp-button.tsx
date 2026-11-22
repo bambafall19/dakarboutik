@@ -100,6 +100,7 @@ function GeneralHelp() {
         </button>
       </DialogTrigger>
       <DialogContent
+        animated={false}
         onCloseAutoFocus={(event) => {
           if (returnFocus.current?.isConnected) {
             event.preventDefault();

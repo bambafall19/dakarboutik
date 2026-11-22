@@ -21,7 +21,7 @@ export function canonicalCategory(label: string) {
   const key = normalizeMarketplaceText(label);
   if (['mode', 'beaute', 'mode & beaute', 'mode et beaute'].includes(key)) return 'Mode & Beauté';
   if (['parfum', 'parfums', 'parfumerie'].includes(key)) return 'Parfumerie';
-  return label.trim();
+  return MARKETPLACE_CATEGORIES.find(name => normalizeMarketplaceText(name) === key) || label.trim();
 }
 
 export function catalogueCategories(labels: string[]) {

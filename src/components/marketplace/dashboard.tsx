@@ -8,7 +8,8 @@ import { BillingPanel } from "./billing-panel";
 import { AdminProductEditor } from "./admin-product-editor";
 import { AdminShopProfile } from "./admin-shop-profile";
 import { PhotoField } from "./photo-field";
-import { filterAdminInventory } from "@/lib/admin-inventory";
+import { AdminProductThumbnail } from "./admin-product-thumbnail";
+import { adminInventoryCategories, filterAdminInventory } from "@/lib/admin-inventory";
 import inventoryStyles from "./admin-inventory.module.css";
 import { MerchantOverview, DashboardCharts, ProductInventory, type MerchantPanel } from "./dashboard-panels";
 import { LayoutDashboard, Store, Package, PlusCircle } from "lucide-react";
@@ -132,13 +133,14 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
   const [adminSearch, setAdminSearch] = useState("");
   const [adminCategory, setAdminCategory] = useState("");
   const [adminStatus, setAdminStatus] = useState("");
+  const [adminAvailability, setAdminAvailability] = useState("");
   const [archive, setArchive] = useState(false);
   const [adminEditorOpen, setAdminEditorOpen] = useState(false);
   const [duplicateProduct, setDuplicateProduct] = useState(false);
   const [confirmation, setConfirmation] = useState<{ listing: Listing; action: "suspend" | "delete" } | null>(null);
   const selectedShop = shops.find((item) => item.id === selectedShopId);
   const scopedListings = selectedShopId ? listings.filter(item => item.shop_id === selectedShopId) : listings;
-  const visibleListings = filterAdminInventory(listings, shops, {shopId:selectedShopId, search:adminSearch, category:adminCategory, status:adminStatus, archive});
+  const visibleListings = filterAdminInventory(listings, shops, {shopId:selectedShopId, search:adminSearch, category:adminCategory, status:adminStatus, availability:adminAvailability, archive});
   const [productMode, setProductMode] = useState<"new" | "stock">("new");
   const [formKey, setFormKey] = useState(0);
   const [panel, setPanel] = useState<MerchantPanel>("overview");
@@ -300,10 +302,11 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                   </select>
                 </label>
                 <label>Rechercher un produit<input type="search" className={field} value={adminSearch} onChange={event => setAdminSearch(event.target.value)} placeholder="Nom, description ou boutique" /></label>
-                <label>Catégorie du produit<select className={field} value={adminCategory} onChange={event => setAdminCategory(event.target.value)}><option value="">Toutes les catégories</option>{[...new Set(scopedListings.map(l => l.details.category))].sort((a,b) => a.localeCompare(b,"fr")).map(name => <option key={name}>{name}</option>)}</select></label>
+                <label>Catégorie du produit<select className={field} value={adminCategory} onChange={event => setAdminCategory(event.target.value)}><option value="">Toutes les catégories</option>{adminInventoryCategories(scopedListings).map(name => <option key={name}>{name}</option>)}</select></label>
                 <label>Statut du produit<select className={field} value={archive ? "suspended" : adminStatus} onChange={event => {setAdminStatus(event.target.value);setArchive(false);}} disabled={archive}><option value="">Tous les produits actifs</option><option value="approved">Publiés</option><option value="pending">En attente</option>{archive && <option value="suspended">Suspendus</option>}</select></label>
+                <label>Disponibilité<select className={field} value={adminAvailability} onChange={event => setAdminAvailability(event.target.value)}><option value="">Toutes les disponibilités</option>{Object.entries(availabilityLabels).map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                 </div>
-                <div className={inventoryStyles.tabs} aria-label="Affichage des produits"><button type="button" aria-pressed={!archive} onClick={() => {setArchive(false);setConfirmation(null);}}>Produits ({scopedListings.filter(l => l.status !== "suspended").length})</button><button type="button" aria-pressed={archive} onClick={() => {setArchive(true);setConfirmation(null);}}>Archives ({scopedListings.filter(l => l.status === "suspended").length})</button><button type="button" onClick={() => {setSelectedShopId("");setAdminSearch("");setAdminCategory("");setAdminStatus("");setArchive(false);}}>Effacer les filtres</button></div>
+                <div className={inventoryStyles.tabs} aria-label="Affichage des produits"><button type="button" aria-pressed={!archive} onClick={() => {setArchive(false);setConfirmation(null);}}>Produits ({scopedListings.filter(l => l.status !== "suspended").length})</button><button type="button" aria-pressed={archive} onClick={() => {setArchive(true);setConfirmation(null);}}>Archives ({scopedListings.filter(l => l.status === "suspended").length})</button><button type="button" onClick={() => {setSelectedShopId("");setAdminSearch("");setAdminCategory("");setAdminStatus("");setAdminAvailability("");setArchive(false);}}>Effacer les filtres</button></div>
                 {archive && <p className="text-sm text-slate-600">Les archives regroupent les produits suspendus. Ils sont conservés et peuvent être republiés.</p>}
                 <button type="button" className="rounded-lg border px-4 py-2 disabled:opacity-50" disabled={!selectedShop || busy} onClick={() => {
                   setEditing(null);
@@ -316,7 +319,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                   <AdminProductEditor key={formKey} shop={selectedShop} listing={editing} duplicate={duplicateProduct} busy={busy} onBusy={setPhotoBusy} onCancel={()=>{setAdminEditorOpen(false);setEditing(null);setDuplicateProduct(false);}} onSave={async (details,status)=>{
                     if(await save({action:"admin-save-listing",shopId:selectedShop.id,id:duplicateProduct?undefined:editing?.id,details,status})){
                       setAdminEditorOpen(false);setEditing(null);setDuplicateProduct(false);
-                      setArchive(false);setAdminSearch("");setAdminCategory("");setAdminStatus("");
+                      setArchive(false);setAdminSearch("");setAdminCategory("");setAdminStatus("");setAdminAvailability("");
                       setMessage(status==="approved"?"Produit enregistré et publié.":status==="pending"||!editing||duplicateProduct?"Brouillon enregistré en attente, non visible sur le site.":"Produit modifié. Son statut de publication est conservé.");
                     }return false;
                   }} />
@@ -330,7 +333,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
                   className={inventoryStyles.row}
                 >
                   <div className={inventoryStyles.identity}>
-                    {l.details.image ? <img src={l.details.image} alt="" loading="lazy" /> : <span aria-hidden="true">—</span>}
+                    <AdminProductThumbnail key={l.details.image} image={l.details.image} title={l.details.title} />
                     <div><h3>{l.details.title}</h3><p>{shops.find(s => s.id === l.shop_id)?.profile.name} · {Number(l.details.price).toLocaleString("fr-FR")} FCFA</p><p>{availabilityLabels[l.details.availability]} · {statusLabels[l.status]}</p></div>
                     <button type="button" disabled={busy} className="rounded-lg border px-4 py-2" onClick={() => {
                       setSelectedShopId(l.shop_id);

@@ -1,7 +1,8 @@
 "use client";
 import { scentOptions } from "@/lib/partner-options";
 import { useState, useTransition, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { marjiPage } from "@/lib/marji-assistant";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import {
@@ -33,6 +34,7 @@ import {
 
 export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const isMarji = !!marjiPage(usePathname() || "");
   return (
     <header className={brand.header}>
       <nav
@@ -83,7 +85,7 @@ export function MarketplaceNav({ compact = false }: { compact?: boolean }) {
               window.dispatchEvent(new Event("dakarboutik:open-help"))
             }
           >
-            On vous guide ?
+            {isMarji ? "Une question à MARJI ?" : "On vous guide ?"}
           </button>
         </div>
       </nav>

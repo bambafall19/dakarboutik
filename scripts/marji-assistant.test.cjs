@@ -41,3 +41,17 @@ test('API validates input and reads fresh public data without recording a conver
  const result=await(await post({question:'Prix des brumes'})).json();assert.equal(result.products.length,0);assert.equal(reads,2);
  const source=fs.readFileSync('src/app/api/marji-assistant/route.ts','utf8');assert.doesNotMatch(source,/console\.|insert into|localStorage/i);
 });
+
+test('MARJI help is scoped to its shop and exact product routes',()=>{
+ assert.deepEqual(assistant.marjiPage('/boutiques/'+MARJI_SHOP_ID),{});
+ assert.deepEqual(assistant.marjiPage('/boutiques/'+MARJI_SHOP_ID+'/produits/'+listings[0].id),{productId:listings[0].id});
+ for(const route of ['/','/admin/boutiques','/boutiques/other','/boutiques/'+MARJI_SHOP_ID+'-other','/boutiques/'+MARJI_SHOP_ID+'/produits/nope'])assert.equal(assistant.marjiPage(route),null);
+});
+test('Scent choices use the published list and preserve seller, selected product and current price',()=>{
+ const description='Senteurs :\n1. Aura\n2. Pink Chiffon\n3. Aura\nDisponibilité à confirmer.';
+ assert.deepEqual(assistant.publishedScents(description),['Aura','Pink Chiffon']);
+ const result=answer(shop,[make(listings[0].id,'Extrait 20 ml',3000,'available',{description})],'prix');const product=result.products[0];
+ const contact=new URL(assistant.scentContactUrl(product,'Pink Chiffon'));
+ assert.equal(contact.pathname,'/221775831637');assert.match(contact.searchParams.get('text'),/Extrait 20 ml/);assert.match(contact.searchParams.get('text'),/3.000 FCFA/);assert.match(contact.searchParams.get('text'),/Senteur souhaitée : Pink Chiffon/);
+ assert.equal(assistant.scentContactUrl(product,'Non publiée'),product.contactUrl);
+});

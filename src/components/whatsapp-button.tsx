@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { marjiPage } from "@/lib/marji-assistant";
+import { MarjiHelp } from "./marketplace/marji-help";
 import { MessageCircle, Search, ArrowRight } from "lucide-react";
 import { Icons } from "./icons";
 import { useSiteSettings } from "@/hooks/use-site-data";
@@ -48,6 +51,12 @@ const topics = [
 ];
 
 export function WhatsAppButton() {
+  const pathname = usePathname();
+  const context = marjiPage(pathname || '');
+  return context ? <MarjiHelp key={pathname} productId={context.productId} /> : <GeneralHelp />;
+}
+
+function GeneralHelp() {
   const { settings } = useSiteSettings();
   const number = getWhatsAppNumber(settings);
   const [open, setOpen] = useState(false);

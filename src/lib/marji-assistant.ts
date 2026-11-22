@@ -6,8 +6,26 @@ export type MarjiAnswer = {
   text: string;
   handoff: boolean;
   contactUrl: string;
-  products: { id: string; title: string; price: string; availability: string; updatedAt: string; href: string; contactUrl: string }[];
+  products: { id: string; title: string; price: string; availability: string; updatedAt: string; href: string; contactUrl: string; image: string; scents: string[] }[];
 };
+
+export function marjiPage(pathname: string): { productId?: string } | null {
+  const base = `/boutiques/${MARJI_SHOP_ID}`;
+  if (pathname === base || pathname === base + "/") return {};
+  const match = pathname.match(new RegExp(`^${base}/produits/([0-9a-f-]{36})/?$`, "i"));
+  return match ? { productId: match[1] } : null;
+}
+
+export function publishedScents(description: string): string[] {
+  return [...new Set(description.split(/\r?\n/).map(line => line.match(/^\s*\d+[.)]\s+(.+?)\s*$/)?.[1]).filter((value): value is string => !!value && value.length <= 100))].slice(0, 60);
+}
+
+export function scentContactUrl(product: MarjiAnswer["products"][number], scent: string) {
+  if (!product.scents.includes(scent)) return product.contactUrl;
+  const url = new URL(product.contactUrl);
+  url.searchParams.set("text", `${url.searchParams.get("text")} Senteur souhaitée : ${scent}.`);
+  return url.toString();
+}
 
 const normalize = (value: string) => normalizeMarketplaceText(value).replace(/(\d)\s*ml\b/g, "$1ml").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 const stop = new Set("bonjour salut bonsoir merci svp s il te vous plait je j aimerais voudrais veux savoir est ce que c le la les un une des du de d l et ou a au aux en chez pour par avec votre vos mon ma mes quel quels quelle quelles combien coute coutent prix tarif tarifs produit produits parfum parfums disponible disponibles disponibilite stock avez as vous il y sont sont ils elles ml senteur senteurs choix collection extrait extraits".split(" "));
@@ -57,6 +75,7 @@ export function answerMarji(shop: Shop | undefined, listings: Listing[], questio
       price: `${Number(item.details.price).toLocaleString("fr-FR")} FCFA`,
       availability: availabilityLabels[item.details.availability],
       updatedAt: item.updated_at, href: partnerProductUrl(item), contactUrl: handoffUrl(item),
+      image: item.details.image || "", scents: publishedScents(item.details.description),
     })),
   };
 }

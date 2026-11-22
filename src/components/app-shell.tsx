@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { Footer } from '@/components/footer';
 import { useSiteSettings, useCategories } from '@/hooks/use-site-data';
 import { HeaderWrapper } from './header-wrapper';
@@ -73,7 +73,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  const menuOpener = useRef<HTMLElement | null>(null);
+  const helpAfterMenuClose = useRef(false);
   const { isSnowing } = useSnow();
+
+  useEffect(() => {
+    helpAfterMenuClose.current = false;
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  const openMobileMenu = () => {
+    menuOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    helpAfterMenuClose.current = false;
+    setIsMobileMenuOpen(true);
+  };
+
+  const openHelpAfterMenu = () => {
+    helpAfterMenuClose.current = true;
+    setIsMobileMenuOpen(false);
+  };
 
   const isAdmin = pathname.startsWith('/admin');
   const isLogin = pathname === '/login';
@@ -109,7 +127,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             settingsLoading={settingsLoading}
             categories={categories}
             categoriesLoading={categoriesLoading}
-            onMobileMenuClick={() => setIsMobileMenuOpen(true)}
+            onMobileMenuClick={openMobileMenu}
             onSearchClick={handleSearchClick}
         />
         <main id="main-content">
@@ -125,17 +143,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ClientOnly>
           <div className="md:hidden">
             <MobileBottomNav
-              onMenuClick={() => setIsMobileMenuOpen(true)}
+              onMenuClick={openMobileMenu}
             />
           </div>
         </ClientOnly>
       </div>
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetContent side="left" className="w-[calc(100%-1rem)] max-w-sm flex flex-col gap-0 p-0 [&>button]:hidden motion-reduce:animate-none motion-reduce:transition-none">
+        <SheetContent side="left" className="w-[calc(100%-1rem)] max-w-sm flex flex-col gap-0 p-0 [&>button]:hidden motion-reduce:animate-none motion-reduce:transition-none"
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            // The sheet is unmounted here: its focus trap and pointer lock are released.
+            if (menuOpener.current?.isConnected) menuOpener.current.focus({ preventScroll: true });
+            if (helpAfterMenuClose.current) {
+              helpAfterMenuClose.current = false;
+              window.dispatchEvent(new Event('dakarboutik:open-help'));
+            }
+          }}>
             <SheetDescription className="sr-only">
               Menu principal : raccourcis boutique, catégories, support et informations légales.
             </SheetDescription>
-            <MobileNav items={categories} settings={settings} onLinkClick={() => setIsMobileMenuOpen(false)} />
+            <MobileNav items={categories} settings={settings} onLinkClick={() => setIsMobileMenuOpen(false)} onHelpClick={openHelpAfterMenu} />
         </SheetContent>
       </Sheet>
       <SearchSheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen} />

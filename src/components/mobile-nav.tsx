@@ -16,6 +16,7 @@ interface MobileNavProps {
   items: Category[];
   settings?: SiteSettings | null;
   onLinkClick: () => void;
+  onHelpClick: () => void;
 }
 
 const links = [
@@ -26,7 +27,7 @@ const links = [
 ];
 const row = 'flex min-h-11 items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
 
-export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
+export function MobileNav({ items, settings, onLinkClick, onHelpClick }: MobileNavProps) {
   const pathname = usePathname();
   const partnerCategories: Category[] = MARKETPLACE_CATEGORIES.map(name => ({ id: name, name, slug: name, order: 0 }));
   const whatsapp = normalizePhoneNumber(settings?.whatsappNumber || '')?.replace(/\D/g, '');
@@ -65,14 +66,14 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
         <nav aria-label="Navigation mobile" className="space-y-1">
           {links.map(({ href, label, icon: Icon }) => {
             const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
-            return <Link key={href} href={href} onClick={onLinkClick} aria-current={active ? 'page' : undefined} className={`${row} ${active ? 'bg-primary/10 text-primary' : ''}`}><Icon className="h-5 w-5 shrink-0" aria-hidden="true" /><span className="flex-1">{label}</span>{active && <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />}</Link>;
+            return <Link key={label} href={href} onClick={onLinkClick} aria-current={active ? 'page' : undefined} className={`${row} ${active ? 'bg-primary/10 text-primary' : ''}`}><Icon className="h-5 w-5 shrink-0" aria-hidden="true" /><span className="flex-1">{label}</span>{active && <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />}</Link>;
           })}
         </nav>
         <div className="my-3 grid grid-cols-2 gap-2">
           <Link href="/boutiques#publicite" onClick={onLinkClick} className={`${row} justify-center bg-amber-50 text-amber-950`}><Tag className="h-4 w-4" aria-hidden="true" />À la une</Link>
           <Link href="/boutiques#produits-resultats" onClick={onLinkClick} className={`${row} justify-center bg-emerald-50 text-emerald-950`}><Sparkles className="h-4 w-4" aria-hidden="true" />Nouveautés</Link>
         </div>
-        <button type="button" className={`${row} w-full border border-amber-200 bg-amber-50 text-emerald-900 mb-3`} onClick={() => { onLinkClick(); setTimeout(() => window.dispatchEvent(new Event("dakarboutik:open-help")), 150); }}><MessageCircle className="h-5 w-5" aria-hidden="true" />On vous guide ?</button>
+        <button type="button" className={`${row} w-full border border-amber-200 bg-amber-50 text-emerald-900 mb-3`} onClick={onHelpClick}><MessageCircle className="h-5 w-5" aria-hidden="true" />On vous guide ?</button>
         <Accordion type="multiple" className="border-y">
           <AccordionItem value="categories" className="border-b-0">
             <AccordionTrigger className="min-h-12 px-3 text-sm font-bold hover:no-underline">Explorer les catégories</AccordionTrigger>

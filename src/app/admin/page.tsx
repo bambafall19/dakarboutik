@@ -75,8 +75,8 @@ export default function AdminDashboardPage() {
       detail: "Visibles dans le catalogue public",
     },
     {
-      label: "Boutiques à valider",
-      value: overview.pendingShops.length,
+      label: "Fiches à valider",
+      value: pending,
       icon: ClipboardCheck,
       href: "#validations",
       detail: `${overview.pendingShops.length} boutique(s) · ${overview.pendingProducts.length} produit(s)`,
@@ -122,7 +122,7 @@ export default function AdminDashboardPage() {
                 className={"mt-4 inline-block text-sm " + linkClass}
                 href={c.href}
               >
-                {c.label === "Boutiques à valider"
+                {c.label === "Fiches à valider"
                   ? "Voir les validations"
                   : `Voir les ${c.label.toLocaleLowerCase("fr")}`}{" "}
                 →

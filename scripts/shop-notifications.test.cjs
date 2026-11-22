@@ -27,3 +27,22 @@ test('A new shop queues one durable alert; edits and suspended resubmissions do 
   await db.query("update marketplace_shops set status='pending' where id=$1",[shop.id]);const data=await (await alerts.GET()).json();assert.equal(data.pendingCount,1);assert.equal(data.notifications[0].id,shop.id);assert.equal(data.notifications[0].email_status,'sent');
  } finally {global.fetch=oldFetch;for(const [key,value] of [['SHOP_ALERT_EMAIL_TO',oldEnv.to],['ORDER_EMAIL_FROM',oldEnv.from],['RESEND_API_KEY',oldEnv.key]]){if(value===undefined)delete process.env[key];else process.env[key]=value;}await db.close();}
 });
+
+test('Moderation alerts persist across reads and count pending products independently from pending shops',async()=>{
+ const db=new PGlite();let session=null;
+ try{
+  for(const file of ['marketplace.sql','shop-notifications.sql'])await db.exec(fs.readFileSync('scripts/'+file,'utf8'));
+  const shop=crypto.randomUUID(),pendingShop=crypto.randomUUID(),product=crypto.randomUUID(),other=crypto.randomUUID();
+  await db.query("insert into marketplace_shops(id,owner_id,profile,status) values($1,'owner','{\"name\":\"Published shop\"}','approved'),($2,'new-owner','{\"name\":\"New shop\"}','pending')",[shop,pendingShop]);
+  await db.query("insert into marketplace_listings(id,shop_id,details,status) values($1,$2,'{\"title\":\"New product\"}','pending'),($3,$2,'{\"title\":\"Visible product\"}','approved')",[product,shop,other]);
+  const adapter={query:async(s,p=[])=>(await db.query(s,p)).rows,queryOne:async(s,p=[])=>(await db.query(s,p)).rows[0]??null};
+  const api=load('src/app/api/marketplace/notifications/route.ts',{'@/lib/db':adapter,'@/lib/auth':{getSession:async()=>session},'@/lib/shop-notifications':{shopEmailConfig:()=>null}});
+  assert.equal((await api.GET()).status,403);session={isAdmin:false};assert.equal((await api.GET()).status,403);session={isAdmin:true};
+  const read=async()=>{const r=await api.GET();assert.equal(r.status,200);assert.equal(r.headers.get('cache-control'),'no-store');return r.json();};
+  for(let n=0;n<2;n++){const d=await read();assert.equal(d.pendingCount,1);assert.equal(d.pendingProductsCount,1);assert.equal(d.products[0].id,product);assert.equal(d.products[0].shop_name,'Published shop');}
+  await db.query("update marketplace_shops set status='approved' where id=$1",[pendingShop]);let d=await read();assert.equal(d.pendingCount,0);assert.equal(d.pendingProductsCount,1);
+  await db.query("update marketplace_listings set status='approved' where id=$1",[product]);d=await read();assert.equal(d.pendingProductsCount,0);assert.deepEqual(d.products,[]);
+  await db.query("update marketplace_listings set status='pending' where id=$1",[product]);assert.equal((await read()).pendingProductsCount,1);
+  await db.query("update marketplace_listings set status='suspended' where id=$1",[product]);assert.equal((await read()).pendingProductsCount,0);
+ }finally{await db.close();}
+});

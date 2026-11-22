@@ -17,6 +17,8 @@ type Data = {
   pendingCount: number;
   notifications: Notice[];
   emailConfigured: boolean;
+  pendingProductsCount: number;
+  products: {id:string;shop_id:string;title:string;shop_name:string;updated_at:string}[];
 };
 const emailLabels: Record<string, string> = {
   queued: "E-mail en attente",
@@ -30,6 +32,7 @@ export function ShopNotifications() {
     "/api/marketplace/notifications",
   );
   const previous = useRef<Set<string> | null>(null);
+  const previousProducts=useRef<Set<string>|null>(null);
   const {data:access,error:accessError}=useApiData<AccessRequestsData>('/api/admin/merchant-access-requests');
   const previousAccess=useRef<Set<string>|null>(null);
   const [busy, setBusy] = useState(false);
@@ -41,7 +44,7 @@ export function ShopNotifications() {
     if(previousAccess.current&&fresh.length)toast({title:'Nouvelle demande d’accès commerçant',description:fresh.map(r=>r.shop_name).join(', ')});
     previousAccess.current=new Set(access.requests.map(r=>r.id));
   },[access,toast]);
-  const total=(data?.pendingCount||0)+(access?.pendingCount||0);
+  const total=(data?.pendingCount||0)+(data?.pendingProductsCount||0)+(access?.pendingCount||0);
   useEffect(() => {
     if (!data) return;
     const fresh = data.notifications.filter(
@@ -53,6 +56,9 @@ export function ShopNotifications() {
         description: fresh.map((n) => n.name).join(", "),
       });
     previous.current = new Set(data.notifications.map((n) => n.id));
+    const freshProducts=data.products.filter(p=>!previousProducts.current?.has(p.id));
+    if(previousProducts.current&&freshProducts.length)toast({title:'Produits en attente de validation',description:freshProducts.map(p=>`${p.title} · ${p.shop_name}`).join(', ')});
+    previousProducts.current=new Set(data.products.map(p=>p.id));
   }, [data, toast]);
   async function retry(id: string) {
     setBusy(true);
@@ -81,7 +87,7 @@ export function ShopNotifications() {
         aria-label={
           error
             ? "Notifications boutiques indisponibles"
-            : `${data?.pendingCount ?? "…"} boutiques à valider · ${access?.pendingCount??'…'} demandes d’accès`
+            : `${data?.pendingCount ?? "…"} boutiques à valider · ${data?.pendingProductsCount??'…'} produits à valider · ${access?.pendingCount??'…'} demandes d’accès`
         }
         className="relative flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-full border"
       >
@@ -101,13 +107,15 @@ export function ShopNotifications() {
         aria-label="Notifications des boutiques"
         className="absolute -right-16 top-12 z-50 max-h-[70vh] w-[min(22rem,calc(100vw-2rem))] space-y-3 overflow-y-auto rounded-2xl border bg-white p-4 text-slate-900 shadow-xl sm:right-0"
       >
-        <h2 className="text-lg font-bold">
-          Boutiques à valider · {data?.pendingCount ?? "…"}
-        </h2>
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm">
+        <h2 className="text-lg font-bold">À traiter</h2>
+        <p className="text-xs text-slate-600">Les alertes restent présentes jusqu’à la validation ou la suspension de la fiche.</p>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <Link href="/admin/boutiques?validation=boutiques#boutiques" className="rounded-xl border bg-emerald-50 p-3 font-semibold">Boutiques à valider <strong className="block text-xl">{data?.pendingCount??'…'}</strong></Link>
+          <Link href="/admin/boutiques?statut=pending#produits" className="rounded-xl border bg-amber-50 p-3 font-semibold">Produits à valider <strong className="block text-xl">{data?.pendingProductsCount??'…'}</strong></Link>
+        </div>
+        <div className="border-t pt-2 text-sm">
           <Link href="/admin/boutiques#demandes-acces" className="inline-flex min-h-11 items-center font-bold text-emerald-900 underline">Demandes d’accès commerçants · {access?.pendingCount??'…'} →</Link>
           {accessError&&<p>Demandes d’accès temporairement indisponibles.</p>}
-          {access?.requests.slice(0,3).map(r=><p className="break-words" key={r.id}>{r.shop_name} · {r.reason==='forgot'?'Mot de passe oublié':'Premier accès'}</p>)}
         </div>
         {error ? (
           <button className="min-h-11 underline" onClick={() => void refetch()}>
@@ -117,19 +125,14 @@ export function ShopNotifications() {
           <p>Chargement…</p>
         ) : (
           <>
-            {!data.emailConfigured && (
-              <p className="rounded-lg bg-amber-50 p-2 text-sm">
-                L’e-mail n’est pas encore configuré. Les alertes dans l’admin
-                restent actives.
-              </p>
-            )}
+            <h3 className="text-sm font-bold">Boutiques en attente</h3>
             {!data.notifications.length && <p>Aucune boutique en attente.</p>}
-            {data.notifications.map((n) => (
+            {data.notifications.slice(0,3).map((n) => (
               <article
                 key={n.id}
                 className="space-y-1 rounded-xl border p-3 text-sm"
               >
-                <h3 className="break-words font-bold">{n.name}</h3>
+                <Link href={`/admin/boutiques?shop=${n.id}#boutiques`} className="inline-flex min-h-11 items-center break-words font-bold text-emerald-900 underline">{n.name} →</Link>
                 <p>
                   {n.category} · {n.city}
                 </p>
@@ -139,7 +142,7 @@ export function ShopNotifications() {
                   })}{" "}
                   (Dakar)
                 </p>
-                <p>
+                <details className="text-xs"><summary className="cursor-pointer py-2">Suivi de l’e-mail</summary><p>
                   {n.email_status
                     ? emailLabels[n.email_status]
                     : "Inscrite avant l’activation des e-mails"}
@@ -154,9 +157,12 @@ export function ShopNotifications() {
                   >
                     Réessayer l’e-mail
                   </button>
-                )}
+                )}</details>
               </article>
             ))}
+            <h3 className="border-t pt-3 text-sm font-bold">Produits en attente</h3>
+            {!data.products.length&&<p className="text-sm">Aucun produit en attente.</p>}
+            {data.products.slice(0,3).map(p=><Link key={p.id} href={`/admin/boutiques?shop=${p.shop_id}&statut=pending#produits`} className="block rounded-xl border p-3 text-sm"><span className="block break-words font-semibold text-emerald-900">{p.title} →</span><span className="text-slate-600">{p.shop_name}</span></Link>)}
           </>
         )}
         {message && (
@@ -165,7 +171,7 @@ export function ShopNotifications() {
           </p>
         )}
         <Link
-          href="/admin/boutiques#boutiques"
+          href="/admin/boutiques?validation=boutiques#boutiques"
           className="inline-flex min-h-11 items-center font-semibold text-emerald-800 underline"
         >
           Vérifier les boutiques →

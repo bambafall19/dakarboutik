@@ -16,8 +16,13 @@ export async function GET() {
     const notifications = await query(
       `select s.id,s.profile->>'name' as name,s.profile->>'category' as category,s.profile->>'city' as city,s.status,s.created_at,a.email_status,a.sent_at from marketplace_shops s left join marketplace_shop_alerts a on a.shop_id=s.id where s.status='pending' order by s.created_at desc limit 10`,
     );
+    const pendingProducts = await queryOne<{ count: number }>("select count(*)::int as count from marketplace_listings where status='pending'");
+    const products = await query(`select l.id,l.shop_id,l.details->>'title' as title,s.profile->>'name' as shop_name,l.updated_at
+      from marketplace_listings l join marketplace_shops s on s.id=l.shop_id where l.status='pending' order by l.updated_at desc,l.id limit 5`);
     return json({
       pendingCount: pending?.count || 0,
+      pendingProductsCount: pendingProducts?.count || 0,
+      products,
       notifications,
       emailConfigured: !!shopEmailConfig(),
     });

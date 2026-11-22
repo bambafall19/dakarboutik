@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect,useState } from 'react';
 import { useApiData } from '@/hooks/use-api-data';
 type AccessRequest={id:string;shop_name:string;phone:string;reason:string;created_at:string;email_status:string;shop_id:string|null;registered_name:string|null};
 export type AccessRequestsData={requests:AccessRequest[];pendingCount:number;emailConfigured:boolean};
@@ -8,6 +8,8 @@ const mailLabels:Record<string,string>={queued:'E-mail en attente',sending:'Envo
 export function MerchantAccessRequests(){
   const {data,error,refetch}=useApiData<AccessRequestsData>('/api/admin/merchant-access-requests');
   const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
+  const [expanded,setExpanded]=useState(false);
+  useEffect(()=>{const sync=()=>{if(location.hash==='#demandes-acces')setExpanded(true);};sync();window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[]);
   async function act(id:string,action:'retry'|'resolve'){
     setBusy(true);setMessage('');try{
       const res=await fetch('/api/admin/merchant-access-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,action})});
@@ -15,8 +17,9 @@ export function MerchantAccessRequests(){
       setMessage(action==='resolve'?'Demande classée comme traitée. Aucun accès modifié.':'Relance de l’e-mail demandée.');await refetch();
     }catch(e){setMessage(e instanceof Error?e.message:'Action impossible.');}finally{setBusy(false);}
   }
-  return <section id="demandes-acces" aria-labelledby="access-requests-title" className="scroll-mt-24 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-5">
-    <h2 id="access-requests-title" className="text-lg font-bold">Demandes d’accès commerçants · {data?.pendingCount??'…'}</h2>
+  return <details id="demandes-acces" open={expanded} onToggle={e=>setExpanded(e.currentTarget.open)} className="scroll-mt-24 rounded-xl border bg-white p-4">
+    <summary className="min-h-11 cursor-pointer font-semibold">Demandes d’accès commerçants · {data?.pendingCount??'…'}</summary>
+    <section aria-label="Demandes d’accès commerçants" className="mt-3">
     <p className="mt-2 text-sm">Mot de passe oublié ou premier accès : vérifiez le propriétaire et le numéro enregistré, puis préparez le lien depuis sa fiche boutique. Une demande ne prouve pas l’identité de son auteur.</p>
     {error?<button type="button" onClick={()=>void refetch()} className="min-h-11 underline">Demandes indisponibles · Réessayer</button>:!data?<p>Chargement…</p>:<>
       {!data.emailConfigured&&<p className="mt-3 rounded-xl border bg-white p-3 text-sm">L’e-mail n’est pas configuré. Les demandes restent visibles ici. Configurez le destinataire d’alertes et le service d’envoi.</p>}
@@ -31,5 +34,5 @@ export function MerchantAccessRequests(){
       </article>)}</div>
       {data.pendingCount>data.requests.length&&<p className="mt-3 text-sm">Les 50 demandes les plus récentes sont affichées. Traitez-les pour afficher les suivantes.</p>}
     </>}{message&&<p role="status" className="mt-3 text-sm">{message}</p>}
-  </section>;
+  </section></details>;
 }

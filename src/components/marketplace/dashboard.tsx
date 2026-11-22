@@ -120,7 +120,7 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
     {register && <p className="mt-4 text-center text-sm text-slate-600">1. Créez votre compte · 2. Présentez votre boutique · 3. Attendez sa validation</p>}
   </section>;
 }
-export function MarketplaceDashboard({ admin = false, inscription = false, initialPlan = "", initialVisibility = "", initialShopId = "" }: { admin?: boolean; inscription?: boolean; initialPlan?: string; initialVisibility?: string; initialShopId?: string }) {
+export function MarketplaceDashboard({ admin = false, inscription = false, initialPlan = "", initialVisibility = "", initialShopId = "", initialStatus = "", initialShopStatus = "" }: { admin?: boolean; inscription?: boolean; initialPlan?: string; initialVisibility?: string; initialShopId?: string; initialStatus?:string; initialShopStatus?:string }) {
   const { user, loading, refresh } = useAuth();
   const [shops, setShops] = useState<Shop[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
@@ -133,7 +133,8 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
   const [selectedShopId, setSelectedShopId] = useState(initialShopId);
   const [adminSearch, setAdminSearch] = useState("");
   const [adminCategory, setAdminCategory] = useState("");
-  const [adminStatus, setAdminStatus] = useState("");
+  const [adminStatus, setAdminStatus] = useState(initialStatus);
+  const [shopStatusFilter,setShopStatusFilter]=useState(initialShopStatus);
   const [adminAvailability, setAdminAvailability] = useState("");
   const [archive, setArchive] = useState(false);
   const [adminEditorOpen, setAdminEditorOpen] = useState(false);
@@ -288,8 +289,12 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
             </p>
           ) : admin ? (
             <>
-              <MerchantAccessRequests />
               <p className="text-sm text-slate-600">Recherchez une fiche pour la modifier. La publication et les archives se gèrent dans les autres actions du produit.</p>
+              <div aria-label="Validations en attente" className="flex flex-wrap gap-2 text-sm">
+                <a href="/admin/boutiques?validation=boutiques#boutiques" className="min-h-11 rounded-xl border bg-emerald-50 px-4 py-3 font-semibold">Boutiques à valider · {shops.filter(s=>s.status==='pending').length}</a>
+                <a href="/admin/boutiques?statut=pending#produits" className="min-h-11 rounded-xl border bg-amber-50 px-4 py-3 font-semibold">Produits à valider · {listings.filter(l=>l.status==='pending').length}</a>
+              </div>
+              <MerchantAccessRequests />
               <nav aria-label="Sections de gestion" className={inventoryStyles.tabs}><a href="#produits">Produits</a><a href="#boutiques">Publication des boutiques</a><a href="#forfaits">Forfaits</a></nav>
               {selectedShop && <AdminShopProfile key={`${selectedShop.id}-${selectedShop.updated_at}`} shop={selectedShop} busy={busy} onBusy={setPhotoBusy} onSave={profile=>save({action:"admin-save-shop",shopId:selectedShop.id,profile})} />}
               <h2 id="produits" className="scroll-mt-6 text-lg font-bold">Produits partenaires</h2>
@@ -432,8 +437,10 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
               <details id="forfaits" className={inventoryStyles.extras}><summary>Forfaits et visibilité — préparation</summary><div><BillingPanel admin /></div></details>
               <details className={inventoryStyles.extras}><summary>Graphiques du catalogue</summary><div><DashboardCharts listings={listings} /></div></details>
               <h2 id="boutiques" className="scroll-mt-6 text-2xl font-bold">Boutiques</h2>
+              <label className="block max-w-sm text-sm">Statut de la boutique<select className={field} value={shopStatusFilter} onChange={e=>setShopStatusFilter(e.target.value)}><option value="">Toutes les boutiques</option><option value="pending">En attente de validation</option><option value="approved">Publiées</option><option value="suspended">Suspendues</option></select></label>
+              {shops.length>0&&!shops.some(s=>(!selectedShopId||s.id===selectedShopId)&&(!shopStatusFilter||s.status===shopStatusFilter))&&<p>Aucune boutique pour ce filtre.</p>}
               {shops.length === 0 && <p>Aucune boutique inscrite.</p>}
-              {(selectedShopId ? shops.filter(shop => shop.id === selectedShopId) : shops).map((s) => (
+              {shops.filter(shop=>(!selectedShopId||shop.id===selectedShopId)&&(!shopStatusFilter||shop.status===shopStatusFilter)).map((s) => (
                 <details key={`${s.id}-${s.updated_at}`} className={inventoryStyles.extras}>
                 <summary>{s.profile.name} <span className="ml-2 text-xs font-normal text-slate-500">{statusLabels[s.status]}</span></summary>
                 <form

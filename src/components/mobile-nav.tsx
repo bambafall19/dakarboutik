@@ -80,7 +80,7 @@ export function MobileNav({ items, settings, onLinkClick }: MobileNavProps) {
           </AccordionItem>
           <AccordionItem value="help" className="border-b-0">
             <AccordionTrigger className="min-h-12 px-3 text-sm font-bold hover:no-underline">Aide et informations</AccordionTrigger>
-            <AccordionContent>{[['/contact','Contact et commandes'],['/sav','Garantie et SAV'],['/faq','Questions fréquentes'],['/a-propos','À propos'],['/mentions-legales','Mentions légales'],['/conditions-generales','Conditions générales'],['/politique-de-confidentialite','Confidentialité']].map(([href,label]) => <Link key={href} href={href} onClick={onLinkClick} className={row}>{label}</Link>)}</AccordionContent>
+            <AccordionContent>{[['/acheter-chez-les-partenaires','Acheter chez les partenaires'],['/contact','Contacter la plateforme'],['/suivi','Suivre une ancienne commande DakarBoutik'],['/sav','SAV des anciennes commandes DakarBoutik'],['/faq','Questions fréquentes'],['/a-propos','À propos'],['/mentions-legales','Mentions légales'],['/conditions-generales','Conditions générales'],['/politique-de-confidentialite','Confidentialité']].map(([href,label]) => <Link key={href} href={href} onClick={onLinkClick} className={row}>{label}</Link>)}</AccordionContent>
           </AccordionItem>
         </Accordion>
         <Link href="/boutiques" onClick={onLinkClick} className={`${row} mt-2`}><Heart className="h-5 w-5" aria-hidden="true" />Toutes les boutiques</Link>

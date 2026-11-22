@@ -22,7 +22,7 @@ export default function LegalNoticePage() {
           <div><dt className="font-semibold">NINEA</dt><dd>008565973</dd></div>
           <div><dt className="font-semibold">Adresse professionnelle</dt><dd>Gueule Tapée, rue 63 × 50, Dakar, Sénégal</dd></div>
           <div><dt className="font-semibold">E-mail</dt><dd><a className="text-primary underline underline-offset-4" href="mailto:contact@dakarboutik.net">contact@dakarboutik.net</a></dd></div>
-          <div><dt className="font-semibold">Téléphone</dt><dd><a className="text-primary underline underline-offset-4" href="tel:+221771203536">+221 77 120 35 36</a></dd></div>
+          <div><dt className="font-semibold">Téléphone</dt><dd><a className="text-primary underline underline-offset-4" href="tel:+221776384676">+221 77 638 46 76</a></dd></div>
         </dl>
         <nav aria-label="Informations complémentaires" className="mt-8 flex flex-wrap gap-4 border-t pt-6 text-sm font-semibold text-primary">
           <Link className="underline underline-offset-4" href="/conditions-generales">Conditions générales</Link>

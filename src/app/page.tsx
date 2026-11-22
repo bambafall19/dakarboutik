@@ -22,6 +22,8 @@ import {
 } from "@/lib/marketplace-discovery";
 import styles from "./home.module.css";
 import { ReferenceArtwork } from "@/components/marketplace/reference-artwork";
+import { MarjiHelp } from "@/components/marketplace/marji-help";
+import { MARJI_SHOP_ID } from "@/lib/marji-assistant";
 
 export const dynamic = "force-dynamic";
 export default async function HomePage() {
@@ -94,6 +96,15 @@ export default async function HomePage() {
           <Search size={22} />
         </button>
       </form>
+      {shops.some(shop => shop.id === MARJI_SHOP_ID && shop.status === "approved") && (
+        <aside aria-label="Conseils parfumerie MARJI" className="mx-auto flex w-full max-w-6xl flex-col gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-bold text-emerald-950">🌸 Un parfum en tête ? MARJI vous guide</p>
+            <p className="mt-1 text-sm text-slate-700">Produits, prix, senteurs et contact vendeur, sans chercher dans les boutiques.</p>
+          </div>
+          <MarjiHelp inline />
+        </aside>
+      )}
       <section className={styles.brandHero} aria-labelledby="welcome-title">
         <div className={styles.heroSparkles} aria-hidden="true">
           <span>✦</span>

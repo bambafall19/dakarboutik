@@ -7,6 +7,7 @@ import { VisibilityRequest } from "./visibility-request";
 import { BillingPanel } from "./billing-panel";
 import { AdminProductEditor } from "./admin-product-editor";
 import { AdminShopProfile } from "./admin-shop-profile";
+import { MerchantAccessRequests } from '@/components/admin/merchant-access-requests';
 import { PhotoField } from "./photo-field";
 import { AdminProductThumbnail } from "./admin-product-thumbnail";
 import { adminInventoryCategories, filterAdminInventory } from "@/lib/admin-inventory";
@@ -112,8 +113,8 @@ function AuthForm({ inscription = false }: { inscription?: boolean }) {
       </form>
       {!register && <button disabled={busy} type="button" onClick={() => { setEmailLogin(!emailLogin); setMessage(""); setShowPassword(false); }} className="mt-4 w-full py-2 text-sm text-emerald-800 underline">{emailLogin ? "Me connecter avec mon téléphone" : "J’ai déjà un compte avec mon e-mail"}</button>}
       <div className="mt-5 border-t pt-4 text-sm">
-        <a className="font-medium text-emerald-800 underline" href="https://wa.me/221776384676?text=Bonjour%20DakarBoutik%2C%20j%E2%80%99ai%20besoin%20d%E2%80%99aide%20pour%20acc%C3%A9der%20%C3%A0%20mon%20compte%20commer%C3%A7ant." data-engagement-audience="support" target="_blank" rel="noopener noreferrer">Mot de passe oublié ? Aide WhatsApp ↗</a>
-        <p className="mt-2 text-xs text-slate-500">Notre équipe vérifiera votre demande. Ne communiquez jamais votre mot de passe.</p>
+        <a className="inline-flex min-h-11 items-center font-semibold text-emerald-800 underline" href="/recuperer-acces">Mot de passe oublié ou premier accès ?</a>
+        <p className="mt-2 text-xs text-slate-500">Prévenez notre équipe en indiquant votre boutique et votre téléphone. Vous choisirez vous-même votre nouveau mot de passe après vérification.</p>
       </div>
     </div>
     {register && <p className="mt-4 text-center text-sm text-slate-600">1. Créez votre compte · 2. Présentez votre boutique · 3. Attendez sa validation</p>}
@@ -248,7 +249,9 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
           </div>}
           {user?.phone && !admin && <details className="max-w-md rounded-xl border bg-white p-4"><summary className="cursor-pointer text-sm font-medium">Modifier mon mot de passe</summary>
             <form className="mt-4 space-y-3" onSubmit={async e => {
-              e.preventDefault(); const form = e.currentTarget; const data = new FormData(form); setBusy(true); setMessage("");
+              e.preventDefault(); const form = e.currentTarget; const data = new FormData(form);
+              if (data.get('newPassword') !== data.get('confirmPassword')) { setMessage('Les nouveaux mots de passe ne correspondent pas.'); return; }
+              setBusy(true); setMessage("");
               try {
                 const response = await fetch("/api/auth/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "change-phone-password", oldPassword: data.get("oldPassword"), newPassword: data.get("newPassword") }) });
                 const result = await response.json(); if (!response.ok) throw Error(result.error || "Modification impossible.");
@@ -257,9 +260,12 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
               finally { setBusy(false); }
             }}>
               <label className="block text-sm">Mot de passe actuel<input className={field} type="password" name="oldPassword" autoComplete="current-password" required /></label>
-              <label className="block text-sm">Nouveau mot de passe<input className={field} type="password" name="newPassword" autoComplete="new-password" minLength={6} maxLength={72} required /></label>
+              <label className="block text-sm">Nouveau mot de passe<input className={field} type="password" name="newPassword" autoComplete="new-password" minLength={10} maxLength={72} required /></label>
+              <label className="block text-sm">Confirmer le nouveau mot de passe<input className={field} type="password" name="confirmPassword" autoComplete="new-password" minLength={10} maxLength={72} required /></label>
+              <p className="text-xs">10 caractères minimum. Votre nouveau mot de passe reste privé.</p>
               <button disabled={busy} className="rounded-lg bg-emerald-800 px-4 py-3 text-sm text-white">Enregistrer le nouveau mot de passe</button>
             </form>
+            <a href="/recuperer-acces" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-emerald-900 underline">J’ai oublié mon mot de passe actuel</a>
           </details>}
           <p role="status" className="whitespace-pre-line">
             {message}
@@ -282,6 +288,7 @@ export function MarketplaceDashboard({ admin = false, inscription = false, initi
             </p>
           ) : admin ? (
             <>
+              <MerchantAccessRequests />
               <p className="text-sm text-slate-600">Recherchez une fiche pour la modifier. La publication et les archives se gèrent dans les autres actions du produit.</p>
               <nav aria-label="Sections de gestion" className={inventoryStyles.tabs}><a href="#produits">Produits</a><a href="#boutiques">Publication des boutiques</a><a href="#forfaits">Forfaits</a></nav>
               {selectedShop && <AdminShopProfile key={`${selectedShop.id}-${selectedShop.updated_at}`} shop={selectedShop} busy={busy} onBusy={setPhotoBusy} onSave={profile=>save({action:"admin-save-shop",shopId:selectedShop.id,profile})} />}

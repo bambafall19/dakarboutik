@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { useApiData } from "@/hooks/use-api-data";
 import { useToast } from "@/hooks/use-toast";
+import type { AccessRequestsData } from './merchant-access-requests';
 type Notice = {
   id: string;
   name: string;
@@ -29,9 +30,18 @@ export function ShopNotifications() {
     "/api/marketplace/notifications",
   );
   const previous = useRef<Set<string> | null>(null);
+  const {data:access,error:accessError}=useApiData<AccessRequestsData>('/api/admin/merchant-access-requests');
+  const previousAccess=useRef<Set<string>|null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const { toast } = useToast();
+  useEffect(()=>{
+    if(!access)return;
+    const fresh=access.requests.filter(r=>!previousAccess.current?.has(r.id));
+    if(previousAccess.current&&fresh.length)toast({title:'Nouvelle demande d’accès commerçant',description:fresh.map(r=>r.shop_name).join(', ')});
+    previousAccess.current=new Set(access.requests.map(r=>r.id));
+  },[access,toast]);
+  const total=(data?.pendingCount||0)+(access?.pendingCount||0);
   useEffect(() => {
     if (!data) return;
     const fresh = data.notifications.filter(
@@ -71,14 +81,14 @@ export function ShopNotifications() {
         aria-label={
           error
             ? "Notifications boutiques indisponibles"
-            : `${data?.pendingCount ?? "…"} boutiques à valider`
+            : `${data?.pendingCount ?? "…"} boutiques à valider · ${access?.pendingCount??'…'} demandes d’accès`
         }
         className="relative flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-full border"
       >
         <Bell size={20} aria-hidden="true" />
-        {(data?.pendingCount || 0) > 0 && (
+        {total > 0 && (
           <span className="absolute -right-1 -top-1 rounded-full bg-rose-700 px-1.5 text-xs font-bold text-white">
-            {data!.pendingCount}
+            {total}
           </span>
         )}
         {error && (
@@ -94,6 +104,11 @@ export function ShopNotifications() {
         <h2 className="text-lg font-bold">
           Boutiques à valider · {data?.pendingCount ?? "…"}
         </h2>
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm">
+          <Link href="/admin/boutiques#demandes-acces" className="inline-flex min-h-11 items-center font-bold text-emerald-900 underline">Demandes d’accès commerçants · {access?.pendingCount??'…'} →</Link>
+          {accessError&&<p>Demandes d’accès temporairement indisponibles.</p>}
+          {access?.requests.slice(0,3).map(r=><p className="break-words" key={r.id}>{r.shop_name} · {r.reason==='forgot'?'Mot de passe oublié':'Premier accès'}</p>)}
+        </div>
         {error ? (
           <button className="min-h-11 underline" onClick={() => void refetch()}>
             Notifications indisponibles · Réessayer

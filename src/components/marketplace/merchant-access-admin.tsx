@@ -18,7 +18,7 @@ export function MerchantAccessAdmin({ shop }: { shop: Shop }) {
     finally { setBusy(false); }
   }
   const whatsapp = `https://wa.me/${shop.profile.whatsapp}?text=${encodeURIComponent(`Bonjour ${shop.profile.name}, voici votre lien personnel DakarBoutik pour choisir vous-même votre mot de passe et accéder à votre boutique : ${url}\nValable 30 minutes, une seule utilisation. Connectez-vous ensuite avec le numéro +${shop.profile.whatsapp}. Ne partagez ni ce lien ni votre mot de passe.`)}`;
-  return <details className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
+  return <details id="acces-commercant" className="scroll-mt-24 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
     <summary className="cursor-pointer py-2 font-bold">Accès du commerçant par téléphone</summary>
     <p className="mt-2">Numéro destinataire enregistré : <strong>+{shop.profile.whatsapp}</strong>.</p>
     <p className="mt-2">Le lien permet au propriétaire de choisir son mot de passe puis de gérer cette boutique et ses produits. À son utilisation, la boutique sera rattachée au compte de ce numéro et ses anciennes sessions téléphone seront déconnectées. Les produits, publicités et statistiques sont conservés. Aucun mot de passe du compte e-mail d’origine n’est modifié.</p>

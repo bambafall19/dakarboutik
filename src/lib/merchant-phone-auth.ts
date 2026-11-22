@@ -74,8 +74,8 @@ export async function authenticatePhone(body: Record<string, unknown>) {
 export async function changePhonePassword(oldPassword: unknown, newPassword: unknown) {
   const session = await phoneSession();
   if (!session) return { status: 401, error: "Connectez-vous avec votre téléphone." };
-  if (typeof oldPassword !== "string" || typeof newPassword !== "string" || newPassword.length < 6 || Buffer.byteLength(newPassword) > 72 || Buffer.byteLength(oldPassword) > 72)
-    return { status: 400, error: "Le nouveau mot de passe doit contenir au moins 6 caractères (72 octets maximum)." };
+  if (typeof oldPassword !== "string" || typeof newPassword !== "string" || newPassword.length < 10 || Buffer.byteLength(newPassword) > 72 || Buffer.byteLength(oldPassword) > 72)
+    return { status: 400, error: "Le nouveau mot de passe doit contenir au moins 10 caractères (72 octets maximum)." };
   if (!await consumePhoneLimit(`password-change:${session.uid}`, 5, 900)) return { status: 429, error: "Trop de tentatives. Réessayez dans 15 minutes." };
   const row = await queryOne<{ password_hash: string }>("select password_hash from merchant_phone_accounts where id=$1", [session.uid]);
   if (!row || !await compare(oldPassword, row.password_hash)) return { status: 401, error: "Mot de passe actuel incorrect." };

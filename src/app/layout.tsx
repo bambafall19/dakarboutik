@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { SiteAnalytics } from '@/components/site-analytics';
 import { Lexend, Plus_Jakarta_Sans } from 'next/font/google';
 import Script from 'next/script';
@@ -14,6 +15,28 @@ import { DataRefreshBridge } from '@/components/data-refresh-bridge';
 import { ContextMenuGuard } from '@/components/context-menu-guard';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://dakarboutik.net'),
+  title: 'DakarBoutik — Vos envies. Nos boutiques.',
+  description: 'Solaire, informatique et parfumerie : découvrez les produits de nos boutiques partenaires et contactez directement votre vendeur.',
+  openGraph: {
+    title: 'DakarBoutik — Vos envies. Nos boutiques.',
+    description: 'Découvrez les produits de nos boutiques partenaires : solaire, informatique et parfumerie.',
+    url: 'https://dakarboutik.net/',
+    siteName: 'DakarBoutik',
+    type: 'website',
+    locale: 'fr_SN',
+    images: [{ url: '/dakarboutik-partage-whatsapp-20261123.jpg', width: 1254, height: 1254, type: 'image/jpeg', alt: 'DakarBoutik — Vos envies. Nos boutiques. Solaire, informatique et parfumerie.' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DakarBoutik — Vos envies. Nos boutiques.',
+    description: 'Découvrez nos boutiques partenaires et contactez directement votre vendeur.',
+    images: ['/dakarboutik-partage-whatsapp-20261123.jpg'],
+  },
+};
+
 
 const lexend = Lexend({
   subsets: ['latin'],
@@ -35,16 +58,6 @@ export default function RootLayout({
   return (
     <html lang="fr-SN" className="h-full" suppressHydrationWarning>
       <head>
-        <title>DakarBoutik - Boutiques, nouveautés et disponibilités au Sénégal</title>
-        <meta
-          name="description"
-          content="Découvrez les boutiques physiques, leurs nouveautés et les produits disponibles. Contactez directement les commerçants pour acheter."
-        />
-        <meta property="og:title" content="DakarBoutik - Les boutiques près de vous" />
-        <meta property="og:description" content="Boutiques physiques, nouveautés et disponibilités : contactez directement le vendeur avec DakarBoutik." />
-        <meta property="og:image" content="https://dakarboutik.net/dakarboutik-logo-tricolore.png" />
-        <meta property="og:url" content="https://dakarboutik.net" />
-        <meta property="og:type" content="website" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/dakarboutik-logo-tricolore.png" type="image/png" />

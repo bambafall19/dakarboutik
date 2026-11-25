@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { type Campaign, campaignLive, safeAdUrl } from "@/lib/advertising";
 import { OFFICIAL_CATALOG_ENABLED } from "@/lib/catalog-mode";
 import { recordEngagement } from "@/lib/engagement-client";
@@ -67,7 +67,6 @@ export function AdvertisingSlot({
 }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -121,13 +120,13 @@ export function AdvertisingSlot({
     return () => observer.disconnect();
   }, [count]);
   useEffect(() => {
-    if (count < 2 || paused || hovered || focused || reduced || !onScreen)
+    if (count < 2 || hovered || focused || reduced || !onScreen)
       return;
     const timer = setInterval(() => {
       if (!document.hidden) setIndex((i) => (i + 1) % count);
     }, 6000);
     return () => clearInterval(timer);
-  }, [count, paused, hovered, focused, reduced, onScreen]);
+  }, [count, hovered, focused, reduced, onScreen]);
   if (!count) return null;
   const move = (delta: number) => setIndex((i) => (i + delta + count) % count);
   return (
@@ -157,7 +156,7 @@ export function AdvertisingSlot({
           </span>
         )}
       </div>
-      <div aria-live={paused || focused ? "polite" : "off"} aria-atomic="true">
+      <div aria-live={focused ? "polite" : "off"} aria-atomic="true">
         <AdCard
           key={visible[position].id}
           campaign={visible[position]}
@@ -187,21 +186,6 @@ export function AdvertisingSlot({
               </button>
             ))}
           </div>
-          {!reduced && (
-            <button
-              type="button"
-              aria-pressed={paused}
-              onClick={() => setPaused((p) => !p)}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border bg-white px-4 text-sm font-semibold text-emerald-900"
-            >
-              {paused ? (
-                <Play size={16} aria-hidden="true" />
-              ) : (
-                <Pause size={16} aria-hidden="true" />
-              )}
-              {paused ? "Reprendre le défilement" : "Mettre en pause"}
-            </button>
-          )}
           <button
             type="button"
             aria-label="Publicité suivante"
